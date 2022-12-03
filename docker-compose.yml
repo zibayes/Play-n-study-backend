@@ -1,0 +1,13 @@
+version: "3.10"
+services:
+  db:
+    image: "postgres:14.4"
+    container_name: "my_postgres"
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/Users/fsociety/PycharmProjects/playstudy/init.sql
+volumes:
+  my_dbdata:
