@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title%}
+<title>Профиль</title>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="row m-3 justify-content-start">
+            Основная информация
+        </span>
+    <div class="row border"></div>
+    <div class="d-flex p-4">
+      <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px;">
+        <img class="border border-2 rounded w-100" src="static/img/Ernesto-Che-Guevara-Portrait.jpg" style="max-width: 400px;">
+
+        <a href=""><button class="btn border border-2 w-100">Сменить аватар</button></a>
+		
+		<span style="margin-top: 20px; margin-left: auto; margin-right: auto;">
+            Достижения
+        </span>
+		
+		<div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+		  <div class="carousel-indicators">
+			<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+			<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+			<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+		  </div>
+		  <div class="carousel-inner">
+			<div class="carousel-item active" data-bs-interval="10000">
+			  <img src="static/img/vive_la_commune.jpg" class="d-block w-100" alt="First slide">
+			  <div class="carousel-caption d-none d-md-block">
+			  </div>
+			</div>
+			<div class="carousel-item" data-bs-interval="2000">
+			  <img src="static/img/vive_la_resistance.png" class="d-block w-100" alt="Second slide">
+			  <div class="carousel-caption d-none d-md-block">
+			  </div>
+			</div>
+			<div class="carousel-item">
+			  <img src="static/img/cheburashka.png" class="d-block w-100" alt="Third slide">
+			  <div class="carousel-caption d-none d-md-block">
+			  </div>
+			</div>
+		  </div>
+		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		  </button>
+		</div>
+		
+      </div>
+      <form method="POST" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
+        <div class="row mt-2">
+          <div class="col-md-6"><label class="labels">Имя</label><input type="text" class="form-control" value="{{ user.name }}"></div>
+          <div class="col-md-6"><label class="labels">Фамилия</label><input type="text" class="form-control" value="{{ user.surname }}"></div>
+        </div>
+		<div class="row mt-2">
+          <div class="col-md-6"><label class="labels">Номер телефона</label><input type="text" class="form-control" value="{{ user.phone }}"></div>
+          <div class="col-md-6"><label class="labels">Email</label><input type="text" class="form-control" value="{{ user.email }}"></div>
+        </div>
+		<div class="row mt-2">
+          <div class="col-md-6"><label class="labels">Город</label><input type="text" class="form-control" value="{{ user.city }}"></div>
+          <div class="col-md-6"><label class="labels">Институт</label><input type="text" class="form-control" value="{{ user.university }}"></div>
+        </div>
+		<div class="row mt-2">
+          <div class="col-md-6"><label class="labels">Специальность</label><input type="text" class="form-control" value="{{ user.specialization }}"></div>
+          <div class="col-md-6"><label class="labels">Учебная группа</label><input type="text" class="form-control" value="{{ user.group }}"></div>
+        </div>
+        <button class="btn border border-2 w-100" style="margin-top: 20px" type="submit">Сохранить</button>
+        <div class="border-top pt-3">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('.carousel').carousel()
+</script>
+{% endblock %}

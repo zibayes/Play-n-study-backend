@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title%}
+<title>Главная страница</title>
+{% endblock %}
+
+{% block content %}
+<div>
+  <h1 class="h1-right" style="color: white"><b>Откройте для</b></h1>
+  <h1 class="h1-right" style="color: white"><b>себя обучение в</b></h1>
+  <h1 class="h1-right" style="color: white"><b>виде игры!</b></h1>
+</div>
+<div>
+
+  <button onclick="window.location.href = 'registration';" type="button" class="btn btn-warning btn-format"><b>Начните знакоство!</b></button>
+</div>
+<p>Подписывайтесь в соцсетях</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3 i-main"><a href="#"><i style="color: white" class="fab fa-instagram color_b"></i></a></div>
+          <div class="col-md-3 i-main"><a href="#"><i style="color: white" class="fab fa-telegram color_b"></i></a></div>
+          <div class="col-md-3 i-main"><a href="#"><i style="color: white" class="fab fa-discord color_b"></i></a></div>
+          <div class="col-md-3 i-main"><a href="#"><i style="color: white" class="fab fa-vk color_b"></i></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

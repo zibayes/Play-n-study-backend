@@ -1,0 +1,6 @@
+# hidden directories
+.gitignore
+.idea
+
+# directories
+venv
