@@ -1,12 +1,12 @@
-from infrastructure.repository.users_repository import get_user_by_id
+from infrastructure.repository.UserRepository import UserRepository
 
 
 class UserLogin:
     def __init__(self):
         self.__user = None
 
-    def from_db(self, session, user_id):
-        self.__user = get_user_by_id(session, user_id)
+    def from_db(self, user_repository: UserRepository, user_id):
+        self.__user = user_repository.get_user_by_id(user_id)
         return self
 
     def create(self, user):
@@ -26,4 +26,4 @@ class UserLogin:
         return False
 
     def get_id(self):
-        return str(self.__user['id'])
+        return str(self.__user.user_id)

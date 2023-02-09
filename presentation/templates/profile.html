@@ -3,7 +3,7 @@
 {% block title%}
 <title>Профиль</title>
 {% endblock %}
-
+<h1>{{username}}</h1>
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="container border border-1 rounded m-5" style="background-color: white;">
@@ -55,20 +55,20 @@
       </div>
       <form method="POST" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
         <div class="row mt-2">
-          <div class="col-md-6"><label class="labels">Имя</label><input type="text" class="form-control" value="{{ user.name }}"></div>
-          <div class="col-md-6"><label class="labels">Фамилия</label><input type="text" class="form-control" value="{{ user.surname }}"></div>
+          <div class="col-md-6"><label class="labels">Имя</label><input type="text" class="form-control" value="{{ username }}"></div>
+          <div class="col-md-6"><label class="labels">Фамилия</label><input type="text" class="form-control" value="0"></div>
         </div>
 		<div class="row mt-2">
-          <div class="col-md-6"><label class="labels">Номер телефона</label><input type="text" class="form-control" value="{{ user.phone }}"></div>
-          <div class="col-md-6"><label class="labels">Email</label><input type="text" class="form-control" value="{{ user.email }}"></div>
+          <div class="col-md-6"><label class="labels">Номер телефона</label><input type="text" class="form-control" value="0"></div>
+          <div class="col-md-6"><label class="labels">Email</label><input type="text" class="form-control" value="0"></div>
         </div>
 		<div class="row mt-2">
-          <div class="col-md-6"><label class="labels">Город</label><input type="text" class="form-control" value="{{ user.city }}"></div>
-          <div class="col-md-6"><label class="labels">Институт</label><input type="text" class="form-control" value="{{ user.university }}"></div>
+          <div class="col-md-6"><label class="labels">Город</label><input type="text" class="form-control" value="0"></div>
+          <div class="col-md-6"><label class="labels">Институт</label><input type="text" class="form-control" value="0"></div>
         </div>
 		<div class="row mt-2">
-          <div class="col-md-6"><label class="labels">Специальность</label><input type="text" class="form-control" value="{{ user.specialization }}"></div>
-          <div class="col-md-6"><label class="labels">Учебная группа</label><input type="text" class="form-control" value="{{ user.group }}"></div>
+          <div class="col-md-6"><label class="labels">Специальность</label><input type="text" class="form-control" value="0"></div>
+          <div class="col-md-6"><label class="labels">Учебная группа</label><input type="text" class="form-control" value="0"></div>
         </div>
         <button class="btn border border-2 w-100" style="margin-top: 20px" type="submit">Сохранить</button>
         <div class="border-top pt-3">

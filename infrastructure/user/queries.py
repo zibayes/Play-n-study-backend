@@ -18,3 +18,7 @@ def get_user_achievements(session, user_id: int) -> Optional[list]:
         achievements.append((row[1].name, row[3].name))
 
     return achievements
+
+
+def get_user_courses(session, user_id: int) -> Optional[list]:
+    pass

@@ -1,5 +1,5 @@
 from settings import MAX_USERNAME_LEN, MIN_PASSWORD_LEN, MIN_EMAIL_LEN
-from infrastructure.repository.users_repository import get_user_by_email, get_user_by_username
+from infrastructure.repository.UserRepository import UserRepository
 from typing import Optional
 from werkzeug.datastructures import MultiDict
 from werkzeug.security import generate_password_hash
@@ -16,7 +16,7 @@ def get_fields_for_register(form_fields: MultiDict[str, str]) -> tuple:
     return tuple(fields_arr)
 
 
-def get_register_wrong_field_msg(session, form_fields: MultiDict[str, str]) -> Optional[str]:
+def get_register_wrong_field_msg(user_repository: UserRepository, form_fields: MultiDict[str, str]) -> Optional[str]:
     email, username,  password, password_confirm = get_register_form_fields(form_fields)
 
     if len(username) > MAX_USERNAME_LEN:
@@ -31,10 +31,10 @@ def get_register_wrong_field_msg(session, form_fields: MultiDict[str, str]) -> O
     elif password != password_confirm:
         return f'Пароли не совпадают'
 
-    elif get_user_by_username(session, username) is not None:
+    elif user_repository.get_user_by_username(username) is not None:
         return f'Пользователь с ником {username} уже зарегистрирован'
 
-    elif get_user_by_email(session, email) is not None:
+    elif user_repository.get_user_by_email(email) is not None:
         return f'Пользователь с почтой {email} уже зарегистрирован'
 
     return None
