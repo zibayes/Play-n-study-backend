@@ -1,13 +1,11 @@
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy.orm import sessionmaker
-from presentation.models.models import *
 from werkzeug.security import check_password_hash
-from infrastructure.repository.UserRepository import UserRepository
 from flask_login import LoginManager, login_user, login_required
 from infrastructure.auth.UserLogin import UserLogin
 from infrastructure.auth.service import get_register_wrong_field_msg, get_fields_for_register
-from infrastructure.user.queries import *
+from infrastructure.QueryManager import *
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
     echo=False
@@ -22,6 +20,9 @@ login_manager = LoginManager(app)
 
 # Repositories
 user_repository = UserRepository(session)
+
+# QueryManager
+query_manager = QueryManager(session)
 
 
 @login_manager.user_loader
@@ -45,7 +46,8 @@ def about():
 @login_required
 def handle_profile(user_id):
     user = user_repository.get_user_by_id(user_id)
-    print(user.json())
+    # если нужны ачивки и тд пишем запрос
+    # query_manager.get_user_achievements(user.user_id)
     return render_template('profile.html', context=user.json())
 
 #
@@ -69,9 +71,7 @@ def handle_profile(user_id):
 
 @app.route("/login", methods=['GET', 'POST'])
 def handle_login():
-    #
     current_template = url_for('handle_login').replace('/', '') + '.html'
-
     if request.method == 'POST':
         user = user_repository.get_user_by_email(request.form['email'])
 
