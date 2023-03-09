@@ -15,17 +15,26 @@ class UserRepository:
 
     def add_user(self, user: User) -> bool:
         try:
-            new_user = UsersModel(
-                email=user.email,
-                city=user.city,
-                username=user.username,
-                password=user.password
-            )
+            new_user = service.user_to_users_db(user)
             self.session.add(new_user)
             self.session.commit()
             return True
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка добавления пользователя в БД " + str(e))
+            return False
+
+    def update_user(self, user: User) -> bool:
+        try:
+            self.session.query(UsersModel) \
+                .filter_by(user_id=user.user_id) \
+                .update({'username': user.username,
+                         'email': user.email,
+                         'city': user.city,
+                         'password': user.password})
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления в БД " + str(e))
             return False
 
     def get_user_by_id(self, user_id) -> Optional[User]:

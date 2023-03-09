@@ -42,7 +42,7 @@
                 <!-- Pills content -->
                 <div class="tab-content">
                     <div class="tab-pane fade active show" id="pills-login" role="tabpanel" aria-labelledby="mdb-tab-login">
-                        <form>
+                        <form action="/login" method="POST">
                             <div class="text-center mb-3">
                                 <p>Войдите через социальную сеть:</p>
                                 <button type="button" class="btn btn-primary btn-floating mx-1">
@@ -62,13 +62,13 @@
 
                             <!-- Email input -->
                             <div class="form-outline mb-4">
-                                <input type="email" id="loginName" class="form-control">
+                                <input type="email" id="loginName" name="email" class="form-control">
                                 <label class="form-label" for="loginName" style="margin-left: 0px;">Почта или логин</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 114.4px;"></div><div class="form-notch-trailing"></div></div></div>
 
                             <!-- Password input -->
                             <div class="form-outline mb-4">
-                                <input type="password" id="loginPassword" class="form-control">
+                                <input type="password" name="password" id="loginPassword" class="form-control">
                                 <label class="form-label" for="loginPassword" style="margin-left: 0px;">Пароль</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64.8px;"></div><div class="form-notch-trailing"></div></div></div>
 
@@ -89,13 +89,11 @@
                             </div>
 
                             <!-- Submit button -->
-                            <a id="first_button" href="main" type="button" class="btn btn-primary btn-block mb-4">Войти</a>
-
-
+                            <button type="submit" class="btn btn-primary btn-block mb-4"> Войти </button>
                         </form>
                     </div>
                     <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="mdb-tab-register">
-                        <form>
+                        <form action="/registration" method="POST">
                             <div class="text-center mb-3">
                                 <p>Зарегистрируйтесь через социальную сеть:</p>
                                 <button type="button" class="btn btn-primary btn-floating mx-1">
@@ -115,33 +113,27 @@
 
                             <p class="text-center">или:</p>
 
-                            <!-- Name input -->
-                            <div class="form-outline mb-4">
-                                <input type="text" id="registerName" class="form-control">
-                                <label class="form-label" for="registerName" style="margin-left: 0px;">Имя</label>
-                                <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
-
                             <!-- Username input -->
                             <div class="form-outline mb-4">
-                                <input type="text" id="registerUsername" class="form-control">
+                                <input type="text" id="registerUsername" name="username" class="form-control">
                                 <label class="form-label" for="registerUsername" style="margin-left: 0px;">Фамилия</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
                             <!-- Email input -->
                             <div class="form-outline mb-4">
-                                <input type="email" id="registerEmail" class="form-control">
+                                <input type="email" name="email" id="registerEmail" class="form-control">
                                 <label class="form-label" for="registerEmail" style="margin-left: 0px;">Почта</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
                             <!-- Password input -->
                             <div class="form-outline mb-4">
-                                <input type="password" id="registerPassword" class="form-control">
+                                <input type="password" name="password" id="registerPassword" class="form-control">
                                 <label class="form-label" for="registerPassword" style="margin-left: 0px;">Пароль</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
                             <!-- Repeat Password input -->
                             <div class="form-outline mb-4">
-                                <input type="password" id="registerRepeatPassword" class="form-control">
+                                <input type="password" name="password2" id="registerRepeatPassword" class="form-control">
                                 <label class="form-label" for="registerRepeatPassword" style="margin-left: 0px;">Повторите пароль</label>
                                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
 
@@ -153,8 +145,10 @@
                                 </label>
                             </div>
 
+
+                            <button type="submit" class="btn btn-primary btn-block mb-1"></button>
                             <!-- Submit button -->
-                            <a id="second_button" href="main" type="button" class="btn btn-primary btn-block mb-1">Войти</a>
+                            <a id="second_button" href="main" type="button" class="btn btn-primary btn-block mb-1">Зарегистрироваться</a>
                         </form>
                     </div>
                 </div>

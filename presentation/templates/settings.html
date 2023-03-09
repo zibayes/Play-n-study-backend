@@ -1,7 +1,7 @@
 {% extends 'base_aut.html' %}
 
 {% block title %}
-<title>Профиль</title>
+<title>Настройки</title>
 {% endblock %}
 
 {% block content %}
@@ -53,25 +53,24 @@
                 </div>
 
             </div>
-            <form method="POST" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
+            <form method="POST" action="#" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
                 <div class="row mt-2">
-                    <div class="col-md-6" style="z-index: 1;"><label class="labels lang" key="name">Имя</label><input type="text" class="form-control" value="{{ user.name }}"></div>
-                    <div class="col-md-6"><label class="labels lang" key="surname">Фамилия</label><input type="text" class="form-control" value="{{ user.surname }}"></div>
+                    <div class="col-md-6" style="z-index: 1;"><label class="labels lang" key="name">Имя</label>
+                        <input type="text" name="username" class="form-control" value="{{ user.username }}">
+                    </div>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-md-6"><label class="labels lang" key="phonenumber">Номер телефона</label><input type="text" class="form-control" value="{{ user.phone }}"></div>
-                    <div class="col-md-6"><label class="labels lang" key="email">Электронная почта</label><input type="text" class="form-control" value="{{ user.email }}"></div>
+                    <div class="col-md-6"><label class="labels lang" key="email">Электронная почта</label>
+                        <input type="text" name="email" class="form-control" value="{{ user.email }}">
+                    </div>
                 </div>
+            </form>
+            <form method="POST" action="/changecity" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
                 <div class="row mt-2">
-                    <div class="col-md-6"><label class="labels lang" key="city">Город</label><input type="text" class="form-control" value="{{ user.city }}"></div>
-                    <div class="col-md-6"><label class="labels lang" key="university">Институт</label><input type="text" class="form-control" value="{{ user.university }}"></div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-6"><label class="labels lang" key="specialization">Специальность</label><input type="text" class="form-control" value="{{ user.specialization }}"></div>
-                    <div class="col-md-6"><label class="labels lang" key="group">Учебная группа</label><input type="text" class="form-control" value="{{ user.group }}"></div>
-                </div>
-                <button class="btn border border-2 w-100 lang" key="save" style="margin-top: 20px" type="submit">Сохранить</button>
-                <div class="border-top pt-3">
+                    <div class="col-md-6" style="z-index: 1;"><label class="labels lang">Город</label>
+                        <input type="text" name="city" class="form-control" value="{{ user.city }}">
+                    </div>
+                    <button class="btn border border-2 w-100 lang" style="margin-top: 20px" type="submit">Сохранить</button>
                 </div>
             </form>
         </div>

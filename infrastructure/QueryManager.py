@@ -1,4 +1,3 @@
-from presentation.models.models import *
 from typing import Optional
 from infrastructure.repository.UserRepository import UserRepository
 from infrastructure.repository.AchievementRepository import AchievementRepository
@@ -57,5 +56,3 @@ class QueryManager:
                 user_courses.append(course)
             return user_courses
         return None
-
-

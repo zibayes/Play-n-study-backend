@@ -102,3 +102,7 @@ body.is-active{
     background-color: #f9f9f900;
     border: none;
 }
+
+.flash-error {
+    color: red;
+}

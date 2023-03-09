@@ -19,6 +19,15 @@ def user_db_to_user(user: UsersModel) -> User:
                 password=user.password)
 
 
+def user_to_users_db(user: User) -> UsersModel:
+    return UsersModel(
+        email=user.email,
+        city=user.city,
+        username=user.username,
+        password=user.password
+    )
+
+
 def achievement_db_to_achievemnt(achievement: Type[AchievementsModel]) -> Achievement:
     return Achievement(ach_id=achievement.ach_id,
                        course_id=achievement.course_id,
