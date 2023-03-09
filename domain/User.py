@@ -17,7 +17,7 @@ class User:
 
     def json(self):
         return {
-            "id": self.user_id,
+            "user_id": self.user_id,
             "email": self.email,
             "username": self.username,
             "city": self.city,

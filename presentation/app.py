@@ -6,12 +6,19 @@ from flask_login import LoginManager, login_user, login_required
 from infrastructure.auth.UserLogin import UserLogin
 from infrastructure.auth.service import get_register_wrong_field_msg, get_fields_for_register
 from infrastructure.QueryManager import *
+from infrastructure.repository.AchievementRepository import AchievementRepository
+from infrastructure.repository.UserRepository import UserRepository
+from infrastructure.repository.AchieveRelRepository import AchieveRelRepository
+
+
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
     echo=False
 )
 Session = sessionmaker(bind=engine)
 session = Session()
+
+print(session)
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
@@ -20,9 +27,15 @@ login_manager = LoginManager(app)
 
 # Repositories
 user_repository = UserRepository(session)
+achieve_rel_repository = AchieveRelRepository(session)
+achievement_repository = AchievementRepository(session)
+
 
 # QueryManager
-query_manager = QueryManager(session)
+query_manager = QueryManager(user_repository=user_repository,
+                             achievement_repository=achievement_repository,
+                             achieve_rel_repository=achieve_rel_repository
+                             )
 
 
 @login_manager.user_loader
@@ -46,27 +59,17 @@ def about():
 @login_required
 def handle_profile(user_id):
     user = user_repository.get_user_by_id(user_id)
-    # если нужны ачивки и тд пишем запрос
-    # query_manager.get_user_achievements(user.user_id)
-    return render_template('profile.html', context=user.json())
+    user.achievements = query_manager.get_user_achievements(user.user_id)
+    json_response = {}
 
-#
-# @app.route('/profile/<int:user_id>/courses')
-# def handle_get_user_courses(user_id):
-#     courses = session.query(UsersModel, CoursesModel, CoursesRelModel) \
-#         .filter(CoursesRelModel.user_id == UsersModel.user_id) \
-#         .filter(CoursesRelModel.course_id == CoursesModel.course_id) \
-#         .filter(UsersModel.user_id == user_id).all()
-#
-#     result = {"total": len(courses)}
-#
-#     i = 0
-#     for row in courses:
-#         course = row[1].name
-#         temp = {'course_name': course}
-#         result[f"{i}"] = temp
-#         i += 1
-#     return result
+    i = 0
+    for ach in user.achievements:
+        json_response[i] = {
+            "name": ach.name,
+            "image": ach.image
+        }
+        i += 1
+    return json_response
 
 
 @app.route("/login", methods=['GET', 'POST'])

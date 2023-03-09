@@ -4,10 +4,11 @@ import infrastructure.repository.service as service
 from typing import Optional
 from presentation.models.models import UsersModel
 from domain.User import User
+from sqlalchemy.orm.session import Session
 
 
 class UserRepository:
-    session = None
+    session: Session = None
 
     def __init__(self, session):
         self.session = session
