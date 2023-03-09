@@ -1,3 +1,13 @@
 # hidden directories
-.gitignore
 .idea
+
+__pycache__
+domain/__pycache__
+infrastructure/__pycache__
+infrastructure/auth/__pycache__
+infrastructure/changes/__pycache__
+infrastructure/repository/__pycache__
+presentation/__pycache__
+presentation/api/__pycache__
+presentation/models/__pycache__
+venv
