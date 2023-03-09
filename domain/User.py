@@ -6,7 +6,8 @@ class User:
     password: str = None
 
     # поля получаемые запросами
-    achievements = None
+    achievements: list = None
+    courses: list = None
 
     def __init__(self, user_id, email, username, city, password):
         self.user_id = user_id
