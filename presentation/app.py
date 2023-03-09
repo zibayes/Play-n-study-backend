@@ -29,13 +29,21 @@ login_manager = LoginManager(app)
 user_repository = UserRepository(session)
 achieve_rel_repository = AchieveRelRepository(session)
 achievement_repository = AchievementRepository(session)
-
+course_repository = CourseRepository(session)
+course_rel_repository = CourseRelRepository(session)
+curator_repository = CuratorRepository(session)
+review_repository = ReviewRepository(session)
+task_repository = TaskRepository(session)
 
 # QueryManager
 query_manager = QueryManager(user_repository=user_repository,
                              achievement_repository=achievement_repository,
-                             achieve_rel_repository=achieve_rel_repository
-                             )
+                             achieve_rel_repository=achieve_rel_repository,
+                             course_repository=course_repository,
+                             course_rel_repository=course_rel_repository,
+                             curator_repository=curator_repository,
+                             review_repository=review_repository,
+                             task_repository=task_repository)
 
 
 @login_manager.user_loader
