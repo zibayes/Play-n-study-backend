@@ -159,13 +159,13 @@ def handle_information():
 
 @app.route('/changepassword', methods=['POST'])
 def handle_changepassword():
-    user_id = current_user.get_id()
-    user = user_repository.get_user_by_id(user_id)
-    user.city = request.form.get('city')
-    if user_repository.add_user(user):
-        flash("Успешно", 'success')
-    else:
-        flash("Что-то пошло не так", 'error')
+    # user_id = current_user.get_id()
+    # user = user_repository.get_user_by_id(user_id)
+    # user.city = request.form.get('city')
+    # if user_repository.add_user(user):
+    #     flash("Успешно", 'success')
+    # else:
+    #     flash("Что-то пошло не так", 'error')
     return redirect(url_for('handle_settings'))
 
 
