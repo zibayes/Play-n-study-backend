@@ -1,0 +1,127 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Команда разработчиков</title>
+{% endblock %}
+
+{% block style %}
+<link href="static/css/reviews.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title lang" key="devinfo" >Информация о разработчике</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">...</div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title lang" key="devinfo" id="exampleModalLabel2">Информация о разработчике</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">...</div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title lang" key="devinfo" id="exampleModalLabel3">Информация о разработчике</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">...</div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang" key="devteam">Команда разработчиков</span>
+        <div class="row border"></div>
+        <br>
+        <!-- Carousel wrapper -->
+            <div class="col-xl-12 mb-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
+                                <div class="ms-3">
+                                    <p class="fw-bold mb-1 lang" key="pavel">Павел</p>
+                                    <p class="text-muted mb-0 lang" key="pavinfo">Бэкенд и Фронтенд разработчик</p>
+                                </div>
+                            </div>
+                            <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                        </div>
+                    </div>
+                    <div class="card-footer border-0 bg-light p-2 d-flex justify-content-around">
+                        <button class="btn btn-link m-0 text-reset lang" key="devinfo" data-mdb-toggle="modal" data-mdb-target="#exampleModal"  role="button" data-ripple-color="primary">Информация о разработчике<i class="fas fa-envelope ms-2"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 mb-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img
+                                        src="https://mdbootstrap.com/img/new/avatars/3.jpg"
+                                        alt=""
+                                        style="width: 45px; height: 45px"
+                                        class="rounded-circle"
+                                />
+                                <div class="ms-3">
+                                    <p class="fw-bold mb-1 lang" key="ilya">Илья</p>
+                                    <p class="text-muted mb-0 lang" key="ilyinfo">Фронтэнд разработчик</p>
+                                </div>
+                            </div>
+                            <span class="badge rounded-pill badge-primary lang" key="offline">Оффлайн</span>
+                        </div>
+                    </div>
+                    <div class="card-footer border-0 bg-light p-2 d-flex justify-content-around">
+                        <button class="btn btn-link m-0 text-reset lang" key="devinfo" data-mdb-toggle="modal" data-mdb-target="#exampleModal2"  role="button" data-ripple-color="primary">Информация о разработчике<i class="fas fa-envelope ms-2"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img
+                                        src="https://mdbootstrap.com/img/new/avatars/2.jpg"
+                                        alt=""
+                                        style="width: 45px; height: 45px"
+                                        class="rounded-circle"
+                                />
+                                <div class="ms-3">
+                                    <p class="fw-bold mb-1 lang" key="anton">Антон</p>
+                                    <p class="text-muted mb-0 lang" key="antinfo">Бэкенд разработчик</p>
+                                </div>
+                            </div>
+                            <span class="badge rounded-pill badge-warning lang" key="afk">Спит</span>
+                        </div>
+                    </div>
+                    <div class="card-footer border-0 bg-light p-2 d-flex justify-content-around">
+                        <button class="btn btn-link m-0 text-reset lang" key="devinfo" data-mdb-toggle="modal" data-mdb-target="#exampleModal3"  role="button" data-ripple-color="primary">Информация о разработчике<i class="fas fa-envelope ms-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!-- Carousel wrapper -->
+
+</div>
+{% endblock %}
