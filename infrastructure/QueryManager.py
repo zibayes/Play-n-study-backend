@@ -58,3 +58,4 @@ class QueryManager:
             return user_courses
         return None
 
+
