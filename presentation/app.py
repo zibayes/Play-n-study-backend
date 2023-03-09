@@ -114,25 +114,35 @@ def handle_register():
             flash(error, 'error')
     return render_template(current_template)
 
+
 @app.route('/main')
 def handle_main():
     return render_template('main.html')
+
 
 @app.route('/profile')
 def handle_settings():
     return render_template('profile.html')
 
+
 @app.route('/reviews')
 def handle_reviews():
     return render_template('reviews.html')
+
 
 @app.route('/schedule')
 def handle_schedule():
     return render_template('schedule.html')
 
+
 @app.route('/information')
 def handle_information():
     return render_template('information.html')
+
+
+class Bunch:
+    pass
+
 
 @app.route('/settings')
 def open_profile():
@@ -146,6 +156,7 @@ def open_profile():
     user.specialization = '09.03.04 Программная инженерия'
     user.group = 'КИ20-16/2Б'
     return render_template('settings.html', user = user)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
