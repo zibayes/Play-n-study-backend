@@ -157,15 +157,15 @@ def handle_information():
     return render_template('information.html')
 
 
-@app.route('/changepassword', methods=['POST'])
+@app.route('/changecity', methods=['POST'])
 def handle_changepassword():
-    # user_id = current_user.get_id()
-    # user = user_repository.get_user_by_id(user_id)
-    # user.city = request.form.get('city')
-    # if user_repository.add_user(user):
-    #     flash("Успешно", 'success')
-    # else:
-    #     flash("Что-то пошло не так", 'error')
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    user.city = request.form.get('city')
+    if user_repository.update_user(user):
+        flash("Успешно обновлено")
+    else:
+        flash("Что-то пошло не так")
     return redirect(url_for('handle_settings'))
 
 
@@ -173,25 +173,7 @@ def handle_changepassword():
 def handle_settings():
     user_id = current_user.get_id()
     if request.method == 'POST':
-        # if request.form is not None:
-        #     print(request.form)
-        #     old_user = user_repository.get_user_by_id(user_id)
-        #     user = user_repository.get_user_by_id(user_id)
-        #     user.username = request.form.get('username')
-        #     user.email = request.form.get('email')
-        #     user.city = request.form.get('city')
-        #
-        #     validated = get_wrong_field_msg(user_repository, user)
-        #     if validated is None:
-        #         if user_repository.add_user(user):
-        #             flash("Настройки успешно изменены", 'success')
-        #         else:
-        #             flash("Что-то пошло не так")
-        #         return redirect(url_for('handle_settings'))
-        #     else:
-        #         flash(validated, 'error')
-        #         return redirect(url_for('handle_settings'))
-        # else:
+        # need imlement
         return redirect(url_for('handle_settings'))
     else:
         user = user_repository.get_user_by_id(user_id)
