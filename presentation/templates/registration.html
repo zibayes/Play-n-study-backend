@@ -21,7 +21,7 @@
                         <div class="card-body p-5">
                             <h2 class="text-uppercase text-center mb-5">Создать аккаунт</h2>
                             {% for msg in get_flashed_messages() %}
-                            <div class="flash">{{msg}}</div>
+                            <div class="flash-error">{{msg}}</div>
                             {% endfor %}
                             <form action="/registration" method="POST">
                                 <div class="form-outline mb-4">

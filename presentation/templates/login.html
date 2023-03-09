@@ -18,11 +18,11 @@
             <div class="card-body p-5">
               <h2 class="text-uppercase text-center mb-5">Войти в аккаунт</h2>
               {% for msg in get_flashed_messages() %}
-              <div class="flash">{{msg}}</div>
+              <div class="flash-error">{{msg}}</div>
               {% endfor %}
               <form action="/login" method="POST">
                 <div class="form-outline mb-6">
-                  <input type="email" name="email" placeholder="Ваше почта" class="form-control form-control-lg" />
+                  <input type="email" name="email" placeholder="Ваша почта" class="form-control form-control-lg" />
                 </div>
                 <br>
                 <div class="form-outline mb-6">
@@ -42,7 +42,7 @@
                           class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Войти</button>
                 </div>
 
-                <p style="padding-left: 40px" class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегестрируйтесь</u></a></p>
+                <p style="padding-left: 40px" class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегистрируйтесь</u></a></p>
               </form>
             </div>
           </div>

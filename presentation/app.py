@@ -82,17 +82,16 @@ def handle_profile(user_id):
 
 @app.route("/login", methods=['GET', 'POST'])
 def handle_login():
-    current_template = url_for('handle_login').replace('/', '') + '.html'
     if request.method == 'POST':
         user = user_repository.get_user_by_email(request.form['email'])
 
         if user is not None and check_password_hash(user.password, request.form['password']):
             user_login = UserLogin().create(user)
             login_user(user_login)
-            return redirect(url_for('index'))
+            return redirect(url_for('handle_main'))
         flash('Неверный логин/пароль', 'error')
 
-    return render_template(current_template)
+    return render_template('login.html')
 
 
 @app.route("/registration", methods=["POST", "GET"])
