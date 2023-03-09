@@ -1,3 +1,5 @@
+import sys
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy.orm import sessionmaker
@@ -130,9 +132,7 @@ def handle_reviews():
     return render_template('reviews.html')
 
 
-@app.route('/schedule')
-def handle_schedule():
-    return render_template('schedule.html')
+
 
 
 @app.route('/information')
