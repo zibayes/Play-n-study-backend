@@ -69,6 +69,8 @@ def handle_logout():
 def handle_login():
     if request.method == 'POST':
         user = user_repository.get_user_by_email(request.form['email'])
+        if user is None:
+            user = user_repository.get_user_by_username(request.form['email'])
 
         if user is not None and check_password_hash(user.password, request.form['password']):
             user_login = UserLogin().create(user)
@@ -159,6 +161,19 @@ def handle_information():
 def handle_changepassword():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
+
+    username = user_repository.get_user_by_username(request.form.get('username'))
+    if username is not None and username.user_id != user.user_id:
+        flash("Такое имя уже занято")
+    else:
+        user.username = request.form.get('username')
+
+    email = user_repository.get_user_by_email(request.form.get('email'))
+    if email is not None and email.user_id != user.user_id:
+        flash("Такой email уже занят")
+    else:
+        user.email = request.form.get('email')
+
     user.city = request.form.get('city')
     if user_repository.update_user(user):
         flash("Успешно обновлено")
