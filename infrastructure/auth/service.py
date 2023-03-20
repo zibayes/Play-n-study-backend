@@ -8,6 +8,8 @@ def get_register_form_fields(form_fields: MultiDict[str, str]) -> tuple:
     return form_fields['email'], form_fields['username'], \
            form_fields['password'], form_fields['password2']
 
+# todo: Проверка пустоты, XSS, SQL Injection, Язык ошибки map из двух ошибок (ru/en)
+
 
 def get_register_wrong_field_msg(user_repository: UserRepository, form_fields: MultiDict[str, str]) -> Optional[str]:
     email, username,  password, password_confirm = get_register_form_fields(form_fields)
@@ -31,3 +33,6 @@ def get_register_wrong_field_msg(user_repository: UserRepository, form_fields: M
         return f'Пользователь с почтой {email} уже зарегистрирован'
 
     return None
+
+
+
