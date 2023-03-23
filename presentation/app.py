@@ -1,3 +1,6 @@
+import sys
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy.orm import sessionmaker
@@ -111,7 +114,7 @@ def handle_register():
 @app.route('/')
 @app.route('/index')
 @app.route('/me')
-@app.route('/profile')
+
 @login_required
 def handle_me():
     # current_user.achievements = query_manager.get_user_achievements(current_user.id)
@@ -126,6 +129,13 @@ def handle_me():
 def about():
     return "About"
 
+@app.route("/task")
+def task():
+    return render_template("tasks.html")
+
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @app.route('/profiles/<int:user_id>')
 @login_required
@@ -143,13 +153,22 @@ def handle_profile(user_id):
         i += 1
     return json_response
 
+@app.route('/friends')
+def handle_friends():
+    return render_template('friends.html')
+
+@app.route('/subscriptions')
+def handle_subscriptions():
+    return render_template('subscriptions.html')
 
 @app.route('/reviews')
 def handle_reviews():
     return render_template('reviews.html')
 
 
-
+@app.route('/achievements')
+def handle_achievements():
+    return render_template("achievements.html")
 
 
 @app.route('/information')
