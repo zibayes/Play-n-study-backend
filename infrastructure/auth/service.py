@@ -4,14 +4,14 @@ from typing import Optional
 from werkzeug.datastructures import MultiDict
 
 
-def get_register_form_fields(form_fields: MultiDict[str, str]) -> tuple:
+def get_register_form_fields(form_fields) -> tuple:
     return form_fields['email'], form_fields['username'], \
            form_fields['password'], form_fields['password2']
 
 # todo: Проверка пустоты, XSS, SQL Injection, Язык ошибки map из двух ошибок (ru/en)
 
 
-def get_register_wrong_field_msg(user_repository: UserRepository, form_fields: MultiDict[str, str]) -> Optional[str]:
+def get_register_wrong_field_msg(user_repository: UserRepository, form_fields) -> Optional[str]:
     email, username,  password, password_confirm = get_register_form_fields(form_fields)
 
     if len(username) > MAX_USERNAME_LEN:

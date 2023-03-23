@@ -1,3 +1,6 @@
+import sys
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy.orm import sessionmaker
@@ -69,6 +72,8 @@ def handle_logout():
 def handle_login():
     if request.method == 'POST':
         user = user_repository.get_user_by_email(request.form['email'])
+        if user is None:
+            user = user_repository.get_user_by_username(request.form['email'])
 
         if user is not None and check_password_hash(user.password, request.form['password']):
             user_login = UserLogin().create(user)
@@ -109,7 +114,7 @@ def handle_register():
 @app.route('/')
 @app.route('/index')
 @app.route('/me')
-@app.route('/profile')
+
 @login_required
 def handle_me():
     # current_user.achievements = query_manager.get_user_achievements(current_user.id)
@@ -124,6 +129,13 @@ def handle_me():
 def about():
     return "About"
 
+@app.route("/task")
+def task():
+    return render_template("tasks.html")
+
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
 
 @app.route('/profiles/<int:user_id>')
 @login_required
@@ -141,13 +153,22 @@ def handle_profile(user_id):
         i += 1
     return json_response
 
+@app.route('/friends')
+def handle_friends():
+    return render_template('friends.html')
+
+@app.route('/subscriptions')
+def handle_subscriptions():
+    return render_template('subscriptions.html')
 
 @app.route('/reviews')
 def handle_reviews():
     return render_template('reviews.html')
 
 
-
+@app.route('/achievements')
+def handle_achievements():
+    return render_template("achievements.html")
 
 
 @app.route('/information')
@@ -159,6 +180,19 @@ def handle_information():
 def handle_changepassword():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
+
+    username = user_repository.get_user_by_username(request.form.get('username'))
+    if username is not None and username.user_id != user.user_id:
+        flash("Такое имя уже занято")
+    else:
+        user.username = request.form.get('username')
+
+    email = user_repository.get_user_by_email(request.form.get('email'))
+    if email is not None and email.user_id != user.user_id:
+        flash("Такой email уже занят")
+    else:
+        user.email = request.form.get('email')
+
     user.city = request.form.get('city')
     if user_repository.update_user(user):
         flash("Успешно обновлено")
