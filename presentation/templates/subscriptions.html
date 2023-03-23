@@ -1,13 +1,75 @@
 {% extends 'base_aut.html' %}
 
 {% block title%}
-<title>Подписки</title>
+<title>{{user.username}} - Подписки</title>
 {% endblock %}
 
 {% block content %}
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="row m-3 justify-content-start lang">
+            Мои подписки
+        </span>
 
-{% endblock %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-8">
+                    <form action="/subscriptions/{{user_id}}" method="post">
+                        <div class="input-group mb-4">
+                            <input id="text"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Поиск пользователей"
+                                    name="query"
+                            />
+                            <button class="btn btn-outline-secondary" type="submit" id="find" data-mdb-ripple-color="dark">
+                                <i class="fas fa-search ms-0" style="color: #676767"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="card">
+                        <div class="card-body" id="1">
+                            {% if found %}
+                                        {% for user in found %}
+                                            <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{user.avatar}}" alt="" style="width: 120px; height: 120px" class="rounded-circle">
+                                                    <div class="ms-4">
+                                                        <a class="fw-bold mb-1 lang" style="color: #676767" href="/profiles/{{user.user_id}}">{{user.username}}</a>
+                                                        <p class="text-muted mb-0">...</p>
+                                                    </div>
+                                                </div>
+                                                <span class="badge rounded-pill badge-success lang">На сайте</span>
+                                            </div>
+                                        {% endfor %}
+                                {% endif %}
 
-{% block script %}
+                             {% if user.sub_to %}
+                                        {% for sub_to in user.sub_to %}
+                                            <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{sub_to.avatar}}" alt="" style="width: 120px; height: 120px" class="rounded-circle">
+                                                    <div class="ms-4">
+                                                        <a class="fw-bold mb-1 lang" style="color: #676767" href="profile">{{sub_to.username}}</a>
+                                                        <p class="text-muted mb-0">...</p>
+                                                    </div>
+                                                </div>
+                                                <span class="badge rounded-pill badge-success lang">На сайте</span>
+                                            </div>
+                                        {% endfor %}
+                                {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}

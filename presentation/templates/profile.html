@@ -21,53 +21,53 @@
                             <i class="fas fa-address-book ms-0"></i>
                         </div>
                         <div class="col-5">
-                            <p>@sleeping_in_life</p>
+                            <p>id @{{user.user_id}}</p>
                         </div>
                     </div>
+                    <hr class="hr" />
+<!--                    <div class="row">-->
+<!--                        <div class="col-1">-->
+<!--                            <i class="fas fa-address-book ms-0"></i>-->
+<!--                        </div>-->
+<!--                        <div class="col-5">-->
+<!--                            Дата рождения:-->
+<!--                        </div>-->
+<!--                        <div class="col-5">-->
+<!--                            9 октября-->
+<!--                        </div>-->
+
+<!--                    </div>-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-1">-->
+<!--                            <i class="fas fa-address-book ms-0"></i>-->
+<!--                        </div>-->
+<!--                        <div class="col-5">-->
+<!--                            Образование:-->
+<!--                        </div>-->
+<!--                        <div class="col-5">-->
+<!--                            СФУ-->
+<!--                        </div>-->
+
+<!--                    </div>-->
                     <hr class="hr" />
                     <div class="row">
                         <div class="col-1">
                             <i class="fas fa-address-book ms-0"></i>
                         </div>
                         <div class="col-5">
-                            Дата рождения:
+                            Город:
                         </div>
                         <div class="col-5">
-                            9 октября
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-1">
-                            <i class="fas fa-address-book ms-0"></i>
-                        </div>
-                        <div class="col-5">
-                            Образование:
-                        </div>
-                        <div class="col-5">
-                            СФУ
-                        </div>
-
-                    </div>
-                    <hr class="hr" />
-                    <div class="row">
-                        <div class="col-1">
-                            <i class="fas fa-address-book ms-0"></i>
-                        </div>
-                        <div class="col-5">
-                            Родной город:
-                        </div>
-                        <div class="col-5">
-                            Красноярск
+                            {{ user.city }}
                         </div>
                     </div>
                     <hr class="hr" />
                     <div class="row">
                         <div class="col-6">
-                            329 друзей
+                            {{ user.subs_count }} подписчиков
                         </div>
                         <div class="col-6">
-                            64 подписки
+                             {{ user.sub_to_count }} подписки
                         </div>
                     </div>
                 </div>
@@ -91,10 +91,10 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
                                 <div class="d-flex align-items-center">
-                                    <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+                                    <img src="{{user.avatar}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
                                     <div class="ms-4">
-                                        <p class="fw-bold mb-1 lang">Павел</p>
-                                        <p class="text-muted mb-0">Бэкенд и Фронтенд разработчик</p>
+                                        <p class="fw-bold mb-1 lang">{{ user.username }}</p>
+                                        <p class="text-muted mb-0">...</p>
                                     </div>
                                 </div>
                                 <span class="badge rounded-pill badge-success lang">На сайте</span>
@@ -111,47 +111,23 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-3">
-                                        <a class="row m-1 lang" style="color: #676767" href="friends">
+                                        <a class="row m-1 lang" style="color: #676767" href="subscriptions/{{user.user_id}}">
                                             Подписки
                                         </a>
                                     </div>
                                 </div>
                                 <hr class="hr" />
                                 <div class="row text-center ">
-                                    <div class="col-md-3 scale"  name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Артем</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Илья</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Антон</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Антон</p>
-                                    </div>
-                                </div>
-                                <div class="row text-center" style="padding: 10px 0">
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Артем</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Илья</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Антон</p>
-                                    </div>
-                                    <div class="col-md-3 scale" name="element">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Антон</p>
-                                    </div>
+
+
+                                {% if user.sub_to %}
+                                        {% for sub_to in user.sub_to %}
+                                        <div class="col-md-3 scale"  name="element">
+                                        <img src="{{sub_to.avatar}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                        <p class="m-2">{{sub_to.username}}</p>
+                                        </div>
+                                        {% endfor %}
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -168,44 +144,24 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-2">
-                                    <a class="row m-1 lang" style="color: #676767" href="subscriptions">
-                                        Курсы
+                                    <a class="row m-1 lang" style="color: #676767" href="courses/{{user.user_id}}">
+                                        Участник в
                                     </a>
                                 </div>
                             </div>
                             <hr class="hr" />
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <div class="ms-4">
-                                            <p class="mb-0">Математический анализ</p>
+                                    {% if user.courses %}
+                                        {% for course in user.courses %}
+                                        <div class="d-flex align-items-center scale2" style="padding: 10px 0">
+                                            <img src="{{course.avatar}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            <div class="ms-4">
+                                                <p class="mb-0">{{course.name}}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <div class="ms-4">
-                                            <p class="mb-0">Русский язык</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <div class="ms-4">
-                                            <p class="mb-0">Компьютерные технологии</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <div class="ms-4">
-                                            <p class="mb-0">Анализ данных</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <div class="ms-4">
-                                            <p class="mb-0">Web-программирование</p>
-                                        </div>
-                                    </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -217,7 +173,7 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-2">
-                                        <a class="row m-1 lang" style="color: #676767" href="achievements">
+                                        <a class="row m-1 lang" style="color: #676767" href="achievements/{{user.user_id}}">
                                             Достижения
                                         </a>
                                     </div>
@@ -225,24 +181,15 @@
                                 </div>
                                 <hr class="hr" />
                                 <div class="row text-center">
-                                    <div class="col-md-6 scale">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Первая победа!</p>
-                                    </div>
-                                    <div class="col-md-6 scale">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Самый быстрый спринт!</p>
-                                    </div>
-                                </div>
-                                <div class="row text-center ">
-                                    <div class="col-md-6 scale">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Герой!</p>
-                                    </div>
-                                    <div class="col-md-6 scale">
-                                        <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                        <p class="m-2">Мудрость в голове, а не в бороде</p>
-                                    </div>
+
+                                    {% if user.achievements %}
+                                        {% for achievement in user.achievements %}
+                                        <div class="col-md-6 scale">
+                                            <img src="{{achievement.image}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            <p class="m-2">{{achievement.name}}</p>
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

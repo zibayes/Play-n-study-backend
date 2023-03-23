@@ -7,6 +7,7 @@ from infrastructure.repository.CourseRelRepository import CourseRelRepository
 from infrastructure.repository.CuratorRepository import CuratorRepository
 from infrastructure.repository.ReviewRepository import ReviewRepository
 from infrastructure.repository.TaskRepository import TaskRepository
+from infrastructure.repository.SubRelRepository import SubRelRepository
 
 
 class QueryManager:
@@ -18,6 +19,7 @@ class QueryManager:
     curator_repository: CuratorRepository = None
     review_repository: ReviewRepository = None
     task_repository: TaskRepository = None
+    sub_rel_repository: SubRelRepository = None
 
     def __init__(self, user_repository: UserRepository,
                  achievement_repository: AchievementRepository,
@@ -26,7 +28,8 @@ class QueryManager:
                  course_rel_repository: CourseRelRepository,
                  curator_repository: CuratorRepository,
                  review_repository: ReviewRepository,
-                 task_repository: TaskRepository
+                 task_repository: TaskRepository,
+                 sub_rel_repository: SubRelRepository
                  ):
         self.user_repository = user_repository
         self.achievement_repository = achievement_repository
@@ -36,6 +39,7 @@ class QueryManager:
         self.curator_repository = curator_repository
         self.review_repository = review_repository
         self.task_repository = task_repository
+        self.sub_rel_repository = sub_rel_repository
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -55,4 +59,30 @@ class QueryManager:
                 course = self.course_repository.get_course_by_course_id(course_rel.course_id)
                 user_courses.append(course)
             return user_courses
+        return None
+
+    def get_user_subs(self, user_id: int) -> Optional[list]:
+        user_subs = []
+        subs_rel_list = self.sub_rel_repository.get_all_by_user_id(user_id)
+        if subs_rel_list is not None:
+            for sub_rel in subs_rel_list:
+                sub = self.user_repository.get_user_by_id(sub_rel.sub_id)
+                user_subs.append(sub)
+            return user_subs
+        return None
+
+    def get_user_sub_to(self, user_id: int) -> Optional[list]:
+        user_sub_to = []
+        sub_to_list = self.sub_rel_repository.get_all_by_sub_id(user_id)
+        if sub_to_list is not None:
+            for sub_rel in sub_to_list:
+                sub_to = self.user_repository.get_user_by_id(sub_rel.user_id)
+                user_sub_to.append(sub_to)
+            return user_sub_to
+        return None
+
+    def get_users_by_query(self, query: str) -> Optional[list]:
+        users_list = self.user_repository.get_users_by_substring("abob")
+        if users_list is not None:
+            return users_list
         return None

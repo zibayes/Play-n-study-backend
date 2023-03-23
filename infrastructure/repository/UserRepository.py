@@ -60,3 +60,17 @@ class UserRepository:
         if user_db is not None:
             return service.user_db_to_user(user_db)
         return None
+
+    def get_users_by_substring(self, substring: str) -> Optional[list]:
+        users = []
+        users_db = self.session.query(UsersModel) \
+            .filter(UsersModel.username.like(substring + "%")) \
+            .all()
+
+        if users_db is not None:
+            for user in users_db:
+                users.append(service.user_db_to_user(user))
+        if len(users) > 0:
+            return users
+        return None
+

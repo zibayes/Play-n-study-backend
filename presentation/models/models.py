@@ -12,6 +12,7 @@ class UsersModel(Base):
     email = Column(Text, unique=True, nullable=False)
     username = Column(String(20), unique=True, nullable=False)
     city = Column(Text, nullable=False)
+    avatar = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
 
     # relationships
@@ -39,6 +40,7 @@ class CoursesModel(Base):
 
     course_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
+    avatar = Column(Text)
 
     # relationships
     curators = relationship("CuratorsModel", back_populates="course")
@@ -198,3 +200,18 @@ class ReviewsModel(Base):
                f"course_id={self.course_id}> " \
                f"rate={self.rate} " \
                f"text='{self.text}'"
+
+
+class SubRelModel(Base):
+    __tablename__ = 'sub_rel'
+
+    sub_rel_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    sub_id = Column(Integer, ForeignKey("users.user_id"))
+
+    def __init__(self, sub_rel_id, user_id, sub_id):
+        self.sub_rel_id = sub_rel_id
+        self.user_id = user_id
+        self.sub_id = sub_id
+
+    # __repr__ impl

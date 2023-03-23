@@ -3,14 +3,16 @@ CREATE TABLE users
     user_id serial PRIMARY KEY,
     email text UNIQUE NOT NULL,
     username varchar(20) UNIQUE NOT NULL,
-    city text NOT NULL,
+    city text,
+    avatar text,
     password text NOT NULL
 );
 
 CREATE TABLE courses
 (
     course_id serial PRIMARY KEY,
-    name text NOT NULL
+    name text NOT NULL,
+    avatar text
 );
 
 CREATE TABLE curators
@@ -61,3 +63,8 @@ CREATE TABLE reviews(
     text text
 );
 
+CREATE TABLE sub_rel(
+    sub_rel_id serial PRIMARY KEY,
+    user_id int REFERENCES users(user_id),
+    sub_id int REFERENCES users(user_id)
+);

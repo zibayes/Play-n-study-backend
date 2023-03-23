@@ -38,6 +38,7 @@ course_rel_repository = CourseRelRepository(session)
 curator_repository = CuratorRepository(session)
 review_repository = ReviewRepository(session)
 task_repository = TaskRepository(session)
+sub_rel_repository = SubRelRepository(session)
 
 # QueryManager
 query_manager = QueryManager(user_repository=user_repository,
@@ -47,7 +48,8 @@ query_manager = QueryManager(user_repository=user_repository,
                              course_rel_repository=course_rel_repository,
                              curator_repository=curator_repository,
                              review_repository=review_repository,
-                             task_repository=task_repository)
+                             task_repository=task_repository,
+                             sub_rel_repository=sub_rel_repository)
 
 
 @login_manager.user_loader
@@ -100,6 +102,7 @@ def handle_register():
                         email=request.form.get('email'),
                         username=request.form.get('username'),
                         city='',
+                        avatar='',
                         password=generate_password_hash(request.form.get('password'))
                         )
             if user_repository.add_user(user):
@@ -114,7 +117,6 @@ def handle_register():
 @app.route('/')
 @app.route('/index')
 @app.route('/me')
-
 @login_required
 def handle_me():
     # current_user.achievements = query_manager.get_user_achievements(current_user.id)
@@ -122,44 +124,52 @@ def handle_me():
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user_id)
     user.courses = query_manager.get_user_courses(user_id)
-    return render_template('me.html', user=user)
+
+    user.subs = query_manager.get_user_subs(user.user_id)
+    user.subs_count = len(user.subs) if user.subs else 0
+    user.sub_to = query_manager.get_user_sub_to(user.user_id)
+    user.sub_to_count = len(user.sub_to) if user.sub_to else 0
+
+    return render_template('profile.html', user=user)
 
 
 @app.route('/about')
 def about():
     return "About"
 
-@app.route("/task")
-def task():
-    return render_template("tasks.html")
-
-@app.route('/profile')
-def profile():
-    return render_template("profile.html")
 
 @app.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user.user_id)
-    json_response = {}
+    user.courses = query_manager.get_user_courses(user.user_id)
+    user.subs = query_manager.get_user_subs(user.user_id)
+    user.subs_count = len(user.subs) if user.subs else 0
+    user.sub_to = query_manager.get_user_sub_to(user.user_id)
+    user.sub_to_count = len(user.sub_to) if user.sub_to else 0
+    return render_template("profile.html", user=user)
 
-    i = 0
-    for ach in user.achievements:
-        json_response[i] = {
-            "name": ach.name,
-            "image": ach.image
-        }
-        i += 1
-    return json_response
+#
+# @app.route('/friends')
+# def handle_friends():
+#     return render_template('subscriptions.html')
 
-@app.route('/friends')
-def handle_friends():
-    return render_template('friends.html')
 
-@app.route('/subscriptions')
-def handle_subscriptions():
-    return render_template('subscriptions.html')
+@app.route('/subscriptions/<int:user_id>', methods=["POST", "GET"])
+def handle_subscriptions(user_id):
+    if request.method == "GET":
+        user = user_repository.get_user_by_id(user_id)
+        user.sub_to = query_manager.get_user_sub_to(user.user_id)
+        return render_template('subscriptions.html', user=user, user_id=user_id)
+
+    user = User(None, None, None, None, None, None)
+    query = request.form['query']
+    if len(query) > 0:
+        found = query_manager.get_users_by_query(query)
+        return render_template("subscriptions.html", user=user, found=found, user_id=user_id)
+    return render_template("subscriptions.html", user=user, found=None, user_id=user_id)
+
 
 @app.route('/reviews')
 def handle_reviews():

@@ -15,7 +15,7 @@
   <!-- Google Fonts Roboto -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
   <!-- MDB -->
-  <link rel="stylesheet" href="static/css_mdb/mdb.min.css"/>
+  <link rel="stylesheet" href="/static/css_mdb/mdb.min.css"/>
   <!-- Bootstrap CSS -->
   {% block title %}
   <title>Базовая страница профиля</title>
@@ -33,7 +33,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <img src="static/img/SFU_avatar.jpg" style="height: 25px" alt="">
+    <img src="/static/img/SFU_avatar.jpg" style="height: 25px" alt="">
     <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent">
       <i class="fas fa-bars"></i>
     </button>
@@ -111,28 +111,28 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
           <li>
-            <a class="dropdown-item lang" href="task" key="mainpage">Главная</a>
+            <a class="dropdown-item lang" href="/" key="mainpage">Главная</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="profile" key="profile">Мой профиль</a>
+            <a class="dropdown-item lang" href="/profiles/{{current_user.get_id()}}" key="profile">Мой профиль</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="friends" key="friend">Мои подписки</a>
+            <a class="dropdown-item lang" href="/subscriptions/{{current_user.get_id()}}" key="friend">Мои подписки</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="subscriptions" key="subscriptions">Мои курсы</a>
+            <a class="dropdown-item lang" href="/courses/{{current_user.get_id()}}" key="subscriptions">Мои курсы</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="achievements" key="achievements">Мои награды</a>
+            <a class="dropdown-item lang" href="/achievements/{{current_user.get_id()}}" key="achievements">Мои награды</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="settings" key="settings">Настройки</a>
+            <a class="dropdown-item lang" href="/settings" key="settings">Настройки</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="reviews" key="reviews">Отзывы</a>
+            <a class="dropdown-item lang" href="/reviews" key="reviews">Отзывы</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="information" key="aboutus">О нас</a>
+            <a class="dropdown-item lang" href="/information" key="aboutus">О нас</a>
           </li>
           <li>
             <button class="dropdown-item lang" key="exit" data-mdb-toggle="modal" data-mdb-target="#exit"  aria-controls="pills-exit" aria-selected="false">Выйти</button>
@@ -163,7 +163,7 @@
 </div>
 
 <!-- MDB -->
-<script type="text/javascript" src="static/js_mdb/mdb.min.js"></script>
+<script type="text/javascript" src="/static/js_mdb/mdb.min.js"></script>
 
 </body>
 

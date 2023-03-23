@@ -8,6 +8,7 @@ from domain.CourseRel import CourseRel
 from domain.Curator import Curator
 from domain.Review import Review
 from domain.Task import Task
+from domain.SubRel import SubRel
 from presentation.models.models import *
 
 
@@ -16,6 +17,7 @@ def user_db_to_user(user: UsersModel) -> User:
                 email=user.email,
                 username=user.username,
                 city=user.city,
+                avatar=user.avatar,
                 password=user.password)
 
 
@@ -43,7 +45,8 @@ def ach_rel_db_to_ach_rel(ach_rel: Type[AchieveRelModel]) -> AchieveRel:
 
 def course_db_to_course(course_db: Type[CoursesModel]) -> Course:
     return Course(course_id=course_db.course_id,
-                  name=course_db.name)
+                  name=course_db.name,
+                  avatar=course_db.avatar)
 
 
 def course_rel_db_to_course_rel(course_rel_db: Type[CoursesRelModel]):
@@ -74,3 +77,9 @@ def task_db_to_task(task_db: Type[TasksModel]):
                 description=task_db.description,
                 _date=task_db.date,
                 completed=task_db.completed)
+
+
+def sub_db_to_sub(sub: Type[SubRelModel]):
+    return SubRel(sub_rel_id=sub.sub_rel_id,
+                  user_id=sub.user_id,
+                  sub_id=sub.sub_id)
