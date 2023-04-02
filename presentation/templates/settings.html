@@ -54,6 +54,7 @@
 
             </div>
             <form method="POST" action="/changecity" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">
+                <div class="flash-error" style="color:red">{{get_flashed_messages()[0]}}</div>
                 <div class="row mt-2">
                     <div class="col-md-6" style="z-index: 1;"><label class="labels lang" key="name">Имя</label>
                         <input type="text" name="username" class="form-control" value="{{ user.username }}">
