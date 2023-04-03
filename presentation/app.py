@@ -173,21 +173,49 @@ def handle_subscriptions(user_id):
 
 @app.route('/reviews')
 def handle_reviews():
-    return render_template('reviews.html')
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('reviews.html', user=user)
 
-@app.route('/test_constructor')
+
+@app.route('/test_constructor', methods=["POST", "GET"])
 def handle_test_constructor():
-    return render_template('test_constructor.html')
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('test_constructor.html', user=user)
 
 
-@app.route('/achievements')
-def handle_achievements():
-    return render_template("achievements.html")
+class Bunch(dict):
+    __getattr__, __setattr__ = dict.get, dict.__setitem__
+
+
+@app.route('/achievements/<int:user_id>')
+def handle_achievements(user_id):
+    achievements = []
+    achievement1 = Bunch()
+    achievement1.name = "Отличник"
+    achievement1.condition = "Пройдите все тесты на отличную оценку"
+    achievement1.image = "static/img/otlychnik.png"
+    achievements.append(achievement1)
+    achievement2 = Bunch()
+    achievement2.name = "Сама скорость"
+    achievement2.condition = "Пройдите все тесты на время, не дожидаясь конца таймера"
+    achievement2.image = "static/img/speed.jpg"
+    achievements.append(achievement2)
+    achievement3 = Bunch()
+    achievement3.name = "Идеал"
+    achievement3.condition = "Пройдите все тесты на максимальный балл"
+    achievement3.image = "static/img/ideal.jpg"
+    achievements.append(achievement3)
+    user = user_repository.get_user_by_id(user_id)
+    return render_template("achievements.html", user=user, achievements=achievements)
 
 
 @app.route('/information')
 def handle_information():
-    return render_template('information.html')
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('information.html', user=user)
 
 
 @app.route('/changecity', methods=['POST'])

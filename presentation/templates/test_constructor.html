@@ -1,7 +1,7 @@
 {% extends 'base_aut.html' %}
 
 {% block title %}
-<title>Профиль</title>
+<title>Конструктор тестов</title>
 {% endblock %}
 
 {% block content %}
@@ -28,6 +28,11 @@
                     id="addQuestion" style=
                     "background-color:green;">
                     Добавить вопрос
+                </button>
+            <button class="btn btn-primary"
+                    id="saveTest" style=
+                    "background-color:yellowgreen;">
+                    Сохранить тест
                 </button>
         </div>
     </div>
@@ -57,6 +62,7 @@
     addBtn.addEventListener("click", function(e) {
         let div = document.createElement('div');
         div.setAttribute('style', "padding-bottom: 8px;");
+        div.setAttribute('id', "delQue-" + questionIndex);
         let divCard = document.createElement('div');
         divCard.setAttribute('class', "card");
         let divCardBody = document.createElement('div');
@@ -71,10 +77,10 @@
         let hr = document.createElement('hr');
         let divIndex = document.createElement('div');
         divIndex.setAttribute('class', "row container-fluid");
-        divIndex.setAttribute('id', questionIndex);
+        divIndex.setAttribute('id', "addAns-" + questionIndex);
         let divTextLabel = document.createElement('div');
         divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
-        divTextLabel.setAttribute('id', "ans-" + answerIndex);
+        divTextLabel.setAttribute('id', "delAns-" + answerIndex);
         let textareaAnswer = document.createElement('textarea');
         textareaAnswer.setAttribute('class', "form-control");
         textareaAnswer.setAttribute('placeholder', "Текст ответа");
@@ -90,13 +96,19 @@
         let button = document.createElement('button');
         button.setAttribute('class', "btn");
         button.setAttribute('style', "background-color:transparent; color:black;");
-        button.setAttribute('onclick', "addAnswerOnButtonClick(this.id)");
+        button.setAttribute('onclick', "addAnswerOnButtonClick(\"addAns-\" + this.id)");
         button.textContent = "Добавить ответ"
         button.setAttribute('id', questionIndex);
+        let buttonDelQuestion = document.createElement('button');
+        buttonDelQuestion.setAttribute('class', "btn");
+        buttonDelQuestion.setAttribute('style', "background-color:red; color:white;");
+        buttonDelQuestion.setAttribute('onclick', "deleteQuestion(\"delQue-\" + this.id)");
+        buttonDelQuestion.textContent = "Удалить вопрос"
+        buttonDelQuestion.setAttribute('id', questionIndex);
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-        buttonDel.setAttribute('onclick', "deleteAnswer(\"ans-\" + this.id)");
+        buttonDel.setAttribute('onclick', "deleteAnswer(\"delAns-\" + this.id)");
         buttonDel.textContent = "✖"
         buttonDel.setAttribute('id', answerIndex);
         let divDel = document.createElement('div');
@@ -115,6 +127,7 @@
         divTextLabel.appendChild(divDel)
         formGroup.appendChild(br)
         formGroup.appendChild(button)
+        formGroup.appendChild(buttonDelQuestion)
         /*
         let html = "";
 
@@ -189,6 +202,11 @@
 
     // Удаление ответа
     function deleteAnswer(index) {
+        document.getElementById(index).remove()
+    }
+
+    // Удаление вопроса
+    function deleteQuestion(index) {
         document.getElementById(index).remove()
     }
     </script>
