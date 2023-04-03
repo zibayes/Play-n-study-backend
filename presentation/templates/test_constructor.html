@@ -1,0 +1,195 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Профиль</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang">
+            Конструктор тестов
+        </span>
+        <div class="row border"></div>
+        <br>
+
+        <textarea required class="form-control" placeholder="Название теста" id="testName" rows="1"></textarea>
+        <hr>
+
+        <div id="notes" class=
+            "row container-fluid">
+        </div>
+
+        <div id="questionsList" style="padding-top: 8px;"></div>
+        <hr>
+        <div style="padding-bottom: 10px;">
+            <button class="btn btn-primary"
+                    id="addQuestion" style=
+                    "background-color:green;">
+                    Добавить вопрос
+                </button>
+        </div>
+    </div>
+</div>
+<style>
+    .scale {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale:hover {
+        transform: scale(1.05); /* Увеличиваем масштаб */
+    }
+    .scale2 {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale2:hover {
+        transform: scale(1.02); /* Увеличиваем масштаб */
+    }
+</style>
+{% endblock %}
+{% block script %}
+    <script>
+
+    // Добавление вопроса
+    let addBtn = document.getElementById("addQuestion");
+    var questionIndex = 0;
+    var answerIndex = 0;
+    addBtn.addEventListener("click", function(e) {
+        let div = document.createElement('div');
+        div.setAttribute('style', "padding-bottom: 8px;");
+        let divCard = document.createElement('div');
+        divCard.setAttribute('class', "card");
+        let divCardBody = document.createElement('div');
+        divCardBody.setAttribute('class', "card-body");
+        let formGroup = document.createElement('div');
+        formGroup.setAttribute('class', "form-group");
+        let textareaQuestion = document.createElement('textarea');
+        textareaQuestion.setAttribute('class', "form-control");
+        textareaQuestion.setAttribute('placeholder', "Текст вопроса");
+        textareaQuestion.setAttribute('id', "question");
+        textareaQuestion.setAttribute('rows', "1");
+        let hr = document.createElement('hr');
+        let divIndex = document.createElement('div');
+        divIndex.setAttribute('class', "row container-fluid");
+        divIndex.setAttribute('id', questionIndex);
+        let divTextLabel = document.createElement('div');
+        divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+        divTextLabel.setAttribute('id', "ans-" + answerIndex);
+        let textareaAnswer = document.createElement('textarea');
+        textareaAnswer.setAttribute('class', "form-control");
+        textareaAnswer.setAttribute('placeholder', "Текст ответа");
+        textareaAnswer.setAttribute('id', "addAnswerText");
+        textareaAnswer.setAttribute('rows', "1");
+        let label = document.createElement('label');
+        label.setAttribute('for', "addAnswerText");
+        label.setAttribute('style', "padding-right: 8px;");
+        let input = document.createElement('input');
+        input.setAttribute('type', "checkbox");
+        input.setAttribute('id', "scales");
+        let br = document.createElement('br');
+        let button = document.createElement('button');
+        button.setAttribute('class', "btn");
+        button.setAttribute('style', "background-color:transparent; color:black;");
+        button.setAttribute('onclick', "addAnswerOnButtonClick(this.id)");
+        button.textContent = "Добавить ответ"
+        button.setAttribute('id', questionIndex);
+        let buttonDel = document.createElement('button');
+        buttonDel.setAttribute('class', "btn");
+        buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+        buttonDel.setAttribute('onclick', "deleteAnswer(\"ans-\" + this.id)");
+        buttonDel.textContent = "✖"
+        buttonDel.setAttribute('id', answerIndex);
+        let divDel = document.createElement('div');
+        divDel.setAttribute('style', "padding-left: 5px;");
+        div.appendChild(divCard)
+        divCard.appendChild(divCardBody)
+        divCardBody.appendChild(formGroup)
+        formGroup.appendChild(textareaQuestion)
+        formGroup.appendChild(hr)
+        formGroup.appendChild(divIndex)
+        divIndex.appendChild(divTextLabel)
+        label.appendChild(input)
+        divTextLabel.appendChild(label)
+        divTextLabel.appendChild(textareaAnswer)
+        divDel.appendChild(buttonDel)
+        divTextLabel.appendChild(divDel)
+        formGroup.appendChild(br)
+        formGroup.appendChild(button)
+        /*
+        let html = "";
+
+        html += `<div style="padding-bottom: 8px;">
+                    <div class="card">
+                    <div class="card-body">
+                    <div class="form-group">
+                    <textarea class="form-control" placeholder="Текст вопроса" id="question" rows="1" ></textarea>
+                    <hr>
+                    <div id="${index}" class="row container-fluid">
+                        <div style="padding-bottom: 10px; display: flex; align-items: center;">
+                            <label for="addAnswerText" style="padding-right: 8px;"><input type="checkbox" id="scales"></label>
+                            <textarea required class="form-control" placeholder="Текст ответа" id="addAnswerText" rows="1"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn"
+                    id="${index}" style="background-color:transparent; color:black;" onclick="addAnswerOnButtonClick(this.id)">
+                    Добавить ответ
+                    </button>
+                </div>
+                </div>
+                </div>
+                </div>`;
+
+        let answersElm = document.getElementById("questionsList");
+
+        answersElm.innerHTML += html;
+        */
+
+        let answersElm = document.getElementById("questionsList");
+        answersElm.appendChild(div)
+
+        questionIndex += 1;
+        answerIndex += 1;
+    });
+
+    // Добавление ответа на вопрос
+    function addAnswerOnButtonClick(index) {
+        let div = document.createElement('div');
+        div.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+        div.setAttribute('id', "ans-" + answerIndex);
+        let textarea = document.createElement('textarea');
+        textarea.setAttribute('class', "form-control");
+        textarea.setAttribute('placeholder', "Текст ответа");
+        textarea.setAttribute('id', "addAnswerText");
+        textarea.setAttribute('rows', "1");
+        let label = document.createElement('label');
+        label.setAttribute('for', "addAnswerText");
+        label.setAttribute('style', "padding-right: 8px;");
+        let input = document.createElement('input');
+        input.setAttribute("type", "checkbox");
+        input.setAttribute('id', "scales");
+        let buttonDel = document.createElement('button');
+        buttonDel.setAttribute('class', "btn");
+        buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+        buttonDel.setAttribute('onclick', "deleteAnswer(\"ans-\" + this.id)");
+        buttonDel.textContent = "✖"
+        buttonDel.setAttribute('id', answerIndex);
+        let divDel = document.createElement('div');
+        divDel.setAttribute('style', "padding-left: 5px;");
+        label.appendChild(input)
+        div.appendChild(label)
+        div.appendChild(textarea)
+        divDel.appendChild(buttonDel)
+        div.appendChild(divDel)
+        let answersElm = document.getElementById(index);
+        answersElm.appendChild(div);
+
+        answerIndex += 1;
+    }
+
+    // Удаление ответа
+    function deleteAnswer(index) {
+        document.getElementById(index).remove()
+    }
+    </script>
+{% endblock %}

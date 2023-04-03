@@ -175,6 +175,10 @@ def handle_subscriptions(user_id):
 def handle_reviews():
     return render_template('reviews.html')
 
+@app.route('/test_constructor')
+def handle_test_constructor():
+    return render_template('test_constructor.html')
+
 
 @app.route('/achievements')
 def handle_achievements():
