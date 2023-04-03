@@ -60,15 +60,18 @@
     var questionIndex = 0;
     var answerIndex = 0;
     addBtn.addEventListener("click", function(e) {
+        // Внешний div
         let div = document.createElement('div');
         div.setAttribute('style', "padding-bottom: 8px;");
         div.setAttribute('id', "delQue-" + questionIndex);
         let divCard = document.createElement('div');
+        // Карточка вопроса
         divCard.setAttribute('class', "card");
         let divCardBody = document.createElement('div');
         divCardBody.setAttribute('class', "card-body");
         let formGroup = document.createElement('div');
         formGroup.setAttribute('class', "form-group");
+        // Содержимое карточки
         let textareaQuestion = document.createElement('textarea');
         textareaQuestion.setAttribute('class', "form-control");
         textareaQuestion.setAttribute('placeholder', "Текст вопроса");
@@ -113,6 +116,29 @@
         buttonDel.setAttribute('id', answerIndex);
         let divDel = document.createElement('div');
         divDel.setAttribute('style', "padding-left: 5px;");
+        let questionType = document.createElement('select')
+        questionType.setAttribute('class', "form-select");
+        questionType.setAttribute('width', "20px");
+        let radio = document.createElement('option')
+        radio.textContent = "Единственный ответ"
+        let check = document.createElement('option')
+        check.textContent = "Множественный ответ"
+        let word = document.createElement('option')
+        word.textContent = "Краткий свободный ответ"
+        let text = document.createElement('option')
+        text.textContent = "Свободный ответ"
+        let divController = document.createElement('div');
+        divController.setAttribute('style', "display: flex;");
+        let divBT = document.createElement('div');
+        divBT.setAttribute('style', "padding-left: 5px;");
+        let divDQ = document.createElement('div');
+        divDQ.setAttribute('style', "padding-left: 5px;");
+        let divQT = document.createElement('div');
+        divQT.setAttribute('style', "width: 280px; padding-left: 5px;");
+        questionType.appendChild(radio)
+        questionType.appendChild(check)
+        questionType.appendChild(word)
+        questionType.appendChild(text)
         div.appendChild(divCard)
         divCard.appendChild(divCardBody)
         divCardBody.appendChild(formGroup)
@@ -126,8 +152,13 @@
         divDel.appendChild(buttonDel)
         divTextLabel.appendChild(divDel)
         formGroup.appendChild(br)
-        formGroup.appendChild(button)
-        formGroup.appendChild(buttonDelQuestion)
+        divBT.appendChild(button)
+        divController.appendChild(divBT)
+        divDQ.appendChild(buttonDelQuestion)
+        divController.appendChild(divDQ)
+        divQT.appendChild(questionType)
+        divController.appendChild(divQT)
+        formGroup.appendChild(divController)
         /*
         let html = "";
 
