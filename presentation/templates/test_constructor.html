@@ -93,8 +93,7 @@
         label.setAttribute('for', "addAnswerText");
         label.setAttribute('style', "padding-right: 8px;");
         let input = document.createElement('input');
-        input.setAttribute('type', "checkbox");
-        input.setAttribute('id', "scales");
+        input.setAttribute('type', "radio");
         let br = document.createElement('br');
         let button = document.createElement('button');
         button.setAttribute('class', "btn");
@@ -102,12 +101,33 @@
         button.setAttribute('onclick', "addAnswerOnButtonClick(\"addAns-\" + this.id)");
         button.textContent = "Добавить ответ"
         button.setAttribute('id', questionIndex);
+        input.setAttribute('name', "right_input-" + button.id);
         let buttonDelQuestion = document.createElement('button');
         buttonDelQuestion.setAttribute('class', "btn");
         buttonDelQuestion.setAttribute('style', "background-color:red; color:white;");
         buttonDelQuestion.setAttribute('onclick', "deleteQuestion(\"delQue-\" + this.id)");
         buttonDelQuestion.textContent = "Удалить вопрос"
         buttonDelQuestion.setAttribute('id', questionIndex);
+        let buttonUpQuestion = document.createElement('button');
+        buttonUpQuestion.setAttribute('class', "btn");
+        buttonUpQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
+        buttonUpQuestion.addEventListener("click", function() {
+            let questionsList = document.getElementById("questionsList");
+            questionsList.insertBefore(div, div.previousElementSibling);
+        });
+        buttonUpQuestion.textContent = "↑"
+        let buttonDownQuestion = document.createElement('button');
+        buttonDownQuestion.setAttribute('class', "btn");
+        buttonDownQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
+        buttonDownQuestion.addEventListener("click", function() {
+            let questionsList = document.getElementById("questionsList");
+            if(div.nextElementSibling == null){
+                questionsList.insertBefore(div, questionsList.firstChild);
+            }else{
+                questionsList.insertBefore(div.nextElementSibling, div);
+            }
+        });
+        buttonDownQuestion.textContent = "↓"
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
@@ -116,9 +136,11 @@
         buttonDel.setAttribute('id', answerIndex);
         let divDel = document.createElement('div');
         divDel.setAttribute('style', "padding-left: 5px;");
+
         let questionType = document.createElement('select')
         questionType.setAttribute('class', "form-select");
         questionType.setAttribute('width', "20px");
+        questionType.setAttribute('id', "QT-" + questionIndex);
         let radio = document.createElement('option')
         radio.textContent = "Единственный ответ"
         let check = document.createElement('option')
@@ -127,18 +149,109 @@
         word.textContent = "Краткий свободный ответ"
         let text = document.createElement('option')
         text.textContent = "Свободный ответ"
+        let info = document.createElement('option')
+        info.textContent = "Информационный блок"
         let divController = document.createElement('div');
         divController.setAttribute('style', "display: flex;");
         let divBT = document.createElement('div');
         divBT.setAttribute('style', "padding-left: 5px;");
         let divDQ = document.createElement('div');
         divDQ.setAttribute('style', "padding-left: 5px;");
+        let divUP = document.createElement('div');
+        divUP.setAttribute('style', "padding-left: 5px;");
+        let divDW = document.createElement('div');
+        divDW.setAttribute('style', "padding-left: 5px;");
         let divQT = document.createElement('div');
         divQT.setAttribute('style', "width: 280px; padding-left: 5px;");
         questionType.appendChild(radio)
         questionType.appendChild(check)
         questionType.appendChild(word)
         questionType.appendChild(text)
+        questionType.appendChild(info)
+        questionType.addEventListener("change", function() {
+        let selectedOption = questionType.options[questionType.selectedIndex];
+            if(selectedOption.text === "Единственный ответ" ||  selectedOption.text === "Множественный ответ") {
+                textareaQuestion.setAttribute('rows', "1");
+                let divIndexNew = document.createElement('div');
+                divIndexNew.setAttribute('class', "row container-fluid");
+                divIndexNew.setAttribute('id', divIndex.id);
+                let divTextLabel = document.createElement('div');
+                divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                let textareaAnswer = document.createElement('textarea');
+                textareaAnswer.setAttribute('class', "form-control");
+                textareaAnswer.setAttribute('placeholder', "Текст ответа");
+                textareaAnswer.setAttribute('id', "addAnswerText");
+                textareaAnswer.setAttribute('rows', "1");
+                let label = document.createElement('label');
+                label.setAttribute('for', "addAnswerText");
+                label.setAttribute('style', "padding-right: 8px;");
+                let input = document.createElement('input');
+                if (selectedOption.text === "Единственный ответ") {
+                    input.setAttribute('type', "radio");
+                }
+                if (selectedOption.text === "Множественный ответ") {
+                    input.setAttribute('type', "checkbox");
+                }
+                input.setAttribute('name', "right_input-" + button.id);
+                let buttonDel = document.createElement('button');
+                buttonDel.setAttribute('class', "btn");
+                buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+                buttonDel.setAttribute('onclick', "deleteAnswer(\"delAns-\" + this.id)");
+                buttonDel.textContent = "✖"
+                buttonDel.setAttribute('id', answerIndex);
+                let divDel = document.createElement('div');
+                divDel.setAttribute('style', "padding-left: 5px;");
+                divIndexNew.appendChild(divTextLabel)
+                label.appendChild(input)
+                divTextLabel.appendChild(label)
+                divTextLabel.appendChild(textareaAnswer)
+                divDel.appendChild(buttonDel)
+                divTextLabel.appendChild(divDel)
+                let divIndexTmp = document.getElementById(divIndex.id)
+                divIndexTmp.replaceWith(divIndexNew);
+                let buttonNew = document.getElementById(button.id)
+                buttonNew.removeAttribute("disabled");
+            }
+            if(selectedOption.text === "Свободный ответ" || selectedOption.text === "Краткий свободный ответ") {
+                textareaQuestion.setAttribute('rows', "1");
+                let divIndexNew = document.createElement('div');
+                divIndexNew.setAttribute('class', "row container-fluid");
+                divIndexNew.setAttribute('id', divIndex.id);
+                let divTextLabel = document.createElement('div');
+                divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                let textareaAnswer = document.createElement('textarea');
+                textareaAnswer.setAttribute('class', "form-control");
+                textareaAnswer.setAttribute('id', "addAnswerText");
+                if (selectedOption.text === "Краткий свободный ответ") {
+                    textareaAnswer.setAttribute('placeholder', "Краткий ответ");
+                    textareaAnswer.setAttribute('rows', "1");
+                }
+                if (selectedOption.text === "Свободный ответ") {
+                    textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
+                    textareaAnswer.setAttribute('rows', "8");
+                }
+                textareaAnswer.setAttribute("disabled", "true");
+                divIndexNew.appendChild(divTextLabel)
+                divTextLabel.appendChild(textareaAnswer)
+                let divIndexTmp = document.getElementById(divIndex.id)
+                divIndexTmp.replaceWith(divIndexNew);
+                let buttonNew = document.getElementById(button.id)
+                buttonNew.setAttribute("disabled", "true");
+            }
+            if(selectedOption.text === "Информационный блок"){
+                textareaQuestion.setAttribute('rows', "8");
+                let divIndexNew = document.createElement('div');
+                divIndexNew.setAttribute('class', "row container-fluid");
+                divIndexNew.setAttribute('id', divIndex.id);
+                let divIndexTmp = document.getElementById(divIndex.id)
+                divIndexTmp.replaceWith(divIndexNew);
+                let buttonNew = document.getElementById(button.id)
+                buttonNew.setAttribute("disabled", "true");
+            }
+        });
+        // Создание всей этой позорной иерархии
         div.appendChild(divCard)
         divCard.appendChild(divCardBody)
         divCardBody.appendChild(formGroup)
@@ -155,39 +268,14 @@
         divBT.appendChild(button)
         divController.appendChild(divBT)
         divDQ.appendChild(buttonDelQuestion)
+        divUP.appendChild(buttonUpQuestion)
+        divDW.appendChild(buttonDownQuestion)
         divController.appendChild(divDQ)
         divQT.appendChild(questionType)
         divController.appendChild(divQT)
+        divController.appendChild(divUP)
+        divController.appendChild(divDW)
         formGroup.appendChild(divController)
-        /*
-        let html = "";
-
-        html += `<div style="padding-bottom: 8px;">
-                    <div class="card">
-                    <div class="card-body">
-                    <div class="form-group">
-                    <textarea class="form-control" placeholder="Текст вопроса" id="question" rows="1" ></textarea>
-                    <hr>
-                    <div id="${index}" class="row container-fluid">
-                        <div style="padding-bottom: 10px; display: flex; align-items: center;">
-                            <label for="addAnswerText" style="padding-right: 8px;"><input type="checkbox" id="scales"></label>
-                            <textarea required class="form-control" placeholder="Текст ответа" id="addAnswerText" rows="1"></textarea>
-                        </div>
-                    </div>
-                    <br>
-                    <button class="btn"
-                    id="${index}" style="background-color:transparent; color:black;" onclick="addAnswerOnButtonClick(this.id)">
-                    Добавить ответ
-                    </button>
-                </div>
-                </div>
-                </div>
-                </div>`;
-
-        let answersElm = document.getElementById("questionsList");
-
-        answersElm.innerHTML += html;
-        */
 
         let answersElm = document.getElementById("questionsList");
         answersElm.appendChild(div)
@@ -210,8 +298,15 @@
         label.setAttribute('for', "addAnswerText");
         label.setAttribute('style', "padding-right: 8px;");
         let input = document.createElement('input');
-        input.setAttribute("type", "checkbox");
-        input.setAttribute('id', "scales");
+        let questionType = document.getElementById(`QT-${index.substring(7)}`);
+        let selectedOption = questionType.options[questionType.selectedIndex];
+        if(selectedOption.text === "Единственный ответ") {
+            input.setAttribute("type", "radio");
+        }
+        if(selectedOption.text === "Множественный ответ") {
+            input.setAttribute("type", "checkbox");
+        }
+        input.setAttribute('name', `right_input-${index.substring(7)}`);
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
