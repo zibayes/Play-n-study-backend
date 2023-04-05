@@ -97,7 +97,12 @@
                                         <p class="text-muted mb-0">...</p>
                                     </div>
                                 </div>
-                                <span class="badge rounded-pill badge-success lang">На сайте</span>
+                                <div id="div_element_button">
+                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button">Подписаться</button>
+                                </div>
+
+
+
                             </div>
                             <div class="card-footer border-0 bg-light  d-flex justify-content-around" >
                                 <button class="btn btn-link m-0 text-reset lang" key="info" data-mdb-toggle="modal" data-mdb-target="#exampleModal"  role="button" data-ripple-color="primary">Подробнее<i class="fas fa-envelope ms-2"></i></button>
@@ -218,5 +223,23 @@
 </style>
 {% endblock %}
 {% block script %}
+<script>
+    flag = false
+    $("#subscribe-button").on("click", function () {
+        if (flag === false){
+            flag = true
+            $(this).hide("slow", function () {
+                $(this).text("Отписаться")
+            })
+            $(this).show("slow")
+        } else{
+            flag = false
+            $(this).hide("slow", function () {
+                $(this).text("Подписаться")
+            })
+            $(this).show("slow")
+        }
+    })
 
+</script>
 {% endblock %}

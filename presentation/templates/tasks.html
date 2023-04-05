@@ -5,53 +5,188 @@
 {% endblock %}
 
 {% block content %}
-<button class="btn btn-warning lang" key="createform" id="1">Создание формы</button>
-<div class="container col-md-12 ">
-  <div class="row">
-    <div class="container col-md-3 mt-5">
-      <div class="toast show fade mx-auto" id="static-example" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false"><div class="toast-header"><strong class="me-auto lang" key="form">Форма</strong><small>11 mins ago</small><button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button></div><div class="toast-body">Сделать домашнее задание по мат. анализу</div></div>
-    </div>
-    <div class="container col-md-3 mt-5">
-      <div class="toast show fade mx-auto" id="static-example1" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">
-        <div class="toast-header toast-primary">
-          <strong class="me-auto lang" key="form">Форма</strong>
-          <small>11 mins ago</small>
-          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Новая заметка</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
       </div>
-    </div>
-    <div class="container col-md-3 mt-5">
-      <div class="toast show fade mx-auto" id="static-example2" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">
-        <div class="toast-header toast-danger">
-          <strong class="me-auto lang" key="form">Форма</strong>
-          <small>11 mins ago</small>
-          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Название:</label>
+            <input type="text" class="form-control" id="recipient-name" />
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Заметка:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
       </div>
-    </div>
-    <div class="container col-md-3 mt-5">
-      <div class="toast show fade mx-auto" id="static-example3" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">
-        <div class="toast-header toast-success">
-          <strong class="me-auto lang" key="form">Форма</strong>
-          <small>11 mins ago</small>
-          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Выйти</button>
+        <button type="button" id="1" class="btn btn-primary" data-mdb-dismiss="modal">Сохранить</button>
       </div>
     </div>
   </div>
 </div>
+
+
+<div class="d-flex justify-content-center">
+  <div class="container border border-1 rounded m-4" style="background-color: white;">
+    <div class="container col-md-12 ">
+      <div class="row">
+        <!-- Pills navs -->
+        <ul class="nav nav-pills nav-fill mb-3 " id="ex1" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link active"
+                    id="ex2-tab-1"
+                    data-mdb-toggle="pill"
+                    href="#ex2-pills-1"
+                    role="tab"
+                    aria-controls="ex2-pills-1"
+                    aria-selected="true"
+            >Мои заметки</a
+            >
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link"
+                    id="ex2-tab-2"
+                    data-mdb-toggle="pill"
+                    href="#ex2-pills-2"
+                    role="tab"
+                    aria-controls="ex2-pills-2"
+                    aria-selected="false"
+            >Мои задачи</a
+            >
+          </li>
+          <li class="nav-item" role="presentation">
+            <a
+                    class="nav-link"
+                    id="ex2-tab-3"
+                    data-mdb-toggle="pill"
+                    href="#ex2-pills-3"
+                    role="tab"
+                    aria-controls="ex2-pills-3"
+                    aria-selected="false"
+            >Месяц</a
+            >
+          </li>
+        </ul>
+        <!-- Pills navs -->
+
+        <!-- Pills content -->
+        <div class="tab-content" id="ex2-content">
+          <div class="tab-pane fade show active" id="ex2-pills-1" role="tabpanel" aria-labelledby="ex2-tab-1">
+            <div class="row">
+              <div class="col-md-3">
+                <button type="button" class="btn btn-link m-0 text-reset lang" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+                  Создать заметку
+                </button>
+              </div>
+            </div>
+            <div id="notes" class="row"></div>
+
+
+          </div>
+          <div
+                  class="tab-pane fade"
+                  id="ex2-pills-2"
+                  role="tabpanel"
+                  aria-labelledby="ex2-tab-2"
+          >
+            <div class="container col-md-12 ">
+              <div class="row">
+                Tab 2 content
+              </div>
+            </div>
+
+          </div>
+          <div
+                  class="tab-pane fade"
+                  id="ex2-pills-3"
+                  role="tabpanel"
+                  aria-labelledby="ex2-tab-3"
+          >
+            <div class="container col-md-12 ">
+              <div class="row">
+                Tab 3 content
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- Pills content -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container col-md-12 ">
+  <div class="row">
+
+<!--    <button class="btn btn-warning lang" key="createform" id="1">Создание формы</button>-->
+
+<!--    <div class="container col-md-3 mt-5">-->
+<!--      <div class="toast show fade mx-auto" id="static-example" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false"><div class="toast-header"><strong class="me-auto lang" key="form">Форма</strong><small>11 mins ago</small><button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button></div><div class="toast-body">Сделать домашнее задание по мат. анализу</div></div>-->
+<!--    </div>-->
+<!--    <div class="container col-md-3 mt-5">-->
+<!--      <div class="toast show fade mx-auto" id="static-example1" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">-->
+<!--        <div class="toast-header toast-primary">-->
+<!--          <strong class="me-auto lang" key="form">Форма</strong>-->
+<!--          <small>11 mins ago</small>-->
+<!--          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="container col-md-3 mt-5">-->
+<!--      <div class="toast show fade mx-auto" id="static-example2" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">-->
+<!--        <div class="toast-header toast-danger">-->
+<!--          <strong class="me-auto lang" key="form">Форма</strong>-->
+<!--          <small>11 mins ago</small>-->
+<!--          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="container col-md-3 mt-5">-->
+<!--      <div class="toast show fade mx-auto" id="static-example3" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">-->
+<!--        <div class="toast-header toast-success">-->
+<!--          <strong class="me-auto lang" key="form">Форма</strong>-->
+<!--          <small>11 mins ago</small>-->
+<!--          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--        <div class="toast-body">Сделать домашнее задание по мат. анализу</div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </div>
+</div>
 {% endblock %}
 {% block script %}
+<!--Додумать удаление всего div'a и прикрепить к ним id-->
 <script>
+  var flag_id = 0
   $("#1").click(function (event){
-    let div = $(".row")
-    let div_add = $('<div class="container col-md-3 mt-5"><div class="toast show fade mx-auto" id="static-example" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false"><div class="toast-header"><strong class="me-auto lang" key="form">Форма</strong><small>11 mins ago</small><button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button></div><div class="toast-body">Сделать домашнее задание по мат. анализу</div></div></div>')
+    flag_id++
+    let div = $("#notes")
+    let name = $('#recipient-name').val()
+    let message = $("#message-text").val()
+    let div_add = $('<div class="container col-md-3 mt-5" id="2">\n' +
+            '      <div class="toast show fade mx-auto" id="static-example1" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">\n' +
+            '        <div class="toast-header toast-primary">\n' +
+            '          <strong class="me-auto lang" key="form">' + name + '</strong>\n' +
+            '          <small>0 mins ago</small>\n' +
+            '          <button type="button" class="btn-close" data-mdb-dismiss="toast"  aria-label="Close"></button>\n' +
+            '        </div>\n' +
+            '        <div class="toast-body">' + message + '</div>\n' +
+            '      </div>\n' +
+            '    </div>')
     div.append(div_add)
   })
-
 
 </script>
 {% endblock %}

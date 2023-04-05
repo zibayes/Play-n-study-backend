@@ -170,6 +170,11 @@ def handle_subscriptions(user_id):
         return render_template("subscriptions.html", user=user, found=found, user_id=user_id)
     return render_template("subscriptions.html", user=user, found=None, user_id=user_id)
 
+@app.route('/task')
+def handle_task():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('tasks.html', user=user)
 
 @app.route('/reviews')
 def handle_reviews():
