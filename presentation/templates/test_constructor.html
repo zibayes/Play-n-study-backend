@@ -14,27 +14,29 @@
         <div class="row border"></div>
         <br>
 
-        <textarea required class="form-control" placeholder="Название теста" id="testName" rows="1"></textarea>
-        <hr>
+        <form action="" method="POST">
+            <textarea required class="form-control" placeholder="Название теста" name="testName" rows="1"></textarea>
+            <hr>
 
-        <div id="notes" class=
-            "row container-fluid">
-        </div>
+            <div id="notes" class=
+                "row container-fluid">
+            </div>
 
-        <div id="questionsList" style="padding-top: 8px;"></div>
-        <hr>
-        <div style="padding-bottom: 10px;">
-            <button class="btn btn-primary"
-                    id="addQuestion" style=
-                    "background-color:green;">
-                    Добавить вопрос
-                </button>
-            <button class="btn btn-primary"
-                    id="saveTest" style=
-                    "background-color:yellowgreen;">
-                    Сохранить тест
-                </button>
-        </div>
+            <div id="questionsList" style="padding-top: 8px;"></div>
+            <hr>
+            <div style="padding-bottom: 10px;">
+                <button class="btn btn-primary"
+                        id="addQuestion" style=
+                        "background-color:green;">
+                        Добавить вопрос
+                    </button>
+                <button class="btn btn-primary" type="submit"
+                        id="saveTest" style=
+                        "background-color:yellowgreen;">
+                        Сохранить тест
+                    </button>
+            </div>
+        </form>
     </div>
 </div>
 <style>
@@ -77,6 +79,8 @@
         textareaQuestion.setAttribute('placeholder', "Текст вопроса");
         textareaQuestion.setAttribute('id', "question");
         textareaQuestion.setAttribute('rows', "1");
+        textareaQuestion.setAttribute('required', 'true');
+        textareaQuestion.setAttribute('name', 'Question-' + questionIndex);
         let hr = document.createElement('hr');
         let divIndex = document.createElement('div');
         divIndex.setAttribute('class', "row container-fluid");
@@ -89,6 +93,7 @@
         textareaAnswer.setAttribute('placeholder', "Текст ответа");
         textareaAnswer.setAttribute('id', "addAnswerText");
         textareaAnswer.setAttribute('rows', "1");
+        textareaAnswer.setAttribute('required', 'true');
         let label = document.createElement('label');
         label.setAttribute('for', "addAnswerText");
         label.setAttribute('style', "padding-right: 8px;");
@@ -187,6 +192,7 @@
                 label.setAttribute('for', "addAnswerText");
                 label.setAttribute('style', "padding-right: 8px;");
                 let input = document.createElement('input');
+                input.setAttribute('required', 'true');
                 if (selectedOption.text === "Единственный ответ") {
                     input.setAttribute('type', "radio");
                 }
@@ -298,6 +304,7 @@
         label.setAttribute('for', "addAnswerText");
         label.setAttribute('style', "padding-right: 8px;");
         let input = document.createElement('input');
+        input.setAttribute('required', 'true');
         let questionType = document.getElementById(`QT-${index.substring(7)}`);
         let selectedOption = questionType.options[questionType.selectedIndex];
         if(selectedOption.text === "Единственный ответ") {

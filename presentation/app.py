@@ -179,7 +179,8 @@ def handle_reviews():
 
 
 @app.route('/test_constructor', methods=["POST", "GET"])
-def handle_test_constructor():
+def handle_test_constructor_info():
+    print(request.method, request.form)
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     return render_template('test_constructor.html', user=user)
