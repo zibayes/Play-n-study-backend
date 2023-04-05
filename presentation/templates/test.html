@@ -1,0 +1,137 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Конструктор тестов</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang">
+            {{ test_name }}
+        </span>
+        <div class="row border"></div>
+        <br>
+
+        <form action="" method="POST">
+
+            <div id="notes" class=
+                "row container-fluid">
+            </div>
+
+            <div id="questionsList" style="padding-top: 8px;">
+                {% for question in test %}
+                    {% for question_text in question[0].keys() %}
+                        {{ question_text }}
+                        <br>
+                        {% if question[1] == "Единственный ответ" %}
+                            {% for answer in question[0][question_text] %}
+                                {% for answer_text, is_right in answer.items() %}
+                                    <div style="display: flex;">
+                                        <input id="checkbox" type="radio" name="{{ question_text }}" value="{{ is_right }}">
+                                        <label for="{{ question_text }}">{{ answer_text }}</label>
+                                    </div>
+                                    <br>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if question[1] == "Множественный ответ" %}
+                            {% for answer in question[0][question_text] %}
+                                {% for answer_text, is_right in answer.items() %}
+                                    <div style="display: flex;">
+                                        <input id="checkbox" type="checkbox" name="{{ question_text }}" value="{{ is_right }}">
+                                        <label for="{{ question_text }}">{{ answer_text }}</label>
+                                    </div>
+                                    <br>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if question[1] == "Краткий свободный ответ" %}
+                            {% for answer in question[0][question_text] %}
+                                <div style="display: flex;">
+                                    <textarea id="freeAnswer" class="form-control" name="{{ answer }}" rows="1"></textarea>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if question[1] == "Свободный ответ" %}
+                            <textarea class="form-control" name="{{ question_text }}" rows="8"></textarea>
+                        {% endif %}
+                    {% endfor %}
+                    <br>
+                    <hr>
+                    <br>
+                {% endfor %}
+            </div>
+            <div style="padding-bottom: 10px;">
+                <button class="btn btn-primary"
+                        id="endTest" style=
+                        "background-color:green;" type="button">
+                        Завершить тест
+                    </button>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    .scale {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale:hover {
+        transform: scale(1.05); /* Увеличиваем масштаб */
+    }
+    .scale2 {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale2:hover {
+        transform: scale(1.02); /* Увеличиваем масштаб */
+    }
+</style>
+{% endblock %}
+{% block script %}
+    <script>
+    let questions_count = {{ test|length }};
+    let right_answers = 0;
+    let endBtn = document.getElementById("endTest");
+    endBtn.addEventListener("click", function(e) {
+        let checkboxes = document.querySelectorAll("[id='checkbox']");
+        checkboxes.forEach(function(elem) {
+            let right = document.createElement('div');
+            right.textContent = "✔";
+            right.setAttribute("style", "color: green;")
+            let wrong = document.createElement('div');
+            wrong.textContent = "✘";
+            wrong.setAttribute("style", "color: red;")
+            if (elem.checked) {
+                if (elem.value === "True") {
+                    right_answers += 1;
+                    elem.parentNode.insertBefore(right, elem);
+                } else {
+                    elem.parentNode.insertBefore(wrong, elem);
+                }
+            }
+        });
+        let free_answers = document.querySelectorAll("[id='freeAnswer']");
+        free_answers.forEach(function(elem) {
+            let right = document.createElement('div');
+            right.textContent = "✔";
+            right.setAttribute("style", "color: green;")
+            let wrong = document.createElement('div');
+            wrong.textContent = "✘";
+            wrong.setAttribute("style", "color: red;")
+            questions_count += 1;
+            if (elem.value === elem.name) {
+                right_answers += 1;
+                elem.parentNode.insertBefore(right, elem);
+            } else {
+                elem.parentNode.insertBefore(wrong, elem);
+            }
+        });
+        alert("Ваш результат: " + (Math.round(right_answers / questions_count * 10000) / 100) + "%")
+        endBtn.setAttribute("disabled", "true")
+    });
+    </script>
+{% endblock %}
