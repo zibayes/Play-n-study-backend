@@ -1,4 +1,6 @@
+import copy
 import sys
+
 sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
@@ -27,7 +29,6 @@ print(session)
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 login_manager = LoginManager(app)
-
 
 # Repositories
 user_repository = UserRepository(session)
@@ -150,6 +151,7 @@ def handle_profile(user_id):
     user.sub_to_count = len(user.sub_to) if user.sub_to else 0
     return render_template("profile.html", user=user)
 
+
 #
 # @app.route('/friends')
 # def handle_friends():
@@ -178,12 +180,75 @@ def handle_reviews():
     return render_template('reviews.html', user=user)
 
 
-@app.route('/test_constructor', methods=["POST", "GET"])
-def handle_test_constructor_info():
-    print(request.method, request.form)
+@app.route('/test_constructor', methods=["GET"])
+def handle_test_constructor():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     return render_template('test_constructor.html', user=user)
+
+
+@app.route('/test_constructor', methods=["POST"])
+def handle_result_test():
+    test_form = request.form.to_dict()
+    test_name = test_form.pop("testName")
+    questions_count = 0
+    for key in test_form.keys():
+        if "Question-" in key:
+            questions_count += 1
+    question_type = ""
+    test = []
+    questions = {}
+    for i in range(questions_count):
+        for key, value in test_form.items():
+            if "QuestionType-" in key:
+                question_type = value
+                break
+        question = ""
+        new_form = copy.deepcopy(test_form)
+        if question_type in ("Единственный ответ", "Множественный ответ"):
+            is_right_answer = False
+            for key, value in test_form.items():
+                if "Question-" in key:
+                    questions[value] = []
+                    question = value
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    questions[question].append({value: is_right_answer})
+                    is_right_answer = False
+                if "Right_Answer-" in key:
+                    is_right_answer = True
+                if "QuestionType-" in key:
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question_type == "Краткий свободный ответ":
+            for key, value in test_form.items():
+                if "Question-" in key:
+                    questions[value] = []
+                    question = value
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    questions[question].append(value)
+                if "QuestionType-" in key:
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question_type in ("Свободный ответ", "Информационный блок"):
+            for key, value in test_form.items():
+                if "Question-" in key:
+                    questions[value] = False
+                if "QuestionType-" in key:
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        test.append((questions, question_type))
+        questions = {}
+    print(test)
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('test.html', user=user, test_name=test_name, test=test)
+    # redirect(url_for('handle_settings'))
 
 
 class Bunch(dict):

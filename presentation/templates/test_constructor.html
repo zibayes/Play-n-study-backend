@@ -23,11 +23,12 @@
             </div>
 
             <div id="questionsList" style="padding-top: 8px;"></div>
+            <div id="questionsList" style="padding-top: 8px;"></div>
             <hr>
             <div style="padding-bottom: 10px;">
                 <button class="btn btn-primary"
                         id="addQuestion" style=
-                        "background-color:green;">
+                        "background-color:green;" type="button">
                         Добавить вопрос
                     </button>
                 <button class="btn btn-primary" type="submit"
@@ -91,7 +92,7 @@
         let textareaAnswer = document.createElement('textarea');
         textareaAnswer.setAttribute('class', "form-control");
         textareaAnswer.setAttribute('placeholder', "Текст ответа");
-        textareaAnswer.setAttribute('id', "addAnswerText");
+        textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
         textareaAnswer.setAttribute('rows', "1");
         textareaAnswer.setAttribute('required', 'true');
         let label = document.createElement('label');
@@ -106,14 +107,17 @@
         button.setAttribute('onclick', "addAnswerOnButtonClick(\"addAns-\" + this.id)");
         button.textContent = "Добавить ответ"
         button.setAttribute('id', questionIndex);
-        input.setAttribute('name', "right_input-" + button.id);
+        button.setAttribute('type', "button");
+        input.setAttribute('name', "Right_Answer-" +  answerIndex);
         let buttonDelQuestion = document.createElement('button');
         buttonDelQuestion.setAttribute('class', "btn");
+        buttonDelQuestion.setAttribute('type', "button");
         buttonDelQuestion.setAttribute('style', "background-color:red; color:white;");
         buttonDelQuestion.setAttribute('onclick', "deleteQuestion(\"delQue-\" + this.id)");
         buttonDelQuestion.textContent = "Удалить вопрос"
         buttonDelQuestion.setAttribute('id', questionIndex);
         let buttonUpQuestion = document.createElement('button');
+        buttonUpQuestion.setAttribute('type', "button");
         buttonUpQuestion.setAttribute('class', "btn");
         buttonUpQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
         buttonUpQuestion.addEventListener("click", function() {
@@ -122,6 +126,7 @@
         });
         buttonUpQuestion.textContent = "↑"
         let buttonDownQuestion = document.createElement('button');
+        buttonDownQuestion.setAttribute('type', "button");
         buttonDownQuestion.setAttribute('class', "btn");
         buttonDownQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
         buttonDownQuestion.addEventListener("click", function() {
@@ -146,6 +151,7 @@
         questionType.setAttribute('class', "form-select");
         questionType.setAttribute('width', "20px");
         questionType.setAttribute('id', "QT-" + questionIndex);
+        questionType.setAttribute('name', "QuestionType-" + questionIndex);
         let radio = document.createElement('option')
         radio.textContent = "Единственный ответ"
         let check = document.createElement('option')
@@ -186,20 +192,21 @@
                 let textareaAnswer = document.createElement('textarea');
                 textareaAnswer.setAttribute('class', "form-control");
                 textareaAnswer.setAttribute('placeholder', "Текст ответа");
-                textareaAnswer.setAttribute('id', "addAnswerText");
+                textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
                 textareaAnswer.setAttribute('rows', "1");
                 let label = document.createElement('label');
                 label.setAttribute('for', "addAnswerText");
                 label.setAttribute('style', "padding-right: 8px;");
                 let input = document.createElement('input');
-                input.setAttribute('required', 'true');
+                //input.setAttribute('required', 'true');
                 if (selectedOption.text === "Единственный ответ") {
                     input.setAttribute('type', "radio");
+                    input.setAttribute('name', "Right_Answer-" + button.id);
                 }
                 if (selectedOption.text === "Множественный ответ") {
                     input.setAttribute('type', "checkbox");
+                    input.setAttribute('name', "Right_Answer-" + button.id + "-" + answerIndex);
                 }
-                input.setAttribute('name', "right_input-" + button.id);
                 let buttonDel = document.createElement('button');
                 buttonDel.setAttribute('class', "btn");
                 buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
@@ -229,16 +236,17 @@
                 divTextLabel.setAttribute('id', "delAns-" + answerIndex);
                 let textareaAnswer = document.createElement('textarea');
                 textareaAnswer.setAttribute('class', "form-control");
-                textareaAnswer.setAttribute('id', "addAnswerText");
+                textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
                 if (selectedOption.text === "Краткий свободный ответ") {
                     textareaAnswer.setAttribute('placeholder', "Краткий ответ");
                     textareaAnswer.setAttribute('rows', "1");
+                    textareaAnswer.removeAttribute("disabled");
                 }
                 if (selectedOption.text === "Свободный ответ") {
                     textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
                     textareaAnswer.setAttribute('rows', "8");
+                    textareaAnswer.setAttribute("disabled", "true");
                 }
-                textareaAnswer.setAttribute("disabled", "true");
                 divIndexNew.appendChild(divTextLabel)
                 divTextLabel.appendChild(textareaAnswer)
                 let divIndexTmp = document.getElementById(divIndex.id)
@@ -247,6 +255,7 @@
                 buttonNew.setAttribute("disabled", "true");
             }
             if(selectedOption.text === "Информационный блок"){
+                textareaQuestion.setAttribute('placeholder', "Информация");
                 textareaQuestion.setAttribute('rows', "8");
                 let divIndexNew = document.createElement('div');
                 divIndexNew.setAttribute('class', "row container-fluid");
@@ -255,7 +264,10 @@
                 divIndexTmp.replaceWith(divIndexNew);
                 let buttonNew = document.getElementById(button.id)
                 buttonNew.setAttribute("disabled", "true");
+            } else {
+                textareaQuestion.setAttribute('placeholder', "Текст вопроса");
             }
+            answerIndex += 1;
         });
         // Создание всей этой позорной иерархии
         div.appendChild(divCard)
@@ -298,22 +310,23 @@
         let textarea = document.createElement('textarea');
         textarea.setAttribute('class', "form-control");
         textarea.setAttribute('placeholder', "Текст ответа");
-        textarea.setAttribute('id', "addAnswerText");
+        textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
         textarea.setAttribute('rows', "1");
         let label = document.createElement('label');
         label.setAttribute('for', "addAnswerText");
         label.setAttribute('style', "padding-right: 8px;");
         let input = document.createElement('input');
-        input.setAttribute('required', 'true');
+        //input.setAttribute('required', 'true');
         let questionType = document.getElementById(`QT-${index.substring(7)}`);
         let selectedOption = questionType.options[questionType.selectedIndex];
         if(selectedOption.text === "Единственный ответ") {
             input.setAttribute("type", "radio");
+            input.setAttribute('name', `Right_Answer-${index.substring(7)}`);
         }
         if(selectedOption.text === "Множественный ответ") {
             input.setAttribute("type", "checkbox");
+            input.setAttribute('name', `Right_Answer-${index.substring(7)}-${answerIndex}`);
         }
-        input.setAttribute('name', `right_input-${index.substring(7)}`);
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
