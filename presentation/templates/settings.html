@@ -13,44 +13,46 @@
         <div class="row border"></div>
         <div class="d-flex p-4">
             <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px;">
-                <img class="border border-2 rounded w-100" src="static/img/Ernesto-Che-Guevara-Portrait.jpg" style="max-width: 400px;">
+                <img class="border border-2 rounded w-100" src="/userava/{{user.user_id}}" style="max-width: 400px;">
+                <form action="/uploadava" method="POST" enctype="multipart/form-data">
+                    <p><input type="file" name="file"></p>
+                    <a><button class="btn border border-2 w-100 lang" key="changeava" type="submit">Сменить аватар</button></a>
+                </form>
 
-                <a><button class="btn border border-2 w-100 lang" key="changeava">Сменить аватар</button></a>
+<!--                <span class="lang" key="anachievements" style="margin-top: 20px; margin-left: auto; margin-right: auto;">-->
+<!--            Достижения-->
+<!--        </span>-->
 
-                <span class="lang" key="anachievements" style="margin-top: 20px; margin-left: auto; margin-right: auto;">
-            Достижения
-        </span>
-
-                <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        <div class="carousel-item active" data-bs-interval="10000">
-                            <img src="static/img/vive_la_commune.jpg" class="d-block w-100" alt="First slide">
-                            <div class="carousel-caption d-none d-md-block">
-                            </div>
-                        </div>
-                        <div class="carousel-item" data-bs-interval="2000">
-                            <img src="static/img/vive_la_resistance.png" class="d-block w-100" alt="Second slide">
-                            <div class="carousel-caption d-none d-md-block">
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="static/img/cheburashka.png" class="d-block w-100" alt="Third slide">
-                            <div class="carousel-caption d-none d-md-block">
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
+<!--                <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">-->
+<!--                    <div class="carousel-indicators">-->
+<!--                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>-->
+<!--                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>-->
+<!--                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>-->
+<!--                    </div>-->
+<!--                    <div class="carousel-inner">-->
+<!--                        <div class="carousel-item active" data-bs-interval="10000">-->
+<!--                            <img src="static/img/vive_la_commune.jpg" class="d-block w-100" alt="First slide">-->
+<!--                            <div class="carousel-caption d-none d-md-block">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="carousel-item" data-bs-interval="2000">-->
+<!--                            <img src="static/img/vive_la_resistance.png" class="d-block w-100" alt="Second slide">-->
+<!--                            <div class="carousel-caption d-none d-md-block">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="carousel-item">-->
+<!--                            <img src="static/img/cheburashka.png" class="d-block w-100" alt="Third slide">-->
+<!--                            <div class="carousel-caption d-none d-md-block">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="prev">-->
+<!--                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+<!--                    </button>-->
+<!--                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark"  data-bs-slide="next">-->
+<!--                        <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+<!--                    </button>-->
+<!--                </div>-->
 
             </div>
             <form method="POST" action="/changecity" class="flex-fill d-flex flex-column ps-2 pe-2" style="width: 70%;">

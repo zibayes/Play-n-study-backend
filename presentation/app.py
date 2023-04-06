@@ -1,21 +1,30 @@
 import copy
-import sys
 
-sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+# sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from sqlalchemy.orm import sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from infrastructure.auth.UserLogin import UserLogin
+from presentation.UserLogin import UserLogin
 from infrastructure.auth.service import get_register_wrong_field_msg
-from infrastructure.changes.settings_service import get_wrong_field_msg
 from infrastructure.QueryManager import *
 from infrastructure.repository.AchievementRepository import AchievementRepository
 from infrastructure.repository.UserRepository import UserRepository
 from infrastructure.repository.AchieveRelRepository import AchieveRelRepository
 from domain.User import User
+from domain.SubRel import SubRel
+
+
+# todo: move to service
+def am_i_subscriber_of(sub_to: list[User], user: User) -> bool:
+    am_i_sub = False
+    for user_in_my_list in sub_to:
+        if user_in_my_list.user_id == user.user_id:
+            am_i_sub = True
+    return am_i_sub
+
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -103,7 +112,7 @@ def handle_register():
                         email=request.form.get('email'),
                         username=request.form.get('username'),
                         city='',
-                        avatar='',
+                        avatar=None,
                         password=generate_password_hash(request.form.get('password'))
                         )
             if user_repository.add_user(user):
@@ -120,7 +129,6 @@ def handle_register():
 @app.route('/me')
 @login_required
 def handle_me():
-    # current_user.achievements = query_manager.get_user_achievements(current_user.id)
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user_id)
@@ -131,7 +139,7 @@ def handle_me():
     user.sub_to = query_manager.get_user_sub_to(user.user_id)
     user.sub_to_count = len(user.sub_to) if user.sub_to else 0
 
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
 
 @app.route('/about')
@@ -142,6 +150,7 @@ def about():
 @app.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
+
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user.user_id)
     user.courses = query_manager.get_user_courses(user.user_id)
@@ -149,7 +158,22 @@ def handle_profile(user_id):
     user.subs_count = len(user.subs) if user.subs else 0
     user.sub_to = query_manager.get_user_sub_to(user.user_id)
     user.sub_to_count = len(user.sub_to) if user.sub_to else 0
-    return render_template("profile.html", user=user)
+    current_user_id = current_user.get_id()
+
+    cur_user = user_repository.get_user_by_id(current_user_id)
+    cur_user.sub_to = query_manager.get_user_sub_to(cur_user.user_id)
+
+    need_subscribe = True
+    is_me = False
+
+    if cur_user.sub_to:
+        if not am_i_subscriber_of(cur_user.sub_to, user):
+            need_subscribe = True
+        else:
+            need_subscribe = False
+    if user.user_id == cur_user.user_id:
+        is_me = True
+    return render_template("profile.html", user=user, need_subscribe=need_subscribe, is_me=is_me)
 
 
 #
@@ -325,6 +349,65 @@ def handle_settings():
         user.achievements = query_manager.get_user_achievements(user_id)
         user.courses = query_manager.get_user_courses(user_id)
         return render_template('settings.html', user=user)
+
+
+@app.route('/uploadava', methods=["POST", "GET"])
+@login_required
+def handle_upload():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and current_user.verify_ext(file.filename):
+            try:
+                img = file.read()
+                user = user_repository.get_user_by_id(current_user.get_id())
+                user.avatar = img
+                res = user_repository.upload_avatar(user)
+                if not res:
+                    flash("Ошибка обновления аватара", "error")
+                    return redirect(url_for('handle_settings'))
+                flash("Аватар обновлен", "success")
+            except FileNotFoundError as e:
+                flash("Ошибка чтения файла", "error")
+    else:
+        flash("Ошибка обновление аватара", "error")
+    return redirect(url_for('handle_settings'))
+
+
+@app.route('/userava/<int:user_id>')
+@login_required
+def handle_userava(user_id):
+    img = query_manager.get_avatar(app, user_repository, user_id)
+    if not img:
+        return ""
+
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
+
+@app.route('/subscribe/<int:user_id>')
+@login_required
+def handle_subscribe(user_id):
+    subrel = SubRel(
+        sub_rel_id=None,
+        user_id=user_id,
+        sub_id=current_user.get_id()
+    )
+    if sub_rel_repository.add_sub_rel(subrel):
+        return redirect(f"/profiles/{user_id}")
+    else:
+        flash('Ошибка при подписке', 'error')
+
+
+@app.route('/unsubscribe/<int:user_id>')
+@login_required
+def handle_unsubscribe(user_id):
+    need_row = sub_rel_repository.get_one_by_user_and_sub_ids(user_id, current_user.get_id())
+    if sub_rel_repository.remove_sub_rel_by_id(need_row.sub_rel_id):
+        return redirect(f"/profiles/{user_id}")
+    else:
+        flash('Ошибка при отписке', 'error')
+
 
 
 if __name__ == "__main__":

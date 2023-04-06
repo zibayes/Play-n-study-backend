@@ -1,10 +1,12 @@
+/* todo: relations full name */
+
 CREATE TABLE users
 (
     user_id serial PRIMARY KEY,
     email text UNIQUE NOT NULL,
     username varchar(20) UNIQUE NOT NULL,
     city text,
-    avatar text,
+    avatar bytea NULL,
     password text NOT NULL
 );
 
@@ -63,6 +65,7 @@ CREATE TABLE reviews(
     text text
 );
 
+/* todo: full name */
 CREATE TABLE sub_rel(
     sub_rel_id serial PRIMARY KEY,
     user_id int REFERENCES users(user_id),

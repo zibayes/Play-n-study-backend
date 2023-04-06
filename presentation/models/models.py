@@ -1,5 +1,5 @@
 from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean
-from sqlalchemy import Column, ForeignKey, CheckConstraint
+from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -12,7 +12,7 @@ class UsersModel(Base):
     email = Column(Text, unique=True, nullable=False)
     username = Column(String(20), unique=True, nullable=False)
     city = Column(Text, nullable=False)
-    avatar = Column(Text, nullable=False)
+    avatar = Column(LargeBinary, nullable=True, default=None)
     password = Column(Text, nullable=False)
 
     # relationships
@@ -209,8 +209,7 @@ class SubRelModel(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"))
     sub_id = Column(Integer, ForeignKey("users.user_id"))
 
-    def __init__(self, sub_rel_id, user_id, sub_id):
-        self.sub_rel_id = sub_rel_id
+    def __init__(self, user_id, sub_id):
         self.user_id = user_id
         self.sub_id = sub_id
 

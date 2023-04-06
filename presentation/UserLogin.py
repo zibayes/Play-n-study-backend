@@ -1,3 +1,5 @@
+from flask import url_for
+
 from infrastructure.repository.UserRepository import UserRepository
 
 
@@ -26,4 +28,10 @@ class UserLogin:
         return False
 
     def get_id(self):
-        return str(self.__user.user_id)
+        return self.__user.user_id
+
+    def verify_ext(self, filename):
+        ext = filename.rsplit('.', 1)[1]
+        if ext == "png" or ext == "PNG":
+            return True
+        return False

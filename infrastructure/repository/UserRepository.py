@@ -37,6 +37,17 @@ class UserRepository:
             print("Ошибка обновления в БД " + str(e))
             return False
 
+    def upload_avatar(self, user: User) -> bool:
+        try:
+            self.session.query(UsersModel) \
+                .filter_by(user_id=user.user_id) \
+                .update({'avatar': user.avatar})
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления аватара в БД :" + str(e))
+            return False
+
     def get_user_by_id(self, user_id) -> Optional[User]:
         user_db = self.session.query(UsersModel) \
             .filter_by(user_id=user_id) \

@@ -3,7 +3,7 @@ class User:
     email: str = None
     username: str = None
     city: str = None
-    avatar: str = None
+    avatar: bytes = None
     password: str = None
 
     # поля получаемые запросами

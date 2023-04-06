@@ -1,3 +1,4 @@
+from flask import url_for
 from typing import Optional
 from infrastructure.repository.UserRepository import UserRepository
 from infrastructure.repository.AchievementRepository import AchievementRepository
@@ -82,7 +83,20 @@ class QueryManager:
         return None
 
     def get_users_by_query(self, query: str) -> Optional[list]:
-        users_list = self.user_repository.get_users_by_substring("abob")
+        users_list = self.user_repository.get_users_by_substring(query)
         if users_list is not None:
             return users_list
         return None
+
+    def get_avatar(self, app, user_repository: UserRepository, user_id: int):
+        img = None
+        user = user_repository.get_user_by_id(user_id)
+        if not user.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/default.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найден аватар по умолчанию: " + str(e))
+        else:
+            img = user.avatar
+        return img
