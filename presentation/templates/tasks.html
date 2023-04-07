@@ -175,12 +175,12 @@
     let div = $("#notes")
     let name = $('#recipient-name').val()
     let message = $("#message-text").val()
-    let div_add = $('<div class="container col-md-3 mt-5" id="2">\n' +
+    let div_add = $('<div class="container col-md-3 mt-5" id={flag_id}>\n' +
             '      <div class="toast show fade mx-auto" id="static-example1" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">\n' +
             '        <div class="toast-header toast-primary">\n' +
             '          <strong class="me-auto lang" key="form">' + name + '</strong>\n' +
             '          <small>0 mins ago</small>\n' +
-            '          <button type="button" class="btn-close" data-mdb-dismiss="toast"  aria-label="Close"></button>\n' +
+            '          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>\n' +
             '        </div>\n' +
             '        <div class="toast-body">' + message + '</div>\n' +
             '      </div>\n' +
