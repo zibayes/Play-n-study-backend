@@ -1,10 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base_aut.html' %}
 
-</body>
-</html>
+{% block title%}
+<title>Курсы</title>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="row m-3 justify-content-start lang">
+            Мои курсы
+        </span>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <form>
+                        <div class="input-group mb-4">
+                            <input id="text"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Поиск курсов"
+                                   name="query"
+                            />
+                            <button class="btn btn-outline-secondary" type="submit" id="find" data-mdb-ripple-color="dark">
+                                <i class="fas fa-search ms-0" style="color: #676767"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                        <div class="d-flex align-items-center">
+                            <img alt="" style="width: 120px; height: 120px" class="rounded-circle">
+                            <div class="ms-4">
+                                <a class="fw-bold mb-1 lang" style="color: #676767">Вышивание</a>
+                                <p class="text-muted mb-0">Курс по вышиванию варешек</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                        <div class="d-flex align-items-center">
+                            <img alt="" style="width: 120px; height: 120px" class="rounded-circle">
+                            <div class="ms-4">
+                                <a class="fw-bold mb-1 lang" style="color: #676767">Математический анализ</a>
+                                <p class="text-muted mb-0">Математика всему наука!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+    </div>
+
+
+
+    </div>
+</div>
+{% endblock %}

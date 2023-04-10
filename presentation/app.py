@@ -1,6 +1,6 @@
 import copy
-
-# sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+from os import sys
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
@@ -147,6 +147,10 @@ def handle_me():
 def about():
     return "About"
 
+@app.route('/courses/<int:user_id>')
+def handle_courses(user_id):
+    user = user_repository.get_user_by_id(user_id)
+    return render_template("courses.html", user=user)
 
 @app.route('/profiles/<int:user_id>')
 @login_required
