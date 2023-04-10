@@ -18,7 +18,7 @@ from domain.SubRel import SubRel
 
 
 # todo: move to service
-def am_i_subscriber_of(sub_to: list[User], user: User) -> bool:
+def am_i_subscriber_of(sub_to, user: User) -> bool:
     am_i_sub = False
     for user_in_my_list in sub_to:
         if user_in_my_list.user_id == user.user_id:
@@ -129,7 +129,8 @@ def handle_register():
 @app.route('/me')
 @login_required
 def handle_me():
-    user_id = current_user.get_id()
+    # user_id = current_user.get_id()
+    user_id = 101
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user_id)
     user.courses = query_manager.get_user_courses(user_id)
@@ -150,7 +151,6 @@ def about():
 @app.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
-
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user.user_id)
     user.courses = query_manager.get_user_courses(user.user_id)
