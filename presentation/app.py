@@ -1,5 +1,6 @@
 import copy
 from os import sys
+
 sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
@@ -15,6 +16,7 @@ from infrastructure.repository.UserRepository import UserRepository
 from infrastructure.repository.AchieveRelRepository import AchieveRelRepository
 from domain.User import User
 from domain.SubRel import SubRel
+import json
 
 
 # todo: move to service
@@ -147,10 +149,12 @@ def handle_me():
 def about():
     return "About"
 
+
 @app.route('/courses/<int:user_id>')
 def handle_courses(user_id):
     user = user_repository.get_user_by_id(user_id)
     return render_template("courses.html", user=user)
+
 
 @app.route('/profiles/<int:user_id>')
 @login_required
@@ -200,11 +204,13 @@ def handle_subscriptions(user_id):
         return render_template("subscriptions.html", user=user, found=found, user_id=user_id)
     return render_template("subscriptions.html", user=user, found=None, user_id=user_id)
 
+
 @app.route('/task')
 def handle_task():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     return render_template('tasks.html', user=user)
+
 
 @app.route('/reviews')
 def handle_reviews():
@@ -229,8 +235,9 @@ def handle_result_test():
         if "Question-" in key:
             questions_count += 1
     question_type = ""
-    test = []
+    test_body = []
     questions = {}
+    score = 0
     for i in range(questions_count):
         for key, value in test_form.items():
             if "QuestionType-" in key:
@@ -249,6 +256,7 @@ def handle_result_test():
                     is_right_answer = False
                 if "Right_Answer-" in key:
                     is_right_answer = True
+                    score += 1
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
@@ -270,18 +278,35 @@ def handle_result_test():
             for key, value in test_form.items():
                 if "Question-" in key:
                     questions[value] = False
+                    if question_type == "Свободный ответ":
+                        score += 1
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
                 new_form.pop(key)
             test_form = new_form
-        test.append((questions, question_type))
+        test_body.append((questions, question_type))
         questions = {}
-    print(test)
+    # Заготовка для сохранения теста в БД
+    '''
+    if test_repository.add_test(json.dumps(test, ensure_ascii=False)):
+        flash('Тест успешно сохранён', 'success')
+    else:
+        flash('Ошибка при сохранении теста', 'error')
+    '''
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
-    return render_template('test.html', user=user, test_name=test_name, test=test)
-    # redirect(url_for('handle_settings'))
+    return render_template('test.html', user=user, test={test_name: test_body}, score=score)
+
+# Заготовка загрузки теста из БД
+'''
+@app.route('/tests/<int:test_id>')
+def handle_load_test():
+    test = json.loads(test_repository.get_test_by_id(test_id))
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('test.html', user=user, test=test)
+'''
 
 
 class Bunch(dict):
@@ -411,7 +436,6 @@ def handle_unsubscribe(user_id):
         return redirect(f"/profiles/{user_id}")
     else:
         flash('Ошибка при отписке', 'error')
-
 
 
 if __name__ == "__main__":

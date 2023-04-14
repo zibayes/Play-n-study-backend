@@ -5,77 +5,78 @@
 {% endblock %}
 
 {% block content %}
+{% for test_name, test_body in test.items() %}
+    <div class="d-flex justify-content-center">
+        <div class="container m-5" style="background-color: white; border-radius: 10px">
+            <span class="row m-3 justify-content-start lang">
+                {{ test_name }}
+            </span>
+            <div class="row border"></div>
+            <br>
 
-<div class="d-flex justify-content-center">
-    <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <span class="row m-3 justify-content-start lang">
-            {{ test_name }}
-        </span>
-        <div class="row border"></div>
-        <br>
+            <form action="" method="POST">
 
-        <form action="" method="POST">
+                <div id="notes" class=
+                    "row container-fluid">
+                </div>
 
-            <div id="notes" class=
-                "row container-fluid">
-            </div>
+                <div id="questionsList" style="padding-top: 8px;">
+                    {% for question in test_body %}
+                        {% for question_text in question[0].keys() %}
+                            {{ question_text }}
+                            <br>
+                            {% if question[1] == "Единственный ответ" %}
+                                {% for answer in question[0][question_text] %}
+                                    {% for answer_text, is_right in answer.items() %}
+                                        <div style="display: flex;">
+                                            <input id="checkbox" type="radio" name="{{ question_text }}" value="{{ is_right }}">
+                                            <label for="{{ question_text }}">{{ answer_text }}</label>
+                                        </div>
+                                        <br>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
 
-            <div id="questionsList" style="padding-top: 8px;">
-                {% for question in test %}
-                    {% for question_text in question[0].keys() %}
-                        {{ question_text }}
+                            {% if question[1] == "Множественный ответ" %}
+                                {% for answer in question[0][question_text] %}
+                                    {% for answer_text, is_right in answer.items() %}
+                                        <div style="display: flex;">
+                                            <input id="checkbox" type="checkbox" name="{{ question_text }}" value="{{ is_right }}">
+                                            <label for="{{ question_text }}">{{ answer_text }}</label>
+                                        </div>
+                                        <br>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if question[1] == "Краткий свободный ответ" %}
+                                {% for answer in question[0][question_text] %}
+                                    <div style="display: flex;">
+                                        <textarea id="freeAnswer" class="form-control" name="{{ answer }}" rows="1"></textarea>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if question[1] == "Свободный ответ" %}
+                                <textarea class="form-control" name="{{ question_text }}" rows="8"></textarea>
+                            {% endif %}
+                        {% endfor %}
                         <br>
-                        {% if question[1] == "Единственный ответ" %}
-                            {% for answer in question[0][question_text] %}
-                                {% for answer_text, is_right in answer.items() %}
-                                    <div style="display: flex;">
-                                        <input id="checkbox" type="radio" name="{{ question_text }}" value="{{ is_right }}">
-                                        <label for="{{ question_text }}">{{ answer_text }}</label>
-                                    </div>
-                                    <br>
-                                {% endfor %}
-                            {% endfor %}
-                        {% endif %}
-
-                        {% if question[1] == "Множественный ответ" %}
-                            {% for answer in question[0][question_text] %}
-                                {% for answer_text, is_right in answer.items() %}
-                                    <div style="display: flex;">
-                                        <input id="checkbox" type="checkbox" name="{{ question_text }}" value="{{ is_right }}">
-                                        <label for="{{ question_text }}">{{ answer_text }}</label>
-                                    </div>
-                                    <br>
-                                {% endfor %}
-                            {% endfor %}
-                        {% endif %}
-
-                        {% if question[1] == "Краткий свободный ответ" %}
-                            {% for answer in question[0][question_text] %}
-                                <div style="display: flex;">
-                                    <textarea id="freeAnswer" class="form-control" name="{{ answer }}" rows="1"></textarea>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-
-                        {% if question[1] == "Свободный ответ" %}
-                            <textarea class="form-control" name="{{ question_text }}" rows="8"></textarea>
-                        {% endif %}
+                        <hr>
+                        <br>
                     {% endfor %}
-                    <br>
-                    <hr>
-                    <br>
-                {% endfor %}
-            </div>
-            <div style="padding-bottom: 10px;">
-                <button class="btn btn-primary"
-                        id="endTest" style=
-                        "background-color:green;" type="button">
-                        Завершить тест
-                    </button>
-            </div>
-        </form>
+                </div>
+                <div style="padding-bottom: 10px; display: flex;">
+                    <button class="btn btn-primary"
+                            id="endTest" style=
+                            "background-color:green;" type="button">
+                            Завершить тест
+                        </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+{% endfor %}
 <style>
     .scale {
         transition: 0.5s; /* Время эффекта */
@@ -93,7 +94,8 @@
 {% endblock %}
 {% block script %}
     <script>
-    let questions_count = {{ test|length }};
+    let startTime = performance.now();
+    let questions_count = {{ score }};
     let right_answers = 0;
     let endBtn = document.getElementById("endTest");
     endBtn.addEventListener("click", function(e) {
@@ -130,7 +132,26 @@
                 elem.parentNode.insertBefore(wrong, elem);
             }
         });
-        alert("Ваш результат: " + (Math.round(right_answers / questions_count * 10000) / 100) + "%")
+        let result = document.createElement('div');
+        let mark = Math.round(right_answers / questions_count * 10000) / 100
+        let endTime = performance.now()
+        let result_time = Math.round((endTime - startTime) / 100) / 10
+        if (result_time < 60)
+            result_time = "(сек): " + result_time
+        else if(result_time < 3600)
+            result_time = "(мин): " + (Math.round(result_time / 6) / 10)
+        else
+            result_time = "(час): " + (Math.round(result_time / 360) / 10)
+        result.textContent = "Ваш результат: " + right_answers + "/" + questions_count + " (" + mark + "%); Прошло времени " + result_time;
+        let result_color = "";
+        if(mark < 50)
+            result_color = "red"
+        if(mark >= 50 && mark < 80)
+            result_color = "orange"
+        if(mark >= 80)
+            result_color = "green"
+        result.setAttribute("style", "color: " + result_color + "; padding-left: 20px;")
+        endBtn.parentNode.insertBefore(result, endBtn.previousElementSibling);
         endBtn.setAttribute("disabled", "true")
     });
     </script>
