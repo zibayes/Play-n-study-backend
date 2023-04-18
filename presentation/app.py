@@ -229,6 +229,7 @@ def handle_test_constructor():
 @app.route('/test_constructor', methods=["POST"])
 def handle_result_test():
     test_form = request.form.to_dict()
+    print(test_form)
     test_name = test_form.pop("testName")
     questions_count = 0
     for key in test_form.keys():
@@ -239,36 +240,41 @@ def handle_result_test():
     questions = {}
     score = 0
     for i in range(questions_count):
+        right_answers_count = 0
+        question = ""
         for key, value in test_form.items():
+            if "Question-" in key:
+                question = value
+                questions[value] = [[]]
             if "QuestionType-" in key:
                 question_type = value
                 break
-        question = ""
         new_form = copy.deepcopy(test_form)
         if question_type in ("Единственный ответ", "Множественный ответ"):
             is_right_answer = False
             for key, value in test_form.items():
-                if "Question-" in key:
-                    questions[value] = []
-                    question = value
                 if "Answer-" in key and "Right_Answer-" not in key:
-                    questions[question].append({value: is_right_answer})
+                    questions[question][0].append({value: is_right_answer})
                     is_right_answer = False
                 if "Right_Answer-" in key:
+                    right_answers_count += 1
                     is_right_answer = True
-                    score += 1
+                if "score-" in key:
+                    questions[question].append(int(value))
+                    score += int(value)
                 if "QuestionType-" in key:
+                    questions[question].append(right_answers_count)
                     new_form.pop(key)
                     break
                 new_form.pop(key)
             test_form = new_form
         if question_type == "Краткий свободный ответ":
             for key, value in test_form.items():
-                if "Question-" in key:
-                    questions[value] = []
-                    question = value
                 if "Answer-" in key and "Right_Answer-" not in key:
-                    questions[question].append(value)
+                    questions[question][0].append(value)
+                if "score-" in key:
+                    questions[question].append(int(value))
+                    score += int(value)
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
@@ -276,10 +282,10 @@ def handle_result_test():
             test_form = new_form
         if question_type in ("Свободный ответ", "Информационный блок"):
             for key, value in test_form.items():
-                if "Question-" in key:
-                    questions[value] = False
+                if "score-" in key:
                     if question_type == "Свободный ответ":
-                        score += 1
+                        questions[question].append(int(value))
+                        score += int(value)
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
@@ -287,6 +293,7 @@ def handle_result_test():
             test_form = new_form
         test_body.append((questions, question_type))
         questions = {}
+    print(test_body)
     # Заготовка для сохранения теста в БД
     '''
     if test_repository.add_test(json.dumps(test, ensure_ascii=False)):

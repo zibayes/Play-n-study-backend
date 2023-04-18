@@ -64,7 +64,6 @@
     addBtn.addEventListener("click", function(e) {
         // Внешний div
         let div = document.createElement('div');
-        div.setAttribute('style', "padding-bottom: 8px;");
         div.setAttribute('id', "delQue-" + questionIndex);
         let divCard = document.createElement('div');
         // Карточка вопроса
@@ -268,6 +267,36 @@
             }
             answerIndex += 1;
         });
+
+        // Навигационная карточка
+        let divQueCard = document.createElement('div');
+        divQueCard.setAttribute('class', "card");
+        divQueCard.setAttribute('style', "background:#d9d9d9; height: 160px;");
+        divCard.setAttribute('style', "background:#bde0ff; flex: 1;");
+        div.setAttribute('style', "display: flex; padding-bottom: 20px;");
+        let divQueCardBody = document.createElement('div');
+        divQueCardBody.setAttribute('class', "card-body");
+        let formQueGroup = document.createElement('div');
+        formQueGroup.setAttribute('class', "form-group");
+        let question = document.createElement('p');
+        question.textContent = "Вопрос №" + (questionIndex + 1)
+        let inputScore = document.createElement('input');
+        inputScore.setAttribute('name', "score-" + questionIndex);
+        inputScore.setAttribute('required', 'true');
+        inputScore.setAttribute('style', 'width:40px;');
+        inputScore.value = 1
+        let labelScore = document.createElement('label');
+        labelScore.setAttribute('for', "score-" + questionIndex);
+        labelScore.setAttribute('style', "padding-top: 35px;");
+        labelScore.textContent = "Баллы: "
+
+        div.appendChild(divQueCard)
+        divQueCard.appendChild(divQueCardBody)
+        divQueCardBody.appendChild(formQueGroup)
+        formQueGroup.appendChild(question)
+        formQueGroup.appendChild(labelScore)
+        formQueGroup.appendChild(inputScore)
+
         // Создание всей этой позорной иерархии
         div.appendChild(divCard)
         divCard.appendChild(divCardBody)
