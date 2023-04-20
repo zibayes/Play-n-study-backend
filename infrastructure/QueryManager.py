@@ -9,6 +9,7 @@ from infrastructure.repository.CuratorRepository import CuratorRepository
 from infrastructure.repository.ReviewRepository import ReviewRepository
 from infrastructure.repository.TaskRepository import TaskRepository
 from infrastructure.repository.SubRelRepository import SubRelRepository
+from infrastructure.repository.TestRepository import TestRepository
 
 
 class QueryManager:
@@ -30,7 +31,8 @@ class QueryManager:
                  curator_repository: CuratorRepository,
                  review_repository: ReviewRepository,
                  task_repository: TaskRepository,
-                 sub_rel_repository: SubRelRepository
+                 sub_rel_repository: SubRelRepository,
+                 test_repository: TestRepository
                  ):
         self.user_repository = user_repository
         self.achievement_repository = achievement_repository
@@ -41,6 +43,7 @@ class QueryManager:
         self.review_repository = review_repository
         self.task_repository = task_repository
         self.sub_rel_repository = sub_rel_repository
+        self.test_repository = test_repository
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []

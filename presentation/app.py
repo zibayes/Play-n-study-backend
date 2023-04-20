@@ -1,7 +1,7 @@
 import copy
 from os import sys
 
-sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+# sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
@@ -14,8 +14,10 @@ from infrastructure.QueryManager import *
 from infrastructure.repository.AchievementRepository import AchievementRepository
 from infrastructure.repository.UserRepository import UserRepository
 from infrastructure.repository.AchieveRelRepository import AchieveRelRepository
+from infrastructure.repository.TestRepository import TestRepository
 from domain.User import User
 from domain.SubRel import SubRel
+from domain.Test import Test
 import json
 
 
@@ -51,6 +53,7 @@ curator_repository = CuratorRepository(session)
 review_repository = ReviewRepository(session)
 task_repository = TaskRepository(session)
 sub_rel_repository = SubRelRepository(session)
+test_repository = TestRepository(session)
 
 # QueryManager
 query_manager = QueryManager(user_repository=user_repository,
@@ -61,7 +64,8 @@ query_manager = QueryManager(user_repository=user_repository,
                              curator_repository=curator_repository,
                              review_repository=review_repository,
                              task_repository=task_repository,
-                             sub_rel_repository=sub_rel_repository)
+                             sub_rel_repository=sub_rel_repository,
+                             test_repository=test_repository)
 
 
 @login_manager.user_loader
@@ -306,6 +310,7 @@ def handle_result_test():
     user = user_repository.get_user_by_id(user_id)
     return render_template('test.html', user=user, test={test_name: test_body}, score=score)
 
+
 # Заготовка загрузки теста из БД
 '''
 @app.route('/tests/<int:test_id>')
@@ -315,6 +320,37 @@ def handle_load_test():
     user = user_repository.get_user_by_id(user_id)
     return render_template('test.html', user=user, test=test)
 '''
+
+
+@app.route('/save_test', methods=["POST"])
+def handle_save_test():
+    pass
+
+
+# route for debug
+# @app.route('/debug')
+# def handle_debug():
+    # test_content = {
+    #     "name": "Название теста",
+    #     "questions": [
+    #         {"ask": "вопрос1", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'false'}, "correct": "1",
+    #          "score": "2", "type": "solo"},
+    #         {"ask": "вопрос2", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'true'}, "correct": "2",
+    #          "score": "2", "type": "multiple"},
+    #         {"ask": "вопрос3", "answers": {"ответ1": 'true', "ответ2": 'true', "ответ3": 'true'}, "correct": "3",
+    #          "score": "2", "type": "free"},
+    #         {"ask": "вопрос4", "answers": "null", "correct": "null", "score": "2", "type": "detailed_free"},
+    #         {"ask": "вопрос5", "answers": "null", "correct": "null", "score": "null", "type": "info"}
+    #     ]
+    # }
+    # test_content_json = json.dumps(test_content, ensure_ascii=False)
+    # course_id = 1
+    # if test_repository.add_test(Test(None, course_id, test_content_json)):
+    #     return "test dobavlen"
+    # return "error"
+    # test = test_repository.get_test_by_id(1)
+    # print(test.content)
+    # return ""
 
 
 class Bunch(dict):

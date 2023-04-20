@@ -4,7 +4,7 @@ CREATE TABLE users
 (
     user_id serial PRIMARY KEY,
     email text UNIQUE NOT NULL,
-    username varchar(20) UNIQUE NOT NULL,
+    username text UNIQUE NOT NULL,
     city text,
     avatar bytea NULL,
     password text NOT NULL
@@ -29,7 +29,7 @@ CREATE TABLE achievements
     ach_id serial PRIMARY KEY,
     course_id integer REFERENCES courses(course_id),
     name text UNIQUE NOT NULL,
-    image text
+    image bytea
 );
 
 CREATE TABLE tasks
@@ -65,9 +65,14 @@ CREATE TABLE reviews(
     text text
 );
 
-/* todo: full name */
 CREATE TABLE sub_rel(
     sub_rel_id serial PRIMARY KEY,
     user_id int REFERENCES users(user_id),
     sub_id int REFERENCES users(user_id)
 );
+
+CREATE TABLE tests(
+    test_id serial PRIMARY KEY,
+    course_id int REFERENCES courses(course_id),
+    content json
+)
