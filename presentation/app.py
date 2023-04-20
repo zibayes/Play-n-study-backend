@@ -17,7 +17,7 @@ from infrastructure.repository.AchieveRelRepository import AchieveRelRepository
 from infrastructure.repository.TestRepository import TestRepository
 from domain.User import User
 from domain.SubRel import SubRel
-from domain.Test import Test
+from domain.Test import Test, TestContent, Question
 import json
 
 
@@ -153,6 +153,7 @@ def handle_task():
 
 
 
+
 @app.route('/about')
 def about():
     return "About"
@@ -240,86 +241,94 @@ def handle_result_test():
     for key in test_form.keys():
         if "Question-" in key:
             questions_count += 1
-    question_type = ""
     test_body = []
-    questions = {}
     score = 0
     for i in range(questions_count):
         right_answers_count = 0
-        question = ""
+        question = Question()
         for key, value in test_form.items():
             if "Question-" in key:
-                question = value
-                questions[value] = [[]]
+                question.ask = value
+                question.answers = []
             if "QuestionType-" in key:
-                question_type = value
+                if value == "Единственный ответ":
+                    question.type = "solo"
+                if value == "Множественный ответ":
+                    question.type = "multiple"
+                if value == "Краткий свободный ответ":
+                    question.type = "free"
+                if value == "Свободный ответ":
+                    question.type = "detailed_free"
+                if value == "Информационный блок":
+                    question.type = "info"
                 break
         new_form = copy.deepcopy(test_form)
-        if question_type in ("Единственный ответ", "Множественный ответ"):
+        if question.type in ("solo", "multiple"):
             is_right_answer = False
             for key, value in test_form.items():
                 if "Answer-" in key and "Right_Answer-" not in key:
-                    questions[question][0].append({value: is_right_answer})
+                    question.answers.append({value: is_right_answer})
                     is_right_answer = False
                 if "Right_Answer-" in key:
                     right_answers_count += 1
                     is_right_answer = True
                 if "score-" in key:
-                    questions[question].append(int(value))
+                    question.score = int(value)
                     score += int(value)
                 if "QuestionType-" in key:
-                    questions[question].append(right_answers_count)
+                    question.correct = right_answers_count
                     new_form.pop(key)
                     break
                 new_form.pop(key)
             test_form = new_form
-        if question_type == "Краткий свободный ответ":
+        if question.type == "free":
             for key, value in test_form.items():
                 if "Answer-" in key and "Right_Answer-" not in key:
-                    questions[question][0].append(value)
+                    question.answers.append(value)
                 if "score-" in key:
-                    questions[question].append(int(value))
+                    question.score = int(value)
                     score += int(value)
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
                 new_form.pop(key)
             test_form = new_form
-        if question_type in ("Свободный ответ", "Информационный блок"):
+        if question.type in ("detailed_free", "info"):
             for key, value in test_form.items():
                 if "score-" in key:
-                    if question_type == "Свободный ответ":
-                        questions[question].append(int(value))
+                    if question.type == "detailed_free":
+                        question.score = int(value)
                         score += int(value)
                 if "QuestionType-" in key:
                     new_form.pop(key)
                     break
                 new_form.pop(key)
             test_form = new_form
-        test_body.append((questions, question_type))
-        questions = {}
-    print(test_body)
-    # Заготовка для сохранения теста в БД
-    '''
-    if test_repository.add_test(json.dumps(test, ensure_ascii=False)):
+        test_body.append(question)
+    test_content = TestContent(test_name, test_body)
+
+    course_id = 1
+    if test_repository.add_test(Test(None, course_id, test_content.toJSON())):
         flash('Тест успешно сохранён', 'success')
     else:
         flash('Ошибка при сохранении теста', 'error')
-    '''
+
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
-    return render_template('test.html', user=user, test={test_name: test_body}, score=score)
+    print(test_content.toJSON())
+    return render_template('test.html', user=user, test=test_content, score=score)
 
 
 # Заготовка загрузки теста из БД
-'''
 @app.route('/tests/<int:test_id>')
-def handle_load_test():
-    test = json.loads(test_repository.get_test_by_id(test_id))
+def handle_load_test(test_id):
+    test = test_repository.get_test_by_id(test_id=test_id)
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
-    return render_template('test.html', user=user, test=test)
-'''
+    total_score = 0
+    for question in test.content.questions:
+        total_score += question.score
+    return render_template('test.html', user=user, test=test.content, score=total_score)
 
 
 @app.route('/save_test', methods=["POST"])

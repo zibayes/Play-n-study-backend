@@ -9,110 +9,108 @@
         let questionsScore = []
         let questionsRightAnswers = []
     </script>
-{% for test_name, test_body in test.items() %}
-    <div class="d-flex justify-content-center">
-        <div class="container m-5" style="background-color: white; border-radius: 10px">
-            <span class="row m-3 justify-content-start lang">
-                {{ test_name }}
-            </span>
-            <div class="row border"></div>
-            <br>
 
-            <form action="" method="POST">
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang">
+            {{ test.name }}
+        </span>
+        <div class="row border"></div>
+        <br>
 
-                <div id="notes" class=
-                    "row container-fluid">
-                </div>
+        <form action="" method="POST">
 
-                <div id="questionsList" style="padding-top: 8px;">
-                    {% set questionNum = namespace(value=0) %}
-                    {% for question in test_body %}
-                        {% for question_text in question[0].keys() %}
-                            {% set questionNum.value = questionNum.value + 1 %}
-                            <div style="display: flex; padding-bottom: 20px">
-                                <div class="card" style="background:#d9d9d9; height: 135px;">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            {% if question[1] == "Информационный блок" %}
-                                                <p>Информация</p>
-                                            {% else %}
-                                                <p>Вопрос №{{ questionNum.value }}</p>
-                                                <p style="padding-top: 20px;">Баллы: {{ question[0][question_text][1] }}</p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
+            <div id="notes" class=
+                "row container-fluid">
+            </div>
 
-                                <script>
-                                    questionsScore.push({{ question[0][question_text][1] }})
-                                    {% if question[0][question_text]|length == 3 %}
-                                        questionsRightAnswers.push({{ question[0][question_text][2] }})
+            <div id="questionsList" style="padding-top: 8px;">
+                {% set questionNum = namespace(value=0) %}
+                {% for question in test.questions %}
+                    {% set questionNum.value = questionNum.value + 1 %}
+                    <div style="display: flex; padding-bottom: 20px;">
+                        <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    {% if question.type == "info" %}
+                                        <p>Информация</p>
                                     {% else %}
-                                        questionsRightAnswers.push(1)
+                                        <p>Вопрос №{{ questionNum.value }}</p>
+                                        <p>Баллы: {{ question.score }}</p>
                                     {% endif %}
-                                </script>
-
-                                <div class="card" style="background:#bde0ff; flex: 1;">
-                                    <div class="card-body">
-                                        <div class="form-group" id="scoreCount">
-                                            {{ question_text }}
-                                            {% if question[1] == "Единственный ответ" %}
-                                                <hr>
-                                                {% for answer in question[0][question_text][0] %}
-                                                    {% for answer_text, is_right in answer.items() %}
-                                                        <div style="display: flex;">
-                                                            <input id="checkbox" type="radio" name="{{ question_text }}" value="{{ is_right }}">
-                                                            <label for="{{ question_text }}">{{ answer_text }}</label>
-                                                        </div>
-                                                        <br>
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            {% endif %}
-
-                                            {% if question[1] == "Множественный ответ" %}
-                                                <hr>
-                                                {% for answer in question[0][question_text][0] %}
-                                                    {% for answer_text, is_right in answer.items() %}
-                                                        <div style="display: flex;">
-                                                            <input id="checkbox" type="checkbox" name="{{ question_text }}" value="{{ is_right }}">
-                                                            <label for="{{ question_text }}">{{ answer_text }}</label>
-                                                        </div>
-                                                        <br>
-                                                    {% endfor %}
-                                                {% endfor %}
-                                            {% endif %}
-
-                                            {% if question[1] == "Краткий свободный ответ" %}
-                                                <hr>
-                                                {% for answer in question[0][question_text][0] %}
-                                                    <div style="display: flex;">
-                                                        <textarea id="freeAnswer" class="form-control" name="{{ answer }}" rows="1"></textarea>
-                                                    </div>
-                                                {% endfor %}
-                                            {% endif %}
-
-                                            {% if question[1] == "Свободный ответ" %}
-                                                <hr>
-                                                <textarea class="form-control" name="{{ question_text }}" rows="8"></textarea>
-                                            {% endif %}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
-                        {% endfor %}
-                    {% endfor %}
-                </div>
-                <div style="padding-bottom: 10px; display: flex;">
-                    <button class="btn btn-primary"
-                            id="endTest" style=
-                            "background-color:green;" type="button">
-                            Завершить тест
-                        </button>
-                </div>
-            </form>
-        </div>
+                        </div>
+
+                        <script>
+                            questionsScore.push({{ question.score }})
+                            {% if question.correct %}
+                                questionsRightAnswers.push({{ question.correct }})
+                            {% else %}
+                                questionsRightAnswers.push(1)
+                            {% endif %}
+                        </script>
+
+                        <div class="card" style="background:#bde0ff; flex: 1;">
+                            <div class="card-body">
+                                <div class="form-group" id="scoreCount">
+                                    {{ question.ask }}
+                                    {% if question.type == "solo" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for answer_text, is_right in answer.items() %}
+                                                <div style="display: flex;">
+                                                    <input id="checkbox" type="radio" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    <label for="{{ question.ask }}">{{ answer_text }}</label>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "multiple" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for answer_text, is_right in answer.items() %}
+                                                <div style="display: flex;">
+                                                    <input id="checkbox" type="checkbox" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    <label for="{{ question.ask }}">{{ answer_text }}</label>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "free" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            <div style="display: flex;">
+                                                <textarea id="freeAnswer" class="form-control" name="{{ answer }}" rows="1"></textarea>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "detailed_free" %}
+                                        <hr>
+                                        <textarea class="form-control" name="{{ question.ask }}" rows="8"></textarea>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div style="padding-bottom: 10px; display: flex;">
+                <button class="btn btn-primary"
+                        id="endTest" style=
+                        "background-color:green;" type="button">
+                        Завершить тест
+                    </button>
+            </div>
+        </form>
     </div>
-{% endfor %}
+</div>
+
 <style>
     .scale {
         transition: 0.5s; /* Время эффекта */
