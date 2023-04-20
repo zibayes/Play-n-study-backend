@@ -271,7 +271,7 @@
         // Навигационная карточка
         let divQueCard = document.createElement('div');
         divQueCard.setAttribute('class', "card");
-        divQueCard.setAttribute('style', "background:#d9d9d9; height: 160px;");
+        divQueCard.setAttribute('style', "background:#d9d9d9; height: 120px; margin-right: 10px;");
         divCard.setAttribute('style', "background:#bde0ff; flex: 1;");
         div.setAttribute('style', "display: flex; padding-bottom: 20px;");
         let divQueCardBody = document.createElement('div');
@@ -287,7 +287,6 @@
         inputScore.value = 1
         let labelScore = document.createElement('label');
         labelScore.setAttribute('for', "score-" + questionIndex);
-        labelScore.setAttribute('style', "padding-top: 35px;");
         labelScore.textContent = "Баллы: "
 
         div.appendChild(divQueCard)
