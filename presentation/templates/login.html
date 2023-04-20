@@ -10,9 +10,9 @@
 {% endblock %}
 {% block content %}
 <section class="vh-100 bg-image">
-  <div class="mask d-flex align-items-center h-100 ">
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
+  <div class="mask d-flex align-items-center ">
+    <div class="container" style="padding-bottom: 300px">
+      <div class="row d-flex justify-content-center align-items-center">
         <div class="col-12 col-md-9 col-lg-7 col-xl-6">
           <div class="card" style="border-radius: 15px;">
             <div class="card-body p-5">
@@ -21,28 +21,19 @@
               <div class="flash-error">{{msg}}</div>
               {% endfor %}
               <form action="/login" method="POST">
-                <div class="form-outline mb-6">
+                <div class="form-outline mb-4">
                   <input type="text" name="email" placeholder="Ваша почта" class="form-control form-control-lg" />
                 </div>
-                <br>
-                <div class="form-outline mb-6">
+                <div class="form-outline mb-4">
                   <input type="password" name="password" placeholder="Ваш пароль" class="form-control form-control-lg" />
                 </div>
-
-                <!--                                <div class="form-check d-flex justify-content-center mb-5">-->
-                <!--                                    <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3cg" />-->
-                <!--                                    <label class="form-check-label">-->
-                <!--                                        I agree all statements in <a href="#!" class="text-body"><u>Terms of service</u></a>-->
-                <!--                                    </label>-->
-                <!--                                </div>-->
-                <br>
-                <br>
                 <div class="d-flex justify-content-center">
                   <button type="submit"
                           class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Войти</button>
                 </div>
-
-                <p style="padding-left: 40px" class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегистрируйтесь</u></a></p>
+                <div style="text-align: center">
+                  <p class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегистрируйтесь</u></a></p>
+                </div>
               </form>
             </div>
           </div>

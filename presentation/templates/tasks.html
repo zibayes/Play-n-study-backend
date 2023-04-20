@@ -26,7 +26,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Выйти</button>
-        <button type="button" id="1" class="btn btn-primary" data-mdb-dismiss="modal">Сохранить</button>
+        <button type="button" id="save" class="btn btn-primary" data-mdb-dismiss="modal">Сохранить</button>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@
 
 
 <div class="d-flex justify-content-center">
-  <div class="container border border-1 rounded m-4" style="background-color: white;">
+  <div class="container border border-1 rounded m-5" style="background-color: white; border-radius: 10px">
     <div class="container col-md-12 ">
       <div class="row">
         <!-- Pills navs -->
@@ -170,23 +170,58 @@
 <!--Додумать удаление всего div'a и прикрепить к ним id-->
 <script>
   var flag_id = 0
-  $("#1").click(function (event){
+  $("#save").click(function (event){
     flag_id++
-    let div = $("#notes")
+    let div = document.getElementById("notes")
     let name = $('#recipient-name').val()
     let message = $("#message-text").val()
-    let div_add = $('<div class="container col-md-3 mt-5" id={flag_id}>\n' +
-            '      <div class="toast show fade mx-auto" id="static-example1" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">\n' +
-            '        <div class="toast-header toast-primary">\n' +
-            '          <strong class="me-auto lang" key="form">' + name + '</strong>\n' +
-            '          <small>0 mins ago</small>\n' +
-            '          <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>\n' +
-            '        </div>\n' +
-            '        <div class="toast-body">' + message + '</div>\n' +
-            '      </div>\n' +
-            '    </div>')
-    div.append(div_add)
+
+    let div_add = document.createElement("div")
+    div_add.id = flag_id
+    div_add.setAttribute("class", "container col-md-3 mt-5")
+    let div_element = document.createElement("div")
+    div_element.setAttribute("class", "toast show fade mx-auto")
+    div_element.setAttribute("role", "alert")
+    div_element.setAttribute("aria-live", "assertive")
+    div_element.setAttribute("aria-atomic", "true")
+    div_element.setAttribute("data-mdb-autohide", "false")
+    div_element.id = "static-example1"
+    let div_toast = document.createElement("div")
+    div_toast.setAttribute("class", "toast-header toast-primary")
+    let strong = document.createElement("strong")
+    strong.setAttribute("class", "me-auto lang")
+    strong.setAttribute("key", "form")
+    strong.textContent = name
+    let small = document.createElement("small")
+    small.textContent = "0 mins ago"
+    let button = document.createElement("button")
+    button.id = "buttons"
+    button.name = flag_id
+    button.type = "button"
+    button.setAttribute("class", "btn-close")
+    button.setAttribute("data-mdb-dismiss", "toast")
+    button.setAttribute("aria-label", "Close")
+    button.setAttribute("onclick", "deleteElement(this.name)")
+    let div_end = document.createElement("div")
+    div_end.setAttribute("class", "toast_body")
+    div_end.style = "padding: 10px"
+    div_end.textContent = message
+
+
+
+    div_add.appendChild(div_element)
+    div_element.appendChild(div_toast)
+    div_toast.appendChild(strong)
+    div_toast.appendChild(small)
+    div_toast.appendChild(button)
+    div_element.appendChild(div_end)
+    div.appendChild(div_add)
+
   })
+
+  function deleteElement(index) {
+    document.getElementById(index).remove()
+  }
 
 </script>
 {% endblock %}

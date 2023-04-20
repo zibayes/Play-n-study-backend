@@ -125,14 +125,11 @@ def handle_register():
             flash(error, 'error')
     return render_template(current_template)
 
-
-@app.route('/')
 @app.route('/index')
 @app.route('/me')
 @login_required
 def handle_me():
-    # user_id = current_user.get_id()
-    user_id = 101
+    user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     user.achievements = query_manager.get_user_achievements(user_id)
     user.courses = query_manager.get_user_courses(user_id)
@@ -143,6 +140,13 @@ def handle_me():
     user.sub_to_count = len(user.sub_to) if user.sub_to else 0
 
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
+
+@app.route('/')
+def handle_task():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('tasks.html', user=user)
+
 
 
 @app.route('/about')
@@ -205,11 +209,8 @@ def handle_subscriptions(user_id):
     return render_template("subscriptions.html", user=user, found=None, user_id=user_id)
 
 
-@app.route('/task')
-def handle_task():
-    user_id = current_user.get_id()
-    user = user_repository.get_user_by_id(user_id)
-    return render_template('tasks.html', user=user)
+
+
 
 
 @app.route('/reviews')
@@ -341,7 +342,11 @@ def handle_achievements(user_id):
     user = user_repository.get_user_by_id(user_id)
     return render_template("achievements.html", user=user, achievements=achievements)
 
-
+@app.route('/course')
+def handle_course():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('course.html', user=user)
 @app.route('/information')
 def handle_information():
     user_id = current_user.get_id()

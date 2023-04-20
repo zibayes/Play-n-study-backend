@@ -6,16 +6,12 @@
 {% block style %}
 <link href="static/css/reg.css" rel="stylesheet">
 
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{cat}}">{{msg}}</div>
-{% endfor %}
-
 {% endblock %}
 {% block content %}
 <section class="vh-100 bg-image">
-    <div class="mask d-flex align-items-center h-100 ">
-        <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="mask d-flex align-items-center">
+        <div class="container" style="padding-bottom: 300px">
+            <div class="row d-flex justify-content-center align-items-center">
                 <div class="col-12 col-md-9 col-lg-7 col-xl-6">
                     <div class="card" style="border-radius: 15px;">
                         <div class="card-body p-5">
@@ -46,14 +42,12 @@
 <!--                                        I agree all statements in <a href="#!" class="text-body"><u>Terms of service</u></a>-->
 <!--                                    </label>-->
 <!--                                </div>-->
-                                <br>
-                                <br>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit"
                                             class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Зарегестрироваться</button>
                                 </div>
 
-                                <p style="padding-left: 40px" class=" text-muted mt-5 mb-0">У вас уже создан аккаунт? <a href="login" class="fw-bold text-muted text-body"><u>Войдите</u></a></p>
+                                <p style="text-align: center" class=" text-muted mt-5 mb-0">У вас уже создан аккаунт? <a href="login" class="fw-bold text-muted text-body"><u>Войдите</u></a></p>
                             </form>
                         </div>
                     </div>
