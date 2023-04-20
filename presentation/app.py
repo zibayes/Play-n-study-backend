@@ -1,7 +1,7 @@
 import copy
 from os import sys
 
-# sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, url_for, flash, make_response
