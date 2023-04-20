@@ -9,6 +9,7 @@ from domain.Curator import Curator
 from domain.Review import Review
 from domain.Task import Task
 from domain.SubRel import SubRel
+from domain.Test import Test, TestContent
 from presentation.models.models import *
 
 
@@ -83,3 +84,9 @@ def sub_db_to_sub(sub: Type[SubRelModel]):
     return SubRel(sub_rel_id=sub.sub_rel_id,
                   user_id=sub.user_id,
                   sub_id=sub.sub_id)
+
+
+def test_db_to_test(test_db: Type[TestsModel]):
+    test = Test(test_id=test_db.test_id, course_id=test_db.course_id, content=None)
+    test.content = TestContent.from_json(test_db.content)
+    return test

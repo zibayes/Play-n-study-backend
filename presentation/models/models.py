@@ -1,4 +1,4 @@
-from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean
+from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean, JSON
 from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -10,7 +10,7 @@ class UsersModel(Base):
 
     user_id = Column(Integer, primary_key=True)
     email = Column(Text, unique=True, nullable=False)
-    username = Column(String(20), unique=True, nullable=False)
+    username = Column(Text, unique=True, nullable=False)
     city = Column(Text, nullable=False)
     avatar = Column(LargeBinary, nullable=True, default=None)
     password = Column(Text, nullable=False)
@@ -214,3 +214,17 @@ class SubRelModel(Base):
         self.sub_id = sub_id
 
     # __repr__ impl
+
+
+class TestsModel(Base):
+    __tablename__ = 'tests'
+    test_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    content = Column(JSON)
+
+    def __init__(self, course_id, content):
+        self.course_id = course_id
+        self.content = content
+
+    # __repr__ impl
+
