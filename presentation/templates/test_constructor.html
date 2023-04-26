@@ -56,6 +56,33 @@
 {% endblock %}
 {% block script %}
     <script>
+    tasksListElement.addEventListener(`dragover`, (evt) => {
+      // Разрешаем сбрасывать элементы в эту область
+      evt.preventDefault();
+
+      // Находим перемещаемый элемент
+      const activeElement = tasksListElement.querySelector(`.selected`);
+      // Находим элемент, над которым в данный момент находится курсор
+      const currentElement = evt.target;
+      // Проверяем, что событие сработало:
+      // 1. не на том элементе, который мы перемещаем,
+      // 2. именно на элементе списка
+      const isMoveable = activeElement !== currentElement &&
+        currentElement.classList.contains(`tasks__item`);
+
+      // Если нет, прерываем выполнение функции
+      if (!isMoveable) {
+        return;
+      }
+
+      // Находим элемент, перед которым будем вставлять
+      const nextElement = (currentElement === activeElement.nextElementSibling) ?
+          currentElement.nextElementSibling :
+          currentElement;
+
+      // Вставляем activeElement перед nextElement
+      tasksListElement.insertBefore(activeElement, nextElement);
+    });
 
     // Добавление вопроса
     let addBtn = document.getElementById("addQuestion");
@@ -65,6 +92,13 @@
         // Внешний div
         let div = document.createElement('div');
         div.setAttribute('id', "delQue-" + questionIndex);
+        div.setAttribute('draggable', "True");
+        div.addEventListener(`dragstart`, (evt) => {
+          evt.target.setAttribute('style', "background-color: #DDDDDD; display: flex; padding-bottom: 20px;");
+        })
+        div.addEventListener(`dragend`, (evt) => {
+          evt.target.setAttribute('style', "background-color: transparent; display: flex; padding-bottom: 20px;");
+        });
         let divCard = document.createElement('div');
         // Карточка вопроса
         divCard.setAttribute('class', "card");

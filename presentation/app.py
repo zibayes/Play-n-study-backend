@@ -1,4 +1,5 @@
 import copy
+import time
 from os import sys
 
 sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
@@ -129,6 +130,7 @@ def handle_register():
             flash(error, 'error')
     return render_template(current_template)
 
+
 @app.route('/index')
 @app.route('/me')
 @login_required
@@ -145,13 +147,12 @@ def handle_me():
 
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
+
 @app.route('/')
 def handle_task():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     return render_template('tasks.html', user=user)
-
-
 
 
 @app.route('/about')
@@ -212,10 +213,6 @@ def handle_subscriptions(user_id):
         found = query_manager.get_users_by_query(query)
         return render_template("subscriptions.html", user=user, found=found, user_id=user_id)
     return render_template("subscriptions.html", user=user, found=None, user_id=user_id)
-
-
-
-
 
 
 @app.route('/reviews')
@@ -328,8 +325,43 @@ def handle_load_test(test_id):
     for question in test.content.questions:
         if question.score:
             total_score += question.score
-    return render_template('test.html', user=user, test=test.content, score=total_score)
+    return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time())
 
+
+@app.route('/tests/<int:test_id>', methods=["POST"])
+def handle_check_test(test_id):
+    test = test_repository.get_test_by_id(test_id=test_id)
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    total_current_score = 0
+    total_score = 0
+    test_res = request.form.to_dict()
+    total_time = time.time() - float(test_res['time'])
+    for question in test.content.questions:
+        question.current_score = 0
+        for key, value in test_res.items():
+            if key == question.ask or question.ask + '-' in key:
+                if question.type in ("solo", "multiple"):
+                    for que_part in question.answers:
+                        if value in que_part.keys():
+                            if que_part[value]:
+                                que_part[value] = "right"
+                                question.current_score += question.score / question.correct
+                            else:
+                                que_part[value] = "wrong"
+                elif question.type in ("free", "detailed_free"):
+                    question.answer = value
+                    question.is_correct = False
+                    for answer in question.answers:
+                        if value == answer:
+                            question.current_score += question.score
+                            question.is_correct = True
+        if question.score:
+            total_score += question.score
+            total_current_score += question.current_score
+        question.current_score = ("%.2f" % question.current_score).replace(".00", "")
+    result = round(float(total_current_score) / float(total_score) * 100, 2)
+    return render_template('test_result.html', user=user, test=test.content, score=total_score, total_score=total_current_score, result=result, total_time=total_time)
 
 @app.route('/save_test', methods=["POST"])
 def handle_save_test():
@@ -339,27 +371,27 @@ def handle_save_test():
 # route for debug
 # @app.route('/debug')
 # def handle_debug():
-    # test_content = {
-    #     "name": "Название теста",
-    #     "questions": [
-    #         {"ask": "вопрос1", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'false'}, "correct": "1",
-    #          "score": "2", "type": "solo"},
-    #         {"ask": "вопрос2", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'true'}, "correct": "2",
-    #          "score": "2", "type": "multiple"},
-    #         {"ask": "вопрос3", "answers": {"ответ1": 'true', "ответ2": 'true', "ответ3": 'true'}, "correct": "3",
-    #          "score": "2", "type": "free"},
-    #         {"ask": "вопрос4", "answers": "null", "correct": "null", "score": "2", "type": "detailed_free"},
-    #         {"ask": "вопрос5", "answers": "null", "correct": "null", "score": "null", "type": "info"}
-    #     ]
-    # }
-    # test_content_json = json.dumps(test_content, ensure_ascii=False)
-    # course_id = 1
-    # if test_repository.add_test(Test(None, course_id, test_content_json)):
-    #     return "test dobavlen"
-    # return "error"
-    # test = test_repository.get_test_by_id(1)
-    # print(test.content)
-    # return ""
+# test_content = {
+#     "name": "Название теста",
+#     "questions": [
+#         {"ask": "вопрос1", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'false'}, "correct": "1",
+#          "score": "2", "type": "solo"},
+#         {"ask": "вопрос2", "answers": {"ответ1": 'true', "ответ2": 'false', "ответ3": 'true'}, "correct": "2",
+#          "score": "2", "type": "multiple"},
+#         {"ask": "вопрос3", "answers": {"ответ1": 'true', "ответ2": 'true', "ответ3": 'true'}, "correct": "3",
+#          "score": "2", "type": "free"},
+#         {"ask": "вопрос4", "answers": "null", "correct": "null", "score": "2", "type": "detailed_free"},
+#         {"ask": "вопрос5", "answers": "null", "correct": "null", "score": "null", "type": "info"}
+#     ]
+# }
+# test_content_json = json.dumps(test_content, ensure_ascii=False)
+# course_id = 1
+# if test_repository.add_test(Test(None, course_id, test_content_json)):
+#     return "test dobavlen"
+# return "error"
+# test = test_repository.get_test_by_id(1)
+# print(test.content)
+# return ""
 
 
 class Bunch(dict):
@@ -387,11 +419,14 @@ def handle_achievements(user_id):
     user = user_repository.get_user_by_id(user_id)
     return render_template("achievements.html", user=user, achievements=achievements)
 
+
 @app.route('/course')
 def handle_course():
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
     return render_template('course.html', user=user)
+
+
 @app.route('/information')
 def handle_information():
     user_id = current_user.get_id()
