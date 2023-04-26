@@ -56,32 +56,33 @@
 {% endblock %}
 {% block script %}
     <script>
-    tasksListElement.addEventListener(`dragover`, (evt) => {
-      // Разрешаем сбрасывать элементы в эту область
-      evt.preventDefault();
+    function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
+    let questions_list = document.getElementById("questionsList")
+    questions_list.addEventListener(`dragover`, (evt) => {
+        // Разрешаем сбрасывать элементы в эту область
+        evt.preventDefault();
 
-      // Находим перемещаемый элемент
-      const activeElement = tasksListElement.querySelector(`.selected`);
-      // Находим элемент, над которым в данный момент находится курсор
-      const currentElement = evt.target;
-      // Проверяем, что событие сработало:
-      // 1. не на том элементе, который мы перемещаем,
-      // 2. именно на элементе списка
-      const isMoveable = activeElement !== currentElement &&
-        currentElement.classList.contains(`tasks__item`);
+        // Находим перемещаемый элемент
+        const activeElement = questions_list.querySelector(`.selected`);
+        // Находим элемент, над которым в данный момент находится курсор
+        const currentElement = evt.target;
+        // Проверяем, что событие сработало:
+        // 1. не на том элементе, который мы перемещаем,
+        // 2. именно на элементе списка
+        const isMoveable = activeElement !== currentElement &&
+        currentElement.classList.contains(`question_div`) && activeElement.classList.contains(`question_div`);
 
-      // Если нет, прерываем выполнение функции
-      if (!isMoveable) {
-        return;
-      }
+        // Если нет, прерываем выполнение функции
+        if (!isMoveable)
+            return;
 
-      // Находим элемент, перед которым будем вставлять
-      const nextElement = (currentElement === activeElement.nextElementSibling) ?
+        // Находим элемент, перед которым будем вставлять
+        const nextElement = (currentElement === activeElement.nextElementSibling) ?
           currentElement.nextElementSibling :
           currentElement;
 
-      // Вставляем activeElement перед nextElement
-      tasksListElement.insertBefore(activeElement, nextElement);
+        // Вставляем activeElement перед nextElement
+        questions_list.insertBefore(activeElement, nextElement);
     });
 
     // Добавление вопроса
@@ -92,16 +93,38 @@
         // Внешний div
         let div = document.createElement('div');
         div.setAttribute('id', "delQue-" + questionIndex);
-        div.setAttribute('draggable', "True");
-        div.addEventListener(`dragstart`, (evt) => {
-          evt.target.setAttribute('style', "background-color: #DDDDDD; display: flex; padding-bottom: 20px;");
-        })
-        div.addEventListener(`dragend`, (evt) => {
-          evt.target.setAttribute('style', "background-color: transparent; display: flex; padding-bottom: 20px;");
-        });
-        let divCard = document.createElement('div');
+        div.setAttribute('class', "question_div");
         // Карточка вопроса
+        let divCard = document.createElement('div');
         divCard.setAttribute('class', "card");
+
+        // Drag'n'drop область
+        let divDragCard = document.createElement('div');
+        divDragCard.setAttribute('style', "height: 35px; justify-content: center; display: flex;");
+        let dragImg = document.createElement('img');
+        dragImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragImg.setAttribute('style', "height: 35px;");
+        divDragCard.setAttribute('draggable', "True");
+        divDragCard.addEventListener(`mouseover`, (evt) => {
+          document.body.style.cursor = 'move';
+        })
+        divDragCard.addEventListener(`mouseout`, (evt) => {
+          document.body.style.cursor = '';
+        })
+        divDragCard.addEventListener(`dragstart`, (evt) => {
+          evt.dataTransfer.setDragImage(div, div.offsetWidth / 1.78, div.offsetHeight / 18)
+          setTimeout(() => {
+              div.classList.add(`selected`);
+              div.style.visibility  = "hidden"
+          }, 0);
+        })
+        divDragCard.addEventListener(`dragend`, (evt) => {
+          setTimeout(() => {
+              div.classList.remove(`selected`);
+              div.style.removeProperty("visibility")
+          }, 0);
+        });
+
         let divCardBody = document.createElement('div');
         divCardBody.setAttribute('class', "card-body");
         let formGroup = document.createElement('div');
@@ -121,6 +144,7 @@
         let divTextLabel = document.createElement('div');
         divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
         divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+        divTextLabel.setAttribute('class', "answer_div");
         let textareaAnswer = document.createElement('textarea');
         textareaAnswer.setAttribute('class', "form-control");
         textareaAnswer.setAttribute('placeholder', "Текст ответа");
@@ -145,7 +169,7 @@
         buttonDelQuestion.setAttribute('class', "btn");
         buttonDelQuestion.setAttribute('type', "button");
         buttonDelQuestion.setAttribute('style', "background-color:red; color:white;");
-        buttonDelQuestion.setAttribute('onclick', "deleteQuestion(\"delQue-\" + this.id)");
+        buttonDelQuestion.setAttribute('onclick', "deleteElement(\"delQue-\" + this.id)");
         buttonDelQuestion.textContent = "Удалить вопрос"
         buttonDelQuestion.setAttribute('id', questionIndex);
         let buttonUpQuestion = document.createElement('button');
@@ -173,11 +197,50 @@
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-        buttonDel.setAttribute('onclick', "deleteAnswer(\"delAns-\" + this.id)");
+        buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
         buttonDel.textContent = "✖"
         buttonDel.setAttribute('id', answerIndex);
         let divDel = document.createElement('div');
         divDel.setAttribute('style', "padding-left: 5px;");
+
+        divIndex.addEventListener(`dragover`, (evt) => {
+            evt.preventDefault();
+            const activeElement = questions_list.querySelector(`.selected`);
+            const currentElement = evt.target;
+            const isMoveable = activeElement !== currentElement &&
+            currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndex);
+            if (!isMoveable)
+                return;
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+              currentElement.nextElementSibling :
+              currentElement;
+            divIndex.insertBefore(activeElement, nextElement);
+        });
+        let divAnsCard = document.createElement('div');
+        divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+        let dragAnsImg = document.createElement('img');
+        dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+        divAnsCard.setAttribute('draggable', "True");
+        divAnsCard.addEventListener(`mouseover`, (evt) => {
+          document.body.style.cursor = 'move';
+        })
+        divAnsCard.addEventListener(`mouseout`, (evt) => {
+          document.body.style.cursor = '';
+        })
+        divAnsCard.addEventListener(`dragstart`, (evt) => {
+          evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+          setTimeout(() => {
+              divTextLabel.classList.add(`selected`);
+              divTextLabel.style.visibility  = "hidden"
+          }, 0);
+        })
+        divAnsCard.addEventListener(`dragend`, (evt) => {
+          setTimeout(() => {
+              divTextLabel.classList.remove(`selected`);
+              divTextLabel.style.removeProperty("visibility")
+          }, 0);
+        });
 
         let questionType = document.createElement('select')
         questionType.setAttribute('class', "form-select");
@@ -221,6 +284,7 @@
                 let divTextLabel = document.createElement('div');
                 divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
                 divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                divTextLabel.setAttribute('class', "answer_div");
                 let textareaAnswer = document.createElement('textarea');
                 textareaAnswer.setAttribute('class', "form-control");
                 textareaAnswer.setAttribute('placeholder', "Текст ответа");
@@ -242,17 +306,59 @@
                 let buttonDel = document.createElement('button');
                 buttonDel.setAttribute('class', "btn");
                 buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-                buttonDel.setAttribute('onclick', "deleteAnswer(\"delAns-\" + this.id)");
+                buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
                 buttonDel.textContent = "✖"
                 buttonDel.setAttribute('id', answerIndex);
                 let divDel = document.createElement('div');
                 divDel.setAttribute('style', "padding-left: 5px;");
+
+                divIndexNew.addEventListener(`dragover`, (evt) => {
+                    evt.preventDefault();
+                    const activeElement = questions_list.querySelector(`.selected`);
+                    const currentElement = evt.target;
+                    const isMoveable = activeElement !== currentElement &&
+                    currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
+                    if (!isMoveable)
+                        return;
+                    const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                      currentElement.nextElementSibling :
+                      currentElement;
+                    divIndexNew.insertBefore(activeElement, nextElement);
+                });
+                let divAnsCard = document.createElement('div');
+                divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+                let dragAnsImg = document.createElement('img');
+                dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+                dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+                divAnsCard.setAttribute('draggable', "True");
+                divAnsCard.addEventListener(`mouseover`, (evt) => {
+                  document.body.style.cursor = 'move';
+                })
+                divAnsCard.addEventListener(`mouseout`, (evt) => {
+                  document.body.style.cursor = '';
+                })
+                divAnsCard.addEventListener(`dragstart`, (evt) => {
+                  evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+                  setTimeout(() => {
+                      divTextLabel.classList.add(`selected`);
+                      divTextLabel.style.visibility  = "hidden"
+                  }, 0);
+                })
+                divAnsCard.addEventListener(`dragend`, (evt) => {
+                  setTimeout(() => {
+                      divTextLabel.classList.remove(`selected`);
+                      divTextLabel.style.removeProperty("visibility")
+                  }, 0);
+                });
+
                 divIndexNew.appendChild(divTextLabel)
                 label.appendChild(input)
                 divTextLabel.appendChild(label)
                 divTextLabel.appendChild(textareaAnswer)
                 divDel.appendChild(buttonDel)
                 divTextLabel.appendChild(divDel)
+                divTextLabel.appendChild(divAnsCard)
+                divAnsCard.appendChild(dragAnsImg)
                 let divIndexTmp = document.getElementById(divIndex.id)
                 divIndexTmp.replaceWith(divIndexNew);
                 let buttonNew = document.getElementById(button.id)
@@ -332,6 +438,8 @@
 
         // Создание всей этой позорной иерархии
         div.appendChild(divCard)
+        divCard.appendChild(divDragCard)
+        divDragCard.appendChild(dragImg)
         divCard.appendChild(divCardBody)
         divCardBody.appendChild(formGroup)
         formGroup.appendChild(textareaQuestion)
@@ -343,6 +451,8 @@
         divTextLabel.appendChild(textareaAnswer)
         divDel.appendChild(buttonDel)
         divTextLabel.appendChild(divDel)
+        divTextLabel.appendChild(divAnsCard)
+        divAnsCard.appendChild(dragAnsImg)
         formGroup.appendChild(br)
         divBT.appendChild(button)
         divController.appendChild(divBT)
@@ -367,7 +477,8 @@
     function addAnswerOnButtonClick(index) {
         let div = document.createElement('div');
         div.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
-        div.setAttribute('id', "ans-" + answerIndex);
+        div.setAttribute('id', "delAns-" + answerIndex);
+        div.setAttribute('class', "answer_div");
         let textarea = document.createElement('textarea');
         textarea.setAttribute('class', "form-control");
         textarea.setAttribute('placeholder', "Текст ответа");
@@ -391,29 +502,53 @@
         let buttonDel = document.createElement('button');
         buttonDel.setAttribute('class', "btn");
         buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-        buttonDel.setAttribute('onclick', "deleteAnswer(\"ans-\" + this.id)");
+        buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
         buttonDel.textContent = "✖"
         buttonDel.setAttribute('id', answerIndex);
         let divDel = document.createElement('div');
         divDel.setAttribute('style', "padding-left: 5px;");
+
+        let divAnsCard = document.createElement('div');
+        divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+        let dragAnsImg = document.createElement('img');
+        dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+        divAnsCard.setAttribute('draggable', "True");
+        divAnsCard.addEventListener(`mouseover`, (evt) => {
+          document.body.style.cursor = 'move';
+        })
+        divAnsCard.addEventListener(`mouseout`, (evt) => {
+          document.body.style.cursor = '';
+        })
+        divAnsCard.addEventListener(`dragstart`, (evt) => {
+          evt.dataTransfer.setDragImage(div, div.offsetWidth / 1.032, div.offsetHeight / 2)
+          setTimeout(() => {
+              div.classList.add(`selected`);
+              div.style.visibility  = "hidden"
+          }, 0);
+        })
+        divAnsCard.addEventListener(`dragend`, (evt) => {
+          setTimeout(() => {
+              div.classList.remove(`selected`);
+              div.style.removeProperty("visibility")
+          }, 0);
+        });
+
         label.appendChild(input)
         div.appendChild(label)
         div.appendChild(textarea)
         divDel.appendChild(buttonDel)
         div.appendChild(divDel)
+        div.appendChild(divAnsCard)
+        divAnsCard.appendChild(dragAnsImg)
         let answersElm = document.getElementById(index);
         answersElm.appendChild(div);
 
         answerIndex += 1;
     }
 
-    // Удаление ответа
-    function deleteAnswer(index) {
-        document.getElementById(index).remove()
-    }
-
-    // Удаление вопроса
-    function deleteQuestion(index) {
+    // Удаление элемента
+    function deleteElement(index) {
         document.getElementById(index).remove()
     }
     </script>

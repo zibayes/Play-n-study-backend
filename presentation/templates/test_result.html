@@ -5,10 +5,6 @@
 {% endblock %}
 
 {% block content %}
-    <script>
-        let questionsScore = []
-        let questionsRightAnswers = []
-    </script>
 
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
@@ -41,15 +37,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <script>
-                            questionsScore.push({{ question.score }})
-                            {% if question.correct %}
-                                questionsRightAnswers.push({{ question.correct }})
-                            {% else %}
-                                questionsRightAnswers.push(1)
-                            {% endif %}
-                        </script>
 
                         <div class="card" style="background:#bde0ff; flex: 1;">
                             <div class="card-body">
@@ -125,11 +112,12 @@
                 <div id="result_text">Ваш результат: {{ total_score }} / {{ score }} ({{ result }}%); Прошло времени: </div>
                 <script>
                     let result_color = "";
-                    if(parseFloat({{result}}) < 50)
+                    let result = parseFloat({{result}});
+                    if(result < 50)
                         result_color = "red"
-                    if(parseFloat({{result}}) >= 50 && parseFloat({{result}}) < 80)
+                    if(result >= 50 && result < 80)
                         result_color = "orange"
-                    if(parseFloat({{result}}) >= 80)
+                    if(result >= 80)
                         result_color = "green"
                     document.getElementById("result_text").setAttribute("style", "color: " + result_color + "; padding-left: 20px;")
                     let result_time = Math.round(parseFloat({{ total_time }}));
