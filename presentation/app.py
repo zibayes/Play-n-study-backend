@@ -319,7 +319,6 @@ def handle_result_test():
     return render_template('test.html', user=user, test=test_content, score=score)
 
 
-# Заготовка загрузки теста из БД
 @app.route('/tests/<int:test_id>')
 def handle_load_test(test_id):
     test = test_repository.get_test_by_id(test_id=test_id)
@@ -327,7 +326,8 @@ def handle_load_test(test_id):
     user = user_repository.get_user_by_id(user_id)
     total_score = 0
     for question in test.content.questions:
-        total_score += question.score
+        if question.score:
+            total_score += question.score
     return render_template('test.html', user=user, test=test.content, score=total_score)
 
 
