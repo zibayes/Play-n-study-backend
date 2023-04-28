@@ -312,7 +312,6 @@ def handle_result_test():
 
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
-    print(test_content.toJSON())
     return render_template('test.html', user=user, test=test_content, score=score)
 
 
@@ -326,6 +325,101 @@ def handle_load_test(test_id):
         if question.score:
             total_score += question.score
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time())
+
+
+@app.route('/tests_edit/<int:test_id>')
+def handle_edit_test(test_id):
+    test = test_repository.get_test_by_id(test_id=test_id)
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('test_editor.html', user=user, test=test.content)
+
+
+@app.route('/tests_edit/<int:test_id>', methods=["POST"])
+def handle_edit_test_save(test_id):
+    test_form = request.form.to_dict()
+    print(test_form)
+    test_name = test_form.pop("testName")
+    questions_count = 0
+    for key in test_form.keys():
+        if "Question-" in key:
+            questions_count += 1
+    test_body = []
+    score = 0
+    for i in range(questions_count):
+        right_answers_count = 0
+        question = Question()
+        for key, value in test_form.items():
+            if "Question-" in key:
+                question.ask = value
+                question.answers = []
+            if "QuestionType-" in key:
+                if value == "Единственный ответ":
+                    question.type = "solo"
+                if value == "Множественный ответ":
+                    question.type = "multiple"
+                if value == "Краткий свободный ответ":
+                    question.type = "free"
+                if value == "Свободный ответ":
+                    question.type = "detailed_free"
+                if value == "Информационный блок":
+                    question.type = "info"
+                break
+        new_form = copy.deepcopy(test_form)
+        if question.type in ("solo", "multiple"):
+            is_right_answer = False
+            for key, value in test_form.items():
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    question.answers.append({value: is_right_answer})
+                    is_right_answer = False
+                if "Right_Answer-" in key:
+                    right_answers_count += 1
+                    is_right_answer = True
+                if "score-" in key:
+                    question.score = int(value)
+                    score += int(value)
+                if "QuestionType-" in key:
+                    question.correct = right_answers_count
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question.type == "free":
+            for key, value in test_form.items():
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    question.answers.append(value)
+                if "score-" in key:
+                    question.score = int(value)
+                    score += int(value)
+                if "QuestionType-" in key:
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question.type in ("detailed_free", "info"):
+            for key, value in test_form.items():
+                if "score-" in key:
+                    if question.type == "detailed_free":
+                        question.score = int(value)
+                        score += int(value)
+                if "QuestionType-" in key:
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        test_body.append(question)
+    test_content = TestContent(test_name, test_body)
+    '''
+    course_id = 1
+    if test_repository.save_test(test_id, Test(None, course_id, test_content.toJSON())):
+        flash('Тест успешно сохранён', 'success')
+    else:
+        flash('Ошибка при сохранении теста', 'error')
+    '''
+
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('test_editor.html', user=user, test=test_content)
 
 
 @app.route('/tests/<int:test_id>', methods=["POST"])
@@ -362,6 +456,7 @@ def handle_check_test(test_id):
         question.current_score = ("%.2f" % question.current_score).replace(".00", "")
     result = round(float(total_current_score) / float(total_score) * 100, 2)
     return render_template('test_result.html', user=user, test=test.content, score=total_score, total_score=total_current_score, result=result, total_time=total_time)
+
 
 @app.route('/save_test', methods=["POST"])
 def handle_save_test():

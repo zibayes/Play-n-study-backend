@@ -1,0 +1,881 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Тест</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang">
+            Редактор тестов
+        </span>
+        <div class="row border"></div>
+        <br>
+
+        <form action="" method="POST">
+        <textarea required class="form-control" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
+        <hr>
+
+            <div id="questionsList" style="padding-top: 8px;">
+                {% set questionNum = namespace(value=0) %}
+                {% for question in test.questions %}
+                    {% set questionNum.value = questionNum.value + 1 %}
+                    <div style="display: flex; padding-bottom: 20px;" id="card-{{ questionNum.value }}" class="question_div">
+                        <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <p>Вопрос №{{ questionNum.value }}</p>
+                                    <label for="score-{{questionNum.value}}">Баллы: </label>
+                                    <input id="score-{{questionNum.value}}" name="score-{{questionNum.value}}" value="{{ question.score }}" style="width:40px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background:#bde0ff; flex: 1;">
+                            <div style="height: 35px; justify-content: center; display: flex;" id="dnd-{{ questionNum.value }}" class="{{ questionNum.value }}" draggable="true" >
+                                <img src="../static/img/drag_n_drop.png" style="height: 35px;" class="{{ questionNum.value }}">
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    {% if question.type == "info" %}
+                                    <textarea required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                    {% else %}
+                                    <textarea required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                    {% endif %}
+                                    <hr>
+                                    <div id="addAns-{{ questionNum.value }}" class="row container-fluid" class="answer_div">
+                                        {% if question.type == "solo" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                            {% set answerNum.value = answerNum.value + 1 %}
+                                                {% for answer_text, is_right in answer.items() %}
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                        <label style="padding-right: 8px;" for="{{ question.ask }}">
+                                                        {% if is_right %}
+                                                            <input checked id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answer_text }}">
+                                                        {% else %}
+                                                            <input id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answer_text }}">
+                                                        {% endif %}
+                                                        </label>
+                                                        <textarea required class="form-control" rows="1" name="Answer-{{ answer_text }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if question.type == "multiple" %}
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                {% for answer_text, is_right in answer.items() %}
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                        <label style="padding-right: 8px;" for="{{ question.ask }}">
+                                                        {% if is_right %}
+                                                            <input checked id="checkbox" type="checkbox" name="Right_Answer-{{ questionNum.value }}-{{ answerNum.value }}" value="{{ answer_text }}">
+                                                        {% else %}
+                                                            <input id="checkbox" type="checkbox" name="Right_Answer-{{ questionNum.value }} -{{ answerNum.value }}" value="{{ answer_text }}">
+                                                        {% endif %}
+                                                        </label>
+                                                        <textarea required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if question.type == "free" %}
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                <div style="display: flex;">
+                                                    <textarea required id="freeAnswer" class="form-control" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}" rows="1">{{ answer }}</textarea>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if question.type == "detailed_free" %}
+                                            <textarea disabled class="form-control" name="{{ question.ask }}" rows="8"></textarea>
+                                        {% endif %}
+                                    </div>
+                                    <br>
+                                </div>
+                                <div style="display: flex;">
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn" style="background-color:transparent; color:black;" type="button" id="{{ questionNum.value }}" onclick="addAnswerOnButtonClick('addAns-' + this.id)">Добавить ответ</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn" style="background-color:red; color:white;" type="button" id="{{ questionNum.value }}" onclick="deleteElement('card-' + this.id)">Удалить вопрос</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <select class="form-select" width="20px" id="QT-{{ questionNum.value }}" name="QuestionType-{{ questionNum.value }}">
+                                            {% if question.type == "single" %}
+                                                <option selected>Единственный ответ</option>
+                                            {% else %}
+                                                <option>Единственный ответ</option>
+                                            {% endif %}
+                                            {% if question.type == "multiple" %}
+                                                <option selected>Множественный ответ</option>
+                                            {% else %}
+                                                <option>Множественный ответ</option>
+                                            {% endif %}
+                                            {% if question.type == "free" %}
+                                                <option selected>Краткий свободный ответ</option>
+                                            {% else %}
+                                                <option>Краткий свободный ответ</option>
+                                            {% endif %}
+                                            {% if question.type == "detailed_free" %}
+                                                <option selected>Свободный ответ</option>
+                                            {% else %}
+                                                <option>Свободный ответ</option>
+                                            {% endif %}
+                                            {% if question.type == "info" %}
+                                                <option selected>Информационный блок</option>
+                                            {% else %}
+                                                <option>Информационный блок</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↑</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↓</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr>
+            <div style="padding-bottom: 10px; display: flex;">
+                <button class="btn btn-primary"
+                        id="addQuestion" style=
+                        "background-color:green;" type="button">
+                        Добавить вопрос
+                </button>
+                <button class="btn btn-primary" type="submit"
+                        id="saveTest" style=
+                        "background-color:yellowgreen; margin-left: 5px;">
+                        Сохранить тест
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .scale {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale:hover {
+        transform: scale(1.05); /* Увеличиваем масштаб */
+    }
+    .scale2 {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale2:hover {
+        transform: scale(1.02); /* Увеличиваем масштаб */
+    }
+</style>
+{% endblock %}
+{% block script %}
+    <script>
+        let questions_count = {{ test.questions|length }}
+        let dnd_elems = []
+        let card_elems = []
+        let questionsTypes = []
+        let addAns_elems = []
+        for(i = 1; i <= questions_count; i++){
+            dnd_elems.push(document.getElementById("dnd-" + i))
+            card_elems.push(document.getElementById("card-" + i))
+
+            dnd_elems[i-1].addEventListener(`mouseover`, (evt) => {
+              document.body.style.cursor = 'move';
+            })
+            dnd_elems[i-1].addEventListener(`mouseout`, (evt) => {
+              document.body.style.cursor = '';
+            })
+            dnd_elems[i-1].addEventListener(`dragstart`, (evt) => {
+              evt.dataTransfer.setDragImage(card_elems[parseInt(evt.target.className) - 1], card_elems[parseInt(evt.target.className) - 1].offsetWidth / 1.78, card_elems[parseInt(evt.target.className) - 1].offsetHeight / 18)
+              setTimeout(() => {
+                  card_elems[parseInt(evt.target.className) - 1].classList.add(`selected`);
+                  card_elems[parseInt(evt.target.className) - 1].style.visibility  = "hidden"
+              }, 0);
+            })
+            dnd_elems[i-1].addEventListener(`dragend`, (evt) => {
+              setTimeout(() => {
+                  card_elems[parseInt(evt.target.className) - 1].classList.remove(`selected`);
+                  card_elems[parseInt(evt.target.className) - 1].style.removeProperty("visibility")
+              }, 0);
+            });
+
+            questionsTypes.push(document.getElementById("QT-" + i))
+            questionsTypes[i-1].addEventListener("change", function() {
+            let selectedOption = questionsTypes[parseInt(this.id.slice(3))-1].options[questionsTypes[parseInt(this.id.slice(3))-1].selectedIndex];
+                let textareaQuestion = document.getElementById("ask-" + (parseInt(this.name)))
+                if(selectedOption.text === "Единственный ответ" ||  selectedOption.text === "Множественный ответ") {
+                    textareaQuestion.setAttribute('rows', "1");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
+                    let divTextLabel = document.createElement('div');
+                    divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                    divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                    divTextLabel.setAttribute('class', "answer_div");
+                    let textareaAnswer = document.createElement('textarea');
+                    textareaAnswer.setAttribute('class', "form-control");
+                    textareaAnswer.setAttribute('placeholder', "Текст ответа");
+                    textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+                    textareaAnswer.setAttribute('rows', "1");
+                    let label = document.createElement('label');
+                    label.setAttribute('for', "addAnswerText");
+                    label.setAttribute('style', "padding-right: 8px;");
+                    let input = document.createElement('input');
+                    //input.setAttribute('required', 'true');
+                    if (selectedOption.text === "Единственный ответ") {
+                        input.setAttribute('type', "radio");
+                        input.setAttribute('name', "Right_Answer-" + parseInt(this.name));
+                    }
+                    if (selectedOption.text === "Множественный ответ") {
+                        input.setAttribute('type', "checkbox");
+                        input.setAttribute('name', "Right_Answer-" + parseInt(this.name) + "-" + answerIndex);
+                    }
+                    let buttonDel = document.createElement('button');
+                    buttonDel.setAttribute('class', "btn");
+                    buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+                    buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+                    buttonDel.textContent = "✖"
+                    buttonDel.setAttribute('id', answerIndex);
+                    let divDel = document.createElement('div');
+                    divDel.setAttribute('style', "padding-left: 5px;");
+
+                    divIndexNew.addEventListener(`dragover`, (evt) => {
+                        evt.preventDefault();
+                        const activeElement = questions_list.querySelector(`.selected`);
+                        const currentElement = evt.target;
+                        const isMoveable = activeElement !== currentElement &&
+                        currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
+                        if (!isMoveable)
+                            return;
+                        const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                          currentElement.nextElementSibling :
+                          currentElement;
+                        divIndexNew.insertBefore(activeElement, nextElement);
+                    });
+                    let divAnsCard = document.createElement('div');
+                    divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+                    let dragAnsImg = document.createElement('img');
+                    dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+                    dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+                    divAnsCard.setAttribute('draggable', "True");
+                    divAnsCard.addEventListener(`mouseover`, (evt) => {
+                      document.body.style.cursor = 'move';
+                    })
+                    divAnsCard.addEventListener(`mouseout`, (evt) => {
+                      document.body.style.cursor = '';
+                    })
+                    divAnsCard.addEventListener(`dragstart`, (evt) => {
+                      evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+                      setTimeout(() => {
+                          divTextLabel.classList.add(`selected`);
+                          divTextLabel.style.visibility  = "hidden"
+                      }, 0);
+                    })
+                    divAnsCard.addEventListener(`dragend`, (evt) => {
+                      setTimeout(() => {
+                          divTextLabel.classList.remove(`selected`);
+                          divTextLabel.style.removeProperty("visibility")
+                      }, 0);
+                    });
+
+                    divIndexNew.appendChild(divTextLabel)
+                    label.appendChild(input)
+                    divTextLabel.appendChild(label)
+                    divTextLabel.appendChild(textareaAnswer)
+                    divDel.appendChild(buttonDel)
+                    divTextLabel.appendChild(divDel)
+                    divTextLabel.appendChild(divAnsCard)
+                    divAnsCard.appendChild(dragAnsImg)
+                    let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(parseInt(this.name))
+                    buttonNew.removeAttribute("disabled");
+                }
+                if(selectedOption.text === "Свободный ответ" || selectedOption.text === "Краткий свободный ответ") {
+                    textareaQuestion.setAttribute('rows', "1");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
+                    let divTextLabel = document.createElement('div');
+                    divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                    divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                    let textareaAnswer = document.createElement('textarea');
+                    textareaAnswer.setAttribute('class', "form-control");
+                    textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+                    if (selectedOption.text === "Краткий свободный ответ") {
+                        textareaAnswer.setAttribute('placeholder', "Краткий ответ");
+                        textareaAnswer.setAttribute('rows', "1");
+                        textareaAnswer.removeAttribute("disabled");
+                    }
+                    if (selectedOption.text === "Свободный ответ") {
+                        textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
+                        textareaAnswer.setAttribute('rows', "8");
+                        textareaAnswer.setAttribute("disabled", "true");
+                    }
+                    divIndexNew.appendChild(divTextLabel)
+                    divTextLabel.appendChild(textareaAnswer)
+                    let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(parseInt(this.name))
+                    buttonNew.setAttribute("disabled", "true");
+                }
+                if(selectedOption.text === "Информационный блок"){
+                    textareaQuestion.setAttribute('placeholder', "Информация");
+                    textareaQuestion.setAttribute('rows', "8");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
+                    let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(parseInt(this.name))
+                    buttonNew.setAttribute("disabled", "true");
+                } else {
+                    textareaQuestion.setAttribute('placeholder', "Текст вопроса");
+                }
+                answerIndex += 1;
+            });
+
+            addAns_elems.push(document.getElementById("addAns-" + i))
+            addAns_elems[i-1].addEventListener(`dragover`, (evt) => {
+                evt.preventDefault();
+                const activeElement = questions_list.querySelector(`.selected`);
+                const currentElement = evt.target.parentElement.parentElement;
+                const isMoveable = activeElement !== currentElement &&
+                currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, addAns_elems[parseInt(evt.target.id)-1]);
+                if (!isMoveable)
+                    return;
+                const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                  currentElement.nextElementSibling :
+                  currentElement;
+                addAns_elems[parseInt(evt.target.id)-1].insertBefore(activeElement, nextElement);
+            });
+        }
+        document.querySelectorAll(".dnd").forEach(elem =>{
+            elem.addEventListener(`mouseover`, (evt) => {
+              document.body.style.cursor = 'move';
+            })
+            elem.addEventListener(`mouseout`, (evt) => {
+              document.body.style.cursor = '';
+            })
+            let divTextLabel = document.getElementById("ans-" + elem.id);
+            elem.addEventListener(`dragstart`, (evt) => {
+              evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+              setTimeout(() => {
+                  divTextLabel.classList.add(`selected`);
+                  divTextLabel.style.visibility  = "hidden"
+              }, 0);
+            })
+            elem.addEventListener(`dragend`, (evt) => {
+              setTimeout(() => {
+                  divTextLabel.classList.remove(`selected`);
+                  divTextLabel.style.removeProperty("visibility")
+              }, 0);
+            });
+        });
+
+        function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
+        let questions_list = document.getElementById("questionsList")
+        questions_list.addEventListener(`dragover`, (evt) => {
+            evt.preventDefault();
+            const activeElement = questions_list.querySelector(`.selected`);
+            const currentElement = evt.target;
+            const isMoveable = activeElement !== currentElement &&
+            currentElement.classList.contains(`question_div`) && activeElement.classList.contains(`question_div`);
+            if (!isMoveable)
+                return;
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+              currentElement.nextElementSibling :
+              currentElement;
+            questions_list.insertBefore(activeElement, nextElement);
+        });
+
+        // Добавление вопроса
+        let addBtn = document.getElementById("addQuestion");
+        var questionIndex = 0;
+        var answerIndex = 0;
+        addBtn.addEventListener("click", function(e) {
+            // Внешний div
+            let div = document.createElement('div');
+            div.setAttribute('id', "delQue-" + questionIndex);
+            div.setAttribute('class', "question_div");
+            // Карточка вопроса
+            let divCard = document.createElement('div');
+            divCard.setAttribute('class', "card");
+
+            // Drag'n'drop область
+            let divDragCard = document.createElement('div');
+            divDragCard.setAttribute('style', "height: 35px; justify-content: center; display: flex;");
+            let dragImg = document.createElement('img');
+            dragImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragImg.setAttribute('style', "height: 35px;");
+            divDragCard.setAttribute('draggable', "True");
+            divDragCard.addEventListener(`mouseover`, (evt) => {
+              document.body.style.cursor = 'move';
+            })
+            divDragCard.addEventListener(`mouseout`, (evt) => {
+              document.body.style.cursor = '';
+            })
+            divDragCard.addEventListener(`dragstart`, (evt) => {
+              evt.dataTransfer.setDragImage(div, div.offsetWidth / 1.78, div.offsetHeight / 18)
+              setTimeout(() => {
+                  div.classList.add(`selected`);
+                  div.style.visibility  = "hidden"
+              }, 0);
+            })
+            divDragCard.addEventListener(`dragend`, (evt) => {
+              setTimeout(() => {
+                  div.classList.remove(`selected`);
+                  div.style.removeProperty("visibility")
+              }, 0);
+            });
+
+            let divCardBody = document.createElement('div');
+            divCardBody.setAttribute('class', "card-body");
+            let formGroup = document.createElement('div');
+            formGroup.setAttribute('class', "form-group");
+            // Содержимое карточки
+            let textareaQuestion = document.createElement('textarea');
+            textareaQuestion.setAttribute('class', "form-control");
+            textareaQuestion.setAttribute('placeholder', "Текст вопроса");
+            textareaQuestion.setAttribute('id', "question");
+            textareaQuestion.setAttribute('rows', "1");
+            textareaQuestion.setAttribute('required', 'true');
+            textareaQuestion.setAttribute('name', 'Question-' + questionIndex);
+            let hr = document.createElement('hr');
+            let divIndex = document.createElement('div');
+            divIndex.setAttribute('class', "row container-fluid");
+            divIndex.setAttribute('id', "addAns-" + questionIndex);
+            let divTextLabel = document.createElement('div');
+            divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+            divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+            divTextLabel.setAttribute('class', "answer_div");
+            let textareaAnswer = document.createElement('textarea');
+            textareaAnswer.setAttribute('class', "form-control");
+            textareaAnswer.setAttribute('placeholder', "Текст ответа");
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('rows', "1");
+            textareaAnswer.setAttribute('required', 'true');
+            let label = document.createElement('label');
+            label.setAttribute('for', "addAnswerText");
+            label.setAttribute('style', "padding-right: 8px;");
+            let input = document.createElement('input');
+            input.setAttribute('type', "radio");
+            let br = document.createElement('br');
+            let button = document.createElement('button');
+            button.setAttribute('class', "btn");
+            button.setAttribute('style', "background-color:transparent; color:black;");
+            button.setAttribute('onclick', "addAnswerOnButtonClick(\"addAns-\" + this.id)");
+            button.textContent = "Добавить ответ"
+            button.setAttribute('id', questionIndex);
+            button.setAttribute('type', "button");
+            input.setAttribute('name', "Right_Answer-" +  answerIndex);
+            let buttonDelQuestion = document.createElement('button');
+            buttonDelQuestion.setAttribute('class', "btn");
+            buttonDelQuestion.setAttribute('type', "button");
+            buttonDelQuestion.setAttribute('style', "background-color:red; color:white;");
+            buttonDelQuestion.setAttribute('onclick', "deleteElement(\"delQue-\" + this.id)");
+            buttonDelQuestion.textContent = "Удалить вопрос"
+            buttonDelQuestion.setAttribute('id', questionIndex);
+            let buttonUpQuestion = document.createElement('button');
+            buttonUpQuestion.setAttribute('type', "button");
+            buttonUpQuestion.setAttribute('class', "btn");
+            buttonUpQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
+            buttonUpQuestion.addEventListener("click", function() {
+                let questionsList = document.getElementById("questionsList");
+                questionsList.insertBefore(div, div.previousElementSibling);
+            });
+            buttonUpQuestion.textContent = "↑"
+            let buttonDownQuestion = document.createElement('button');
+            buttonDownQuestion.setAttribute('type', "button");
+            buttonDownQuestion.setAttribute('class', "btn");
+            buttonDownQuestion.setAttribute('style', "background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;");
+            buttonDownQuestion.addEventListener("click", function() {
+                let questionsList = document.getElementById("questionsList");
+                if(div.nextElementSibling == null){
+                    questionsList.insertBefore(div, questionsList.firstChild);
+                }else{
+                    questionsList.insertBefore(div.nextElementSibling, div);
+                }
+            });
+            buttonDownQuestion.textContent = "↓"
+            let buttonDel = document.createElement('button');
+            buttonDel.setAttribute('class', "btn");
+            buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.textContent = "✖"
+            buttonDel.setAttribute('id', answerIndex);
+            let divDel = document.createElement('div');
+            divDel.setAttribute('style', "padding-left: 5px;");
+
+            divIndex.addEventListener(`dragover`, (evt) => {
+                evt.preventDefault();
+                const activeElement = questions_list.querySelector(`.selected`);
+                const currentElement = evt.target;
+                const isMoveable = activeElement !== currentElement &&
+                currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndex);
+                if (!isMoveable)
+                    return;
+                const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                  currentElement.nextElementSibling :
+                  currentElement;
+                divIndex.insertBefore(activeElement, nextElement);
+            });
+            let divAnsCard = document.createElement('div');
+            divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+            let dragAnsImg = document.createElement('img');
+            dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+            divAnsCard.setAttribute('draggable', "True");
+            divAnsCard.addEventListener(`mouseover`, (evt) => {
+              document.body.style.cursor = 'move';
+            })
+            divAnsCard.addEventListener(`mouseout`, (evt) => {
+              document.body.style.cursor = '';
+            })
+            divAnsCard.addEventListener(`dragstart`, (evt) => {
+              evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+              setTimeout(() => {
+                  divTextLabel.classList.add(`selected`);
+                  divTextLabel.style.visibility  = "hidden"
+              }, 0);
+            })
+            divAnsCard.addEventListener(`dragend`, (evt) => {
+              setTimeout(() => {
+                  divTextLabel.classList.remove(`selected`);
+                  divTextLabel.style.removeProperty("visibility")
+              }, 0);
+            });
+
+            let questionType = document.createElement('select')
+            questionType.setAttribute('class', "form-select");
+            questionType.setAttribute('width', "20px");
+            questionType.setAttribute('id', "QT-" + questionIndex);
+            questionType.setAttribute('name', "QuestionType-" + questionIndex);
+            let radio = document.createElement('option')
+            radio.textContent = "Единственный ответ"
+            let check = document.createElement('option')
+            check.textContent = "Множественный ответ"
+            let word = document.createElement('option')
+            word.textContent = "Краткий свободный ответ"
+            let text = document.createElement('option')
+            text.textContent = "Свободный ответ"
+            let info = document.createElement('option')
+            info.textContent = "Информационный блок"
+            let divController = document.createElement('div');
+            divController.setAttribute('style', "display: flex;");
+            let divBT = document.createElement('div');
+            divBT.setAttribute('style', "padding-left: 5px;");
+            let divDQ = document.createElement('div');
+            divDQ.setAttribute('style', "padding-left: 5px;");
+            let divUP = document.createElement('div');
+            divUP.setAttribute('style', "padding-left: 5px;");
+            let divDW = document.createElement('div');
+            divDW.setAttribute('style', "padding-left: 5px;");
+            let divQT = document.createElement('div');
+            divQT.setAttribute('style', "width: 280px; padding-left: 5px;");
+            questionType.appendChild(radio)
+            questionType.appendChild(check)
+            questionType.appendChild(word)
+            questionType.appendChild(text)
+            questionType.appendChild(info)
+            questionType.addEventListener("change", function() {
+            let selectedOption = questionType.options[questionType.selectedIndex];
+                if(selectedOption.text === "Единственный ответ" ||  selectedOption.text === "Множественный ответ") {
+                    textareaQuestion.setAttribute('rows', "1");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', divIndex.id);
+                    let divTextLabel = document.createElement('div');
+                    divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                    divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                    divTextLabel.setAttribute('class', "answer_div");
+                    let textareaAnswer = document.createElement('textarea');
+                    textareaAnswer.setAttribute('class', "form-control");
+                    textareaAnswer.setAttribute('placeholder', "Текст ответа");
+                    textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+                    textareaAnswer.setAttribute('rows', "1");
+                    let label = document.createElement('label');
+                    label.setAttribute('for', "addAnswerText");
+                    label.setAttribute('style', "padding-right: 8px;");
+                    let input = document.createElement('input');
+                    //input.setAttribute('required', 'true');
+                    if (selectedOption.text === "Единственный ответ") {
+                        input.setAttribute('type', "radio");
+                        input.setAttribute('name', "Right_Answer-" + button.id);
+                    }
+                    if (selectedOption.text === "Множественный ответ") {
+                        input.setAttribute('type', "checkbox");
+                        input.setAttribute('name', "Right_Answer-" + button.id + "-" + answerIndex);
+                    }
+                    let buttonDel = document.createElement('button');
+                    buttonDel.setAttribute('class', "btn");
+                    buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+                    buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+                    buttonDel.textContent = "✖"
+                    buttonDel.setAttribute('id', answerIndex);
+                    let divDel = document.createElement('div');
+                    divDel.setAttribute('style', "padding-left: 5px;");
+
+                    divIndexNew.addEventListener(`dragover`, (evt) => {
+                        evt.preventDefault();
+                        const activeElement = questions_list.querySelector(`.selected`);
+                        const currentElement = evt.target;
+                        const isMoveable = activeElement !== currentElement &&
+                        currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
+                        if (!isMoveable)
+                            return;
+                        const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                          currentElement.nextElementSibling :
+                          currentElement;
+                        divIndexNew.insertBefore(activeElement, nextElement);
+                    });
+                    let divAnsCard = document.createElement('div');
+                    divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+                    let dragAnsImg = document.createElement('img');
+                    dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+                    dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+                    divAnsCard.setAttribute('draggable', "True");
+                    divAnsCard.addEventListener(`mouseover`, (evt) => {
+                      document.body.style.cursor = 'move';
+                    })
+                    divAnsCard.addEventListener(`mouseout`, (evt) => {
+                      document.body.style.cursor = '';
+                    })
+                    divAnsCard.addEventListener(`dragstart`, (evt) => {
+                      evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
+                      setTimeout(() => {
+                          divTextLabel.classList.add(`selected`);
+                          divTextLabel.style.visibility  = "hidden"
+                      }, 0);
+                    })
+                    divAnsCard.addEventListener(`dragend`, (evt) => {
+                      setTimeout(() => {
+                          divTextLabel.classList.remove(`selected`);
+                          divTextLabel.style.removeProperty("visibility")
+                      }, 0);
+                    });
+
+                    divIndexNew.appendChild(divTextLabel)
+                    label.appendChild(input)
+                    divTextLabel.appendChild(label)
+                    divTextLabel.appendChild(textareaAnswer)
+                    divDel.appendChild(buttonDel)
+                    divTextLabel.appendChild(divDel)
+                    divTextLabel.appendChild(divAnsCard)
+                    divAnsCard.appendChild(dragAnsImg)
+                    let divIndexTmp = document.getElementById(divIndex.id)
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(button.id)
+                    buttonNew.removeAttribute("disabled");
+                }
+                if(selectedOption.text === "Свободный ответ" || selectedOption.text === "Краткий свободный ответ") {
+                    textareaQuestion.setAttribute('rows', "1");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', divIndex.id);
+                    let divTextLabel = document.createElement('div');
+                    divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+                    divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+                    let textareaAnswer = document.createElement('textarea');
+                    textareaAnswer.setAttribute('class', "form-control");
+                    textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+                    if (selectedOption.text === "Краткий свободный ответ") {
+                        textareaAnswer.setAttribute('placeholder', "Краткий ответ");
+                        textareaAnswer.setAttribute('rows', "1");
+                        textareaAnswer.removeAttribute("disabled");
+                    }
+                    if (selectedOption.text === "Свободный ответ") {
+                        textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
+                        textareaAnswer.setAttribute('rows', "8");
+                        textareaAnswer.setAttribute("disabled", "true");
+                    }
+                    divIndexNew.appendChild(divTextLabel)
+                    divTextLabel.appendChild(textareaAnswer)
+                    let divIndexTmp = document.getElementById(divIndex.id)
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(button.id)
+                    buttonNew.setAttribute("disabled", "true");
+                }
+                if(selectedOption.text === "Информационный блок"){
+                    textareaQuestion.setAttribute('placeholder', "Информация");
+                    textareaQuestion.setAttribute('rows', "8");
+                    let divIndexNew = document.createElement('div');
+                    divIndexNew.setAttribute('class', "row container-fluid");
+                    divIndexNew.setAttribute('id', divIndex.id);
+                    let divIndexTmp = document.getElementById(divIndex.id)
+                    divIndexTmp.replaceWith(divIndexNew);
+                    let buttonNew = document.getElementById(button.id)
+                    buttonNew.setAttribute("disabled", "true");
+                } else {
+                    textareaQuestion.setAttribute('placeholder', "Текст вопроса");
+                }
+                answerIndex += 1;
+            });
+
+            // Навигационная карточка
+            let divQueCard = document.createElement('div');
+            divQueCard.setAttribute('class', "card");
+            divQueCard.setAttribute('style', "background:#d9d9d9; height: 120px; margin-right: 10px;");
+            divCard.setAttribute('style', "background:#bde0ff; flex: 1;");
+            div.setAttribute('style', "display: flex; padding-bottom: 20px;");
+            let divQueCardBody = document.createElement('div');
+            divQueCardBody.setAttribute('class', "card-body");
+            let formQueGroup = document.createElement('div');
+            formQueGroup.setAttribute('class', "form-group");
+            let question = document.createElement('p');
+            question.textContent = "Вопрос №" + (questionIndex + 1)
+            let inputScore = document.createElement('input');
+            inputScore.setAttribute('name', "score-" + questionIndex);
+            inputScore.setAttribute('required', 'true');
+            inputScore.setAttribute('style', 'width:40px;');
+            inputScore.value = 1
+            let labelScore = document.createElement('label');
+            labelScore.setAttribute('for', "score-" + questionIndex);
+            labelScore.textContent = "Баллы: "
+
+            div.appendChild(divQueCard)
+            divQueCard.appendChild(divQueCardBody)
+            divQueCardBody.appendChild(formQueGroup)
+            formQueGroup.appendChild(question)
+            formQueGroup.appendChild(labelScore)
+            formQueGroup.appendChild(inputScore)
+
+            // Создание всей этой позорной иерархии
+            div.appendChild(divCard)
+            divCard.appendChild(divDragCard)
+            divDragCard.appendChild(dragImg)
+            divCard.appendChild(divCardBody)
+            divCardBody.appendChild(formGroup)
+            formGroup.appendChild(textareaQuestion)
+            formGroup.appendChild(hr)
+            formGroup.appendChild(divIndex)
+            divIndex.appendChild(divTextLabel)
+            label.appendChild(input)
+            divTextLabel.appendChild(label)
+            divTextLabel.appendChild(textareaAnswer)
+            divDel.appendChild(buttonDel)
+            divTextLabel.appendChild(divDel)
+            divTextLabel.appendChild(divAnsCard)
+            divAnsCard.appendChild(dragAnsImg)
+            formGroup.appendChild(br)
+            divBT.appendChild(button)
+            divController.appendChild(divBT)
+            divDQ.appendChild(buttonDelQuestion)
+            divUP.appendChild(buttonUpQuestion)
+            divDW.appendChild(buttonDownQuestion)
+            divController.appendChild(divDQ)
+            divQT.appendChild(questionType)
+            divController.appendChild(divQT)
+            divController.appendChild(divUP)
+            divController.appendChild(divDW)
+            formGroup.appendChild(divController)
+
+            let answersElm = document.getElementById("questionsList");
+            answersElm.appendChild(div)
+
+            questionIndex += 1;
+            answerIndex += 1;
+        });
+
+        // Добавление ответа на вопрос
+        function addAnswerOnButtonClick(index) {
+            let div = document.createElement('div');
+            div.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+            div.setAttribute('id', "delAns-" + answerIndex);
+            div.setAttribute('class', "answer_div");
+            let textarea = document.createElement('textarea');
+            textarea.setAttribute('class', "form-control");
+            textarea.setAttribute('placeholder', "Текст ответа");
+            textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
+            textarea.setAttribute('rows', "1");
+            let label = document.createElement('label');
+            label.setAttribute('for', "addAnswerText");
+            label.setAttribute('style', "padding-right: 8px;");
+            let input = document.createElement('input');
+            //input.setAttribute('required', 'true');
+            let questionType = document.getElementById(`QT-${index.substring(7)}`);
+            let selectedOption = questionType.options[questionType.selectedIndex];
+            if(selectedOption.text === "Единственный ответ") {
+                input.setAttribute("type", "radio");
+                input.setAttribute('name', `Right_Answer-${index.substring(7)}`);
+            }
+            if(selectedOption.text === "Множественный ответ") {
+                input.setAttribute("type", "checkbox");
+                input.setAttribute('name', `Right_Answer-${index.substring(7)}-${answerIndex}`);
+            }
+            let buttonDel = document.createElement('button');
+            buttonDel.setAttribute('class', "btn");
+            buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.textContent = "✖"
+            buttonDel.setAttribute('id', answerIndex);
+            let divDel = document.createElement('div');
+            divDel.setAttribute('style', "padding-left: 5px;");
+
+            let divAnsCard = document.createElement('div');
+            divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
+            let dragAnsImg = document.createElement('img');
+            dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
+            divAnsCard.setAttribute('draggable', "True");
+            divAnsCard.addEventListener(`mouseover`, (evt) => {
+              document.body.style.cursor = 'move';
+            })
+            divAnsCard.addEventListener(`mouseout`, (evt) => {
+              document.body.style.cursor = '';
+            })
+            divAnsCard.addEventListener(`dragstart`, (evt) => {
+              evt.dataTransfer.setDragImage(div, div.offsetWidth / 1.032, div.offsetHeight / 2)
+              setTimeout(() => {
+                  div.classList.add(`selected`);
+                  div.style.visibility  = "hidden"
+              }, 0);
+            })
+            divAnsCard.addEventListener(`dragend`, (evt) => {
+              setTimeout(() => {
+                  div.classList.remove(`selected`);
+                  div.style.removeProperty("visibility")
+              }, 0);
+            });
+
+            label.appendChild(input)
+            div.appendChild(label)
+            div.appendChild(textarea)
+            divDel.appendChild(buttonDel)
+            div.appendChild(divDel)
+            div.appendChild(divAnsCard)
+            divAnsCard.appendChild(dragAnsImg)
+            let answersElm = document.getElementById(index);
+            answersElm.appendChild(div);
+
+            answerIndex += 1;
+        }
+
+        // Удаление элемента
+        function deleteElement(index) {
+            document.getElementById(index).remove()
+        }
+    </script>
+{% endblock %}
