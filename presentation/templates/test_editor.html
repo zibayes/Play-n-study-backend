@@ -15,7 +15,7 @@
         <br>
 
         <form action="" method="POST">
-        <textarea required class="form-control" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
+        <textarea maxlength="1000" required class="form-control" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
         <hr>
 
             <div id="questionsList" style="padding-top: 8px;">
@@ -40,9 +40,9 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     {% if question.type == "info" %}
-                                    <textarea required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                    <textarea maxlength="15000" required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
                                     {% else %}
-                                    <textarea required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                    <textarea maxlength="5000" required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
                                     {% endif %}
                                     <hr>
                                     <div id="addAns-{{ questionNum.value }}" class="row container-fluid" class="answer_div">
@@ -59,7 +59,7 @@
                                                             <input id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answer_text }}">
                                                         {% endif %}
                                                         </label>
-                                                        <textarea required class="form-control" rows="1" name="Answer-{{ answer_text }}">{{ answer_text }}</textarea>
+                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ answer_text }}">{{ answer_text }}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
@@ -83,7 +83,7 @@
                                                             <input id="checkbox" type="checkbox" name="Right_Answer-{{ questionNum.value }} -{{ answerNum.value }}" value="{{ answer_text }}">
                                                         {% endif %}
                                                         </label>
-                                                        <textarea required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
@@ -99,13 +99,13 @@
                                             {% for answer in question.answers %}
                                                 {% set answerNum.value = answerNum.value + 1 %}
                                                 <div style="display: flex;">
-                                                    <textarea required id="freeAnswer" class="form-control" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}" rows="1">{{ answer }}</textarea>
+                                                    <textarea maxlength="5000" required id="freeAnswer" class="form-control" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}" rows="1">{{ answer }}</textarea>
                                                 </div>
                                             {% endfor %}
                                         {% endif %}
 
                                         {% if question.type == "detailed_free" %}
-                                            <textarea disabled class="form-control" name="{{ question.ask }}" rows="8"></textarea>
+                                            <textarea maxlength="15000" disabled class="form-control" name="{{ question.ask }}" rows="8"></textarea>
                                         {% endif %}
                                     </div>
                                     <br>
@@ -236,6 +236,7 @@
                     divTextLabel.setAttribute('class', "answer_div");
                     let textareaAnswer = document.createElement('textarea');
                     textareaAnswer.setAttribute('class', "form-control");
+                    textareaAnswer.setAttribute('maxlength', '5000');
                     textareaAnswer.setAttribute('placeholder', "Текст ответа");
                     textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
                     textareaAnswer.setAttribute('rows', "1");
@@ -328,11 +329,13 @@
                         textareaAnswer.setAttribute('placeholder', "Краткий ответ");
                         textareaAnswer.setAttribute('rows', "1");
                         textareaAnswer.removeAttribute("disabled");
+                        textareaAnswer.setAttribute('maxlength', '5000');
                     }
                     if (selectedOption.text === "Свободный ответ") {
                         textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
                         textareaAnswer.setAttribute('rows', "8");
                         textareaAnswer.setAttribute("disabled", "true");
+                        textareaAnswer.setAttribute('maxlength', '15000');
                     }
                     divIndexNew.appendChild(divTextLabel)
                     divTextLabel.appendChild(textareaAnswer)
@@ -460,6 +463,7 @@
             textareaQuestion.setAttribute('class', "form-control");
             textareaQuestion.setAttribute('placeholder', "Текст вопроса");
             textareaQuestion.setAttribute('id', "question");
+            textareaQuestion.setAttribute('maxlength', '5000');
             textareaQuestion.setAttribute('rows', "1");
             textareaQuestion.setAttribute('required', 'true');
             textareaQuestion.setAttribute('name', 'Question-' + questionIndex);
@@ -476,6 +480,7 @@
             textareaAnswer.setAttribute('placeholder', "Текст ответа");
             textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
             textareaAnswer.setAttribute('rows', "1");
+            textareaAnswer.setAttribute('maxlength', '5000');
             textareaAnswer.setAttribute('required', 'true');
             let label = document.createElement('label');
             label.setAttribute('for', "addAnswerText");
@@ -614,6 +619,7 @@
                     let textareaAnswer = document.createElement('textarea');
                     textareaAnswer.setAttribute('class', "form-control");
                     textareaAnswer.setAttribute('placeholder', "Текст ответа");
+                    textareaAnswer.setAttribute('maxlength', '5000');
                     textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
                     textareaAnswer.setAttribute('rows', "1");
                     let label = document.createElement('label');
@@ -705,11 +711,13 @@
                         textareaAnswer.setAttribute('placeholder', "Краткий ответ");
                         textareaAnswer.setAttribute('rows', "1");
                         textareaAnswer.removeAttribute("disabled");
+                        textareaAnswer.setAttribute('maxlength', '5000');
                     }
                     if (selectedOption.text === "Свободный ответ") {
                         textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
                         textareaAnswer.setAttribute('rows', "8");
                         textareaAnswer.setAttribute("disabled", "true");
+                        textareaAnswer.setAttribute('maxlength', '15000');
                     }
                     divIndexNew.appendChild(divTextLabel)
                     divTextLabel.appendChild(textareaAnswer)
@@ -808,6 +816,7 @@
             let textarea = document.createElement('textarea');
             textarea.setAttribute('class', "form-control");
             textarea.setAttribute('placeholder', "Текст ответа");
+            textarea.setAttribute('maxlength', '5000');
             textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
             textarea.setAttribute('rows', "1");
             let label = document.createElement('label');

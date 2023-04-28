@@ -433,6 +433,7 @@ def handle_check_test(test_id):
     total_time = time.time() - float(test_res['time'])
     for question in test.content.questions:
         question.current_score = 0
+        answers_count = 0
         for key, value in test_res.items():
             if key == question.ask or question.ask + '-' in key:
                 if question.type in ("solo", "multiple"):
@@ -443,16 +444,20 @@ def handle_check_test(test_id):
                                 question.current_score += question.score / question.correct
                             else:
                                 que_part[value] = "wrong"
+                                question.current_score -= question.score / question.correct  # (question.correct * 2)
+                            answers_count += 1
                 elif question.type in ("free", "detailed_free"):
                     question.answer = value
                     question.is_correct = False
                     for answer in question.answers:
-                        if value == answer:
+                        if value.lower().strip() == answer.lower().strip():
                             question.current_score += question.score
                             question.is_correct = True
         if question.score:
             total_score += question.score
             total_current_score += question.current_score
+        if question.current_score < 0 or answers_count == len(question.answers):
+            question.current_score = 0
         question.current_score = ("%.2f" % question.current_score).replace(".00", "")
     result = round(float(total_current_score) / float(total_score) * 100, 2)
     return render_template('test_result.html', user=user, test=test.content, score=total_score, total_score=total_current_score, result=result, total_time=total_time)

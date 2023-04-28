@@ -15,7 +15,7 @@
         <br>
 
         <form action="" method="POST">
-            <textarea required class="form-control" placeholder="Название теста" name="testName" rows="1"></textarea>
+            <textarea required class="form-control" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
             <hr>
 
             <div id="questionsList" style="padding-top: 8px;"></div>
@@ -132,6 +132,7 @@
         textareaQuestion.setAttribute('id', "question");
         textareaQuestion.setAttribute('rows', "1");
         textareaQuestion.setAttribute('required', 'true');
+        textareaQuestion.setAttribute('maxlength', '5000');
         textareaQuestion.setAttribute('name', 'Question-' + questionIndex);
         let hr = document.createElement('hr');
         let divIndex = document.createElement('div');
@@ -146,6 +147,7 @@
         textareaAnswer.setAttribute('placeholder', "Текст ответа");
         textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
         textareaAnswer.setAttribute('rows', "1");
+        textareaAnswer.setAttribute('maxlength', '5000');
         textareaAnswer.setAttribute('required', 'true');
         let label = document.createElement('label');
         label.setAttribute('for', "addAnswerText");
@@ -286,6 +288,7 @@
                 textareaAnswer.setAttribute('placeholder', "Текст ответа");
                 textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
                 textareaAnswer.setAttribute('rows', "1");
+                textareaAnswer.setAttribute('maxlength', '5000');
                 let label = document.createElement('label');
                 label.setAttribute('for', "addAnswerText");
                 label.setAttribute('style', "padding-right: 8px;");
@@ -375,11 +378,13 @@
                     textareaAnswer.setAttribute('placeholder', "Краткий ответ");
                     textareaAnswer.setAttribute('rows', "1");
                     textareaAnswer.removeAttribute("disabled");
+                    textareaAnswer.setAttribute('maxlength', '5000');
                 }
                 if (selectedOption.text === "Свободный ответ") {
                     textareaAnswer.setAttribute('placeholder', "Развернутый ответ");
                     textareaAnswer.setAttribute('rows', "8");
                     textareaAnswer.setAttribute("disabled", "true");
+                    textareaAnswer.setAttribute('maxlength', '15000');
                 }
                 divIndexNew.appendChild(divTextLabel)
                 divTextLabel.appendChild(textareaAnswer)
@@ -420,6 +425,7 @@
         inputScore.setAttribute('name', "score-" + questionIndex);
         inputScore.setAttribute('required', 'true');
         inputScore.setAttribute('style', 'width:40px;');
+        inputScore.setAttribute('maxlength', '10');
         inputScore.value = 1
         let labelScore = document.createElement('label');
         labelScore.setAttribute('for', "score-" + questionIndex);
@@ -477,6 +483,7 @@
         div.setAttribute('class', "answer_div");
         let textarea = document.createElement('textarea');
         textarea.setAttribute('class', "form-control");
+        textarea.setAttribute('maxlength', '5000');
         textarea.setAttribute('placeholder', "Текст ответа");
         textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
         textarea.setAttribute('rows', "1");
