@@ -32,3 +32,12 @@ class TestRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка добавления теста в БД " + str(e))
 
+    def update_test(self, test: Test) -> bool:
+        try:
+            test_to_update = self.get_test_by_id(test_id=test.test_id)
+            test_to_update.course_id = test.course_id
+            test_to_update.content = test.content
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления теста в БД " + str(e))

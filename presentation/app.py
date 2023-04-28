@@ -409,13 +409,12 @@ def handle_edit_test_save(test_id):
             test_form = new_form
         test_body.append(question)
     test_content = TestContent(test_name, test_body)
-    '''
+
     course_id = 1
-    if test_repository.save_test(test_id, Test(None, course_id, test_content.toJSON())):
+    if test_repository.update_test(Test(test_id, course_id, test_content.toJSON())):
         flash('Тест успешно сохранён', 'success')
     else:
         flash('Ошибка при сохранении теста', 'error')
-    '''
 
     user_id = current_user.get_id()
     user = user_repository.get_user_by_id(user_id)
