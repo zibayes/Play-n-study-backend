@@ -34,7 +34,9 @@ class TestRepository:
 
     def update_test(self, test: Test) -> bool:
         try:
-            test_to_update = self.get_test_by_id(test_id=test.test_id)
+            test_to_update = self.session.query(TestsModel) \
+                .filter_by(test_id=test.test_id) \
+                .first()
             test_to_update.course_id = test.course_id
             test_to_update.content = test.content
             self.session.commit()

@@ -54,12 +54,12 @@
                                                     <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
                                                         <label style="padding-right: 8px;" for="{{ question.ask }}">
                                                         {% if is_right %}
-                                                            <input checked id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answer_text }}">
+                                                            <input checked id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answerNum.value }}">
                                                         {% else %}
-                                                            <input id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answer_text }}">
+                                                            <input id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answerNum.value }}">
                                                         {% endif %}
                                                         </label>
-                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ answer_text }}">{{ answer_text }}</textarea>
+                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
