@@ -147,6 +147,11 @@ def handle_me():
 
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
+@app.route('/tests')
+def handle_tests():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template('tests.html', user=user)
 
 @app.route('/')
 def handle_task():
@@ -165,6 +170,17 @@ def handle_courses(user_id):
     user = user_repository.get_user_by_id(user_id)
     return render_template("courses.html", user=user)
 
+@app.route('/test_preview')
+def handle_test_preview():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template("test_preview.html", user=user)
+
+@app.route('/index')
+def handle_index():
+    user_id = current_user.get_id()
+    user = user_repository.get_user_by_id(user_id)
+    return render_template("index1.html", user=user)
 
 @app.route('/profiles/<int:user_id>')
 @login_required
