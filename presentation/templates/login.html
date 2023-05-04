@@ -1,45 +1,149 @@
-{% extends 'base.html' %}
-
+{% extends 'new_base.html' %}
 {% block title%}
-<title>Страница авторизации</title>
+<title>Главная страница</title>
 {% endblock %}
-{% block style %}
-<link href="static/css/reg.css" rel="stylesheet">
+
+{% block login %}
+<hr class="my-5" />
+<div class="row d-flex justify-content-center">
+    <!--Section: Content-->
+    <section class="mb-5 w-75">
+        <h4 class="mb-5 text-center my-div"><strong>Зарегестрируйтесь прямо сейчас или войдите!</strong></h4>
+        <div class="modal-body p-4">
+            <!-- Pills navs -->
+            <ul class="nav nav-pills nav-justified mb-3" id="ex2" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="mdb-tab-login1" data-mdb-toggle="pill" href="#pills-login1" role="tab" aria-controls="pills-login" aria-selected="true">Вход</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="mdb-tab-register1" data-mdb-toggle="pill" href="#pills-register1" role="tab" aria-controls="pills-register" aria-selected="false" tabindex="-1">Регистрация</a>
+                </li>
+            </ul>
+            <!-- Pills navs -->
+
+            <!-- Pills content -->
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="pills-login1" role="tabpanel" aria-labelledby="mdb-tab-login">
+                    <form action="/login" method="POST">
+                        <div class="text-center mb-3">
+                            <p>Войдите через социальную сеть:</p>
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-google"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                        </div>
+
+                        <p class="text-center">или:</p>
+                        {% for msg in get_flashed_messages() %}
+                        <div class="flash-error" style="color: red">{{msg}}</div>
+                        {% endfor %}
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <input type="text" id="loginName1" name="email" class="form-control">
+                            <label class="form-label" for="loginName1" style="margin-left: 0px;">Почта или логин</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 114.4px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- Password input -->
+                        <div class="form-outline mb-4">
+                            <input type="password" name="password" id="loginPassword1" class="form-control">
+                            <label class="form-label" for="loginPassword1" style="margin-left: 0px;">Пароль</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 64.8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- 2 column grid layout for inline styling -->
+                        <div class="d-flex mb-4 justify-content-around">
+                            <!-- Checkbox -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="loginCheck1">
+                                <label class="form-check-label" for="loginCheck1"> Запомнить меня </label>
+                            </div>
+                            <a href="#!">Забыли пароль?</a>
+                        </div>
 
 
-{% endblock %}
-{% block content %}
-<section class="vh-100 bg-image">
-  <div class="mask d-flex align-items-center ">
-    <div class="container" style="padding-bottom: 300px">
-      <div class="row d-flex justify-content-center align-items-center">
-        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-          <div class="card" style="border-radius: 15px;">
-            <div class="card-body p-5">
-              <h2 class="text-uppercase text-center mb-5">Войти в аккаунт</h2>
-              {% for msg in get_flashed_messages() %}
-              <div class="flash-error">{{msg}}</div>
-              {% endfor %}
-              <form action="/login" method="POST">
-                <div class="form-outline mb-4">
-                  <input type="text" name="email" placeholder="Ваша почта" class="form-control form-control-lg" />
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block mb-4"> Войти </button>
+                    </form>
                 </div>
-                <div class="form-outline mb-4">
-                  <input type="password" name="password" placeholder="Ваш пароль" class="form-control form-control-lg" />
+                <div class="tab-pane fade" id="pills-register1" role="tabpanel" aria-labelledby="mdb-tab-register">
+                    <form action="/registration" method="POST">
+                        <div class="text-center mb-3">
+                            <p>Зарегистрируйтесь через социальную сеть:</p>
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-google"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+
+
+                        </div>
+
+                        <p class="text-center">или:</p>
+
+                        <!-- Username input -->
+                        <div class="form-outline mb-4">
+                            <input type="text" id="registerUsername1" name="username" class="form-control">
+                            <label class="form-label" for="registerUsername1" style="margin-left: 0px;">Логин</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <input type="email" name="email" id="registerEmail1" class="form-control">
+                            <label class="form-label" for="registerEmail1" style="margin-left: 0px;">Почта</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- Password input -->
+                        <div class="form-outline mb-4">
+                            <input type="password" name="password" id="registerPassword1" class="form-control">
+                            <label class="form-label" for="registerPassword1" style="margin-left: 0px;">Пароль</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- Repeat Password input -->
+                        <div class="form-outline mb-4">
+                            <input type="password" name="password2" id="registerRepeatPassword1" class="form-control">
+                            <label class="form-label" for="registerRepeatPassword1" style="margin-left: 0px;">Повторите пароль</label>
+                            <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 8px;"></div><div class="form-notch-trailing"></div></div></div>
+
+                        <!-- Checkbox -->
+                        <div class="form-check d-flex justify-content-center mb-4">
+                            <input class="form-check-input me-2" type="checkbox" value="" id="registerCheck1" aria-describedby="registerCheckHelpText">
+                            <label class="form-check-label" for="registerCheck1">
+                                Я прочитал и согласен с условиями
+                            </label>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary btn-block mb-1">Зарегистрироваться</button>
+                        <!-- Submit button -->
+                    </form>
                 </div>
-                <div class="d-flex justify-content-center">
-                  <button type="submit"
-                          class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Войти</button>
-                </div>
-                <div style="text-align: center">
-                  <p class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегистрируйтесь</u></a></p>
-                </div>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener( 'DOMContentLoaded', ()=>{ // Ожидание готовности документа
+
+        document.querySelector('.my-div').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+    });
+</script>
 {% endblock %}
