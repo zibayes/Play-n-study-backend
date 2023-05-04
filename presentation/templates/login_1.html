@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title%}
+<title>Страница авторизации</title>
+{% endblock %}
+{% block style %}
+<link href="static/css/reg.css" rel="stylesheet">
+
+
+{% endblock %}
+{% block content %}
+<section class="vh-100 bg-image">
+  <div class="mask d-flex align-items-center ">
+    <div class="container" style="padding-bottom: 300px">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+          <div class="card" style="border-radius: 15px;">
+            <div class="card-body p-5">
+              <h2 class="text-uppercase text-center mb-5">Войти в аккаунт</h2>
+              {% for msg in get_flashed_messages() %}
+              <div class="flash-error">{{msg}}</div>
+              {% endfor %}
+              <form action="/login" method="POST">
+                <div class="form-outline mb-4">
+                  <input type="text" name="email" placeholder="Ваша почта" class="form-control form-control-lg" />
+                </div>
+                <div class="form-outline mb-4">
+                  <input type="password" name="password" placeholder="Ваш пароль" class="form-control form-control-lg" />
+                </div>
+                <div class="d-flex justify-content-center">
+                  <button type="submit"
+                          class="btn btn-success btn-block btn-lg gradient-custom-4 text-body">Войти</button>
+                </div>
+                <div style="text-align: center">
+                  <p class="text-muted mt-5 mb-0">У вас нет аккаунта? <a href="registration" class="fw-bold text-muted text-body"><u>Зарегистрируйтесь</u></a></p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
