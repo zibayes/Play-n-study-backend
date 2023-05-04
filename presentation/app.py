@@ -104,7 +104,7 @@ def handle_me():
 @app.route('/tests')
 def handle_tests():
     user_id = current_user.get_id()
-    user = user_repository.get_user_by_id(user_id)
+    user = logic.get_user_by_id(user_id)
     return render_template('tests.html', user=user)
 
 @app.route('/')
@@ -127,7 +127,7 @@ def handle_courses(user_id):
 @app.route('/test_preview')
 def handle_test_preview():
     user_id = current_user.get_id()
-    user = user_repository.get_user_by_id(user_id)
+    user = logic.get_user_by_id(user_id)
     return render_template("test_preview.html", user=user)
 
 @app.route('/index')
