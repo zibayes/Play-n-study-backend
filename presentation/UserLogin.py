@@ -1,14 +1,12 @@
-from flask import url_for
-
-from infrastructure.repository.UserRepository import UserRepository
+from data.repositories import UserRepository
 
 
 class UserLogin:
     def __init__(self):
         self.__user = None
 
-    def from_db(self, user_repository: UserRepository, user_id):
-        self.__user = user_repository.get_user_by_id(user_id)
+    def from_db(self, logic, user_id):
+        self.__user = logic.get_user_by_id(user_id)
         return self
 
     def create(self, user):

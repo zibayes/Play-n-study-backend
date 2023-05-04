@@ -1,16 +1,7 @@
 from typing import Type
 
-from domain.User import User
-from domain.Achievement import Achievement
-from domain.AchieveRel import AchieveRel
-from domain.Course import Course
-from domain.CourseRel import CourseRel
-from domain.Curator import Curator
-from domain.Review import Review
-from domain.Task import Task
-from domain.SubRel import SubRel
-from domain.Test import Test, TestContent
-from presentation.models.models import *
+from data.types import *
+from data.models import *
 
 
 def user_db_to_user(user: UsersModel) -> User:
@@ -90,3 +81,4 @@ def test_db_to_test(test_db: Type[TestsModel]):
     test = Test(test_id=test_db.test_id, course_id=test_db.course_id, content=None)
     test.content = TestContent.from_json(test_db.content)
     return test
+

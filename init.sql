@@ -1,14 +1,14 @@
 /* todo: relations full name */
-DROP TABLE tests CASCADE;
-DROP TABLE sub_rel CASCADE;
-DROP TABLE reviews CASCADE;
-DROP TABLE courses_rel CASCADE;
-DROP TABLE achieve_rel CASCADE;
-DROP TABLE tasks CASCADE;
-DROP TABLE achievements CASCADE;
-DROP TABLE curators CASCADE;
-DROP TABLE courses CASCADE;
-DROP TABLE users CASCADE;
+-- DROP TABLE tests CASCADE;
+-- DROP TABLE sub_rel CASCADE;
+-- DROP TABLE reviews CASCADE;
+-- DROP TABLE courses_rel CASCADE;
+-- DROP TABLE achieve_rel CASCADE;
+-- DROP TABLE tasks CASCADE;
+-- DROP TABLE achievements CASCADE;
+-- DROP TABLE curators CASCADE;
+-- DROP TABLE courses CASCADE;
+-- DROP TABLE users CASCADE;
 
 
 CREATE TABLE users
