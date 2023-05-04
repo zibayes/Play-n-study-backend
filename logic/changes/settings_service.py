@@ -1,8 +1,7 @@
 from settings import MAX_USERNAME_LEN, MIN_PASSWORD_LEN, MIN_EMAIL_LEN
-from infrastructure.repository.UserRepository import UserRepository
+from service.repository.UserRepository import UserRepository
 from werkzeug.security import generate_password_hash
 from typing import Optional
-
 
 
 def get_wrong_field_msg(user_repository: UserRepository, user):

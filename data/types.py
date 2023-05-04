@@ -1,4 +1,153 @@
 import json
+from datetime import date
+
+
+class User:
+    def __init__(self, user_id=0, email=None, username=None, city=None, avatar=None, password=None):
+        self.user_id = user_id
+        self.email = email
+        self.username = username
+        self.city = city
+        self.avatar = avatar
+        self.password = password
+
+        # query fields
+        self.achievements = None
+        self.courses = None
+        self.courses_count = 0
+        self.subs  = None
+        self.subs_count = 0
+        self.sub_to = None
+        self.sub_to_count = 0
+
+    def json(self):
+        return {
+            "user_id": self.user_id,
+            "email": self.email,
+            "username": self.username,
+            "city": self.city,
+            "avatar": self.avatar,
+            "password": self.password
+        }
+
+class Achievement:
+    def __init__(self, ach_id=0, course_id=0, name=None, image=None):
+        self.ach_id = ach_id
+        self.course_id = course_id
+        self.name = name
+        self.image = image
+
+    def json(self):
+        return {
+            "ach_id": self.ach_id,
+            "course_id": self.course_id,
+            "name": self.name,
+            "image": self.image
+        }
+
+class AchieveRel:
+    def __init__(self, ach_rel_id=0, ach_id=0, user_id=0):
+        self.ach_rel_id = ach_rel_id
+        self.ach_id = ach_id
+        self.user_id = user_id
+
+    def json(self):
+        return {
+            "ach_rel_id": self.ach_rel_id,
+            "ach_id": self.ach_id,
+            "user_id": self.user_id
+        }
+
+class Course:
+    def __init__(self, course_id=0, name=None, avatar=None):
+        self.course_id = course_id
+        self.name = name
+        self.avatar = avatar
+
+    def json(self):
+        return {
+            "course_id": self.course_id,
+            "name": self.name,
+            "avatar": self.avatar
+        }
+
+class CourseRel:
+    def __init__(self, cour_rel_id=0, user_id=0, course_id=0):
+        self.cour_rel_id = cour_rel_id
+        self.user_id = user_id
+        self.course_id = course_id
+
+    def json(self):
+        return {
+            "cour_rel_id": self.cour_rel_id,
+            "user_id": self.user_id,
+            "course_id": self.course_id
+        }
+
+class Curator:
+    def __init__(self, cur_id=0, user_id=0, course_id=0):
+        self.cur_id = cur_id
+        self.user_id = user_id
+        self.course_id = course_id
+
+    def json(self):
+        return {
+            "cur_id": self.cur_id,
+            "user_id": self.user_id,
+            "course_id": self.course_id
+        }
+
+class Review:
+    def __init__(self, rev_id=0, user_id=0, course_id=0, rate=0, text=None):
+        self.rev_id = rev_id
+        self.user_id = user_id
+        self.course_id = course_id
+        self.rate = rate
+        self.text = text
+
+    def json(self):
+        return {
+            "rev_id": self.rev_id,
+            "user_id": self.user_id,
+            "course_id": self.course_id,
+            "rate": self.rate,
+            "text": self.text
+        }
+
+class SubRel:
+    def __init__(self, sub_rel_id=0, user_id=0, sub_id=0):
+        self.sub_rel_id = sub_rel_id
+        self.user_id = user_id
+        self.sub_id = sub_id
+
+    def json(self):
+        return {
+            "sub_rel_id": self.sub_rel_id,
+            "user_id": self.user_id,
+            "sub_id": self.sub_id
+        }
+
+class Task:
+    def __init__(self, task_id=0, user_id=0, name=None, tags=None, description=None, _date=None, completed=False):
+        self.task_id = task_id
+        self.user_id = user_id
+        self.name = name
+        self.tags = tags
+        self.description = description
+        self.date = _date
+        self.completed = completed
+
+    def json(self):
+        return {
+            "task_id": self.task_id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "tags": self.tags,
+            "description": self.description,
+            "date": self.date,
+            "completed": self.completed
+        }
+
 
 
 def downcast(base, derived):

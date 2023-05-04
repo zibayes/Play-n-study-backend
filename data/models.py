@@ -59,7 +59,7 @@ class CoursesModel(Base):
 class CuratorsModel(Base):
     __tablename__ = "curators"
 
-    cur_id = Column(Integer, primary_key=True)
+    cur_rel_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"))
     course_id = Column(Integer, ForeignKey("courses.course_id"))
 
