@@ -7,7 +7,7 @@ import time
 # from os import sys
 #
 # sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
-
+import flask_admin
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, flash, make_response, url_for
 from sqlalchemy.orm import sessionmaker
@@ -15,6 +15,22 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from presentation.UserLogin import UserLogin
 from logic.facade import LogicFacade
 from data.types import User
+from flask_admin.contrib.sqla import ModelView
+from data.models import *
+
+
+class UserMV(ModelView):
+    excluded_list_columns = ('password', 'avatar')
+    list_columns = ('user_id', 'username', 'email', 'city')
+
+
+class CuratorMV(ModelView):
+    list_columns = ('cur_rel_id', 'user_id', 'course_id')
+
+
+class CoursesMV(ModelView):
+    list_columns = ('course_id', 'name')
+
 
 
 engine = create_engine(
@@ -26,7 +42,14 @@ session = Session()
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
+
 login_manager = LoginManager(app)
+
+admin = flask_admin.Admin(app, name='Admin Panel')
+admin.add_view(UserMV(UsersModel, session))
+admin.add_view(CuratorMV(CuratorsModel, session))
+admin.add_view(CoursesMV(CoursesModel, session))
+
 
 # logic layer instance
 logic = LogicFacade(session)
