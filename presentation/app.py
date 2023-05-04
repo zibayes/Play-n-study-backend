@@ -4,9 +4,8 @@
 
 
 import time
-# from os import sys
-#
-# sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
+from os import sys
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 import flask_admin
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, flash, make_response, url_for
@@ -91,7 +90,7 @@ def handle_register():
     if request.method == 'POST':
         response = logic.user_register(request.form.copy())
         flash(*response)
-    return render_template("login.html")
+    return render_template("registration.html")
 
 
 @app.route('/index')
