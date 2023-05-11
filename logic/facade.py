@@ -1,7 +1,10 @@
-from data.types import SubRel
+from data.types import SubRel, CourseRel
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
+
+# todo: сделать единые названия для функций фасада,
+#  если связано с тестами test_get_by_id, пользователями user_get_for_profile, user_get_for_courses и тд
 
 
 class LogicFacade:
@@ -11,6 +14,9 @@ class LogicFacade:
 
     def get_user_for_profile(self, user_id, current_user_id):
         return self.data.get_user_for_profile(user_id, current_user_id)
+
+    def get_user_for_courses(self, user_id):
+        return self.data.get_user_for_courses(user_id)
 
     def get_user_by_id(self, user_id):
         return self.data.get_user_by_id(user_id)
@@ -43,8 +49,8 @@ class LogicFacade:
         else:
             return tuple(["Ошибка обновление аватара", "error"])
 
-    def get_avatar(self, app, user_id):
-        return self.data.get_avatar(app, user_id)
+    def get_user_avatar(self, app, user_id):
+        return self.data.get_user_avatar(app, user_id)
 
     def save_test(self, form):
         test = get_test_from_form(form)
@@ -110,3 +116,42 @@ class LogicFacade:
             return True
         else:
             return False
+
+    def course_get_avatar(self, app, course_id):
+        return self.data.course_get_avatar(app, course_id)
+
+    def courses_get_by_query(self, query):
+        return self.data.course_get_courses_by_query(query)
+
+    def course_get_by_id(self, course_id):
+        return self.data.course_get_by_id(course_id)
+
+    def course_join(self, course_id, user_id):
+        course_rel = CourseRel(
+            cour_rel_id=None,
+            user_id=user_id,
+            course_id=course_id
+        )
+        if self.data.rel_add_course_rel(course_rel):
+            return True
+        return False
+
+    def course_leave(self, course_id, user_id):
+        need_row = self.data.course_rel_repository. \
+            get_one_by_user_and_course_ids(user_id, course_id)
+        if self.data.course_rel_repository.rel_remove_course_rel(need_row.cour_rel_id):
+            return True
+        else:
+            return False
+
+    def course_get_for_preview(self, course_id, user_id):
+        course = self.course_get_by_id(course_id)
+        rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)
+        if rel is None:
+            course.can_subscribe = True
+        else:
+            course.can_subscribe = False
+        return course
+
+    def user_progress_get_by_user_course_ids(self, user_id, course_id):
+        return self.data.user_get_progress_by_course_user_ids(user_id, course_id)

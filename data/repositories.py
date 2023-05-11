@@ -97,6 +97,27 @@ class CourseRelRepository:
             return courses_rel_list
         return None
 
+    def get_one_by_user_and_course_ids(self, user_id, course_id):
+        course_rel_id = self.session.query(CoursesRelModel) \
+            .filter_by(course_id=course_id) \
+            .filter_by(user_id=user_id) \
+            .first()
+        if course_rel_id is not None:
+            return convert.course_rel_db_to_course_rel(course_rel_id)
+        return None
+
+
+    def rel_remove_course_rel(self, rel_id):
+        try:
+            self.session.query(CoursesRelModel) \
+                .filter_by(cour_rel_id=rel_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления отношения sub_rel :" + str(e))
+            return False
+
 
 class CourseRepository:
     session: Session = None
@@ -123,6 +144,12 @@ class CourseRepository:
         if course_db is not None:
             return convert.course_db_to_course(course_db)
         return None
+
+    def get_courses_by_substring(self, substring):
+        courses_db = self.session.query(CoursesModel) \
+            .filter(CoursesModel.name.like(substring + "%")) \
+            .all()
+        return convert.courses_db_to_courses(courses_db)
 
 
 class CuratorRepository:
@@ -397,3 +424,26 @@ class UserRepository:
         if len(users) > 0:
             return users
         return None
+
+
+class ArticlesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_article(self, article: Article):
+        pass
+
+    def get_article_by_id(self, article_id):
+        pass
+
+    def get_all_course_articles(self, course_id):
+        pass
+
+
+class UserProgressRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_progress_by_user_course_ids(self, user_id, course_id):
+        pass
+

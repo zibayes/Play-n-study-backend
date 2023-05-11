@@ -31,6 +31,7 @@
                     <div class="card">
                         <div class="card-body" id="1">
                             {% if found %}
+                                <p class="mt-2">Найдено по запросу:</p>
                                         {% for user in found %}
                                             {% if user.user_id != user_id %}
                                             <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
@@ -46,7 +47,6 @@
                                             {% endif %}
                                         {% endfor %}
                             {% endif %}
-
                              {% if user.sub_to and not found%}
                                         {% for sub_to in user.sub_to %}
                                             <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">

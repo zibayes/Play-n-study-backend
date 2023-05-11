@@ -38,7 +38,10 @@ def ach_rel_db_to_ach_rel(ach_rel: Type[AchieveRelModel]) -> AchieveRel:
 def course_db_to_course(course_db: Type[CoursesModel]) -> Course:
     return Course(course_id=course_db.course_id,
                   name=course_db.name,
-                  avatar=course_db.avatar)
+                  avatar=course_db.avatar,
+                  description=course_db.description,
+                  category=course_db.category,
+                  content=CourseUnit.from_json(course_db.content))
 
 
 def course_rel_db_to_course_rel(course_rel_db: Type[CoursesRelModel]):
@@ -82,3 +85,9 @@ def test_db_to_test(test_db: Type[TestsModel]):
     test.content = TestContent.from_json(test_db.content)
     return test
 
+
+def courses_db_to_courses(courses):
+    crs = []
+    for cour in courses:
+        crs.append(course_db_to_course(cour))
+    return crs if len(crs) > 0 else None

@@ -16,6 +16,8 @@ class DataFacade:
         self.task_repository = TaskRepository(session)
         self.sub_rel_repository = SubRelRepository(session)
         self.test_repository = TestRepository(session)
+        self.articles_repository = ArticlesRepository(session)
+        self.user_progress_repository = UserProgressRepository(session)
 
     def __get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -63,7 +65,7 @@ class DataFacade:
             return users_list
         return None
 
-    def get_avatar(self, app, user_id: int):
+    def get_user_avatar(self, app, user_id: int):
         img = None
         user = self.user_repository.get_user_by_id(user_id)
         if not user.avatar:
@@ -135,3 +137,52 @@ class DataFacade:
 
     def add_sub_rel(self, subrel):
         return self.sub_rel_repository.add_sub_rel(subrel)
+
+    def get_user_for_courses(self, user_id):
+        user = self.user_repository.get_user_by_id(user_id)
+        user_relations = self.course_rel_repository.get_course_rels_by_user_id(user_id)
+        user_courses = []
+        if user_relations is not None:
+            for relation in user_relations:
+                course = self.course_repository.get_course_by_course_id(relation.course_id)
+                user_courses.append(course)
+            user.courses = user_courses
+            return user
+        return user
+
+    def course_get_avatar(self, app, course_id):
+        img = None
+        course = self.course_repository.get_course_by_course_id(course_id)
+        if not course.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = course.avatar
+        return img
+
+    def course_get_courses_by_query(self, query):
+        courses_list = self.course_repository.get_courses_by_substring(query)
+        if courses_list is not None:
+            return courses_list
+        return None
+
+    def course_get_by_id(self, course_id):
+        return self.course_repository.get_course_by_course_id(course_id)
+
+    def rel_add_course_rel(self, course_rel):
+        return self.course_rel_repository.add_course_rel(course_rel)
+
+    def article_get_by_id(self, article_id):
+        return self.articles_repository.get_article_by_id(article_id)
+
+    def article_get_all_by_course_id(self, course_id):
+        return self.articles_repository.get_all_course_articles(course_id)
+
+    def article_add_article(self, article):
+        return self.articles_repository.add_article(article)
+
+    def user_get_progress_by_course_user_ids(self, user_id, course_id):
+        return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)

@@ -40,7 +40,10 @@ class CoursesModel(Base):
 
     course_id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    avatar = Column(Text)
+    avatar = Column(LargeBinary)
+    description = Column(Text)
+    category = Column(Text)
+    content = Column(JSON)
 
     # relationships
     curators = relationship("CuratorsModel", back_populates="course")
@@ -228,3 +231,27 @@ class TestsModel(Base):
 
     # __repr__ impl
 
+
+class ArticlesModel(Base):
+    __tablename__ = 'articles'
+    article_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    content = Column(Text)
+
+    def __init__(self, course_id, content):
+        self.course_id = course_id
+        self.content = content
+
+
+class UsersProgressModel(Base):
+    __tablename__ = "users_progress"
+
+    up_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    progress = Column(JSON)
+
+    def __init__(self, user_id, course_id, progress):
+        self.user_id = user_id
+        self.course_id = course_id
+        self.progress = progress

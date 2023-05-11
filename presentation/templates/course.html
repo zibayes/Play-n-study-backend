@@ -1,7 +1,7 @@
 {% extends 'base_aut.html' %}
 
 {% block title%}
-<title>Подписка на курсы</title>
+<title>Курс - {{ course.name }}</title>
 {% endblock %}
 
 {% block content %}
@@ -19,15 +19,26 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
                                 <div class="d-flex align-items-center">
-                                    <img src="https://store-images.s-microsoft.com/image/apps.49800.13718773309227929.bebdcc0e-1ed5-4778-8732-f4ef65a2f445.9ac09d39-064d-466c-81ca-2f1b6f0b95c5?mode=scale&q=90&h=300&w=200&background=%23FFFFFF" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+                                    <img src="/courseava/{{ course.course_id }}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
                                     <div class="ms-4">
-                                        <p class="fw-bold mb-1 lang">Forza Horizon 5</p>
-                                        <p class="text-muted mb-0">Стандартное издание</p>
+                                        <p class="fw-bold mb-1 lang">{{ course.name }}</p>
+                                        <p class="text-muted mb-0">{{ course.category }}</p>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-around">
-                                    <button type="submit" class="btn btn-outline-dark btn-rounded lang">Подписаться на курс</button>
-                                </div>
+                                {% if course.can_subscribe %}
+                                        <form action="/api/joincourse/{{ course.course_id }}">
+                                            <div id="div_element_button">
+                                                <button type="submit" class="btn btn-outline-dark btn-rounded lang" id="subscribe-button">Подписаться</button>
+                                            </div>
+                                        </form>
+                                {% elif not course.can_subscribe %}
+                                        <form action="/api/leavecourse/{{course.course_id}}">
+                                            <div id="div_element_button">
+                                                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Отписаться</button>
+                                            </div>
+                                        </form>
+                                {% endif %}                                </div>
                             </div>
                         </div>
                     </div>
@@ -36,63 +47,15 @@
         </div>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-8">
-                    <div class="card">
-                        <div class="card-body">
+                <div class="col mb-8">
+                    <div class="container">
+                        <div class="">
                             <span class="row justify-content-start lang " style="padding: 0 0 20px 10px">
                                 Описание
                             </span>
                             <div class="row border mb-4"></div>
                             <div>
-                                Вас ждёт бесконечный калейдоскоп приключений Horizon! Совершайте увлекательные поездки по невероятно красивому и самобытному миру Мексики за рулём величайших автомобилей в истории.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8 mb-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <div id="carouselBasicExample" class="carousel slide carousel-fade" data-mdb-ride="carousel">
-                                <div class="carousel-indicators">
-                                    <button type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                                    <button type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide-to="1" aria-label="Slide 2"></button>
-                                    <button type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide-to="2" aria-label="Slide 3"></button>
-                                </div>
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <img src="https://store-images.s-microsoft.com/image/apps.54576.13718773309227929.a9ed3a56-4096-4b23-aca9-a9d49ff8b774.be970d0b-dcc3-4ffd-943e-65a88bcae5b7?w=1399&h=787&q=90&format=jpg" class="d-block w-100" alt="Sunset Over the City"/>
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Пейзажи</h5>
-                                            <p>Посмотри на красивые виды и пейзажи.</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="carousel-item">
-                                        <img src="https://store-images.s-microsoft.com/image/apps.36774.13718773309227929.a9ed3a56-4096-4b23-aca9-a9d49ff8b774.dbf33a40-6662-4cee-86af-aa0dd5e921b0?w=1399&h=787&q=90&format=jpg" class="d-block w-100" alt="Canyon at Nigh"/>
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Спорткары</h5>
-                                            <p>Покатайся с ветерком.</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="carousel-item">
-                                        <img src="https://store-images.s-microsoft.com/image/apps.12298.13718773309227929.a9ed3a56-4096-4b23-aca9-a9d49ff8b774.f8ebc9ec-feca-4dc3-b81a-1d5a4df00111?w=1399&h=787&q=90&format=jpg" class="d-block w-100" alt="Cliff Above a Stormy Sea"/>
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h5>Крутые машины</h5>
-                                            <p>Грязь и бездорожье.</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <button class="carousel-control-prev" type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Предыдущий</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-mdb-target="#carouselBasicExample" data-mdb-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Следующий</span>
-                                </button>
+                                {{ course.description }}
                             </div>
                         </div>
                     </div>
