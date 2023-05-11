@@ -1,4 +1,6 @@
 import json
+
+
 # todo: поправить json'ы или убрать там где не нужно
 
 class User:
@@ -44,6 +46,7 @@ class Course:
         self.category = category
         self.content = content
 
+
 class CourseRel:
     def __init__(self, cour_rel_id=0, user_id=0, course_id=0):
         self.cour_rel_id = cour_rel_id
@@ -57,6 +60,7 @@ class CourseRel:
             "course_id": self.course_id
         })
 
+
 class Curator:
     def __init__(self, cur_id=0, user_id=0, course_id=0):
         self.cur_id = cur_id
@@ -69,6 +73,7 @@ class Curator:
             "user_id": self.user_id,
             "course_id": self.course_id
         }
+
 
 class Review:
     def __init__(self, rev_id=0, user_id=0, course_id=0, rate=0, text=None):
@@ -87,6 +92,7 @@ class Review:
             "text": self.text
         }
 
+
 class SubRel:
     def __init__(self, sub_rel_id=0, user_id=0, sub_id=0):
         self.sub_rel_id = sub_rel_id
@@ -99,6 +105,7 @@ class SubRel:
             "user_id": self.user_id,
             "sub_id": self.sub_id
         }
+
 
 class Task:
     def __init__(self, task_id=0, user_id=0, name=None, tags=None, description=None, _date=None, completed=False):
@@ -120,7 +127,6 @@ class Task:
             "date": self.date,
             "completed": self.completed
         }
-
 
 
 def downcast(base, derived):
@@ -291,3 +297,25 @@ class Article:
         self.article_id = article_id
         self.course_id = course_id
         self.content = content
+
+
+class UserProgress:
+    def __init__(self, up_id, user_id, course_id, progress):
+        self.up_id = up_id
+        self.user_id = user_id
+        self.course_id = course_id
+        # это поле типа Progress
+        self.progress = progress
+
+
+class Progress:
+
+    def __init__(self):
+        pass
+
+    def to_json(self):
+        pass
+
+    @staticmethod
+    def from_json(progress_json):
+        pass
