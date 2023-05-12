@@ -51,8 +51,12 @@ class CoursesModel(Base):
     achievements = relationship("AchievementsModel", back_populates="course")
     reviews = relationship("ReviewsModel", back_populates="course")
 
-    def __init__(self, name):
+    def __init__(self, name, avatar, description, category, content):
         self.name = name
+        self.avatar = avatar
+        self.description = description
+        self.category = category
+        self.content = content
 
     def __repr__(self):
         return f"<Course course_id={self.course_id} " \

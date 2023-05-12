@@ -127,7 +127,12 @@ class CourseRepository:
     def add_course(self, course: Course) -> bool:
         try:
             new_course = CoursesModel(
-                name=course.name
+                name=course.name,
+                avatar=course.avatar,
+                description=course.description,
+                category=course.category,
+                content=course.content
+
             )
             self.session.add(new_course)
             self.session.commit()
