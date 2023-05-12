@@ -91,3 +91,16 @@ def courses_db_to_courses(courses):
     for cour in courses:
         crs.append(course_db_to_course(cour))
     return crs if len(crs) > 0 else None
+
+
+def article_db_to_article(article: Type[ArticlesModel]):
+    return Article(article_id=article.article_id,
+                   course_id=article.course_id,
+                   content=article.content)
+
+
+def progress_db_to_progress(progress: Type[UsersProgressModel]):
+    return UserProgress(up_id=progress.up_id,
+                        user_id=progress.user_id,
+                        course_id=progress.course_id,
+                        progress=progress.progress)

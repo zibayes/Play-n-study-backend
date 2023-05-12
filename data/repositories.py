@@ -106,7 +106,6 @@ class CourseRelRepository:
             return convert.course_rel_db_to_course_rel(course_rel_id)
         return None
 
-
     def rel_remove_course_rel(self, rel_id):
         try:
             self.session.query(CoursesRelModel) \
@@ -431,13 +430,27 @@ class ArticlesRepository:
         self.session = session
 
     def add_article(self, article: Article):
-        pass
+        try:
+            new_article = ArticlesModel(
+                course_id=article.course_id,
+                content=article.content
+            )
+            self.session.add(new_article)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления раздела в БД " + str(e))
 
     def get_article_by_id(self, article_id):
-        pass
+        article_db = self.session.query(ArticlesModel) \
+            .filter_by(article_id=article_id) \
+            .first()
+        return convert.article_db_to_article(article_db)
 
     def get_all_course_articles(self, course_id):
-        pass
+        articles_db = self.session.query(ArticlesModel) \
+            .filter_by(course_id=course_id)
+        return convert.article_db_to_article(articles_db)
 
 
 class UserProgressRepository:
@@ -445,5 +458,8 @@ class UserProgressRepository:
         self.session = session
 
     def get_progress_by_user_course_ids(self, user_id, course_id):
-        pass
+        progress_db = self.session.query(UsersProgressModel) \
+            .filter_by(user_id=user_id, course_id=course_id) \
+            .first()
+        return convert.progress_db_to_progress(progress_db)
 

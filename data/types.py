@@ -309,9 +309,12 @@ class UserProgress:
 
 
 class Progress:
-
-    def __init__(self):
-        pass
+    def __init__(self, progress_id, type, completed, content=None):
+        self.progress_id = progress_id
+        self.type = type
+        self.completed = completed
+        # это поле типа TestContent
+        self.content = content
 
     def to_json(self):
         pass

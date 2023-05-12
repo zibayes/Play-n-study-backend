@@ -90,17 +90,17 @@ CREATE TABLE tests(
     test_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
     content json
-)
+);
 
 CREATE TABLE articles(
     article_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
     content text
-)
+);
 
 CREATE TABLE users_progress(
     up_id serial PRIMARY KEY ,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
     progress json
-)
+);
