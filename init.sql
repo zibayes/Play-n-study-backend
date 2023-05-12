@@ -1,14 +1,15 @@
-/* todo: relations full name */
--- DROP TABLE tests CASCADE;
--- DROP TABLE sub_rel CASCADE;
--- DROP TABLE reviews CASCADE;
--- DROP TABLE courses_rel CASCADE;
--- DROP TABLE achieve_rel CASCADE;
--- DROP TABLE tasks CASCADE;
--- DROP TABLE achievements CASCADE;
--- DROP TABLE curators CASCADE;
--- DROP TABLE courses CASCADE;
--- DROP TABLE users CASCADE;
+DROP TABLE  articles CASCADE ;
+DROP TABLE  users_progress CASCADE;
+DROP TABLE  tests CASCADE;
+DROP TABLE  sub_rel CASCADE;
+DROP TABLE  reviews CASCADE;
+DROP TABLE  courses_rel CASCADE;
+DROP TABLE  achieve_rel CASCADE;
+DROP TABLE  tasks CASCADE;
+DROP TABLE  achievements CASCADE;
+DROP TABLE  curators CASCADE;
+DROP TABLE  courses CASCADE;
+DROP TABLE  users CASCADE;
 
 
 CREATE TABLE users
@@ -25,7 +26,10 @@ CREATE TABLE courses
 (
     course_id serial PRIMARY KEY,
     name text NOT NULL,
-    avatar text
+    avatar text,
+    description text,
+    category text,
+    content json
 );
 
 CREATE TABLE curators
@@ -86,4 +90,17 @@ CREATE TABLE tests(
     test_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
     content json
+)
+
+CREATE TABLE articles(
+    article_id serial PRIMARY KEY,
+    course_id int REFERENCES courses(course_id),
+    content text
+)
+
+CREATE TABLE users_progress(
+    up_id serial PRIMARY KEY ,
+    user_id int REFERENCES users(user_id),
+    course_id int REFERENCES courses(course_id),
+    progress json
 )

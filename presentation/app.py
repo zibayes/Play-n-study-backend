@@ -2,9 +2,12 @@
 #  методы логического слоя теперь возвращают кортеж
 #  ("сообщение, "тип") вывод никак не организован
 
+# todo: убрать все модели users там где это не надо, заменить на current_user
+#  в самом шаблоне
 
 import time
 from os import sys
+
 sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 import flask_admin
 from sqlalchemy import create_engine
@@ -28,8 +31,7 @@ class CuratorMV(ModelView):
 
 
 class CoursesMV(ModelView):
-    list_columns = ('course_id', 'name')
-
+    list_columns = ('course_id', 'name', 'description')
 
 
 engine = create_engine(
@@ -48,7 +50,6 @@ admin = flask_admin.Admin(app, name='Admin Panel')
 admin.add_view(UserMV(UsersModel, session))
 admin.add_view(CuratorMV(CuratorsModel, session))
 admin.add_view(CoursesMV(CoursesModel, session))
-
 
 # logic layer instance
 logic = LogicFacade(session)
@@ -101,11 +102,13 @@ def handle_me():
     user = logic.get_user_for_profile(user_id)
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
+
 @app.route('/tests')
 def handle_tests():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
     return render_template('tests.html', user=user)
+
 
 @app.route('/')
 def handle_task():
@@ -119,10 +122,29 @@ def about():
     return "About"
 
 
-@app.route('/courses/<int:user_id>')
+@app.route('/courses/<int:user_id>', methods=['POST', 'GET'])
 def handle_courses(user_id):
-    user = logic.get_user_by_id(user_id)
-    return render_template("courses.html", user=user)
+    match request.method:
+        case 'GET':
+            user = logic.get_user_for_courses(user_id)
+            return render_template("courses.html", user=user, found=None, user_id=user_id)
+        case 'POST':
+            query = request.form['query']
+            if len(query) > 0:
+                found = logic.courses_get_by_query(query)
+                return render_template("courses.html", found=found, user=User(), user_id=user_id)
+
+
+@app.route('/courseava/<int:course_id>')
+@login_required
+def handle_course_ava(course_id):
+    img = logic.course_get_avatar(app, course_id)
+    if not img:
+        return ""
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
 
 @app.route('/test_preview')
 def handle_test_preview():
@@ -130,11 +152,6 @@ def handle_test_preview():
     user = logic.get_user_by_id(user_id)
     return render_template("test_preview.html", user=user)
 
-@app.route('/index')
-def handle_index():
-    user_id = current_user.get_id()
-    user = user_repository.get_user_by_id(user_id)
-    return render_template("index1.html", user=user)
 
 @app.route('/profiles/<int:user_id>')
 @login_required
@@ -211,7 +228,8 @@ def handle_check_test(test_id):
     print(test.content.toJSON())
 
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=test.content, score=result.total_score, total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+    return render_template('test_result.html', user=user, test=test.content, score=result.total_score,
+                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 
 @app.route('/save_test', methods=["POST"])
@@ -231,10 +249,10 @@ def handle_achievements(user_id):
     pass
 
 
-@app.route('/course')
-def handle_course():
-    user = logic.get_user_by_id(current_user.get_id())
-    return render_template('course.html', user=user)
+@app.route('/course/<int:course_id>')
+def handle_course(course_id):
+    course = logic.course_get_for_preview(course_id, current_user.get_id())
+    return render_template('course.html', course=course)
 
 
 @app.route('/information')
@@ -266,7 +284,7 @@ def handle_upload():
 @app.route('/userava/<int:user_id>')
 @login_required
 def handle_userava(user_id):
-    img = logic.get_avatar(app, user_id)
+    img = logic.get_user_avatar(app, user_id)
     if not img:
         return ""
     h = make_response(img)
@@ -292,6 +310,24 @@ def handle_unsubscribe(user_id):
         return redirect(f"/profiles/{user_id}")
     else:
         flash('Ошибка при отписке', 'error')
+
+
+@app.route('/api/joincourse/<int:course_id>')
+@login_required
+def handle_join_course(course_id):
+    response = logic.course_join(course_id, current_user.get_id())
+    if response:
+        return redirect(f'/course/{course_id}')
+    flash('Ошибка при подписке', 'error')
+
+
+@app.route('/api/leavecourse/<int:course_id>')
+@login_required
+def handle_join_leave_course(course_id):
+    response = logic.course_leave(course_id, current_user.get_id())
+    if response:
+        return redirect(f'/course/{course_id}')
+    flash('Ошибка при отписке', 'error')
 
 
 if __name__ == "__main__":

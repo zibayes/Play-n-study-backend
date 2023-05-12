@@ -1,6 +1,7 @@
 import json
-from datetime import date
 
+
+# todo: поправить json'ы или убрать там где не нужно
 
 class User:
     def __init__(self, user_id=0, email=None, username=None, city=None, avatar=None, password=None):
@@ -15,20 +16,11 @@ class User:
         self.achievements = None
         self.courses = None
         self.courses_count = 0
-        self.subs  = None
+        self.subs = None
         self.subs_count = 0
         self.sub_to = None
         self.sub_to_count = 0
 
-    def json(self):
-        return {
-            "user_id": self.user_id,
-            "email": self.email,
-            "username": self.username,
-            "city": self.city,
-            "avatar": self.avatar,
-            "password": self.password
-        }
 
 class Achievement:
     def __init__(self, ach_id=0, course_id=0, name=None, image=None):
@@ -37,13 +29,6 @@ class Achievement:
         self.name = name
         self.image = image
 
-    def json(self):
-        return {
-            "ach_id": self.ach_id,
-            "course_id": self.course_id,
-            "name": self.name,
-            "image": self.image
-        }
 
 class AchieveRel:
     def __init__(self, ach_rel_id=0, ach_id=0, user_id=0):
@@ -51,25 +36,16 @@ class AchieveRel:
         self.ach_id = ach_id
         self.user_id = user_id
 
-    def json(self):
-        return {
-            "ach_rel_id": self.ach_rel_id,
-            "ach_id": self.ach_id,
-            "user_id": self.user_id
-        }
 
 class Course:
-    def __init__(self, course_id=0, name=None, avatar=None):
+    def __init__(self, course_id=0, name=None, avatar=None, description=None, category=None, content=None):
         self.course_id = course_id
         self.name = name
         self.avatar = avatar
+        self.description = description
+        self.category = category
+        self.content = content
 
-    def json(self):
-        return {
-            "course_id": self.course_id,
-            "name": self.name,
-            "avatar": self.avatar
-        }
 
 class CourseRel:
     def __init__(self, cour_rel_id=0, user_id=0, course_id=0):
@@ -78,11 +54,12 @@ class CourseRel:
         self.course_id = course_id
 
     def json(self):
-        return {
+        return json.dumps({
             "cour_rel_id": self.cour_rel_id,
             "user_id": self.user_id,
             "course_id": self.course_id
-        }
+        })
+
 
 class Curator:
     def __init__(self, cur_id=0, user_id=0, course_id=0):
@@ -96,6 +73,7 @@ class Curator:
             "user_id": self.user_id,
             "course_id": self.course_id
         }
+
 
 class Review:
     def __init__(self, rev_id=0, user_id=0, course_id=0, rate=0, text=None):
@@ -114,6 +92,7 @@ class Review:
             "text": self.text
         }
 
+
 class SubRel:
     def __init__(self, sub_rel_id=0, user_id=0, sub_id=0):
         self.sub_rel_id = sub_rel_id
@@ -126,6 +105,7 @@ class SubRel:
             "user_id": self.user_id,
             "sub_id": self.sub_id
         }
+
 
 class Task:
     def __init__(self, task_id=0, user_id=0, name=None, tags=None, description=None, _date=None, completed=False):
@@ -147,7 +127,6 @@ class Task:
             "date": self.date,
             "completed": self.completed
         }
-
 
 
 def downcast(base, derived):
@@ -291,3 +270,52 @@ class QSolo(Question):
     def from_json(qsolo_json):
         base = Question.from_json(qsolo_json)
         return downcast(base, QSolo(None, None, None, None, None))
+
+
+# контент курсов
+
+class CourseUnit:
+    def __init__(self, unit_type=None, unit_id=None):
+        self.unit_type = unit_type
+        self.unit_id = unit_id
+
+    @staticmethod
+    def from_json(unit_json):
+        return {
+            CourseUnit(unit_type=unit_json['unit_type'], unit_id=unit_json['unit_id'])
+        }
+
+    def to_json(self):
+        return json.dumps({
+            "unit_type": self.unit_type,
+            "unit_id": self.unit_id
+        })
+
+
+class Article:
+    def __init__(self, article_id, course_id, content):
+        self.article_id = article_id
+        self.course_id = course_id
+        self.content = content
+
+
+class UserProgress:
+    def __init__(self, up_id, user_id, course_id, progress):
+        self.up_id = up_id
+        self.user_id = user_id
+        self.course_id = course_id
+        # это поле типа Progress
+        self.progress = progress
+
+
+class Progress:
+
+    def __init__(self):
+        pass
+
+    def to_json(self):
+        pass
+
+    @staticmethod
+    def from_json(progress_json):
+        pass

@@ -14,7 +14,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 mb-2">
-                    <form>
+                    <form action="/courses/{{ user_id }}" method="post">
                         <div class="input-group mb-4">
                             <input id="text"
                                    type="text"
@@ -29,33 +29,45 @@
                     </form>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
-                        <div class="d-flex align-items-center">
-                            <a href="/course" ><img alt="" style="width: 120px; height: 120px" class="rounded-circle" src="https://store-images.s-microsoft.com/image/apps.49800.13718773309227929.bebdcc0e-1ed5-4778-8732-f4ef65a2f445.9ac09d39-064d-466c-81ca-2f1b6f0b95c5?mode=scale&q=90&h=300&w=200&background=%23FFFFFF"></a>
-                            <div class="ms-4">
-                                <a class="fw-bold mb-1 lang" href="/course" style="color: #676767">Вышивание</a>
-                                <p class="text-muted mb-0">Курс по вышиванию варешек</p>
+
+            {% if found %}
+                <p class="mt-2">Найдено по запросу:</p>
+                            <hr>
+                {% for course in found %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                                <div class="d-flex align-items-center">
+                                    <a href="/course/{{ course.course_id }}" ><img alt="" style="width: 120px; height: 120px" class="rounded-circle" src="/courseava/{{ course.course_id }}"></a>
+                                    <div class="ms-4">
+                                        <a class="fw-bold mb-1 lang" href="/course/{{ course.course_id }}" style="color: #676767">{{course.name}}</a>
+                                        <p class="text-muted mb-0">{{course.name}}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <hr>
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
-                        <div class="d-flex align-items-center">
-                            <a href="/course" ><img alt="" style="width: 120px; height: 120px" class="rounded-circle" src="https://store-images.s-microsoft.com/image/apps.49800.13718773309227929.bebdcc0e-1ed5-4778-8732-f4ef65a2f445.9ac09d39-064d-466c-81ca-2f1b6f0b95c5?mode=scale&q=90&h=300&w=200&background=%23FFFFFF"></a>
-                            <div class="ms-4">
-                                <a class="fw-bold mb-1 lang" href="/course" style="color: #676767">Математический анализ</a>
-                                <p class="text-muted mb-0">Математика всему наука!</p>
+                {% endfor %}
+            {% endif %}
+                    <hr>
+            {% if user.courses and not found %}
+                <p class="mt-2">Пользовательские курсы</p>
+                {% for course in user.courses %}
+                     <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
+                                <div class="d-flex align-items-center">
+                                    <a href="/course/{{ course.course_id }}" ><img alt="" style="width: 120px; height: 120px" class="rounded-circle" src="/courseava/{{ course.course_id }}"></a>
+                                    <div class="ms-4">
+                                        <a class="fw-bold mb-1 lang" href="/course/{{ course.course_id }}" style="color: #676767">{{course.name}}</a>
+                                        <p class="text-muted mb-0">Курс по вышиванию варешек</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                {% endfor %}
+            {% endif %}
             <hr>
     </div>
 

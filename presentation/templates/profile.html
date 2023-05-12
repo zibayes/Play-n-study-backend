@@ -169,7 +169,11 @@
                                     {% if user.courses %}
                                         {% for course in user.courses %}
                                         <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                            <img src="{{course.avatar}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            {% if course.avatar %}
+                                            {% endif %}
+                                            {% if not course.avatar %}
+                                            <img src="/static/img/nophoto.png" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            {% endif %}
                                             <div class="ms-4">
                                                 <p class="mb-0">{{course.name}}</p>
                                             </div>
