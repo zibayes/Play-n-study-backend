@@ -208,6 +208,7 @@ def handle_check_test(test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
+    print(test.content.toJSON())
 
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=test.content, score=result.total_score, total_score=result.total_current_score, result=result.result, total_time=result.total_time)
