@@ -1,3 +1,5 @@
+import json
+
 import sqlalchemy.exc
 from data import convert as convert
 
@@ -132,7 +134,6 @@ class CourseRepository:
                 description=course.description,
                 category=course.category,
                 content=course.content
-
             )
             self.session.add(new_course)
             self.session.commit()
@@ -147,6 +148,15 @@ class CourseRepository:
             .first()
         if course_db is not None:
             return convert.course_db_to_course(course_db)
+        return None
+
+    def get_course_by_course_id_in_json(self, course_id: int) -> Optional[Course]:
+        course_db = self.session.query(CoursesModel) \
+            .filter_by(course_id=course_id) \
+            .first()
+        if course_db is not None:
+            course_db.content = json.loads(str(course_db.content).replace("'", '"'))
+            return course_db
         return None
 
     def get_courses_by_substring(self, substring):

@@ -103,11 +103,18 @@ def handle_me():
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
 
-@app.route('/tests')
-def handle_tests():
+@app.route('/course/<int:course_id>')
+def handle_tests(course_id):
+    course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    return render_template('tests.html', user=user)
+    # TODO: изменить на нормальный редирект
+    # tests = [logic.get_test_by_id(course.content["test_id"])]
+    course.content["test"] = logic.get_test_by_id(course.content["test_id"])
+    print(course.content["test"].content.name)
+    if course is None:
+        return render_template('index.html', user=user)
+    return render_template('tests.html', user=user, course=course)
 
 
 @app.route('/')
@@ -249,7 +256,7 @@ def handle_achievements(user_id):
     pass
 
 
-@app.route('/course/<int:course_id>')
+@app.route('/course_preview/<int:course_id>')
 def handle_course(course_id):
     course = logic.course_get_for_preview(course_id, current_user.get_id())
     return render_template('course.html', course=course)
@@ -317,7 +324,7 @@ def handle_unsubscribe(user_id):
 def handle_join_course(course_id):
     response = logic.course_join(course_id, current_user.get_id())
     if response:
-        return redirect(f'/course/{course_id}')
+        return redirect(f'/course_preview/{course_id}')
     flash('Ошибка при подписке', 'error')
 
 
@@ -326,7 +333,7 @@ def handle_join_course(course_id):
 def handle_join_leave_course(course_id):
     response = logic.course_leave(course_id, current_user.get_id())
     if response:
-        return redirect(f'/course/{course_id}')
+        return redirect(f'/course_preview/{course_id}')
     flash('Ошибка при отписке', 'error')
 
 

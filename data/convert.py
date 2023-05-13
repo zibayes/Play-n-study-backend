@@ -41,7 +41,7 @@ def course_db_to_course(course_db: Type[CoursesModel]) -> Course:
                   avatar=course_db.avatar,
                   description=course_db.description,
                   category=course_db.category,
-                  content=CourseUnit.from_json(course_db.content))
+                  content=CourseUnit.from_json(json.loads(course_db.content)))
 
 
 def course_rel_db_to_course_rel(course_rel_db: Type[CoursesRelModel]):
