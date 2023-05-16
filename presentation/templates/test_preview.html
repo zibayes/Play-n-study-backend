@@ -8,20 +8,22 @@
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;">
         <span class="fs-5 row m-3 justify-content-start lang">
-            Города мира
+            {{ course.name }}
         </span>
         <div class="row border"></div>
 
         <div class="card">
             <div class="card-body">
                 <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
-                    Тест 1
+                    {{ test.content.name }}
                 </span>
                 <div class="row border"></div>
                 <br>
                 <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
                 <div class="d-flex justify-content-center m-5">
-                    <button class="btn btn-primary ">Начать тест</button>
+                    <form action="/tests/{{test.test_id}}">
+                        <button class="btn btn-primary ">Начать тест</button>
+                    </form>
                 </div>
             </div>
         </div>

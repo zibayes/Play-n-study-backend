@@ -153,7 +153,6 @@
       <div class="modal-footer">
         <a type="button" class="btn badge-primary lang" key="logout" style="border-radius: 25px" href="/logout">Выход из учетной записи</a>
       </div>
-
     </div>
   </div>
 </div>
@@ -293,9 +292,9 @@ var arrLang = {
       window.location = linkLocation;
     }
   });
-
+/*
 var lang = localStorage.getItem('language');
-	if(lang.valueOf() == 'en'.valueOf()){
+	if(lang.valueOf() === 'en'.valueOf()){
 		document.getElementById("ru-tick").style.visibility = "hidden";
 		document.getElementById("en-tick").style.visibility = "visible";
 	} else {
@@ -306,6 +305,7 @@ var lang = localStorage.getItem('language');
 		$(this).text(arrLang[lang][$(this).attr('key')]);
 		$('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').addClass(arrLang[lang][$('.curflag').attr('key')]);
 	});
+*/
 </script>
 {% block script %}
 {% endblock %}

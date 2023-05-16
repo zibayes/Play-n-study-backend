@@ -282,7 +282,7 @@ class CourseUnit:
     @staticmethod
     def from_json(unit_json):
         return {
-            CourseUnit(unit_type=unit_json['unit_type'], unit_id=unit_json['unit_id'])
+            [{'name': unit['name'], 'tests': [CourseUnit(unit_type=i['unit_type'], unit_id=i['unit_id']) for i in unit['tests']]} for unit in unit_json]
         }
 
     def to_json(self):

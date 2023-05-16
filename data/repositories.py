@@ -155,7 +155,8 @@ class CourseRepository:
             .filter_by(course_id=course_id) \
             .first()
         if course_db is not None:
-            course_db.content = json.loads(str(course_db.content).replace("'", '"'))
+            course_db.content = str(course_db.content).replace("'", '"')
+            course_db.content = json.loads(course_db.content)
             return course_db
         return None
 

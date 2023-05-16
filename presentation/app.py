@@ -109,9 +109,10 @@ def handle_tests(course_id):
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
     # TODO: изменить на нормальный редирект
-    # tests = [logic.get_test_by_id(course.content["test_id"])]
-    course.content["test"] = logic.get_test_by_id(course.content["test_id"])
-    print(course.content["test"].content.name)
+    for unit in course.content:
+        for test in unit['tests']:
+            test["test"] = logic.get_test_by_id(test["test_id"])
+    print(course.content)
     if course is None:
         return render_template('index.html', user=user)
     return render_template('tests.html', user=user, course=course)
@@ -153,11 +154,33 @@ def handle_course_ava(course_id):
     return h
 
 
-@app.route('/test_preview')
-def handle_test_preview():
+@app.route('/test_preview/<int:test_id>')
+def handle_test_preview(test_id):
+    test = logic.get_test_by_id(test_id)
+    user_id = current_user.get_id()
+    course = logic.get_course(test.course_id, user_id)
+    user = logic.get_user_by_id(user_id)
+    return render_template("test_preview.html", user=user, test=test, course=course)
+
+
+@app.route('/course_editor/<int:course_id>')
+def handle_course_editor(course_id):
+    course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    return render_template("test_preview.html", user=user)
+    for unit in course.content:
+        for test in unit['tests']:
+            test["test"] = logic.get_test_by_id(test["test_id"])
+    if course is None:
+        return render_template('index.html', user=user)
+    return render_template('course_editor.html', user=user, course=course)
+
+
+@app.route('/course_constructor')
+def handle_course_constructor():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    return render_template('course_constructor.html', user=user)
 
 
 @app.route('/profiles/<int:user_id>')
