@@ -259,3 +259,25 @@ class UsersProgressModel(Base):
         self.user_id = user_id
         self.course_id = course_id
         self.progress = progress
+
+
+class RolesModel(Base):
+    __tablename__ = "roles"
+
+    role_id = Column(Integer, primary_key=True)
+    name = Column(Text)
+
+    def __init__(self, name):
+        self.name = name
+
+
+class UsersRolesModel(Base):
+    __tablename__ = "users_roles"
+
+    ur_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    role_id = Column(Integer, ForeignKey("roles.role_id"))
+
+    def __init__(self, user_id, role_id):
+        self.user_id = user_id
+        self.role_id = role_id
