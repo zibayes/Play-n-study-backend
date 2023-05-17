@@ -26,25 +26,31 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-around">
-                                {% if course.can_subscribe %}
-                                        <form action="/api/joincourse/{{ course.course_id }}">
-                                            <div id="div_element_button">
-                                                <button type="submit" class="btn btn-outline-dark btn-rounded lang" id="subscribe-button">Подписаться</button>
-                                            </div>
-                                        </form>
-                                {% elif not course.can_subscribe %}
-                                        <form action="/course/{{course.course_id}}">
-                                            <div id="div_element_button" style="margin-right: 8px;">
-                                                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Перейти на курс</button>
-                                            </div>
-                                        </form>
-                                        <form action="/api/leavecourse/{{course.course_id}}">
-                                            <div id="div_element_button">
-                                                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Отписаться</button>
-                                            </div>
-                                        </form>
-                                {% endif %}                                </div>
+                                    {% if course.can_subscribe %}
+                                            <form action="/api/joincourse/{{ course.course_id }}">
+                                                <div id="div_element_button">
+                                                    <button type="submit" class="btn btn-outline-dark btn-rounded lang" id="subscribe-button">Подписаться</button>
+                                                </div>
+                                            </form>
+                                    {% elif not course.can_subscribe %}
+                                            <form action="/course/{{course.course_id}}">
+                                                <div id="div_element_button" style="margin-right: 8px;">
+                                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Перейти на курс</button>
+                                                </div>
+                                            </form>
+                                            <form action="/api/leavecourse/{{course.course_id}}">
+                                                <div id="div_element_button">
+                                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Отписаться</button>
+                                                </div>
+                                            </form>
+                                    {% endif %}
+                                </div>
                             </div>
+                            <form action="/course_editor/{{course.course_id}}">
+                                <div id="div_element_button" style="margin-right: 8px;">
+                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Редактировать курс</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

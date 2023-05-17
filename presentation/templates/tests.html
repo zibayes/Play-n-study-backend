@@ -32,12 +32,10 @@
                                     </p>
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
-                                            <!-- <a href="#!" class="btn btn-outline-light">Тест</a> -->
                                             <form action="/test_preview/{{unit_test.test.test_id}}">
                                                 <button class="btn btn-outline-light" id="test-button">Тест</button>
                                             </form>
                                         {% else %}
-                                            <!-- <a href="#!" class="btn btn-outline-light">Лекция</a> -->
                                             <button class="btn btn-outline-light" id="lection-button">Лекция</button>
                                         {% endif %}
                                         <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>

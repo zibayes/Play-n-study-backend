@@ -66,17 +66,22 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
+    def update_course_add_unit(self, course_id, unit_name, unit_id):
+        course = self.data.course_get_by_id(course_id)
+        course.content.append({'name': unit_name, 'unit_id': unit_id, 'tests': []})
+        if self.data.update_course(course):
+            return tuple(['Раздел успешно сохранён', 'success'])
+        else:
+            return tuple(['Ошибка при раздела курса', 'error'])
+
     def get_test_by_id(self, test_id):
         return self.data.get_test_by_id(test_id)
 
     def get_all_tests(self):
         return self.data.get_all_tests()
 
-    def edit_test(self, form):
-        test = get_test_from_form(form)
-
-        # change if you need
-        test.course_id = 1
+    def edit_test(self, form, test_id, course_id):
+        test = get_test_from_form(form, test_id, course_id)
 
         if self.data.update_test(test):
             return tuple(['Тест успешно сохранён', 'success'])

@@ -162,7 +162,7 @@ def handle_test_preview(test_id):
     return render_template("test_preview.html", user=user, test=test, course=course)
 
 
-@app.route('/course_editor/<int:course_id>')
+@app.route('/course_editor/<int:course_id>', methods=['GET'])
 def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
@@ -173,6 +173,14 @@ def handle_course_editor(course_id):
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
+
+
+@app.route('/course_editor/<int:course_id>', methods=['POST'])
+def handle_course_editor_save_unit(course_id):
+    unit_name = request.form['newUnitName']
+    unit_id = 3
+    logic.update_course_add_unit(course_id, unit_name, unit_id)
+    return redirect(f'/course_editor/{course_id}')
 
 
 @app.route('/course_constructor')
@@ -209,18 +217,19 @@ def handle_reviews():
     return render_template('reviews.html', user=user)
 
 
-@app.route('/course/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
+@app.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
 def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
 
 
-@app.route('/course/<int:course_id>/test_constructor/<int:unit_id>', methods=["POST"])
+@app.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["POST"])
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
     if response[1] == 'success':
-        return "успешно"
-    return "ошибка"
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении теста', 'error')
+    return redirect(f'/course_editor/{course_id}')
 
 
 @app.route('/tests/<int:test_id>')
@@ -234,19 +243,20 @@ def handle_load_test(test_id):
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time())
 
 
-@app.route('/tests_edit/<int:test_id>')
-def handle_edit_test(test_id):
+@app.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>')
+def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
     user = logic.get_user_by_id(current_user.get_id())
     return render_template('test_editor.html', user=user, test=test.content)
 
 
-@app.route('/tests_edit/<int:test_id>', methods=["POST"])
-def handle_edit_test_save(test_id):
-    response = logic.edit_test(request.form.to_dict())
+@app.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["POST"])
+def handle_edit_test_save(course_id, test_id):
+    response = logic.edit_test(request.form, test_id, course_id)
     if response[1] == 'success':
-        return "успешно"
-    return "ошибка"
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении теста', 'error')
+    return redirect(f'/course_editor/{course_id}')
 
 
 @app.route('/tests/<int:test_id>', methods=["POST"])

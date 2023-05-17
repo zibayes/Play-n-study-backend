@@ -36,7 +36,7 @@
                                         {% else %}
                                             <button disabled class="btn btn-outline-light" id="lection-button">Лекция</button>
                                         {% endif %}
-                                        <form action="/tests_edit/{{unit_test.test.test_id}}">
+                                        <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
                                             <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
                                         </form>
                                         <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>
@@ -46,7 +46,7 @@
                         </div>
                     {% endfor %}
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <form action="/course/{{course.course_id}}/test_constructor/{{unit.unit_id}}">
+                        <form action="/course_editor/{{course.course_id}}/test_constructor/{{unit.unit_id}}">
                             <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
                                 <button class="card-body text-white" style="background: transparent; border: transparent;">
                                     <h1 style="font-size: 84px; text-align: center;">+</h1>
@@ -60,11 +60,29 @@
         <div class="row border" id="insert-place"></div>
         <br>
         <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
-            <button class="card-body text-white" style="background: transparent; border: transparent;" onclick="addUnitOnButtonClick()">
+            <button class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addUnit" data-mdb-toggle="modal">
                 <h1 style="font-size: 84px; text-align: center;">+</h1>
             </button>
         </div>
     </div>
+</div>
+
+<div class="modal fade " id="addUnit" tabindex="-1">
+  <div class="modal-dialog modal-side">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание раздела</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/course_editor/{{course.course_id}}" method="POST">
+          <div class="modal-body lang" key="areusure">Введите название раздела:</div>
+            <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+          <div class="modal-footer">
+                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+          </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
