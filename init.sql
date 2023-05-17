@@ -104,3 +104,16 @@ CREATE TABLE users_progress(
     course_id int REFERENCES courses(course_id),
     progress json
 );
+
+CREATE TABLE roles(
+    role_id serial PRIMARY KEY,
+    name text
+);
+
+CREATE TABLE users_roles(
+    ur_id serial PRIMARY KEY,
+    user_id int REFERENCES users(user_id),
+    role_id int REFERENCES roles(role_id)
+);
+
+INSERT INTO roles(name) VALUES ('admin');

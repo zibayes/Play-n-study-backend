@@ -182,3 +182,15 @@ class LogicFacade:
         if rel is None:
             return
         return course
+
+    def __role_get_user_role_by_user_id(self, user_id):
+        return self.data.role_get_user_roles_by_user_id(user_id)
+
+    def is_user_admin(self, user_id):
+        roles = self.__role_get_user_role_by_user_id(user_id)
+        if roles and 'admin' in roles:
+            return True
+        return False
+
+    def is_user_curator_of_course(self, user_id, course_id):
+        return self.data.is_user_curator_of_course(user_id, course_id)

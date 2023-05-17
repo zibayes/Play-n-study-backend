@@ -215,6 +215,15 @@ class CuratorRepository:
             return curators_list
         return None
 
+    def is_user_curator_of_course(self, user_id, course_id):
+        curator_db = self.session.query(CuratorsModel) \
+            .filter_by(user_id=user_id) \
+            .filter_by(course_id=course_id) \
+            .first()
+        if curator_db:
+            return True
+        return False
+
 
 class ReviewRepository:
     session: Session = None
@@ -507,4 +516,25 @@ class UserProgressRepository:
             .filter_by(user_id=user_id, course_id=course_id) \
             .first()
         return convert.progress_db_to_progress(progress_db)
+
+
+class RoleRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_user_roles_by_id(self, user_id):
+        relations = self.session.query(UsersRolesModel) \
+            .filter_by(user_id=user_id) \
+            .all()
+        if relations:
+            roles = []
+            for relation in relations:
+                role = self.session.query(RolesModel) \
+                          .filter_by(role_id=relation.role_id) \
+                          .first()
+                if role:
+                    roles.append(role.name.lower())
+            return roles
+        else:
+            return None
 

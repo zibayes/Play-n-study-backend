@@ -17,21 +17,6 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from presentation.UserLogin import UserLogin
 from logic.facade import LogicFacade
 from data.types import User
-from flask_admin.contrib.sqla import ModelView
-from data.models import *
-
-
-class UserMV(ModelView):
-    excluded_list_columns = ('password', 'avatar')
-    list_columns = ('user_id', 'username', 'email', 'city')
-
-
-class CuratorMV(ModelView):
-    list_columns = ('cur_rel_id', 'user_id', 'course_id')
-
-
-class CoursesMV(ModelView):
-    list_columns = ('course_id', 'name', 'description')
 
 
 engine = create_engine(
@@ -46,11 +31,6 @@ app.secret_key = 'super secret key'
 
 login_manager = LoginManager(app)
 
-admin = flask_admin.Admin(app, name='Admin Panel')
-admin.add_view(UserMV(UsersModel, session))
-admin.add_view(CuratorMV(CuratorsModel, session))
-admin.add_view(CoursesMV(CoursesModel, session))
-
 # logic layer instance
 logic = LogicFacade(session)
 
@@ -61,9 +41,25 @@ def load_user(user_id):
     return UserLogin().from_db(logic, user_id)
 
 
+# @app.route('/admin')
+# @login_required
+# def handle_admin():
+#     is_admin = logic.is_user_admin(current_user.get_id())
+#     if not is_admin:
+#         return "not allowed"
+#     return render_template()
+
+
 @login_manager.unauthorized_handler
 def unauthorized():
     return render_template('index.html')
+
+
+@app.route('/debug')
+def debug_route():
+    if logic.is_user_admin(current_user.get_id()):
+        return "admin"
+    return "not admin"
 
 
 @app.route("/logout")
@@ -103,6 +99,7 @@ def handle_me():
     return render_template('profile.html', user=user, is_me=True, need_subscribe=False)
 
 
+@login_required
 @app.route('/course/<int:course_id>')
 def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
@@ -129,6 +126,7 @@ def about():
     return "About"
 
 
+@login_required
 @app.route('/courses/<int:user_id>', methods=['POST', 'GET'])
 def handle_courses(user_id):
     match request.method:
@@ -152,7 +150,7 @@ def handle_course_ava(course_id):
     h.headers['Content-Type'] = 'image/png'
     return h
 
-
+@login_required
 @app.route('/test_preview/<int:test_id>')
 def handle_test_preview(test_id):
     test = logic.get_test_by_id(test_id)
@@ -162,6 +160,7 @@ def handle_test_preview(test_id):
     return render_template("test_preview.html", user=user, test=test, course=course)
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>', methods=['GET'])
 def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
@@ -175,6 +174,7 @@ def handle_course_editor(course_id):
     return render_template('course_editor.html', user=user, course=course)
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>', methods=['POST'])
 def handle_course_editor_save_unit(course_id):
     unit_name = request.form['newUnitName']
@@ -182,7 +182,7 @@ def handle_course_editor_save_unit(course_id):
     logic.update_course_add_unit(course_id, unit_name, unit_id)
     return redirect(f'/course_editor/{course_id}')
 
-
+@login_required
 @app.route('/course_constructor', methods=['GET'])
 def handle_course_constructor():
     user_id = current_user.get_id()
@@ -190,6 +190,7 @@ def handle_course_constructor():
     return render_template('course_constructor.html', user=user)
 
 
+@login_required
 @app.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
     course_name = request.form['courseName']
@@ -200,6 +201,7 @@ def handle_course_create(user_id):
     return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
+@login_required
 @app.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
@@ -208,6 +210,7 @@ def handle_profile(user_id):
                            need_subscribe=user.need_subscribe, is_me=user.is_me)
 
 
+@login_required
 @app.route('/subscriptions/<int:user_id>', methods=["POST", "GET"])
 def handle_subscriptions(user_id):
     if request.method == "GET":
@@ -221,18 +224,21 @@ def handle_subscriptions(user_id):
     return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
 
 
+
 @app.route('/reviews')
 def handle_reviews():
     user = logic.get_user_by_id(current_user.get_id())
     return render_template('reviews.html', user=user)
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
 def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["POST"])
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
@@ -242,6 +248,7 @@ def handle_result_test(course_id, unit_id):
     return redirect(f'/course_editor/{course_id}')
 
 
+@login_required
 @app.route('/tests/<int:test_id>')
 def handle_load_test(test_id):
     test = logic.get_test_by_id(test_id)
@@ -253,6 +260,7 @@ def handle_load_test(test_id):
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time())
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>')
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
@@ -260,6 +268,7 @@ def handle_edit_test(course_id, test_id):
     return render_template('test_editor.html', user=user, test=test.content)
 
 
+@login_required
 @app.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["POST"])
 def handle_edit_test_save(course_id, test_id):
     response = logic.edit_test(request.form, test_id, course_id)
@@ -269,6 +278,7 @@ def handle_edit_test_save(course_id, test_id):
     return redirect(f'/course_editor/{course_id}')
 
 
+@login_required
 @app.route('/tests/<int:test_id>', methods=["POST"])
 def handle_check_test(test_id):
     test = logic.get_test_by_id(test_id)

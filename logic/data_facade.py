@@ -18,6 +18,7 @@ class DataFacade:
         self.test_repository = TestRepository(session)
         self.articles_repository = ArticlesRepository(session)
         self.user_progress_repository = UserProgressRepository(session)
+        self.role_repository = RoleRepository(session)
 
     def __get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -201,3 +202,9 @@ class DataFacade:
 
     def user_get_progress_by_course_user_ids(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)
+
+    def role_get_user_roles_by_user_id(self, user_id):
+        return self.role_repository.get_user_roles_by_id(user_id)
+
+    def is_user_curator_of_course(self, user_id, course_id):
+        return self.curator_repository.is_user_curator_of_course(user_id, course_id)
