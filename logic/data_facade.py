@@ -123,6 +123,9 @@ class DataFacade:
     def add_test(self, test):
         return self.test_repository.add_test(test)
 
+    def add_course(self, course):
+        return self.course_repository.add_course(course)
+
     def update_course(self, course):
         return self.course_repository.update_course(course)
 

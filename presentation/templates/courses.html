@@ -70,11 +70,31 @@
             {% endif %}
             <hr>
     </div>
-        <form action="/course_constructor">
+        <!--<form action="/course_constructor">-->
             <div id="div_element_button" style="margin-right: 8px;">
-                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block; margin-bottom: 8px;">Создать курс</button>
+                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#addCourse" data-mdb-toggle="modal">Создать курс</button>
             </div>
-        </form>
+        <!--<</form>-->
     </div>
+</div>
+
+<div class="modal fade " id="addCourse" tabindex="-1">
+  <div class="modal-dialog modal-side">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание курса</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/create_course/{{user.user_id}}" method="POST">
+          <div class="modal-body lang" key="areusure">Введите данные курса:</div>
+            <textarea required class="form-control" maxlength="1000" placeholder="Название курса" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+            <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+            <textarea required class="form-control" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+          <div class="modal-footer">
+                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+          </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

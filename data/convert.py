@@ -38,7 +38,6 @@ def ach_rel_db_to_ach_rel(ach_rel: Type[AchieveRelModel]) -> AchieveRel:
 
 def course_db_to_course(course_db: Type[CoursesModel]) -> Course:
     course_db.content = str(course_db.content).replace("'", '"')
-    print(type(course_db.content))
     return Course(course_id=course_db.course_id,
                   name=course_db.name,
                   avatar=course_db.avatar,

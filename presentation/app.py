@@ -183,11 +183,21 @@ def handle_course_editor_save_unit(course_id):
     return redirect(f'/course_editor/{course_id}')
 
 
-@app.route('/course_constructor')
+@app.route('/course_constructor', methods=['GET'])
 def handle_course_constructor():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
     return render_template('course_constructor.html', user=user)
+
+
+@app.route('/create_course/<int:user_id>', methods=['POST'])
+def handle_course_create(user_id):
+    course_name = request.form['courseName']
+    course_desc = request.form['description']
+    course_cat = request.form['category']
+    logic.add_course(course_name, course_desc, course_cat)
+    user = logic.get_user_for_courses(user_id)
+    return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
 @app.route('/profiles/<int:user_id>')

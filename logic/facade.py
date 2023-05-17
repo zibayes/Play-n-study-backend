@@ -1,4 +1,4 @@
-from data.types import SubRel, CourseRel, CourseUnit
+from data.types import SubRel, CourseRel, CourseUnit, Course
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
@@ -65,6 +65,13 @@ class LogicFacade:
             return tuple(['Тест успешно сохранён', 'success'])
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
+
+    def add_course(self, course_name, course_desc, course_cat):
+        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content=[])
+        if self.data.add_course(course):
+            return tuple(['Курс успешно сохранён', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении курса', 'error'])
 
     def update_course_add_unit(self, course_id, unit_name, unit_id):
         course = self.data.course_get_by_id(course_id)
