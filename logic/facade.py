@@ -58,7 +58,7 @@ class LogicFacade:
         if self.data.add_test(test):
             test = self.data.get_last_test_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
-            for unit in course.content:
+            for unit in course.content['body']:
                 if int(unit['unit_id']) == unit_id:
                     unit['tests'].append(CourseUnit(unit_type='test', test_id=test.test_id))
             self.data.update_course(course)
@@ -67,19 +67,35 @@ class LogicFacade:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
     def add_course(self, course_name, course_desc, course_cat):
-        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content=[])
+        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content={'body': [], 'unit_counter': 0})
         if self.data.add_course(course):
             return tuple(['Курс успешно сохранён', 'success'])
         else:
             return tuple(['Ошибка при сохранении курса', 'error'])
 
-    def update_course_add_unit(self, course_id, unit_name, unit_id):
+    def update_course_add_unit(self, course_id, unit_name):
         course = self.data.course_get_by_id(course_id)
-        course.content.append({'name': unit_name, 'unit_id': unit_id, 'tests': []})
+        course.content['unit_counter'] += 1
+        course.content['body'].append({'name': unit_name, 'unit_id': course.content['unit_counter'], 'tests': []})
         if self.data.update_course(course):
             return tuple(['Раздел успешно сохранён', 'success'])
         else:
-            return tuple(['Ошибка при раздела курса', 'error'])
+            return tuple(['Ошибка при сохранении раздела курса', 'error'])
+
+    def update_course(self, course):
+        if self.data.update_course(course):
+            return tuple(['Курс успешно сохранён', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении курса', 'error'])
+
+    def remove_course(self, course_id):
+        if self.data.remove_course(course_id):
+            return tuple(['Курс успешно удалён', 'success'])
+        else:
+            return tuple(['Ошибка при удалении курса', 'error'])
+
+    def remove_test(self, test_id):
+        return self.data.remove_test(test_id)
 
     def get_test_by_id(self, test_id):
         return self.data.get_test_by_id(test_id)
@@ -182,3 +198,6 @@ class LogicFacade:
         if rel is None:
             return
         return course
+
+    def get_course_without_rel(self, course_id):
+        return self.data.course_json_get_by_id(course_id)

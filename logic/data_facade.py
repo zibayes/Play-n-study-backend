@@ -129,6 +129,9 @@ class DataFacade:
     def update_course(self, course):
         return self.course_repository.update_course(course)
 
+    def remove_course(self, course_id):
+        return self.course_repository.remove_course(course_id)
+
     def get_test_by_id(self, test_id):
         return self.test_repository.get_test_by_id(test_id)
 
@@ -137,6 +140,9 @@ class DataFacade:
 
     def get_last_test_by_course(self, course_id):
         return self.test_repository.get_last_test_by_course(course_id)
+
+    def remove_test(self, test_id):
+        return self.test_repository.remove_test(test_id)
 
     def update_test(self, test):
         return self.test_repository.update_test(test)

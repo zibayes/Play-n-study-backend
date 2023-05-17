@@ -108,10 +108,10 @@ def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    for unit in course.content:
+    print(course.content['body'])
+    for unit in course.content['body']:
         for test in unit['tests']:
             test["test"] = logic.get_test_by_id(test["test_id"])
-    print(course.content)
     if course is None:
         return render_template('index.html', user=user)
     return render_template('tests.html', user=user, course=course)
@@ -162,12 +162,63 @@ def handle_test_preview(test_id):
     return render_template("test_preview.html", user=user, test=test, course=course)
 
 
+@app.route('/delete_test/<int:course_id>/<int:test_id>', methods=['POST'])
+def handle_delete_test(course_id, test_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    index_to_delete = 0
+    inner_index_to_delete = 0
+    is_break = False
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if int(test['test_id']) == test_id:
+                is_break = True
+                break
+            inner_index_to_delete += 1
+        if is_break:
+            break
+        inner_index_to_delete = 0
+        index_to_delete += 1
+    logic.update_course(course)
+    logic.remove_test(test_id)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@app.route('/delete_unit/<int:course_id>/<int:unit_id>', methods=['POST'])
+def handle_delete_unit(course_id, unit_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    index_to_delete = 0
+    for unit in course.content['body']:
+        if int(unit['unit_id']) == unit_id:
+            break
+        index_to_delete += 1
+
+    for test in course.content['body'][index_to_delete]['tests']:
+        logic.remove_test(test['test_id'])
+    course.content['body'].pop(index_to_delete)
+    logic.update_course(course)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@app.route('/delete_course/<int:course_id>', methods=['POST'])
+def handle_delete_course(course_id):
+    user_id = current_user.get_id()
+    course = logic.get_course_without_rel(course_id)
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            logic.remove_test(test['test_id'])
+    logic.course_leave(course.course_id, user_id)
+    logic.remove_course(course.course_id)
+    return redirect(f'/courses/{user_id}')
+
+
 @app.route('/course_editor/<int:course_id>', methods=['GET'])
 def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    for unit in course.content:
+    for unit in course.content['body']:
         for test in unit['tests']:
             test["test"] = logic.get_test_by_id(test["test_id"])
     if course is None:
@@ -178,8 +229,7 @@ def handle_course_editor(course_id):
 @app.route('/course_editor/<int:course_id>', methods=['POST'])
 def handle_course_editor_save_unit(course_id):
     unit_name = request.form['newUnitName']
-    unit_id = 3
-    logic.update_course_add_unit(course_id, unit_name, unit_id)
+    logic.update_course_add_unit(course_id, unit_name)
     return redirect(f'/course_editor/{course_id}')
 
 

@@ -46,11 +46,18 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <form action="/course_editor/{{course.course_id}}">
-                                <div id="div_element_button" style="margin-right: 8px;">
-                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Редактировать курс</button>
-                                </div>
-                            </form>
+                            <div style="display: flex;">
+                                <form action="/course_editor/{{course.course_id}}">
+                                    <div id="div_element_button" style="margin-right: 8px;">
+                                        <button class="btn btn-outline-dark btn-rounded lang" id="edit-button" style="display: inline-block;">Редактировать курс</button>
+                                    </div>
+                                </form>
+                                <form action="/delete_course/{{course.course_id}}" method="POST">
+                                    <div id="div_element_button" style="margin-right: 8px;">
+                                        <button class="btn btn-outline-dark btn-rounded lang" id="delete-button" style="display: inline-block;">Удалить курс</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

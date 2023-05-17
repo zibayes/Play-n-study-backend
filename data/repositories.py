@@ -184,6 +184,17 @@ class CourseRepository:
             .all()
         return convert.courses_db_to_courses(courses_db)
 
+    def remove_course(self, course_id) -> bool:
+        try:
+            self.session.query(CoursesModel) \
+                .filter_by(course_id=course_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления курса :" + str(e))
+            return False
+
 
 class CuratorRepository:
     session: Session = None
@@ -389,6 +400,17 @@ class TestRepository:
             return True
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка обновления теста в БД " + str(e))
+
+    def remove_test(self, test_id) -> bool:
+        try:
+            self.session.query(TestsModel) \
+                .filter_by(test_id=test_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления теста :" + str(e))
+            return False
 
 
 class UserRepository:

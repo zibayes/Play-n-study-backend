@@ -282,32 +282,36 @@ class CourseUnit:
 
     @staticmethod
     def from_json(unit_json):
-        return [
-            {
-             'name': unit['name'],
-             'unit_id': unit['unit_id'],
-             'tests': [
-                CourseUnit(unit_type=i['unit_type'], test_id=i['test_id']) for i in unit['tests']
-             ]
-            } for unit in unit_json
-        ]
+        return {
+            'body': [
+                {
+                 'name': unit['name'],
+                 'unit_id': unit['unit_id'],
+                 'tests': [
+                    CourseUnit(unit_type=i['unit_type'], test_id=i['test_id']) for i in unit['tests']
+                 ]
+                } for unit in unit_json['body']
+            ],
+            'unit_counter': unit_json['unit_counter']
+        }
 
     @staticmethod
     def to_json(units):
-        for k in [i for i in [unit1['tests'] for unit1 in units]]:
-            print(k)
-        return json.dumps([
-            {
-             'name': unit['name'],
-             'unit_id': unit['unit_id'],
-             'tests': [
-                 {
-                  'unit_type': i.unit_type,
-                  'test_id': i.test_id
-                 } for i in unit['tests']
-             ]
-            } for unit in units
-        ])
+        return json.dumps({
+            'body': [
+                {
+                 'name': unit['name'],
+                 'unit_id': unit['unit_id'],
+                 'tests': [
+                     {
+                      'unit_type': i['unit_type'] if isinstance(i, dict) else i.unit_type,
+                      'test_id': i['test_id'] if isinstance(i, dict) else i.test_id
+                     } for i in unit['tests']
+                 ]
+                } for unit in units['body']
+            ],
+            'unit_counter': units['unit_counter']
+        })
 
 
 class Article:
