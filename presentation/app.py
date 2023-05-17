@@ -108,7 +108,6 @@ def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    # TODO: изменить на нормальный редирект
     for unit in course.content:
         for test in unit['tests']:
             test["test"] = logic.get_test_by_id(test["test_id"])
@@ -210,15 +209,15 @@ def handle_reviews():
     return render_template('reviews.html', user=user)
 
 
-@app.route('/test_constructor', methods=["GET"])
-def handle_test_constructor():
+@app.route('/course/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
+def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('test_constructor.html', user=user)
+    return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
 
 
-@app.route('/test_constructor', methods=["POST"])
-def handle_result_test():
-    response = logic.save_test(request.form)
+@app.route('/course/<int:course_id>/test_constructor/<int:unit_id>', methods=["POST"])
+def handle_result_test(course_id, unit_id):
+    response = logic.save_test(request.form, course_id, unit_id)
     if response[1] == 'success':
         return "успешно"
     return "ошибка"

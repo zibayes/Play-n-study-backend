@@ -46,7 +46,7 @@
                         </div>
                     {% endfor %}
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <form action="/test_constructor">
+                        <form action="/course/{{course.course_id}}/test_constructor/{{unit.unit_id}}">
                             <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
                                 <button class="card-body text-white" style="background: transparent; border: transparent;">
                                     <h1 style="font-size: 84px; text-align: center;">+</h1>
@@ -92,7 +92,7 @@
             let div_col = document.createElement('div');
             div_col.setAttribute('class', "col-lg-4 col-md-6 mb-4");
             let form = document.createElement('form');
-            form.setAttribute('action', "/test_constructor");
+            form.setAttribute('action', "/course/{{course.course_id}}/test_constructor/1");
             let div_mb = document.createElement('div');
             div_mb.setAttribute('class', "mb-2 bg-image card shadow-1-strong");
             div_mb.setAttribute('style', "background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');");

@@ -38,12 +38,23 @@ def ach_rel_db_to_ach_rel(ach_rel: Type[AchieveRelModel]) -> AchieveRel:
 
 def course_db_to_course(course_db: Type[CoursesModel]) -> Course:
     course_db.content = str(course_db.content).replace("'", '"')
+    print(type(course_db.content))
     return Course(course_id=course_db.course_id,
                   name=course_db.name,
                   avatar=course_db.avatar,
                   description=course_db.description,
                   category=course_db.category,
                   content=CourseUnit.from_json(json.loads(course_db.content)))
+
+
+def course_to_course_db(course: Course) -> CoursesModel:
+    return CoursesModel(
+        name=course.name,
+        avatar=course.avatar,
+        description=course.description,
+        category=course.category,
+        content=CourseUnit.to_json(course.content)
+    )
 
 
 def course_rel_db_to_course_rel(course_rel_db: Type[CoursesRelModel]):

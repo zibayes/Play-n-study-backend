@@ -275,21 +275,39 @@ class QSolo(Question):
 # контент курсов
 
 class CourseUnit:
-    def __init__(self, unit_type=None, unit_id=None):
+    def __init__(self, unit_type=None, unit_id=None, test_id=None):
         self.unit_type = unit_type
         self.unit_id = unit_id
+        self.test_id = test_id
 
     @staticmethod
     def from_json(unit_json):
-        return {
-            [{'name': unit['name'], 'tests': [CourseUnit(unit_type=i['unit_type'], unit_id=i['unit_id']) for i in unit['tests']]} for unit in unit_json]
-        }
+        return [
+            {
+             'name': unit['name'],
+             'unit_id': unit['unit_id'],
+             'tests': [
+                CourseUnit(unit_type=i['unit_type'], test_id=i['test_id']) for i in unit['tests']
+             ]
+            } for unit in unit_json
+        ]
 
-    def to_json(self):
-        return json.dumps({
-            "unit_type": self.unit_type,
-            "unit_id": self.unit_id
-        })
+    @staticmethod
+    def to_json(units):
+        for k in [i for i in [unit1['tests'] for unit1 in units]]:
+            print(k)
+        return json.dumps([
+            {
+             'name': unit['name'],
+             'unit_id': unit['unit_id'],
+             'tests': [
+                 {
+                  'unit_type': i.unit_type,
+                  'test_id': i.test_id
+                 } for i in unit['tests']
+             ]
+            } for unit in units
+        ])
 
 
 class Article:

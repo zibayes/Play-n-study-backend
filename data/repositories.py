@@ -7,6 +7,7 @@ from typing import Optional
 from data.models import *
 from data.types import *
 from sqlalchemy.orm.session import Session
+from sqlalchemy import desc
 
 
 class AchievementRepository:
@@ -142,6 +143,22 @@ class CourseRepository:
             print("Ошибка добавления в БД " + str(e))
             return False
 
+    def update_course(self, course: Course) -> bool:
+        try:
+            course_to_update = self.session.query(CoursesModel) \
+                .filter_by(course_id=course.course_id) \
+                .first()
+            course_to_update.name = course.name
+            course_to_update.avatar = course.avatar
+            course_to_update.description = course.description
+            course_to_update.category = course.category
+            course_to_update.content = CourseUnit.to_json(course.content)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления курса в БД " + str(e))
+            return False
+
     def get_course_by_course_id(self, course_id: int) -> Optional[Course]:
         course_db = self.session.query(CoursesModel) \
             .filter_by(course_id=course_id) \
@@ -156,6 +173,7 @@ class CourseRepository:
             .first()
         if course_db is not None:
             course_db.content = str(course_db.content).replace("'", '"')
+            print(course_db.content)
             course_db.content = json.loads(course_db.content)
             return course_db
         return None
@@ -331,9 +349,20 @@ class TestRepository:
     def __init__(self, session):
         self.session = session
 
+    def get_all_tests(self):
+        tests_db = self.session.query(TestsModel).all()
+        return [convert.test_db_to_test(i) for i in tests_db]
+
     def get_test_by_id(self, test_id):
         test_db = self.session.query(TestsModel) \
             .filter_by(test_id=test_id) \
+            .first()
+        return convert.test_db_to_test(test_db)
+
+    def get_last_test_by_course(self, course_id):
+        test_db = self.session.query(TestsModel) \
+            .filter_by(course_id=course_id) \
+            .order_by(TestsModel.test_id.desc()) \
             .first()
         return convert.test_db_to_test(test_db)
 

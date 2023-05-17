@@ -1,4 +1,4 @@
-from data.types import SubRel, CourseRel
+from data.types import SubRel, CourseRel, CourseUnit
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
@@ -52,17 +52,25 @@ class LogicFacade:
     def get_user_avatar(self, app, user_id):
         return self.data.get_user_avatar(app, user_id)
 
-    def save_test(self, form):
+    def save_test(self, form, course_id, unit_id):
         test = get_test_from_form(form)
-        # change if you need
-        test.course_id = 1
+        test.course_id = course_id
         if self.data.add_test(test):
+            test = self.data.get_last_test_by_course(course_id)
+            course = self.data.course_get_by_id(course_id)
+            for unit in course.content:
+                if int(unit['unit_id']) == unit_id:
+                    unit['tests'].append(CourseUnit(unit_type='test', test_id=test.test_id))
+            self.data.update_course(course)
             return tuple(['Тест успешно сохранён', 'success'])
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
     def get_test_by_id(self, test_id):
         return self.data.get_test_by_id(test_id)
+
+    def get_all_tests(self):
+        return self.data.get_all_tests()
 
     def edit_test(self, form):
         test = get_test_from_form(form)
