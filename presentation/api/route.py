@@ -1,3 +1,4 @@
+from markdown import markdown
 from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash
 from sqlalchemy import create_engine
@@ -33,3 +34,8 @@ def handle_join_leave_course(course_id):
     if response:
         return redirect(f'/course_preview/{course_id}')
     flash('Ошибка при отписке', 'error')
+
+
+@api_bp.route('/api/rendermd', methods=['POST'])
+def handle_rendermd():
+    return markdown(request.json['text'])
