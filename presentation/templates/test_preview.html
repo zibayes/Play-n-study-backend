@@ -19,18 +19,22 @@
                 </span>
                 <div class="row border"></div>
                 <br>
+                {% for progress in progresses %}
+                    <div class="d-flex justify-content-center m-5">
+                        <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="POST">
+                            <button class="btn btn-primary ">Посмотреть попытку №{{ progress.up_id }}</button>
+                        </form>
+                    </div>
+                {% endfor %}
+                <br>
                 <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
                 <div class="d-flex justify-content-center m-5">
-                    <form action="/tests/{{test.test_id}}">
+                    <form action="/course/{{course.course_id}}/tests/{{test.test_id}}">
                         <button class="btn btn-primary ">Начать тест</button>
                     </form>
                 </div>
             </div>
         </div>
-
-
-
-
     </div>
 </div>
 {% endblock %}

@@ -1,5 +1,6 @@
 import copy
 import time
+import json
 
 from data.types import TestContent, Question, Test
 
@@ -10,6 +11,27 @@ class TestResult:
         self.total_current_score = total_current_score
         self.total_time = total_time
         self.result = result
+
+    def to_json(self):
+        return json.dumps({
+            'total_score': self.total_score,
+            'total_current_score': self.total_current_score,
+            'total_time': self.total_time,
+            'result': self.result
+        })
+
+    @staticmethod
+    def from_json(result_json):
+        return TestResult(result_json['total_score'], result_json['total_current_score'],
+                          result_json['total_time'], result_json['result'])
+        '''
+        {
+            'total_score': result_json['total_score'],
+            'total_current_score': result_json['total_current_score'],
+            'total_time': result_json['total_time'],
+            'result': result_json['result']
+        }
+        '''
 
 
 def get_test_from_form(form, test_id=None, course_id=1):

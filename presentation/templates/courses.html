@@ -85,16 +85,94 @@
         <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание курса</h5>
         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form action="/create_course/{{user.user_id}}" method="POST">
           <div class="modal-body lang" key="areusure">Введите данные курса:</div>
-            <textarea required class="form-control" maxlength="1000" placeholder="Название курса" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-            <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-            <textarea required class="form-control" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+            <form id="form1" action="/create_course/{{user.user_id}}" method="POST">
+                <textarea required class="form-control" maxlength="1000" placeholder="Название" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                <textarea required class="form-control" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+            </form>
+            <form id="form2" action="/create_course/{{user.user_id}}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" class="form-control" id="customFile" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"/>
+            </form>
           <div class="modal-footer">
-                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px " onclick="submit()">Создать</button>
           </div>
-      </form>
     </div>
   </div>
 </div>
+
+<script>
+function getFile() {
+    var form = $('#form2'),
+        formData = new FormData()
+        formParams = form.serializeArray();
+
+    $.each(form.find('input[type="file"]'), function(i, tag) {
+      $.each($(tag)[0].files, function(i, file) {
+        formData.append(tag.name, file);
+      });
+    });
+
+    $.each(formParams, function(i, val) {
+      formData.append(val.name, val.value);
+    });
+
+    for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]);
+    }
+    alert(formData.get('file'))
+}
+function submit(){
+    var url = "/create_course/{{user.user_id}}"
+    var str1 = $("#form1").serialize();
+    var form1 = $("#form1"),
+        formData1 = new FormData()
+    var form = $('#form2'),
+        formData = new FormData()
+    formParams = form1.serializeArray();
+
+    $.each(form.find('input[type="file"]'), function(i, tag) {
+      $.each($(tag)[0].files, function(i, file) {
+        formData.append(tag.name, file);
+        str1 += "&" + tag.name + "=" + file
+      });
+    });
+
+    $.each(formParams, function(i, val) {
+      formData.append(val.name, val.value);
+    });
+
+    $.ajax({
+        url: "/create_course/{{user.user_id}}",
+        type: "POST",
+        dataType: "html",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data, status)
+        {
+            console.log(status)
+        },
+        error: function (xhr, desc, err)
+        {
+            console.log(err, desc)
+        }
+    });
+
+    // $.post(url, str1);
+}
+function submitBothForms() {
+    const { form1, form2 } = document.forms;
+    fetch(form1.action, {
+        method: form1.method,
+        headers: { "content-type": form1.enctype },
+        body: new FormData(form1),
+    });
+    form2.submit();
+}
+submitForms = function(){
+    document.getElementById("form1").submit();
+    document.getElementById("form2").submit();
+}
+</script>
 {% endblock %}

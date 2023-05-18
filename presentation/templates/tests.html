@@ -32,7 +32,7 @@
                                     </p>
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
-                                            <form action="/test_preview/{{unit_test.test.test_id}}">
+                                            <form action="/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}">
                                                 <button class="btn btn-outline-light" id="test-button">Тест</button>
                                             </form>
                                         {% else %}

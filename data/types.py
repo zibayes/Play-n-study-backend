@@ -331,16 +331,35 @@ class UserProgress:
 
 
 class Progress:
-    def __init__(self, progress_id, type, completed, content=None):
+    def __init__(self, progress_id, test_id, type, completed, result=None, content=None):
         self.progress_id = progress_id
+        self.test_id = test_id
         self.type = type
         self.completed = completed
+        # это поле типа TestResult
+        self.result = result
         # это поле типа TestContent
         self.content = content
 
-    def to_json(self):
-        pass
+    @staticmethod
+    def to_json(progress):
+        return json.dumps({
+            'content': progress.content,
+            'result': progress.result,
+            'progress_id': progress.progress_id,
+            'test_id': progress.test_id,
+            'completed': progress.completed,
+            'type': progress.type
+        })
 
     @staticmethod
     def from_json(progress_json):
-        pass
+        # return Progress(progress_json['content'], progress_json['result'], progress_json['progress_id'], progress_json['test_id'], progress_json['completed'], progress_json['type'])
+        return {
+            'content': progress_json['content'],
+            'result': progress_json['result'],
+            'progress_id': progress_json['progress_id'],
+            'test_id': progress_json['test_id'],
+            'completed': progress_json['completed'],
+            'type': progress_json['type']
+        }

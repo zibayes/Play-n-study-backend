@@ -115,4 +115,4 @@ def progress_db_to_progress(progress: Type[UsersProgressModel]):
     return UserProgress(up_id=progress.up_id,
                         user_id=progress.user_id,
                         course_id=progress.course_id,
-                        progress=progress.progress)
+                        progress=Progress.from_json(json.loads(progress.progress)))

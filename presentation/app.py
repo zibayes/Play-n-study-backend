@@ -1,7 +1,7 @@
 # todo: сделать вывод flash-сообщений,
 #  методы логического слоя теперь возвращают кортеж
 #  ("сообщение, "тип") вывод никак не организован
-
+import json
 # todo: убрать все модели users там где это не надо, заменить на current_user
 #  в самом шаблоне
 
@@ -16,7 +16,8 @@ from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from presentation.UserLogin import UserLogin
 from logic.facade import LogicFacade
-from data.types import User
+from data.types import User, Progress, TestContent
+from logic.test import TestResult
 
 
 engine = create_engine(
@@ -152,13 +153,25 @@ def handle_course_ava(course_id):
 
 
 @login_required
-@app.route('/test_preview/<int:test_id>')
-def handle_test_preview(test_id):
+@app.route('/course/<int:course_id>/test_preview/<int:test_id>')
+def handle_test_preview(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user_id = current_user.get_id()
     course = logic.get_course(test.course_id, user_id)
     user = logic.get_user_by_id(user_id)
-    return render_template("test_preview.html", user=user, test=test, course=course)
+    progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+    to_delete = []
+    # progress[i].progress = Progress.from_json(json.loads(str(progress[i].progress).replace("'", '"')))
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) != test_id:
+            to_delete.append(i)
+
+    for i in reversed(to_delete):
+        progress.pop(i)
+
+
+    # print(progress[0].progress)
+    return render_template("test_preview.html", user=user, test=test, course=course, progresses=progress)
 
 
 @login_required
@@ -210,7 +223,11 @@ def handle_delete_course(course_id):
     for unit in course.content['body']:
         for test in unit['tests']:
             logic.remove_test(test['test_id'])
-    logic.course_leave(course.course_id, user_id)
+    rels = logic.get_course_rels_all(course_id)
+    if rels:
+        for rel in rels:
+            logic.rel_remove_course_rel(rel.cour_rel_id)
+    # logic.course_leave(course.course_id, user_id)
     logic.remove_course(course.course_id)
     return redirect(f'/courses/{user_id}')
 
@@ -236,21 +253,20 @@ def handle_course_editor_save_unit(course_id):
     logic.update_course_add_unit(course_id, unit_name)
     return redirect(f'/course_editor/{course_id}')
 
-@login_required
-@app.route('/course_constructor', methods=['GET'])
-def handle_course_constructor():
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    return render_template('course_constructor.html', user=user)
-
 
 @login_required
 @app.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
+    print(request.files)
+    print(request.form)
     course_name = request.form['courseName']
     course_desc = request.form['description']
     course_cat = request.form['category']
-    logic.add_course(course_name, course_desc, course_cat)
+    if request.files:
+        course_ava = request.files['file']
+    else:
+        course_ava = None
+    logic.add_course(course_name, course_desc, course_cat, course_ava, current_user)
     user = logic.get_user_for_courses(user_id)
     return render_template("courses.html", user=user, found=None, user_id=user_id)
 
@@ -278,7 +294,6 @@ def handle_subscriptions(user_id):
     return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
 
 
-
 @app.route('/reviews')
 def handle_reviews():
     user = logic.get_user_by_id(current_user.get_id())
@@ -303,8 +318,8 @@ def handle_result_test(course_id, unit_id):
 
 
 @login_required
-@app.route('/tests/<int:test_id>')
-def handle_load_test(test_id):
+@app.route('/course/<int:course_id>/tests/<int:test_id>', methods=["GET"])
+def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     total_score = 0
@@ -333,15 +348,31 @@ def handle_edit_test_save(course_id, test_id):
 
 
 @login_required
-@app.route('/tests/<int:test_id>', methods=["POST"])
-def handle_check_test(test_id):
+@app.route('/course/<int:course_id>/tests/<int:test_id>', methods=["POST"])
+def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
+    progress = Progress(progress_id=None, completed=True, type='test',
+                        content=test.content.toJSON(), test_id=test_id, result=result.to_json())
+    logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
     print(test.content.toJSON())
 
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=test.content, score=result.total_score,
+                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+
+
+@login_required
+@app.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["POST"])
+def handle_show_test_result(course_id, test_id, progress_id):
+    test = logic.get_test_by_id(test_id)
+    user = logic.get_user_by_id(current_user.get_id())
+    progress = logic.get_progress_by_id(progress_id)
+    progress.progress = Progress.from_json(progress.progress)
+    result = TestResult.from_json(json.loads(progress.progress['result']))
+    # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
+    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']), score=result.total_score,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 

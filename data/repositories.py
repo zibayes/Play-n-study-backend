@@ -100,6 +100,17 @@ class CourseRelRepository:
             return courses_rel_list
         return None
 
+    def get_course_rels_all(self, course_id):
+        courses_rels_db = self.session.query(CoursesRelModel) \
+            .filter_by(course_id=course_id) \
+            .all()
+        courses_rel_list = []
+        for course_rel in courses_rels_db:
+            courses_rel_list.append(convert.course_rel_db_to_course_rel(course_rel))
+        if len(courses_rel_list) > 0:
+            return courses_rel_list
+        return None
+
     def get_one_by_user_and_course_ids(self, user_id, course_id):
         course_rel_id = self.session.query(CoursesRelModel) \
             .filter_by(course_id=course_id) \
@@ -538,6 +549,33 @@ class UserProgressRepository:
             .filter_by(user_id=user_id, course_id=course_id) \
             .first()
         return convert.progress_db_to_progress(progress_db)
+
+    def get_progress_by_user_course_ids_all(self, user_id, course_id):
+        progresses_db = self.session.query(UsersProgressModel) \
+            .filter_by(user_id=user_id, course_id=course_id) \
+            .all()
+        for i in range(len(progresses_db)):
+            progresses_db[i] = convert.progress_db_to_progress(progresses_db[i])
+        return progresses_db
+
+    def get_progress_by_id(self, progress_id):
+        progress_db = self.session.query(UsersProgressModel) \
+            .filter_by(up_id=progress_id) \
+            .first()
+        return convert.progress_db_to_progress(progress_db)
+
+    def add_progress(self, user_progress):
+        try:
+            new_user_progress = UsersProgressModel(
+                user_id=user_progress.user_id,
+                course_id=user_progress.course_id,
+                progress=user_progress.progress
+            )
+            self.session.add(new_user_progress)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления прогресса в БД " + str(e))
 
 
 class RoleRepository:

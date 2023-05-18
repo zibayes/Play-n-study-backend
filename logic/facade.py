@@ -1,4 +1,4 @@
-from data.types import SubRel, CourseRel, CourseUnit, Course
+from data.types import SubRel, CourseRel, CourseUnit, Course, UserProgress
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
@@ -66,8 +66,15 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
-    def add_course(self, course_name, course_desc, course_cat):
-        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content={'body': [], 'unit_counter': 0})
+    def add_course(self, course_name, course_desc, course_cat, avatar_file, current_user):
+        if avatar_file and current_user.verify_ext(avatar_file.filename):
+            try:
+                avatar = avatar_file.read()
+            except FileNotFoundError as e:
+                return tuple(["Ошибка чтения файла", "error"])
+        else:
+            return tuple(["Ошибка обновление аватара", "error"])
+        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=avatar, content={'body': [], 'unit_counter': 0})
         if self.data.add_course(course):
             return tuple(['Курс успешно сохранён', 'success'])
         else:
@@ -113,6 +120,13 @@ class LogicFacade:
 
     def get_test_result(self, test, form):
         return get_test_result(test, form)
+
+    def add_progress(self, course_id, user_id, progress):
+        user_progress = UserProgress(up_id=None, course_id=course_id, user_id=user_id, progress=progress)
+        if self.data.add_progress(user_progress):
+            return tuple(['Прогресс успешно сохранён', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении прогресса', 'error'])
 
     def change_user_data(self, form, current_user_id):
         # todo: вынести в отдельный файл
@@ -180,6 +194,12 @@ class LogicFacade:
         else:
             return False
 
+    def get_course_rels_all(self, course_id):
+        return self.data.get_course_rels_all(course_id)
+
+    def rel_remove_course_rel(self, rel_id):
+        return self.data.rel_remove_course_rel(rel_id)
+
     def course_get_for_preview(self, course_id, user_id):
         course = self.course_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)
@@ -191,6 +211,12 @@ class LogicFacade:
 
     def user_progress_get_by_user_course_ids(self, user_id, course_id):
         return self.data.user_get_progress_by_course_user_ids(user_id, course_id)
+
+    def get_progress_by_id(self, progress_id):
+        return self.data.get_progress_by_id(progress_id)
+
+    def get_progress_by_user_course_ids_all(self, user_id, course_id):
+        return self.data.get_progress_by_user_course_ids_all(user_id, course_id)
 
     def get_course(self, course_id, user_id):
         course = self.data.course_json_get_by_id(course_id)
