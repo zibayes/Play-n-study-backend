@@ -1,4 +1,7 @@
 from sqlalchemy import create_engine
+from os import sys
+
+sys.path.append("C:\\Users\\anari\\WebstormProjects\\Play-n-study-backend")
 from flask import Flask, make_response, render_template
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_required
@@ -54,6 +57,7 @@ def handle_course_ava(course_id):
     h = make_response(img)
     h.headers['Content-Type'] = 'image/png'
     return h
+
 
 
 @app.route('/userava/<int:user_id>')

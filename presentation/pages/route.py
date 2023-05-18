@@ -2,7 +2,6 @@ from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from data.types import User
 from logic.facade import LogicFacade
 
@@ -29,6 +28,11 @@ def handle_task():
 def about():
     return "About"
 
+@pages_bp.route('/article')
+def handle_article():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    return render_template('article.html', user=user)
 
 @pages_bp.route('/profiles/<int:user_id>')
 @login_required
