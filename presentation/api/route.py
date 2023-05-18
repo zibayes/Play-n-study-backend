@@ -3,7 +3,6 @@ from flask import Blueprint, redirect, render_template, request, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User
 from logic.facade import LogicFacade
 
 engine = create_engine(
