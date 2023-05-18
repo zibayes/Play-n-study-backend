@@ -1,10 +1,3 @@
-# todo: сделать вывод flash-сообщений,
-#  методы логического слоя теперь возвращают кортеж
-#  ("сообщение, "тип") вывод никак не организован
-
-# todo: убрать все модели users там где это не надо, заменить на current_user
-#  в самом шаблоне
-
 import time
 from os import sys
 
@@ -236,8 +229,9 @@ def handle_course_editor_save_unit(course_id):
     logic.update_course_add_unit(course_id, unit_name)
     return redirect(f'/course_editor/{course_id}')
 
-@login_required
+
 @app.route('/course_constructor', methods=['GET'])
+@login_required
 def handle_course_constructor():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
@@ -255,7 +249,6 @@ def handle_course_create(user_id):
     return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
-@login_required
 @app.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
@@ -276,7 +269,6 @@ def handle_subscriptions(user_id):
             found = logic.get_users_by_query(query)
             return render_template("subscriptions.html", user=User(), found=found, user_id=user_id)
     return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
-
 
 
 @app.route('/reviews')
@@ -345,24 +337,15 @@ def handle_check_test(test_id):
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 
-@app.route('/save_test', methods=["POST"])
-def handle_save_test():
-    pass
-
-
-# route for debug
-# @app.route('/debug')
-# def handle_debug():
-# pass
-
-
 @app.route('/achievements/<int:user_id>')
+@login_required
 def handle_achievements(user_id):
     # todo: сделать ачивки пользователя
     pass
 
 
 @app.route('/course_preview/<int:course_id>')
+@login_required
 def handle_course(course_id):
     course = logic.course_get_for_preview(course_id, current_user.get_id())
     return render_template('course.html', course=course)
@@ -375,12 +358,14 @@ def handle_information():
 
 
 @app.route('/changecity', methods=['POST'])
+@login_required
 def handle_change_user_data():
     response = logic.change_user_data(request.form, current_user.get_id())
     return redirect(url_for('handle_settings'))
 
 
 @app.route('/settings', methods=["GET"])
+@login_required
 def handle_settings():
     user = logic.get_user_by_id(current_user.get_id())
     return render_template('settings.html', user=user)
@@ -395,7 +380,6 @@ def handle_upload():
 
 
 @app.route('/userava/<int:user_id>')
-@login_required
 def handle_userava(user_id):
     img = logic.get_user_avatar(app, user_id)
     if not img:
@@ -441,6 +425,36 @@ def handle_join_leave_course(course_id):
     if response:
         return redirect(f'/course_preview/{course_id}')
     flash('Ошибка при отписке', 'error')
+
+
+# admin features
+
+@app.route('/admin/add_curator', methods=["POST"])
+@login_required
+def handle_admin_add_curator():
+    admin = logic.is_user_admin(current_user.get_id())
+    if not admin:
+        return "not allowed"
+    user_id = int(request.form['user_id'])
+    course_id = int(request.form['course_id'])
+    response = logic.curator_add(user_id, course_id)
+    if response:
+        return "success"
+    return "failure"
+
+
+@app.route('/admin/remove_curator', methods=["POST"])
+@login_required
+def handle_admin_remove_curator():
+    admin = logic.is_user_admin(current_user.get_id())
+    if not admin:
+        return "not allowed"
+    user_id = int(request.form['user_id'])
+    course_id = int(request.form['course_id'])
+    response = logic.curator_remove(user_id, course_id)
+    if response:
+        return "success"
+    return "failure"
 
 
 if __name__ == "__main__":
