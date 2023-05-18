@@ -239,3 +239,9 @@ class LogicFacade:
 
     def is_user_curator_of_course(self, user_id, course_id):
         return self.data.is_user_curator_of_course(user_id, course_id)
+
+    def curator_add(self, user_id, course_id):
+        return self.data.curator_add(user_id, course_id)
+
+    def curator_remove(self, user_id, course_id):
+        return self.data.curator_remove(user_id, course_id)

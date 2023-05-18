@@ -246,6 +246,18 @@ class CuratorRepository:
             return True
         return False
 
+    def remove_curator(self, user_id, course_id):
+        try:
+            self.session.query(CuratorsModel) \
+                .filter_by(user_id=user_id) \
+                .filter_by(course_id=course_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления из БД " + e)
+            return False
+
 
 class ReviewRepository:
     session: Session = None
