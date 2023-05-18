@@ -1,4 +1,3 @@
-from data.repositories import UserRepository
 
 
 class UserLogin:
