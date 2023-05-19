@@ -12,13 +12,7 @@
         </span>
         <div class="row border"></div>
         <br>
-        <p class="m-3">Лето. Такая прекрасная, чудесная пора. Мне кажется, что на свете очень мало людей, которые могут не любить лето. Конечно, ведь лето – это время тепла, радости, веселья и самых разных забав. Лето – это пора самых долгих каникул в году. Это не может не радовать нас.
-
-            Летом мы с друзьями и одноклассниками любим часто ездить по городу на велосипеде часами напролет. Это так приятно ехать и наслаждаться теплыми лучами летнего солнца. Мы проезжаем по много километров в день. Это не только весело, а еще и полезно для здоровья.
-
-            Самые вкусные и полезные фрукты и ягоды появляются именно летом. В такую жаркую погоду они являются лучшей пищей, тем более, в них очень много витаминов. Получается, что лето – это еще и лучшее время для укрепления нашего здоровья.
-
-            Лето считается самым любимым сезоном для всех людей, а особенно для детей. Ведь можно забыть об учебе, уроках и других заботах на целых три месяца. Я тоже считаю, что лето – это самое теплое, самое веселое и беззаботное время в году.</p>
+        <p id="text-view" style="margin: 20px;"></p>
 
         <a class="btn btn-primary position-relative m-3" href="">Лекция прочитана</a>
 
@@ -26,4 +20,48 @@
 
     </div>
 </div>
+<script>
+    function htmlspecialchars_decode (string, quoteStyle) {
+      let optTemp = 0
+      let i = 0
+      let noquotes = false
+      if (typeof quoteStyle === 'undefined') {
+        quoteStyle = 2
+      }
+      string = string.toString()
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+      const OPTS = {
+        ENT_NOQUOTES: 0,
+        ENT_HTML_QUOTE_SINGLE: 1,
+        ENT_HTML_QUOTE_DOUBLE: 2,
+        ENT_COMPAT: 2,
+        ENT_QUOTES: 3,
+        ENT_IGNORE: 4
+      }
+      if (quoteStyle === 0) {
+        noquotes = true
+      }
+      if (typeof quoteStyle !== 'number') {
+        quoteStyle = [].concat(quoteStyle)
+        for (i = 0; i < quoteStyle.length; i++) {
+          if (OPTS[quoteStyle[i]] === 0) {
+            noquotes = true
+          } else if (OPTS[quoteStyle[i]]) {
+            optTemp = optTemp | OPTS[quoteStyle[i]]
+          }
+        }
+        quoteStyle = optTemp
+      }
+      if (quoteStyle & OPTS.ENT_HTML_QUOTE_SINGLE) {
+        string = string.replace(/&#0*39;/g, "'")
+      }
+      if (!noquotes) {
+        string = string.replace(/&quot;/g, '"')
+      }
+      string = string.replace(/&amp;/g, '&')
+      return string
+    }
+    document.getElementById('text-view').innerHTML = htmlspecialchars_decode(`{{ article.content }}`)
+</script>
 {% endblock %}

@@ -36,7 +36,9 @@
                                                 <button class="btn btn-outline-light" id="test-button">Тест</button>
                                             </form>
                                         {% else %}
-                                            <button class="btn btn-outline-light" id="lection-button">Лекция</button>
+                                            <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">
+                                                <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                            </form>
                                         {% endif %}
                                         <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>
                                     </div>

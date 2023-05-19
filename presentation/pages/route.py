@@ -29,12 +29,6 @@ def about():
     return "About"
 
 
-@pages_bp.route('/preview_article')
-def handle_article():
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    return render_template('preview_article.html', user=user)
-
 @pages_bp.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):

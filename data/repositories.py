@@ -184,7 +184,6 @@ class CourseRepository:
             .first()
         if course_db is not None:
             course_db.content = str(course_db.content).replace("'", '"')
-            print(course_db.content)
             course_db.content = json.loads(course_db.content)
             return course_db
         return None
@@ -557,6 +556,19 @@ class ArticlesRepository:
             .order_by(ArticlesModel.article_id.desc()) \
             .first()
         return convert.article_db_to_article(article_db)
+
+    def update_article(self, article: Article) -> bool:
+        try:
+            article_to_update = self.session.query(ArticlesModel) \
+                .filter_by(article_id=article.article_id) \
+                .first()
+            article_to_update.course_id = article.course_id
+            article_to_update.content = article.content
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления статьи в БД " + str(e))
+            return False
 
 
 class UserProgressRepository:

@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from data.types import User, Progress, TestContent, Article
 from logic.test import TestResult
 from logic.facade import LogicFacade
+from markdown import markdown
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -28,7 +29,6 @@ def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    print(course.content['body'])
     for unit in course.content['body']:
         for test in unit['tests']:
             test["test"] = logic.get_test_by_id(test["test_id"])
@@ -147,8 +147,6 @@ def handle_course_editor_save_unit(course_id):
 @login_required
 @courses_bp.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
-    print(request.files)
-    print(request.form)
     course_name = request.form['courseName']
     course_desc = request.form['description']
     course_cat = request.form['category']
@@ -173,6 +171,26 @@ def handle_test_constructor(course_id, unit_id):
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
     if response[1] == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении теста', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/article_editor/<int:article_id>', methods=["GET"])
+def handle_article_editor(course_id, article_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    article = logic.article_get_by_id(article_id)
+    return render_template('article_editor.html', user=user, course_id=course_id, article=article)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/article_editor/<int:article_id>', methods=["POST"])
+def handle_article_update(course_id, article_id):
+    article_text = request.form['Article']
+    article = Article(article_id=article_id, course_id=course_id, content=article_text)
+    response = logic.update_article(article)
+    if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')
     return redirect(f'/course_editor/{course_id}')
@@ -220,6 +238,15 @@ def handle_load_test(course_id, test_id):
 
 
 @login_required
+@courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["GET"])
+def handle_load_article(course_id, article_id):
+    article = logic.article_get_by_id(article_id)
+    article.content = markdown(article.content)
+    user = logic.get_user_by_id(current_user.get_id())
+    return render_template('preview_article.html', user=user, article=article)
+
+
+@login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["GET"])
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
@@ -246,8 +273,6 @@ def handle_check_test(course_id, test_id):
     progress = Progress(progress_id=None, completed=True, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
-    print(test.content.toJSON())
-
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=test.content, score=result.total_score,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)

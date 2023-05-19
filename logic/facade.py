@@ -218,6 +218,9 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении статьи', 'error'])
 
+    def update_article(self, article):
+        return self.data.update_article(article)
+
     def course_get_for_preview(self, course_id, user_id):
         course = self.course_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)

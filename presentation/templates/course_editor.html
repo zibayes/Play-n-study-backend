@@ -43,10 +43,11 @@
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
                                             <button disabled class="btn btn-outline-light" id="test-button">Тест</button>
+                                            <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
                                         {% else %}
                                             <button disabled class="btn btn-outline-light" id="lection-button">Статья</button>
+                                            <form action="/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}">
                                         {% endif %}
-                                        <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
                                             <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
                                         </form>
                                         <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>
