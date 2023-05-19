@@ -44,7 +44,7 @@
                                         {% if unit_test.unit_type == "test" %}
                                             <button disabled class="btn btn-outline-light" id="test-button">Тест</button>
                                         {% else %}
-                                            <button disabled class="btn btn-outline-light" id="lection-button">Лекция</button>
+                                            <button disabled class="btn btn-outline-light" id="lection-button">Статья</button>
                                         {% endif %}
                                         <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
                                             <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
@@ -56,15 +56,39 @@
                         </div>
                     {% endfor %}
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <form action="/course_editor/{{course.course_id}}/test_constructor/{{unit.unit_id}}">
+                        <!-- <form action="/course_editor/{{course.course_id}}/test_constructor/{{unit.unit_id}}"> -->
                             <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
-                                <button class="card-body text-white" style="background: transparent; border: transparent;">
+                                <button class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addTask-{{unit.unit_id}}" data-mdb-toggle="modal">
                                     <h1 style="font-size: 84px; text-align: center;">+</h1>
                                 </button>
                             </div>
-                        </form>
+                        <!-- </form> -->
                     </div>
                 </div>
+
+                <div class="modal fade" id="addTask-{{unit.unit_id}}" tabindex="-1">
+                  <div class="modal-dialog modal-side">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
+                          <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
+                            <div style="display: flex; justify-content: center;">
+                                <input id="checkbox-test" type="radio" name="TaskType" value="test">
+                                <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
+                                <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
+                                <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
+                            </div>
+                          <div class="modal-footer">
+                                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
             </div>
         {% endfor %}
         <div class="row border" id="insert-place"></div>
@@ -77,7 +101,7 @@
     </div>
 </div>
 
-<div class="modal fade " id="addUnit" tabindex="-1">
+<div class="modal fade" id="addUnit" tabindex="-1">
   <div class="modal-dialog modal-side">
     <div class="modal-content">
       <div class="modal-header">
@@ -94,56 +118,4 @@
     </div>
   </div>
 </div>
-
-<script>
-    function addUnitOnButtonClick() {
-            let mainContainer = document.getElementById("main-container")
-            let insPlace = document.getElementById("insert-place")
-            let div = document.createElement('div');
-            let br = document.createElement('br');
-            let row_border_div = document.createElement('div');
-            row_border_div.setAttribute('class', "row border");
-            let span = document.createElement('span');
-            span.setAttribute('class', "fw-bolder fs-5 row m-3 justify-content-center lang");
-            let textarea = document.createElement('textarea');
-            textarea.setAttribute('class', "form-control");
-            textarea.setAttribute('placeholder', "Название раздела");
-            textarea.setAttribute('maxlength', '1000');
-            textarea.setAttribute('rows', "1");
-            textarea.setAttribute('required', 'true');
-            let row_border_div1 = document.createElement('div');
-            row_border_div1.setAttribute('class', "row border");
-            let div_container = document.createElement('div');
-            div_container.setAttribute('class', "container");
-            let div_row = document.createElement('div');
-            div_row.setAttribute('class', "row");
-            let div_col = document.createElement('div');
-            div_col.setAttribute('class', "col-lg-4 col-md-6 mb-4");
-            let form = document.createElement('form');
-            form.setAttribute('action', "/course/{{course.course_id}}/test_constructor/1");
-            let div_mb = document.createElement('div');
-            div_mb.setAttribute('class', "mb-2 bg-image card shadow-1-strong");
-            div_mb.setAttribute('style', "background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');");
-            let button = document.createElement('button');
-            button.setAttribute('class', "card-body text-white");
-            button.setAttribute('style', "background: transparent; border: transparent;");
-            let h1 = document.createElement('h1');
-            h1.textContent = "+"
-            h1.setAttribute('style', "font-size: 84px; text-align: center;");
-
-            div.appendChild(row_border_div)
-            div.appendChild(span)
-            span.appendChild(textarea)
-            div.appendChild(row_border_div1)
-            div.appendChild(br)
-            div_container.appendChild(div_row)
-            div_row.appendChild(div_col)
-            div_col.appendChild(form)
-            form.appendChild(div_mb)
-            div_mb.appendChild(button)
-            button.appendChild(h1)
-            mainContainer.insertBefore(div, insPlace);
-            mainContainer.insertBefore(div_container, insPlace);
-        }
-</script>
 {% endblock %}

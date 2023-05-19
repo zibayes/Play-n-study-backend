@@ -551,6 +551,13 @@ class ArticlesRepository:
             .filter_by(course_id=course_id)
         return convert.article_db_to_article(articles_db)
 
+    def get_last_article_by_course(self, course_id):
+        article_db = self.session.query(ArticlesModel) \
+            .filter_by(course_id=course_id) \
+            .order_by(ArticlesModel.article_id.desc()) \
+            .first()
+        return convert.article_db_to_article(article_db)
+
 
 class UserProgressRepository:
     def __init__(self, session):

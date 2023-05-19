@@ -2,11 +2,11 @@ import time
 import json
 
 from flask_login import login_required, current_user
-from flask import Blueprint, redirect, render_template, request, flash
+from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent
+from data.types import User, Progress, TestContent, Article
 from logic.test import TestResult
 from logic.facade import LogicFacade
 
@@ -144,14 +144,6 @@ def handle_course_editor_save_unit(course_id):
     return redirect(f'/course_editor/{course_id}')
 
 
-@courses_bp.route('/course_constructor', methods=['GET'])
-@login_required
-def handle_course_constructor():
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    return render_template('course_constructor.html', user=user)
-
-
 @login_required
 @courses_bp.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
@@ -187,6 +179,35 @@ def handle_result_test(course_id, unit_id):
 
 
 @login_required
+@courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["GET"])
+def handle_article_constructor(course_id, unit_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    return render_template('article_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["POST"])
+def handle_article_save(course_id, unit_id):
+    article_text = request.form['Article']
+    article = Article(article_id=None, course_id=course_id, content=article_text)
+    response = logic.article_add_article(article, course_id, unit_id)
+    if response[1] == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении теста', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/create_task/<int:unit_id>', methods=["POST"])
+def handle_create_task(course_id, unit_id):
+    task_type = request.form['TaskType']
+    if task_type == 'test':
+        return redirect(url_for('courses.handle_test_constructor', course_id=course_id, unit_id=unit_id))
+    else:
+        return redirect(url_for('courses.handle_article_constructor', course_id=course_id, unit_id=unit_id))
+
+
+@login_required
 @courses_bp.route('/course/<int:course_id>/tests/<int:test_id>', methods=["GET"])
 def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
@@ -199,7 +220,7 @@ def handle_load_test(course_id, test_id):
 
 
 @login_required
-@courses_bp.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>')
+@courses_bp.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["GET"])
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
     user = logic.get_user_by_id(current_user.get_id())
