@@ -200,6 +200,24 @@ class LogicFacade:
     def rel_remove_course_rel(self, rel_id):
         return self.data.rel_remove_course_rel(rel_id)
 
+    def article_get_by_id(self, article_id):
+        return self.data.article_get_by_id(article_id)
+
+    def article_get_all_by_course_id(self, course_id):
+        return self.data.article_get_all_by_course_id(course_id)
+
+    def article_add_article(self, article, course_id, unit_id):
+        if self.data.article_add_article(article):
+            article = self.data.get_last_article_by_course(course_id)
+            course = self.data.course_get_by_id(course_id)
+            for unit in course.content['body']:
+                if int(unit['unit_id']) == unit_id:
+                    unit['tests'].append(CourseUnit(unit_type='article', test_id=article.article_id))
+            self.data.update_course(course)
+            return tuple(['Статья успешно сохранена', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении статьи', 'error'])
+
     def course_get_for_preview(self, course_id, user_id):
         course = self.course_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)

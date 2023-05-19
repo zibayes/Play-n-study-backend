@@ -215,6 +215,9 @@ class DataFacade:
     def article_add_article(self, article):
         return self.articles_repository.add_article(article)
 
+    def get_last_article_by_course(self, course_id):
+        return self.articles_repository.get_last_article_by_course(course_id)
+
     def user_get_progress_by_course_user_ids(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)
 
