@@ -230,6 +230,9 @@ class DataFacade:
     def get_progress_by_user_course_ids_all(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids_all(user_id, course_id)
 
+    def get_progress_by_course_id_all(self, course_id):
+        return self.user_progress_repository.get_progress_by_course_id_all(course_id)
+
     def role_get_user_roles_by_user_id(self, user_id):
         return self.role_repository.get_user_roles_by_id(user_id)
 

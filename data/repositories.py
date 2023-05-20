@@ -593,6 +593,14 @@ class UserProgressRepository:
             .first()
         return convert.progress_db_to_progress(progress_db)
 
+    def get_progress_by_course_id_all(self, course_id):
+        progresses_db = self.session.query(UsersProgressModel) \
+            .filter_by(course_id=course_id) \
+            .all()
+        for i in range(len(progresses_db)):
+            progresses_db[i] = convert.progress_db_to_progress(progresses_db[i])
+        return progresses_db
+
     def add_progress(self, user_progress):
         try:
             new_user_progress = UsersProgressModel(

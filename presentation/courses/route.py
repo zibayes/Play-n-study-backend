@@ -66,16 +66,35 @@ def handle_test_preview(course_id, test_id):
     user_id = current_user.get_id()
     course = logic.get_course(test.course_id, user_id)
     user = logic.get_user_by_id(user_id)
+
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
     to_delete = []
+    max_score = 0
     for i in range(len(progress)):
         if int(progress[i].progress['test_id']) != test_id:
             to_delete.append(i)
         else:
             progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
+            if progress[i].progress['result'].total_current_score > max_score:
+                max_score = progress[i].progress['result'].total_current_score
     for i in reversed(to_delete):
         progress.pop(i)
-    return render_template("test_preview.html", user=user, test=test, course=course, progresses=progress)
+
+    leaders = logic.get_progress_by_course_id_all(course_id)
+    leaders_to_show = {}
+    for i in range(len(leaders)):
+        if int(leaders[i].progress['test_id']) == test_id:
+            leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
+            user_for_table = logic.get_user_by_id(leaders[i].user_id).username
+            if user_for_table not in leaders_to_show.keys():
+                leaders_to_show[user_for_table] = []
+            leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
+    for key in leaders_to_show.keys():
+        leaders_to_show[key] = max(leaders_to_show[key])
+
+    return render_template("test_preview.html", user=user, test=test, course=course,
+                           progresses=progress, max_score=max_score,
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)))
 
 
 @login_required

@@ -32,50 +32,105 @@
                 <div class="row border"></div>
                 <br>
                 {% if progresses %}
-                    {% set progressNum = namespace(value=0) %}
-                    <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
-                        Результаты ваших прошлых попыток
-                    </span>
-                    <table class="table">
-                        <tbody>
-                            <tr><th>Номер попытки</th><th>Состояние</th><th>Оценка</th><th>Просмотр</th></tr>
-                            {% for progress in progresses %}
-                                {% set progressNum.value = progressNum.value + 1 %}
-                                <tr>
-                                    <td>
-                                        {{ progressNum.value }}
-                                    </td>
-                                    <td id="time-{{progress.up_id}}">
-                                        {% if progress.progress.completed %}
-                                            Завершено
-                                        {% else %}
-                                            Не завершено
-                                        {% endif %}
-                                        <br>
-                                        Потрачено времени на прохождение
-                                    </td>
-                                    <td>
-                                        {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
-                                    </td>
-                                    <td>
-                                        <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="POST">
-                                            <button class="btn btn-primary ">Посмотреть попытку</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <script>
-                                result_time = Math.round(parseFloat({{ progress.progress.result.total_time }}));
-                                if (result_time < 60)
-                                    result_time = " (сек): " + result_time;
-                                else if(result_time < 3600)
-                                    result_time = " (мин): " + (Math.round(result_time / 6) / 10);
-                                else
-                                    result_time = " (час): " + (Math.round(result_time / 360) / 10);
-                                document.getElementById("time-{{progress.up_id}}").innerText += result_time;
-                            </script>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div align="center">
+                        <button disabled class="btn btn-primary" id="show_results">Поросмотр попыток</button>
+                        <button class="btn btn-primary" id="show_leaders">Таблица лидеров</button>
+                    </div>
+                    <div id="test-results">
+                        {% set progressNum = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            Результаты ваших предыдущих попыток
+                        </span>
+                        <table class="table">
+                            <tbody>
+                                <tr><th>Номер попытки</th><th>Состояние</th><th>Оценка</th><th>Просмотр</th></tr>
+                                {% for progress in progresses %}
+                                    {% set progressNum.value = progressNum.value + 1 %}
+                                    <tr style="
+                                    {% if progress.progress.result.total_current_score == max_score %}
+                                        background: #75c1ff55
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {{ progressNum.value }}
+                                        </td>
+                                        <td id="time-{{progress.up_id}}">
+                                            {% if progress.progress.completed %}
+                                                Завершено
+                                            {% else %}
+                                                Не завершено
+                                            {% endif %}
+                                            <br>
+                                            Потрачено времени на прохождение
+                                        </td>
+                                        <td>
+                                            {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
+                                        </td>
+                                        <td>
+                                            <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="POST">
+                                                <button class="btn btn-primary ">Посмотреть попытку</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <script>
+                                        result_time = Math.round(parseFloat({{ progress.progress.result.total_time }}));
+                                        if (result_time < 60)
+                                            result_time = " (сек): " + result_time;
+                                        else if(result_time < 3600)
+                                            result_time = " (мин): " + (Math.round(result_time / 6) / 10);
+                                        else
+                                            result_time = " (час): " + (Math.round(result_time / 360) / 10);
+                                        document.getElementById("time-{{progress.up_id}}").innerText += result_time;
+                                    </script>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                                Высшая оценка: {{ max_score }} / {{ progresses[0].progress.result.total_score }}
+                        </span>
+                    </div>
+
+                    <div id="leaders-table" hidden="hidden">
+                        {% set userNum = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            Таблица лидеров ♕
+                        </span>
+                        <table class="table">
+                            <tbody>
+                                <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
+                                {% for leader, result in leaders.items() %}
+                                    {% set userNum.value = userNum.value + 1 %}
+                                    <tr style="
+                                    {% if userNum.value == 1 %}
+                                        background: #ffd70066
+                                    {% elif userNum.value == 2 %}
+                                        background: #C0C0C066
+                                    {% elif userNum.value == 3 %}
+                                        background: #cd7f3266
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {% if userNum.value == 1 %}
+                                                <p style="font-size: 28px;">🥇</p>
+                                            {% elif userNum.value == 2 %}
+                                                <p style="font-size: 28px;">🥈</p>
+                                            {% elif userNum.value == 3 %}
+                                                <p style="font-size: 28px;">🥉</p>
+                                            {% else %}
+                                                {{ userNum.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ leader }}
+                                        </td>
+                                        <td>
+                                            {{ result }} / {{ progresses[0].progress.result.total_score }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% endif %}
                 <br>
                 <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
@@ -88,4 +143,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    let showResults = document.getElementById("show_results");
+    let showLeaders = document.getElementById("show_leaders");
+    let results = document.getElementById("test-results");
+    let leaders = document.getElementById("leaders-table");
+    showResults.addEventListener("click", function(e) {
+        showResults.setAttribute("disabled", "disabled");
+        showLeaders.removeAttribute("disabled");
+        leaders.setAttribute("hidden", "hidden");
+        results.removeAttribute("hidden");
+    });
+    showLeaders.addEventListener("click", function(e) {
+        showLeaders.setAttribute("disabled", "disabled");
+        showResults.removeAttribute("disabled");
+        results.setAttribute("hidden", "hidden");
+        leaders.removeAttribute("hidden");
+    });
+</script>
 {% endblock %}

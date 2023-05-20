@@ -241,6 +241,9 @@ class LogicFacade:
     def get_progress_by_user_course_ids_all(self, user_id, course_id):
         return self.data.get_progress_by_user_course_ids_all(user_id, course_id)
 
+    def get_progress_by_course_id_all(self, course_id):
+        return self.data.get_progress_by_course_id_all(course_id)
+
     def get_course(self, course_id, user_id):
         course = self.data.course_json_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)

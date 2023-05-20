@@ -11,6 +11,7 @@
             {{ course.name }}
         </span>
         <div class="row border"></div>
+        {% set notAllowed = namespace(value=0) %}
         {% for unit in course.content.body %}
             <div>
                 <div class="row border"></div>
@@ -37,11 +38,30 @@
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
                                             <form action="/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}">
-                                                <button class="btn btn-outline-light" id="test-button">Тест</button>
+                                                {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
+                                                    {%  if notAllowed.value > 0 %}
+                                                        <button class="btn btn-outline-light" id="test-button" disabled>Тест</button>
+                                                    {% else %}
+                                                        <button class="btn btn-outline-light" id="lection-button">Тест</button>
+                                                    {% endif %}
+                                                    {% set notAllowed.value = notAllowed.value + 1 %}
+                                                {% else %}
+                                                    <button class="btn btn-outline-light" id="test-button">Тест</button>
+                                                {% endif %}
+
                                             </form>
                                         {% else %}
                                             <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">
-                                                <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
+                                                    {%  if notAllowed.value > 0 %}
+                                                        <button class="btn btn-outline-light" id="lection-button" disabled>Статья</button>
+                                                    {% else %}
+                                                        <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                    {% endif %}
+                                                    {% set notAllowed.value = notAllowed.value + 1 %}
+                                                {% else %}
+                                                    <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                {% endif %}
                                             </form>
                                         {% endif %}
                                         {% if  results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
