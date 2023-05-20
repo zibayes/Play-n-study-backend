@@ -12,6 +12,7 @@
                 Составление статьи
             </span>
             <div class="row border"></div>
+            <textarea required class="form-control" maxlength="1000" placeholder="Название статьи" name="articleName" rows="1" style="margin: 8px;">{{ article_name }}</textarea>
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-lg-6">
@@ -23,7 +24,7 @@
                                 <div class="row border"></div>
                                 <br>
                                 <div class="form-outline">
-                                    <textarea class="form-control" id="textAreaExample" name="Article" rows="6"></textarea>
+                                    <textarea class="form-control" maxlength="15000" id="textAreaExample" name="Article" rows="6"></textarea>
                                     <label class="form-label" for="textAreaExample">Текст статьи</label>
                                 </div>
                             </div>

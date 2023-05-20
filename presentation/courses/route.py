@@ -36,7 +36,7 @@ def handle_tests(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, TestContent("Статья " + str(test.test_id), None))
+                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
             for progress in progresses:
                 if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                     results[str(test.test_id) + test.unit_type] = progress.progress['completed']
@@ -100,6 +100,7 @@ def handle_test_preview(course_id, test_id):
 @login_required
 @courses_bp.route('/delete_test/<int:course_id>/<int:test_id>', methods=['POST'])
 def handle_delete_test(course_id, test_id):
+    #TODO: реализовать удаление статей
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
     index_to_delete = 0
@@ -107,7 +108,7 @@ def handle_delete_test(course_id, test_id):
     is_break = False
     for unit in course.content['body']:
         for test in unit['tests']:
-            if int(test['test_id']) == test_id:
+            if int(test.test_id) == test_id:
                 is_break = True
                 break
             inner_index_to_delete += 1
@@ -145,7 +146,7 @@ def handle_delete_course(course_id):
     course = logic.get_course_without_rel(course_id)
     for unit in course.content['body']:
         for test in unit['tests']:
-            logic.remove_test(test['test_id'])
+            logic.remove_test(test.test_id)
     logic.course_leave(course.course_id, user_id)
     logic.remove_course(course.course_id)
     return redirect(f'/courses/{user_id}')
@@ -157,12 +158,13 @@ def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
+    print(course)
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, TestContent("Статья", None))
+                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
@@ -213,15 +215,29 @@ def handle_result_test(course_id, unit_id):
 def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
-    return render_template('article_editor.html', user=user, course_id=course_id, article=article)
+    course = logic.get_course(course_id, user.user_id)
+    article_name = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == article_id and test.unit_type == 'article':
+                article_name = test.article_name
+    return render_template('article_editor.html', user=user, course_id=course_id,
+                           article=article, article_name=article_name)
 
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_editor/<int:article_id>', methods=["POST"])
 def handle_article_update(course_id, article_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
     article_text = request.form['Article']
     article = Article(article_id=article_id, course_id=course_id, content=article_text)
-    response = logic.update_article(article)
+    unit_id = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == article_id and test.unit_type == 'article':
+                unit_id = unit['unit_id']
+    response = logic.update_article(article, course_id, unit_id, request.form['articleName'])
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')
@@ -240,7 +256,7 @@ def handle_article_constructor(course_id, unit_id):
 def handle_article_save(course_id, unit_id):
     article_text = request.form['Article']
     article = Article(article_id=None, course_id=course_id, content=article_text)
-    response = logic.article_add_article(article, course_id, unit_id)
+    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'])
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')

@@ -66,6 +66,8 @@
                                         {% endif %}
                                         {% if  results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
                                             <span class="badge rounded-pill badge-success" style="padding: 11px">Выполнено</span>
+                                        {% elif results[unit_test.test.test_id|string + unit_test.unit_type] == False %}
+                                            <span class="badge rounded-pill badge-warning" style="padding: 11px">На проверке</span>
                                         {% else %}
                                             <span class="badge rounded-pill badge-warning" style="padding: 11px">Не выполнено</span>
                                         {% endif %}
