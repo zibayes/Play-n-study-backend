@@ -28,7 +28,11 @@
                                 <div class="card-body text-white">
                                     <h5 class="card-title">{{unit_test.test.content.name}}</h5>
                                     <p class="card-text">
+                                        {% if unit_test.unit_type == "test" %}
                                         Ответьте на вопросы и получите приз
+                                        {% else %}
+                                        Прочтите статью и съешьте конфетку
+                                        {% endif %}
                                     </p>
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
@@ -40,7 +44,11 @@
                                                 <button class="btn btn-outline-light" id="lection-button">Статья</button>
                                             </form>
                                         {% endif %}
-                                        <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>
+                                        {% if  results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
+                                            <span class="badge rounded-pill badge-success" style="padding: 11px">Выполнено</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill badge-warning" style="padding: 11px">Не выполнено</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

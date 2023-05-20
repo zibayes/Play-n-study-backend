@@ -38,7 +38,11 @@
                                         </button>
                                     </form>
                                     <p class="card-text">
+                                        {% if unit_test.unit_type == "test" %}
                                         Ответьте на вопросы и получите приз
+                                        {% else %}
+                                        Прочтите статью и съешьте конфетку
+                                        {% endif %}
                                     </p>
                                     <div class="d-flex justify-content-between">
                                         {% if unit_test.unit_type == "test" %}
@@ -50,7 +54,6 @@
                                         {% endif %}
                                             <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
                                         </form>
-                                        <span class="badge rounded-pill badge-warning" style="padding: 11px">Не закончен</span>
                                     </div>
                                 </div>
                             </div>

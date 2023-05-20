@@ -90,18 +90,19 @@
                 <textarea required class="form-control" maxlength="1000" placeholder="Название" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
                 <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
                 <textarea required class="form-control" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-            </form>
-            <form id="form2" action="/create_course/{{user.user_id}}" method="POST" enctype="multipart/form-data">
+            <!-- <form id="form2" action="/create_course/{{user.user_id}}" method="POST" enctype="multipart/form-data">
                 <input type="file" name="file" class="form-control" id="customFile" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"/>
+            </form> -->
+                <div class="modal-footer">
+                      <button type="submit" class="btn badge-primary lang" style="border-radius: 25px ">Создать</button>
+                </div>
             </form>
-          <div class="modal-footer">
-                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px " onclick="submit()">Создать</button>
-          </div>
     </div>
   </div>
 </div>
 
 <script>
+/*
 function getFile() {
     var form = $('#form2'),
         formData = new FormData()
@@ -174,5 +175,6 @@ submitForms = function(){
     document.getElementById("form1").submit();
     document.getElementById("form2").submit();
 }
+*/
 </script>
 {% endblock %}

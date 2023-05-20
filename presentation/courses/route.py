@@ -6,7 +6,7 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Article
+from data.types import User, Progress, TestContent, Test, Article
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from markdown import markdown
@@ -29,12 +29,20 @@ def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
+    progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+    results = {}
     for unit in course.content['body']:
         for test in unit['tests']:
-            test["test"] = logic.get_test_by_id(test["test_id"])
+            if test.unit_type == 'test':
+                test.test = logic.get_test_by_id(test.test_id)
+            else:
+                test.test = Test(test.test_id, course_id, TestContent("Статья " + str(test.test_id), None))
+            for progress in progresses:
+                if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
+                    results[str(test.test_id) + test.unit_type] = progress.progress['completed']
     if course is None:
         return render_template('index.html', user=user)
-    return render_template('tests.html', user=user, course=course)
+    return render_template('tests.html', user=user, course=course, results=results)
 
 
 @login_required
@@ -63,6 +71,8 @@ def handle_test_preview(course_id, test_id):
     for i in range(len(progress)):
         if int(progress[i].progress['test_id']) != test_id:
             to_delete.append(i)
+        else:
+            progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
     for i in reversed(to_delete):
         progress.pop(i)
     return render_template("test_preview.html", user=user, test=test, course=course, progresses=progress)
@@ -130,7 +140,10 @@ def handle_course_editor(course_id):
     user = logic.get_user_by_id(user_id)
     for unit in course.content['body']:
         for test in unit['tests']:
-            test["test"] = logic.get_test_by_id(test["test_id"])
+            if test.unit_type == 'test':
+                test.test = logic.get_test_by_id(test.test_id)
+            else:
+                test.test = Test(test.test_id, course_id, TestContent("Статья", None))
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
@@ -243,7 +256,7 @@ def handle_load_article(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('preview_article.html', user=user, article=article)
+    return render_template('preview_article.html', user=user, course_id=course_id, article=article)
 
 
 @login_required
@@ -270,6 +283,7 @@ def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
+    print(test.content.toJSON())
     progress = Progress(progress_id=None, completed=True, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
@@ -279,9 +293,25 @@ def handle_check_test(course_id, test_id):
 
 
 @login_required
+@courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["POST"])
+def handle_check_article(course_id, article_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
+    need_to_add = True
+    for progress in progresses:
+        if progress.progress['type'] == 'article' and int(progress.progress['test_id']) == article_id:
+            need_to_add = False
+    if need_to_add is True:
+        progress = Progress(progress_id=None, completed=True, type='article',
+                            content=None, test_id=article_id, result=None)
+        logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
+    return redirect(f'/course/{course_id}')
+
+
+@login_required
 @courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["POST"])
 def handle_show_test_result(course_id, test_id, progress_id):
-    test = logic.get_test_by_id(test_id)
+    # test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)

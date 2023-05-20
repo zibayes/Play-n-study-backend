@@ -134,6 +134,7 @@ def downcast(base, derived):
     derived.answers = base.answers
     derived.correct = base.correct
     derived.score = base.score
+    derived.current_score = base.current_score
     derived.type = base.type
     return derived
 
@@ -143,6 +144,7 @@ def upcast(derived, base):
     base.answers = derived.answers
     base.correct = derived.correct
     base.score = derived.score
+    base.current_score = derived.current_score
     base.type = derived.type
     return base
 
@@ -191,17 +193,18 @@ class TestContent:
 
 
 class Question:
-    def __init__(self, ask=None, answers=None, correct=None, score=None, type=None):
+    def __init__(self, ask=None, answers=None, correct=None, score=None, current_score=None, type=None):
         self.ask = ask if ask != 'null' else None
         self.answers = None if answers == 'null' else answers
         self.correct = None if correct == 'null' else correct
         self.score = None if score == 'null' else score
+        self.current_score = None if current_score == 'null' else current_score
         self.type = None if type == 'null' else type
 
     @staticmethod
     def from_json(qbase_json):
         return Question(qbase_json['ask'], qbase_json['answers'], qbase_json['correct'],
-                        qbase_json['score'], qbase_json['type'])
+                        qbase_json['score'], qbase_json['current_score'], qbase_json['type'])
 
     def toJSON(self):
         return {
@@ -209,6 +212,7 @@ class Question:
             "answers": self.answers,
             "correct": self.correct,
             "score": self.score,
+            "current_score": self.current_score,
             "type": self.type
         }
 
@@ -218,6 +222,7 @@ class Question:
         derived.answers = base.answers
         derived.correct = base.correct
         derived.score = base.score
+        derived.current_score = base.current_score
         derived.type = base.type
         return derived
 
@@ -275,10 +280,11 @@ class QSolo(Question):
 # контент курсов
 
 class CourseUnit:
-    def __init__(self, unit_type=None, unit_id=None, test_id=None):
+    def __init__(self, unit_type=None, unit_id=None, test_id=None, test=None):
         self.unit_type = unit_type
         self.unit_id = unit_id
         self.test_id = test_id
+        self.test = test
 
     @staticmethod
     def from_json(unit_json):

@@ -14,10 +14,9 @@
         <br>
         <p id="text-view" style="margin: 20px;"></p>
 
-        <a class="btn btn-primary position-relative m-3" href="">Лекция прочитана</a>
-
-
-
+        <form action="/course/{{course_id}}/article/{{article.article_id}}" method="POST">
+            <button class="btn btn-primary position-relative m-3" type="submit">Лекция прочитана</button>
+        </form>
     </div>
 </div>
 <script>

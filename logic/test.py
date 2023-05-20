@@ -24,14 +24,6 @@ class TestResult:
     def from_json(result_json):
         return TestResult(result_json['total_score'], result_json['total_current_score'],
                           result_json['total_time'], result_json['result'])
-        '''
-        {
-            'total_score': result_json['total_score'],
-            'total_current_score': result_json['total_current_score'],
-            'total_time': result_json['total_time'],
-            'result': result_json['result']
-        }
-        '''
 
 
 def get_test_from_form(form, test_id=None, course_id=1):
@@ -119,6 +111,7 @@ def get_test_result(test, form):
     for question in test.content.questions:
         question.current_score = 0
         answers_count = 0
+        score_part = 0
         for key, value in test_res.items():
             if key == question.ask or question.ask + '-' in key:
                 if question.type in ("solo", "multiple"):
@@ -126,10 +119,11 @@ def get_test_result(test, form):
                         if value in que_part.keys():
                             if que_part[value]:
                                 que_part[value] = "right"
-                                question.current_score += question.score / question.correct
+                                score_part += question.score / question.correct
                             else:
                                 que_part[value] = "wrong"
-                                question.current_score -= question.score / question.correct  # (question.correct * 2)
+                                if question.type == "multiple":
+                                    score_part -= question.score / question.correct  # (question.correct * 2)
                             answers_count += 1
                 elif question.type in ("free", "detailed_free"):
                     question.answer = value
@@ -138,11 +132,14 @@ def get_test_result(test, form):
                         if value.lower().strip() == answer.lower().strip():
                             question.current_score += question.score
                             question.is_correct = True
+        if (score_part < 0 or answers_count == len(question.answers)) and question.type == "multiple":
+            score_part = 0
+        question.current_score += score_part
         if question.score:
             total_score += question.score
             total_current_score += question.current_score
-        if question.current_score < 0 or answers_count == len(question.answers):
-            question.current_score = 0
+        # if question.current_score < 0 or answers_count == len(question.answers):
+        #     question.current_score = 0
         question.current_score = ("%.2f" % question.current_score).replace(".00", "")
     result = round(float(total_current_score) / float(total_score) * 100, 2)
     return TestResult(total_score, total_current_score, total_time, result)

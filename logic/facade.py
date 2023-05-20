@@ -67,6 +67,7 @@ class LogicFacade:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
     def add_course(self, course_name, course_desc, course_cat, avatar_file, current_user):
+        '''
         if avatar_file and current_user.verify_ext(avatar_file.filename):
             try:
                 avatar = avatar_file.read()
@@ -74,7 +75,8 @@ class LogicFacade:
                 return tuple(["Ошибка чтения файла", "error"])
         else:
             return tuple(["Ошибка обновление аватара", "error"])
-        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=avatar, content={'body': [], 'unit_counter': 0})
+        '''
+        course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content={'body': [], 'unit_counter': 0})
         if self.data.add_course(course):
             return tuple(['Курс успешно сохранён', 'success'])
         else:
