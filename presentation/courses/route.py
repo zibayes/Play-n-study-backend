@@ -57,6 +57,9 @@ def handle_courses(user_id):
             if len(query) > 0:
                 found = logic.courses_get_by_query(query)
                 return render_template("courses.html", found=found, user=User(), user_id=user_id)
+            else:
+                user = logic.get_user_for_courses(user_id)
+                return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
 @login_required
@@ -147,7 +150,9 @@ def handle_delete_course(course_id):
     for unit in course.content['body']:
         for test in unit['tests']:
             logic.remove_test(test.test_id)
-    logic.course_leave(course.course_id, user_id)
+    rels = logic.get_course_rels_all(course.course_id)
+    for rel in rels:
+        logic.course_leave(rel.course_id, rel.user_id)
     logic.remove_course(course.course_id)
     return redirect(f'/courses/{user_id}')
 
@@ -187,9 +192,10 @@ def handle_course_create(user_id):
         course_ava = request.files['file']
     else:
         course_ava = None
-    logic.add_course(course_name, course_desc, course_cat, course_ava, current_user)
-    user = logic.get_user_for_courses(user_id)
-    return render_template("courses.html", user=user, found=None, user_id=user_id)
+    course_id = logic.add_course(course_name, course_desc, course_cat, course_ava, current_user, user_id)[2]
+    return redirect(f'/course_preview/{course_id}')
+    #user = logic.get_user_for_courses(user_id)
+    #return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
 @login_required

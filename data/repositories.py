@@ -188,9 +188,15 @@ class CourseRepository:
 
     def get_courses_by_substring(self, substring):
         courses_db = self.session.query(CoursesModel) \
-            .filter(CoursesModel.name.like(substring + "%")) \
+            .filter(CoursesModel.name.ilike("%"+ substring + "%")) \
             .all()
         return convert.courses_db_to_courses(courses_db)
+
+    def get_last_course(self):
+        course_db = self.session.query(CoursesModel) \
+            .order_by(CoursesModel.course_id.desc()) \
+            .first()
+        return convert.course_db_to_course(course_db)
 
     def remove_course(self, course_id) -> bool:
         try:

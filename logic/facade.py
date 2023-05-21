@@ -66,7 +66,7 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
 
-    def add_course(self, course_name, course_desc, course_cat, avatar_file, current_user):
+    def add_course(self, course_name, course_desc, course_cat, avatar_file, current_user, user_id):
         '''
         if avatar_file and current_user.verify_ext(avatar_file.filename):
             try:
@@ -78,7 +78,9 @@ class LogicFacade:
         '''
         course = Course(course_id=None, name=course_name, description=course_desc, category=course_cat, avatar=None, content={'body': [], 'unit_counter': 0})
         if self.data.add_course(course):
-            return tuple(['Курс успешно сохранён', 'success'])
+            course = self.data.get_last_course()
+            self.course_join(course.course_id, user_id)
+            return tuple(['Курс успешно сохранён', 'success', course.course_id])
         else:
             return tuple(['Ошибка при сохранении курса', 'error'])
 

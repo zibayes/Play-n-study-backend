@@ -197,6 +197,9 @@ class DataFacade:
     def course_json_get_by_id(self, course_id):
         return self.course_repository.get_course_by_course_id_in_json(course_id)
 
+    def get_last_course(self):
+        return self.course_repository.get_last_course()
+
     def rel_add_course_rel(self, course_rel):
         return self.course_rel_repository.add_course_rel(course_rel)
 
