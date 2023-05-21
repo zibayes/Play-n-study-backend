@@ -224,6 +224,9 @@ class DataFacade:
     def update_article(self, article):
         return self.articles_repository.update_article(article)
 
+    def remove_article(self, article_id):
+        return self.articles_repository.remove_article(article_id)
+
     def user_get_progress_by_course_user_ids(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)
 

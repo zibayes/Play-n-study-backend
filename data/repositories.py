@@ -574,6 +574,17 @@ class ArticlesRepository:
             print("Ошибка обновления статьи в БД " + str(e))
             return False
 
+    def remove_article(self, article_id) -> bool:
+        try:
+            self.session.query(ArticlesModel) \
+                .filter_by(article_id=article_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления статьи :" + str(e))
+            return False
+
 
 class UserProgressRepository:
     def __init__(self, session):

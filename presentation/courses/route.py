@@ -103,7 +103,6 @@ def handle_test_preview(course_id, test_id):
 @login_required
 @courses_bp.route('/delete_test/<int:course_id>/<int:test_id>', methods=['POST'])
 def handle_delete_test(course_id, test_id):
-    #TODO: реализовать удаление статей
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
     index_to_delete = 0
@@ -119,8 +118,33 @@ def handle_delete_test(course_id, test_id):
             break
         inner_index_to_delete = 0
         index_to_delete += 1
+    course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
     logic.update_course(course)
     logic.remove_test(test_id)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/delete_article/<int:course_id>/<int:article_id>', methods=['POST'])
+def handle_delete_article(course_id, article_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    index_to_delete = 0
+    inner_index_to_delete = 0
+    is_break = False
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if int(test.test_id) == article_id:
+                is_break = True
+                break
+            inner_index_to_delete += 1
+        if is_break:
+            break
+        inner_index_to_delete = 0
+        index_to_delete += 1
+    course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
+    logic.update_course(course)
+    logic.remove_article(article_id)
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -194,8 +218,6 @@ def handle_course_create(user_id):
         course_ava = None
     course_id = logic.add_course(course_name, course_desc, course_cat, course_ava, current_user, user_id)[2]
     return redirect(f'/course_preview/{course_id}')
-    #user = logic.get_user_for_courses(user_id)
-    #return render_template("courses.html", user=user, found=None, user_id=user_id)
 
 
 @login_required

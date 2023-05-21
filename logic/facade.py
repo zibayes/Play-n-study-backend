@@ -235,6 +235,9 @@ class LogicFacade:
         self.data.update_course(course)
         return self.data.update_article(article)
 
+    def remove_article(self, article_id):
+        return self.data.remove_article(article_id)
+
     def course_get_for_preview(self, course_id, user_id):
         course = self.course_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)
