@@ -10,13 +10,16 @@
         <span class="fs-5 row m-3 justify-content-start lang">
             <textarea required class="form-control" maxlength="1000" placeholder="Название курса" name="courseName" rows="1">{{ course.name }}</textarea>
         </span>
-        <div class="row border"></div>
+        <div class="row border" id="units_list"></div>
         {% for unit in course.content.body %}
-            <div>
+            <div id="unit-{{unit.unit_id}}">
                 <div class="row border"></div>
                 <span class="fw-bolder fs-5 row m-3 justify-content-center lang">
                     <form action="/delete_unit/{{course.course_id}}/{{unit.unit_id}}" method="POST" style="display: flex;">
                         <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="courseName" rows="1">{{ unit.name }}</textarea>
+                        <div style="height: 30px; justify-content: center; display: flex;" class="unit_div">
+                            <img src="../static/img/drag_n_drop.png" style="height: 40px; transform: rotate(90deg);" draggable="true" id="{{unit.unit_id}}" class="dnd-units unit_div">
+                        </div>
                         <button id="delete-unit-button" style="background: transparent; border: transparent;">
                             <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
                         </button>
@@ -24,75 +27,75 @@
                 </span>
                 <div class="row border"></div>
                 <br>
-            </div>
-            <div class="container">
-                <div class="row">
-                    {% for unit_test in unit.tests %}
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
-                                <div class="card-body text-white">
-                                    <h5 class="card-title">{{unit_test.test.content.name}}</h5>
-                                    <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST" style="position:absolute;top:8px; right:8px">
-                                        <button id="delete-button" style="background: transparent; border: transparent;">
-                                            <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
-                                        </button>
-                                    </form>
-                                    <p class="card-text">
-                                        {% if unit_test.unit_type == "test" %}
-                                        Ответьте на вопросы и получите приз
-                                        {% else %}
-                                        Прочтите статью и съешьте конфетку
-                                        {% endif %}
-                                    </p>
-                                    <div class="d-flex justify-content-between">
-                                        {% if unit_test.unit_type == "test" %}
-                                            <button disabled class="btn btn-outline-light" id="test-button">Тест</button>
-                                            <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
-                                        {% else %}
-                                            <button disabled class="btn btn-outline-light" id="lection-button">Статья</button>
-                                            <form action="/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}">
-                                        {% endif %}
-                                            <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
+                <div class="container">
+                    <div class="row" id="unit_tests-{{unit.unit_id}}">
+                        {% for unit_test in unit.tests %}
+                            <div class="col-lg-4 col-md-6 mb-4" id="unit_test-{{ unit_test.test.test_id }}">
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');" id="{{unit.unit_id}}">
+                                    <div class="card-body text-white">
+                                        <div style="position:absolute; top:-2px; left:185px; height: 30px; justify-content: center; display: flex;" id="dnd-{{ unit_test.test.test_id }}" class="{{ unit_test.test.test_id }} test_div" draggable="true" >
+                                            <img src="../static/img/drag_n_drop.png" style="height: 35px;" class="dnd {{ unit_test.test.test_id }}" id="{{ unit_test.test.test_id }}">
+                                        </div>
+                                        <h5 class="card-title">{{unit_test.test.content.name}}</h5>
+                                        <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST" style="position:absolute;top:8px; right:8px">
+                                            <button id="delete-button" style="background: transparent; border: transparent;">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
+                                            </button>
                                         </form>
+                                        <p class="card-text">
+                                            {% if unit_test.unit_type == "test" %}
+                                            Ответьте на вопросы и получите приз
+                                            {% else %}
+                                            Прочтите статью и съешьте конфетку
+                                            {% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between">
+                                            {% if unit_test.unit_type == "test" %}
+                                                <button disabled class="btn btn-outline-light" id="test-button">Тест</button>
+                                                <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
+                                            {% else %}
+                                                <button disabled class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                <form action="/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}">
+                                            {% endif %}
+                                                <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <!-- <form action="/course_editor/{{course.course_id}}/test_constructor/{{unit.unit_id}}"> -->
+                        {% endfor %}
+                        <div class="col-lg-4 col-md-6 mb-4">
                             <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
                                 <button class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addTask-{{unit.unit_id}}" data-mdb-toggle="modal">
                                     <h1 style="font-size: 84px; text-align: center;">+</h1>
                                 </button>
                             </div>
-                        <!-- </form> -->
+                        </div>
                     </div>
-                </div>
 
-                <div class="modal fade" id="addTask-{{unit.unit_id}}" tabindex="-1">
-                  <div class="modal-dialog modal-side">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
-                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
-                          <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
-                            <div style="display: flex; justify-content: center;">
-                                <input id="checkbox-test" type="radio" name="TaskType" value="test">
-                                <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
-                                <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
-                                <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
-                            </div>
-                          <div class="modal-footer">
-                                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                    <div class="modal fade" id="addTask-{{unit.unit_id}}" tabindex="-1">
+                      <div class="modal-dialog modal-side">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                           </div>
-                      </form>
+                          <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
+                              <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
+                                <div style="display: flex; justify-content: center;">
+                                    <input id="checkbox-test" type="radio" name="TaskType" value="test">
+                                    <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
+                                    <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
+                                    <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
+                                </div>
+                              <div class="modal-footer">
+                                    <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
-                  </div>
                 </div>
-
             </div>
         {% endfor %}
         <div class="row border" id="insert-place"></div>
@@ -122,4 +125,85 @@
     </div>
   </div>
 </div>
+
+<script>
+    document.querySelectorAll(".dnd").forEach(elem =>{
+        elem.addEventListener(`mouseover`, (evt) => {
+          document.body.style.cursor = 'move';
+        })
+        elem.addEventListener(`mouseout`, (evt) => {
+          document.body.style.cursor = '';
+        })
+        let divUnitTest = document.getElementById("unit_test-" + elem.id);
+        elem.addEventListener(`dragstart`, (evt) => {
+          evt.dataTransfer.setDragImage(divUnitTest, divUnitTest.offsetWidth / 1.92, divUnitTest.offsetHeight / 8)
+          setTimeout(() => {
+              divUnitTest.classList.add(`selected`);
+              divUnitTest.style.visibility  = "hidden"
+          }, 0);
+        })
+        elem.addEventListener(`dragend`, (evt) => {
+          setTimeout(() => {
+              divUnitTest.classList.remove(`selected`);
+              divUnitTest.style.removeProperty("visibility")
+          }, 0);
+        });
+    });
+
+    document.querySelectorAll(".dnd-units").forEach(elem =>{
+        elem.addEventListener(`mouseover`, (evt) => {
+          document.body.style.cursor = 'move';
+        })
+        elem.addEventListener(`mouseout`, (evt) => {
+          document.body.style.cursor = '';
+        })
+        let divUnit = document.getElementById("unit-" + elem.id);
+        elem.addEventListener(`dragstart`, (evt) => {
+          evt.dataTransfer.setDragImage(divUnit, divUnit.offsetWidth / 1.09, divUnit.offsetHeight / 8)
+          setTimeout(() => {
+              divUnit.classList.add(`selected`);
+              divUnit.style.visibility  = "hidden"
+          }, 0);
+        })
+        elem.addEventListener(`dragend`, (evt) => {
+          setTimeout(() => {
+              divUnit.classList.remove(`selected`);
+              divUnit.style.removeProperty("visibility")
+          }, 0);
+        });
+    });
+
+    document.querySelectorAll(".dnd-unit").forEach(elem => {
+        let divUnitTests = document.getElementById("unit_tests-" + elem.id);
+        divUnitTests.addEventListener(`dragover`, (evt) => {
+            evt.preventDefault();
+            const activeElement = divUnitTests.querySelector(`.selected`);
+            const currentElement = evt.target;
+            const isMoveable = activeElement !== currentElement &&
+                currentElement.classList.contains(`test_div`) && activeElement.classList.contains(`test_div`) && childOf(activeElement, divUnitTests);
+            if (!isMoveable)
+                return;
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                currentElement.nextElementSibling :
+                currentElement;
+            divUnitTests.insertBefore(activeElement, nextElement);
+        });
+    });
+
+    function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
+        let units_list = document.getElementById("units_list")
+        units_list.addEventListener(`dragover`, (evt) => {
+            evt.preventDefault();
+            const activeElement = units_list.querySelector(`.selected`);
+            const currentElement = evt.target;
+            const isMoveable = activeElement !== currentElement &&
+            currentElement.classList.contains(`test_div`) && activeElement.classList.contains(`test_div`);
+            if (!isMoveable)
+                return;
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+              currentElement.nextElementSibling :
+              currentElement;
+            units_list.insertBefore(activeElement, nextElement);
+        });
+</script>
 {% endblock %}

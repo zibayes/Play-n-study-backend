@@ -158,7 +158,6 @@ def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    print(course)
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.unit_type == 'test':
@@ -318,7 +317,6 @@ def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
-    print(test.content.toJSON())
     progress = Progress(progress_id=None, completed=True, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))

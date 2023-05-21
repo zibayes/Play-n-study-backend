@@ -91,7 +91,11 @@
                     </div>
 
                     <div id="leaders-table" hidden="hidden">
-                        {% set userNum = namespace(value=0) %}
+                        {% set userNum = namespace(value=3) %}
+                        {% set firstPlace = namespace(value=0) %}
+                        {% set secondPlace = namespace(value=0) %}
+                        {% set thirdPlace = namespace(value=0) %}
+                        {% set otherPlace = namespace(value=0) %}
                         <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
                             Таблица лидеров ♕
                         </span>
@@ -99,22 +103,34 @@
                             <tbody>
                                 <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
                                 {% for leader, result in leaders.items() %}
-                                    {% set userNum.value = userNum.value + 1 %}
+
+                                    {% if firstPlace.value < result %}
+                                        {% set firstPlace.value = result %}
+                                    {% elif secondPlace.value < result %}
+                                        {% set secondPlace.value = result %}
+                                    {% elif thirdPlace.value < result %}
+                                        {% set thirdPlace.value = result %}
+                                        {% set otherPlace.value = result %}
+                                    {% elif otherPlace.value > result %}
+                                        {% set otherPlace.value = result %}
+                                        {% set userNum.value = userNum.value + 1 %}
+                                    {% endif %}
+
                                     <tr style="
-                                    {% if userNum.value == 1 %}
+                                    {% if result == firstPlace.value %}
                                         background: #ffd70066
-                                    {% elif userNum.value == 2 %}
+                                    {% elif result == secondPlace.value %}
                                         background: #C0C0C066
-                                    {% elif userNum.value == 3 %}
+                                    {% elif result == thirdPlace.value %}
                                         background: #cd7f3266
                                     {% endif %}
                                     ">
                                         <td>
-                                            {% if userNum.value == 1 %}
+                                            {% if result == firstPlace.value %}
                                                 <p style="font-size: 28px;">🥇</p>
-                                            {% elif userNum.value == 2 %}
+                                            {% elif result == secondPlace.value %}
                                                 <p style="font-size: 28px;">🥈</p>
-                                            {% elif userNum.value == 3 %}
+                                            {% elif result == thirdPlace.value %}
                                                 <p style="font-size: 28px;">🥉</p>
                                             {% else %}
                                                 {{ userNum.value }}
@@ -152,14 +168,18 @@
     showResults.addEventListener("click", function(e) {
         showResults.setAttribute("disabled", "disabled");
         showLeaders.removeAttribute("disabled");
+        $("#leaders-table").fadeOut(400);
         leaders.setAttribute("hidden", "hidden");
         results.removeAttribute("hidden");
+        $("#test-results").fadeIn(400);
     });
     showLeaders.addEventListener("click", function(e) {
         showLeaders.setAttribute("disabled", "disabled");
         showResults.removeAttribute("disabled");
+        $("#test-results").fadeOut(400);
         results.setAttribute("hidden", "hidden");
         leaders.removeAttribute("hidden");
+        $("#leaders-table").fadeIn(400);
     });
 </script>
 {% endblock %}

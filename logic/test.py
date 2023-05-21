@@ -132,7 +132,8 @@ def get_test_result(test, form):
                         if value.lower().strip() == answer.lower().strip():
                             question.current_score += question.score
                             question.is_correct = True
-        if (score_part < 0 or answers_count == len(question.answers)) and question.type == "multiple":
+        if (score_part < 0 or (answers_count == len(question.answers) and question.correct != len(question.answers))) \
+                and question.type == "multiple":
             score_part = 0
         question.current_score += score_part
         if question.score:
