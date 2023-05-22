@@ -207,6 +207,35 @@ def handle_course_editor_save_unit(course_id):
 
 
 @login_required
+@courses_bp.route('/update_course/<int:course_id>', methods=['POST'])
+def handle_update_course(course_id):
+    structure = request.form.to_dict()
+    course = logic.get_course(course_id, current_user.get_id())
+    course.name = structure.pop('courseName')
+    new_units_order = []
+    for unit_name, task in structure.items():
+        if 'unitName' in unit_name:
+            for unit in course.content['body']:
+                if unit_name == 'unitName-' + str(unit['unit_id']):
+                    new_units_order.append(unit)
+    course.content['body'] = new_units_order
+    for unit in course.content['body']:
+        unit['name'] = structure.pop('unitName-' + str(unit['unit_id']))
+        new_tests_order = []
+        for unit_name, task in structure.items():
+            if 'unitName' in unit_name:
+                break
+            task_type = task[:task.index('-')]
+            task_id = task[task.index('-')+1:]
+            for test in unit['tests']:
+                if test.unit_type == task_type and test.test_id == int(task_id):
+                    new_tests_order.append(test)
+        unit['tests'] = new_tests_order
+    logic.update_course(course)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
 @courses_bp.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
     course_name = request.form['courseName']
@@ -379,6 +408,48 @@ def handle_show_test_result(course_id, test_id, progress_id):
     result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']), score=result.total_score,
+                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>', methods=["GET"])
+def handle_test_check_preview(course_id, test_id):
+    progress = logic.get_progress_by_course_id_all(course_id)
+    test = logic.get_test_by_id(test_id)
+    user_id = current_user.get_id()
+    course = logic.get_course(test.course_id, user_id)
+    user = logic.get_user_by_id(user_id)
+    to_delete = []
+    max_score = 0
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) != test_id:
+            to_delete.append(i)
+        else:
+            progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
+            if progress[i].progress['result'].total_current_score > max_score:
+                max_score = progress[i].progress['result'].total_current_score
+    for i in reversed(to_delete):
+        progress.pop(i)
+
+    users = {}
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) == test_id:
+            username = logic.get_user_by_id(progress[i].user_id).username
+            if username not in users.values():
+                users[progress[i].user_id] = username
+    return render_template('test_check_preview.html', user=user, test=test, course=course, progresses=progress, users=users)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>/<int:progress_id>', methods=["GET"])
+def handle_test_check(course_id, test_id, progress_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    progress = logic.get_progress_by_id(progress_id)
+    progress.progress = Progress.from_json(progress.progress)
+    result = TestResult.from_json(json.loads(progress.progress['result']))
+    # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
+    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']),
+                           score=result.total_score,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 

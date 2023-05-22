@@ -1,0 +1,153 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Конструктор тестов</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="row m-3 justify-content-start lang">
+            {{ test.name }}
+        </span>
+        <div class="row border"></div>
+        <br>
+
+        <form action="" method="POST">
+
+            <div id="notes" class=
+                "row container-fluid">
+            </div>
+
+            <div id="questionsList" style="padding-top: 8px;">
+                {% set questionNum = namespace(value=0) %}
+                {% for question in test.questions %}
+                    {% set questionNum.value = questionNum.value + 1 %}
+                    <div style="display: flex; padding-bottom: 20px;">
+                        <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    {% if question.type == "info" %}
+                                        <p>Информация</p>
+                                    {% else %}
+                                        <p>Вопрос №{{ questionNum.value }}</p>
+                                        <p>Баллы: {{ question.current_score }} / {{ question.score }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background:#bde0ff; flex: 1;">
+                            <div class="card-body">
+                                <div class="form-group" id="scoreCount">
+                                    {{ question.ask }}
+                                    {% if question.type == "solo" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for answer_text, is_right in answer.items() %}
+                                                <div style="display: flex;">
+                                                    {% if is_right == "right" %}
+                                                        <div style="color: green;">✔</div>
+                                                        <input disabled checked id="checkbox" type="radio" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% elif is_right == "wrong" %}
+                                                        <div style="color: red;">✘</div>
+                                                        <input disabled checked id="checkbox" type="radio" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% else %}
+                                                        <input disabled id="checkbox" type="radio" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% endif %}
+                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "multiple" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for answer_text, is_right in answer.items() %}
+                                                <div style="display: flex;">
+                                                    {% if is_right == "right" %}
+                                                        <div style="color: green;">✔</div>
+                                                        <input disabled checked id="checkbox" type="checkbox" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% elif is_right == "wrong" %}
+                                                        <div style="color: red;">✘</div>
+                                                        <input disabled checked id="checkbox" type="checkbox" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% else %}
+                                                        <input disabled id="checkbox" type="checkbox" name="{{ question.ask }}" value="{{ is_right }}">
+                                                    {% endif %}
+                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "free" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            <div style="display: flex;">
+                                                {% if question.is_correct %}
+                                                    <div style="color: green;">✔</div>
+                                                {% else %}
+                                                    <div style="color: red;">✘</div>
+                                                {% endif %}
+                                                <textarea disabled id="freeAnswer" class="form-control" name="{{ answer }}" rows="1">{{ question.answer }}</textarea>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "detailed_free" %}
+                                        <hr>
+                                        <textarea disabled class="form-control" name="{{ question.ask }}" rows="8">{{ question.answer }}</textarea>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div style="padding-bottom: 10px; display: flex;">
+                <div id="result_text">Ваш результат: {{ total_score }} / {{ score }} ({{ result }}%); Прошло времени: </div>
+                <script>
+                    let result_color = "";
+                    let result = parseFloat({{result}});
+                    if(result < 50)
+                        result_color = "red"
+                    if(result >= 50 && result < 80)
+                        result_color = "orange"
+                    if(result >= 80)
+                        result_color = "green"
+                    document.getElementById("result_text").setAttribute("style", "color: " + result_color + "; padding-left: 20px;")
+                    let result_time = Math.round(parseFloat({{ total_time }}));
+                    if (result_time < 60)
+                        result_time = "(сек): " + result_time;
+                    else if(result_time < 3600)
+                        result_time = "(мин): " + (Math.round(result_time / 6) / 10);
+                    else
+                        result_time = "(час): " + (Math.round(result_time / 360) / 10);
+                    document.getElementById("result_text").textContent += result_time;
+                </script>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .scale {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale:hover {
+        transform: scale(1.05); /* Увеличиваем масштаб */
+    }
+    .scale2 {
+        transition: 0.5s; /* Время эффекта */
+    }
+    .scale2:hover {
+        transform: scale(1.02); /* Увеличиваем масштаб */
+    }
+</style>
+{% endblock %}
+{% block script %}
+{% endblock %}

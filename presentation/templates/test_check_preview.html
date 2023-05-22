@@ -1,0 +1,95 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Тесты</title>
+{% endblock %}
+
+{% block content %}
+<style>
+    table,
+    td {
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        alignment: center;
+    }
+</style>
+<script>
+    let result_time = 0;
+</script>
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="fs-5 row m-3 justify-content-start lang">
+            {{ course.name }}
+        </span>
+        <div class="row border"></div>
+
+        <div class="card">
+            <div class="card-body">
+                <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                    {{ test.content.name }}
+                </span>
+                <div class="row border"></div>
+                <br>
+                {% if progresses %}
+                    <div id="test-results">
+                        {% set progressNum = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            Результаты попыток
+                        </span>
+                        <table class="table">
+                            <tbody>
+                                <tr><th>Номер попытки</th><th>Пользователь</th><th>Состояние</th><th>Оценка</th><th>Просмотр</th></tr>
+                                {% for progress in progresses %}
+                                    {% set progressNum.value = progressNum.value + 1 %}
+                                    <tr style="
+                                    {% if progress.progress.result.total_current_score == max_score %}
+                                        background: #75c1ff55
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {{ progressNum.value }}
+                                        </td>
+                                        <td>
+                                            {{ users[progress.user_id] }}
+                                        </td>
+                                        <td id="time-{{progress.up_id}}">
+                                            {% if progress.progress.completed %}
+                                                Завершено
+                                            {% else %}
+                                                Не завершено
+                                            {% endif %}
+                                            <br>
+                                            Потрачено времени на прохождение
+                                        </td>
+                                        <td>
+                                            {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
+                                        </td>
+                                        <td>
+                                            <form action="/course_editor/{{course.course_id}}/tests_check/{{test.test_id}}/{{progress.up_id}}">
+                                                <button class="btn btn-primary ">Проверить попытку</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <script>
+                                        result_time = Math.round(parseFloat({{ progress.progress.result.total_time }}));
+                                        if (result_time < 60)
+                                            result_time = " (сек): " + result_time;
+                                        else if(result_time < 3600)
+                                            result_time = " (мин): " + (Math.round(result_time / 6) / 10);
+                                        else
+                                            result_time = " (час): " + (Math.round(result_time / 360) / 10);
+                                        document.getElementById("time-{{progress.up_id}}").innerText += result_time;
+                                    </script>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                <br>
+                <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
