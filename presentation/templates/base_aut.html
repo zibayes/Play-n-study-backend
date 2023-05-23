@@ -17,6 +17,8 @@
   <!-- MDB -->
   <link rel="stylesheet" href="/static/css_mdb/mdb.min.css"/>
   <!-- Bootstrap CSS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
   {% block title %}
   <title>Базовая страница профиля</title>
   {% endblock %}
@@ -27,27 +29,21 @@
 </head>
 
 <body style="background: #b4b4b4">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.1/emojionearea.min.css" />
+<script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.1/emojionearea.min.js"></script>
+
+
 {% block precontent %}
 {% endblock %}
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <img src="/static/img/SFU_avatar.jpg" style="height: 25px" alt="">
+    <a href="/"><img src="/static/img/SFU_avatar.jpg" style="height: 25px" alt=""></a>
     <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent">
       <i class="fas fa-bars"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" style="padding-left: 10px">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link lang" href="/" key="mainpage">Главная</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link lang" href="#" key="support">Поддержка</a>
-        </li>
-      </ul>
-    </div>
-
     <div class="d-flex align-items-center">
       <!-- Icon -->
       <div class="dropdown">
@@ -104,6 +100,10 @@
           </li>
         </ul>
       </div>
+      <div style="padding: 10px">
+        <a class="nav-link lang" href="#" key="support" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="fas fa-paper-plane"></i></a>
+      </div>
+
       <!-- Avatar -->
       <div class="dropdown" style="padding-left: 10px">
         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
@@ -156,6 +156,104 @@
     </div>
   </div>
 </div>
+
+
+
+<div style="background: gainsboro; width: 450px" class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" >
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Ваши диалоги</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <hr style="color: black; margin: 0 0 0 0">
+  <div class="offcanvas-body">
+    <!--  В этом диве помещаем чат  -->
+    <div>
+      <div class="collapse mt-3" id="collapseExample">
+        <div class="card" id="chat4">
+          <button type="button" class="btn-close" data-mdb-toggle="collapse" href="#collapseExample" style="padding: 10px"></button>
+          <div class="card-body" data-mdb-perfect-scrollbar="true"
+               style="position: relative; height: 400px; overflow: auto;">
+            <!-- Чат элемент  -->
+            <div class="d-flex flex-row justify-content-start">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                   alt="avatar 1" style="width: 45px; height: 100%;">
+              <div>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Привет!</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Как дела?</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Что будешь делать сегодня?</p>
+                <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
+              </div>
+            </div>
+            <!-- Чат элемент  -->
+            <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+
+              <div>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-info">Привет, я хорошо!</p>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-info">Как твои дела?</p>
+                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-info">Да ничего такого, буду заниматься проектом. </p>
+                <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:06</p>
+              </div>
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+                   alt="avatar 1" style="width: 45px; height: 100%;">
+            </div>
+            <!-- Чат элемент  -->
+            <div class="d-flex flex-row justify-content-start">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+                   alt="avatar 1" style="width: 45px; height: 100%;">
+              <div>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Все хорошо спасибо!</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Не буду тебя отвлекать</p>
+                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Напишу попозже, пока!</p>
+                <p class="small ms-3 mb-3 rounded-3 text-muted">00:08</p>
+              </div>
+            </div>
+            <!-- Чат элемент  -->
+          </div>
+          <div class="container">
+            <div class="row card-footer text-muted align-items-center">
+              <div class="col-md-10" style="padding: 0 0 0 0">
+                <textarea id="shoutbox-name" type="text" class="form-control form-control-lg" placeholder="Введите сообщение"></textarea>
+              </div>
+              <div class="col-md-1" style="padding: 0 0 0 10px">
+                <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+              </div>
+              <div class="col-md-1" style="padding: 0 0 0 0">
+                <a class="ms-3 link-info" href="#!"><i class="fas fa-paper-plane"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--  Конец чата  -->
+    <!--  Элемент коллапса  -->
+    <br>
+    <a class="card elements" data-mdb-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+      <div class="card-body">
+        <div class="position-relative position-relative-example">
+          <div class="position-absolute top-0 end-0 text-muted" style="font-size: 75%">15:03</div>
+          <div class="position-absolute top-0 start-50 text-warning" style="font-size: 75%;padding: 0 0 0 0">Новое уведомление!</div>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-2" style="padding: 10px 0 10px 0">
+              <img src="https://blog.getbootstrap.com/assets/img/2022/05/docs-home.png" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
+            </div>
+            <div class="col-md-10" style="padding: 10px 0 0 10px">
+              <p class="fw-bold mb-1 lang text-muted">Антон</p>
+              <p class="lang text-muted text-truncate" style="font-size: 75%">Ты когда бэком заниматься будешь? А то без тебя все вверх дном</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+    <br>
+    <!--  Конец элемента коллапса  -->
+  </div>
+</div>
+
+
 <div>
   {% block content %}
   {% endblock %}
@@ -167,7 +265,26 @@
 </body>
 
 </html>
+<style>
+  .truncate-text {
+    width: 350px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
 <script>
+
+  $(document).ready(function() {
+    $('#shoutbox-name').emojioneArea({
+      emojiPlaceholder: ":smile_cat:",
+      searchPlaceholder: "Поиск",
+      buttonTitle: "Эмодзи",
+      searchPosition: "top",
+      pickerPosition: "top"
+    });
+  });
+
 var arrLang = {
   'en': {
     'mainpage': 'Main page',
@@ -292,6 +409,8 @@ var arrLang = {
       window.location = linkLocation;
     }
   });
+
+
 /*
 var lang = localStorage.getItem('language');
 	if(lang.valueOf() === 'en'.valueOf()){
