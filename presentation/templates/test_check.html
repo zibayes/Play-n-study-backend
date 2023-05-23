@@ -106,10 +106,15 @@
                             </div>
                         </div>
                     </div>
+                <div style="display: flex; padding-bottom: 20px; padding-left: 145px;">
+                    <div class="{{questionNum.value}} card" style="background:#FFEFAB; flex: 1; padding: 12px; display: inline;">
+                        <button class="addComment" type="button" style="background: transparent; border: transparent;" id="{{questionNum.value}}"><strong>+ </strong>Добавить комментарий</button>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
             <div style="padding-bottom: 10px; display: flex;">
-                <div id="result_text">Ваш результат: {{ total_score }} / {{ score }} ({{ result }}%); Прошло времени: </div>
+                <div id="result_text">Результат: {{ total_score }} / {{ score }} ({{ result }}%); Прошло времени: </div>
                 <script>
                     let result_color = "";
                     let result = parseFloat({{result}});
@@ -130,9 +135,34 @@
                     document.getElementById("result_text").textContent += result_time;
                 </script>
             </div>
+            <button class="btn btn-primary" style="margin: 8px;">Завершить проверку</button>
         </form>
     </div>
 </div>
+
+<script>
+    let add_comment_buttons = document.querySelectorAll(".addComment");
+    add_comment_buttons.forEach(elem =>{
+        elem.addEventListener("click", function(e) {
+            $('#' + elem.id).fadeOut(400);
+            //elem.setAttribute("hidden", "hidden");
+            let textareaComment = document.createElement('textarea');
+            textareaComment.setAttribute('class', "form-control");
+            textareaComment.setAttribute('placeholder', "Комментарий");
+            textareaComment.setAttribute('maxlength', '5000');
+            textareaComment.setAttribute('name', elem.id);
+            textareaComment.setAttribute('id', "Comment-" + elem.id);
+            textareaComment.setAttribute('rows', "2");
+            textareaComment.setAttribute("hidden", "hidden");
+            let divComment = document.getElementsByClassName(elem.id)[0];
+            divComment.appendChild(textareaComment);
+            setTimeout(() => {
+                textareaComment.removeAttribute("hidden");
+                $('#Comment-' + textareaComment.id).fadeIn(400);
+            }, 400)
+        });
+    })
+</script>
 
 <style>
     .scale {

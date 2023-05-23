@@ -233,6 +233,8 @@
         });
     });
 
+    var isAbleToMove = true;
+
     document.querySelectorAll(".dnd-unit").forEach(elem => {
         let divUnitTests = document.getElementById("unit_tests-" + elem.id);
         divUnitTests.addEventListener(`dragover`, (evt) => {
@@ -241,38 +243,28 @@
             let currentElement = evt.target;
             if (activeElement == null)
                 return;
-            let isMoveable = activeElement !== currentElement &&
+            let isMoveable = activeElement !== currentElement && isAbleToMove &&
                 currentElement.classList.contains(`test_div`) && activeElement.classList.contains(`test_div`) && childOf(activeElement, divUnitTests);
             if (!isMoveable)
                 return;
-            prev_sibs = getPreviousSiblings(activeElement)
-            const nextElement = (currentElement === activeElement.nextElementSibling) ?
-              activeElement.nextElementSibling :
-              currentElement;
-            divUnitTests.insertBefore(nextElement, activeElement);
-            /*
-            if (prev_sibs.includes(currentElement))
-                divUnitTests.insertBefore(activeElement, nextElement);
-            else
+            isAbleToMove = false;
+            array_for_compare = Array.from(divUnitTests.children);
+            console.log(array_for_compare.indexOf(currentElement), array_for_compare.indexOf(activeElement))
+            if (array_for_compare.indexOf(currentElement) > array_for_compare.indexOf(activeElement)) {
+                const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                    activeElement.nextElementSibling :
+                    currentElement;
                 divUnitTests.insertBefore(nextElement, activeElement);
-             */
-            /*
-            if (Array.from((divUnitTests.children)).indexOf(activeElement.nextElementSibling) % 3 === 2)
-                divUnitTests.insertBefore(nextElement, activeElement);
-            else
+            }
+            else {
+                const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                    activeElement.nextElementSibling :
+                    currentElement;
                 divUnitTests.insertBefore(activeElement, nextElement);
-             */
+            }
+            setTimeout(() => {isAbleToMove = true;}, 200)
         });
     });
-
-    function getPreviousSiblings(elem) {
-        let sibs = [];
-        while (elem = elem.previousSibling) {
-            if (elem.nodeType === 3) continue;
-            sibs.push(elem);
-        }
-        return sibs;
-    }
 
     function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
 

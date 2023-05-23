@@ -448,7 +448,20 @@ def handle_test_check(course_id, test_id, progress_id):
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']),
+    return render_template('test_check.html', user=user, test=TestContent.from_json(progress.progress['content']),
+                           score=result.total_score,
+                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>/<int:progress_id>', methods=["POST"])
+def handle_test_check_over(course_id, test_id, progress_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    progress = logic.get_progress_by_id(progress_id)
+    progress.progress = Progress.from_json(progress.progress)
+    result = TestResult.from_json(json.loads(progress.progress['result']))
+    comments = request.form.to_dict()
+    return render_template('test_check.html', user=user, test=TestContent.from_json(progress.progress['content']),
                            score=result.total_score,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
