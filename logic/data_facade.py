@@ -157,9 +157,6 @@ class DataFacade:
     def add_sub_rel(self, subrel):
         return self.sub_rel_repository.add_sub_rel(subrel)
 
-    def add_progress(self, user_progress):
-        return self.user_progress_repository.add_progress(user_progress)
-
     def get_user_for_courses(self, user_id):
         user = self.user_repository.get_user_by_id(user_id)
         user_relations = self.course_rel_repository.get_course_rels_by_user_id(user_id)
@@ -227,6 +224,9 @@ class DataFacade:
     def remove_article(self, article_id):
         return self.articles_repository.remove_article(article_id)
 
+    def add_progress(self, user_progress):
+        return self.user_progress_repository.add_progress(user_progress)
+
     def user_get_progress_by_course_user_ids(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)
 
@@ -238,6 +238,9 @@ class DataFacade:
 
     def get_progress_by_course_id_all(self, course_id):
         return self.user_progress_repository.get_progress_by_course_id_all(course_id)
+
+    def update_progress(self, progress):
+        return self.user_progress_repository.update_progress(progress)
 
     def role_get_user_roles_by_user_id(self, user_id):
         return self.role_repository.get_user_roles_by_id(user_id)

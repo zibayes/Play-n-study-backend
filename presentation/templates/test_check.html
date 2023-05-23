@@ -32,7 +32,9 @@
                                         <p>Информация</p>
                                     {% else %}
                                         <p>Вопрос №{{ questionNum.value }}</p>
-                                        <p>Баллы: {{ question.current_score }} / {{ question.score }}</p>
+                                        <div style="display: flex;">
+                                            <p>Баллы: </p> <input name="score-{{questionNum.value}}" value="{{ question.current_score }}" style="width:35px; height: 26px;"> <p>/ {{ question.score }}</p>
+                                        </div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -108,7 +110,11 @@
                     </div>
                 <div style="display: flex; padding-bottom: 20px; padding-left: 145px;">
                     <div class="{{questionNum.value}} card" style="background:#FFEFAB; flex: 1; padding: 12px; display: inline;">
-                        <button class="addComment" type="button" style="background: transparent; border: transparent;" id="{{questionNum.value}}"><strong>+ </strong>Добавить комментарий</button>
+                        {% if not question.comment %}
+                            <button class="addComment" type="button" style="background: transparent; border: transparent;" id="{{questionNum.value}}"><strong>+ </strong>Добавить комментарий</button>
+                        {% else %}
+                            <textarea class="form-control" placeholder="Комментарий" maxlength="5000" name="{{ questionNum.value }}" rows="2">{{ question.comment }}</textarea>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}

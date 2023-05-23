@@ -132,6 +132,12 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении прогресса', 'error'])
 
+    def update_progress(self, progress):
+        if self.data.update_progress(progress):
+            return tuple(['Прогресс успешно сохранён', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении прогресса', 'error'])
+
     def change_user_data(self, form, current_user_id):
         # todo: вынести в отдельный файл
         user = self.data.get_user_by_id(current_user_id)

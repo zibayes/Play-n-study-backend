@@ -136,6 +136,7 @@ def downcast(base, derived):
     derived.score = base.score
     derived.current_score = base.current_score
     derived.type = base.type
+    derived.comment = base.comment
     return derived
 
 
@@ -146,6 +147,7 @@ def upcast(derived, base):
     base.score = derived.score
     base.current_score = derived.current_score
     base.type = derived.type
+    base.comment = derived.comment
     return base
 
 
@@ -193,18 +195,19 @@ class TestContent:
 
 
 class Question:
-    def __init__(self, ask=None, answers=None, correct=None, score=None, current_score=None, type=None):
+    def __init__(self, ask=None, answers=None, correct=None, score=None, current_score=None, type=None, comment=None):
         self.ask = ask if ask != 'null' else None
         self.answers = None if answers == 'null' else answers
         self.correct = None if correct == 'null' else correct
         self.score = None if score == 'null' else score
         self.current_score = None if current_score == 'null' else current_score
         self.type = None if type == 'null' else type
+        self.comment = None if comment == 'null' else comment
 
     @staticmethod
     def from_json(qbase_json):
         return Question(qbase_json['ask'], qbase_json['answers'], qbase_json['correct'],
-                        qbase_json['score'], qbase_json['current_score'], qbase_json['type'])
+                        qbase_json['score'], qbase_json['current_score'], qbase_json['type'], qbase_json['comment'])
 
     def toJSON(self):
         return {
@@ -213,7 +216,8 @@ class Question:
             "correct": self.correct,
             "score": self.score,
             "current_score": self.current_score,
-            "type": self.type
+            "type": self.type,
+            "comment": self.comment
         }
 
     @staticmethod
@@ -224,6 +228,7 @@ class Question:
         derived.score = base.score
         derived.current_score = base.current_score
         derived.type = base.type
+        derived.comment = base.comment
         return derived
 
 

@@ -1,3 +1,4 @@
+import copy
 import time
 import json
 
@@ -160,7 +161,7 @@ def handle_delete_unit(course_id, unit_id):
         index_to_delete += 1
 
     for test in course.content['body'][index_to_delete]['tests']:
-        logic.remove_test(test['test_id'])
+        logic.remove_test(test.test_id)
     course.content['body'].pop(index_to_delete)
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
@@ -226,7 +227,7 @@ def handle_update_course(course_id):
             if 'unitName' in unit_name:
                 break
             task_type = task[:task.index('-')]
-            task_id = task[task.index('-')+1:]
+            task_id = task[task.index('-') + 1:]
             for test in unit['tests']:
                 if test.unit_type == task_type and test.test_id == int(task_id):
                     new_tests_order.append(test)
@@ -401,13 +402,13 @@ def handle_check_article(course_id, article_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["POST"])
 def handle_show_test_result(course_id, test_id, progress_id):
-    # test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']), score=result.total_score,
+    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']),
+                           score=result.total_score,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 
@@ -437,7 +438,8 @@ def handle_test_check_preview(course_id, test_id):
             username = logic.get_user_by_id(progress[i].user_id).username
             if username not in users.values():
                 users[progress[i].user_id] = username
-    return render_template('test_check_preview.html', user=user, test=test, course=course, progresses=progress, users=users)
+    return render_template('test_check_preview.html', user=user, test=test, course=course, progresses=progress,
+                           users=users)
 
 
 @login_required
@@ -459,11 +461,34 @@ def handle_test_check_over(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
+    progress.progress['content'] = TestContent.from_json(progress.progress['content'])
+    test = copy.deepcopy(progress.progress['content'])
     result = TestResult.from_json(json.loads(progress.progress['result']))
     comments = request.form.to_dict()
-    return render_template('test_check.html', user=user, test=TestContent.from_json(progress.progress['content']),
-                           score=result.total_score,
-                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+    for key, value in comments.items():
+        if 'score-' not in key:
+            progress.progress['content'].questions[int(key) - 1].comment = value
+        else:
+            if value.isdigit():
+                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = int(value)
+            else:
+                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = float(value)
+    new_current_score = 0
+    for question in progress.progress['content'].questions:
+        new_current_score += question.current_score
+    result.total_current_score = new_current_score
+    new_result = round(new_current_score / result.total_score * 100, 2)
+    result.result = new_result
+    progress.progress['result'] = result.to_json()
+    progress.progress['content'] = progress.progress['content'].toJSON()
+    progress.progress = Progress.to_json(Progress(None, progress.progress['test_id'], progress.progress['type'],
+                                                  progress.progress['completed'], progress.progress['result'],
+                                                  progress.progress['content']))
+    logic.update_progress(progress)
+    return redirect(f'/course_editor/{course_id}/tests_check/{test_id}')
+    #return render_template('test_check.html', user=user, test=test,
+    #                       score=result.total_score,
+    #                       total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 
 @courses_bp.route('/course_preview/<int:course_id>')
@@ -471,4 +496,3 @@ def handle_test_check_over(course_id, test_id, progress_id):
 def handle_course(course_id):
     course = logic.course_get_for_preview(course_id, current_user.get_id())
     return render_template('course.html', course=course)
-

@@ -631,6 +631,18 @@ class UserProgressRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка добавления прогресса в БД " + str(e))
 
+    def update_progress(self, user_progress):
+        try:
+            progress_to_update = self.session.query(UsersProgressModel) \
+                .filter_by(up_id=user_progress.up_id) \
+                .first()
+            progress_to_update.progress = user_progress.progress
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления прогресса в БД " + str(e))
+            return False
+
 
 class RoleRepository:
     def __init__(self, session):
