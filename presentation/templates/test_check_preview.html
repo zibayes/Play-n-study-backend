@@ -43,8 +43,8 @@
                                 {% for progress in progresses %}
                                     {% set progressNum.value = progressNum.value + 1 %}
                                     <tr style="
-                                    {% if progress.progress.result.total_current_score == max_score %}
-                                        background: #75c1ff55
+                                    {% if progress.progress.completed %}
+                                        background: #98fa9855
                                     {% endif %}
                                     ">
                                         <td>
@@ -57,7 +57,7 @@
                                             {% if progress.progress.completed %}
                                                 Завершено
                                             {% else %}
-                                                Не завершено
+                                                На проверке
                                             {% endif %}
                                             <br>
                                             Потрачено времени на прохождение

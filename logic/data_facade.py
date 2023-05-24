@@ -242,6 +242,15 @@ class DataFacade:
     def update_progress(self, progress):
         return self.user_progress_repository.update_progress(progress)
 
+    def add_review(self, review):
+        return self.review_repository.add_review(review)
+
+    def get_reviews_by_course_id(self, course_id):
+        return self.review_repository.get_reviews_by_course_id(course_id)
+
+    def update_review(self, review):
+        return self.review_repository.update_review(review)
+
     def role_get_user_roles_by_user_id(self, user_id):
         return self.role_repository.get_user_roles_by_id(user_id)
 

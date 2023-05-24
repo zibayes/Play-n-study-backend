@@ -375,7 +375,11 @@ def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
-    progress = Progress(progress_id=None, completed=True, type='test',
+    completed = True
+    for question in test.content.questions:
+        if question.current_score is None:
+            completed = False
+    progress = Progress(progress_id=None, completed=completed, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
@@ -471,11 +475,18 @@ def handle_test_check_over(course_id, test_id, progress_id):
         else:
             if value.isdigit():
                 progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = int(value)
-            else:
+            elif value:
                 progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = float(value)
+            else:
+                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = None
     new_current_score = 0
+    completed = True
     for question in progress.progress['content'].questions:
-        new_current_score += question.current_score
+        if question.current_score:
+            new_current_score += question.current_score
+        else:
+            completed = False
+    progress.progress['completed'] = completed
     result.total_current_score = new_current_score
     new_result = round(new_current_score / result.total_score * 100, 2)
     result.result = new_result
@@ -494,5 +505,15 @@ def handle_test_check_over(course_id, test_id, progress_id):
 @courses_bp.route('/course_preview/<int:course_id>')
 @login_required
 def handle_course(course_id):
-    course = logic.course_get_for_preview(course_id, current_user.get_id())
-    return render_template('course.html', course=course)
+    user_id = current_user.get_id()
+    course = logic.course_get_for_preview(course_id, user_id)
+    reviews = logic.get_reviews_by_course_id(course_id)
+    user_review = None
+    average_rate = 0
+    if reviews:
+        for review in reviews:
+            if review.user_id == user_id:
+                user_review = review
+            average_rate += review.rate
+        average_rate /= len(reviews)
+    return render_template('course.html', course=course, reviews=reviews, user_review=user_review, average_rate=average_rate)

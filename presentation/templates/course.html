@@ -24,6 +24,11 @@
                                         <p class="fw-bold mb-1 lang">{{ course.name }}</p>
                                         <p class="text-muted mb-0">{{ course.category }}</p>
                                     </div>
+                                    {% if average_rate > 0 %}
+                                        <div class="ms-4" style="padding-left: 80px;">
+                                            Рейтинг курса: {{average_rate}} <i class="far fa-star star fas rate-active"></i>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="d-flex justify-content-around">
                                     {% if course.can_subscribe %}
@@ -63,37 +68,7 @@
                 </div>
             </div>
         </div>
-        <div class="" style="text-align: center">
-            <p>Как вам данный курс? Поставьте отзыв:</p>
-            <div class="stars">
-                <label class="rate">
-                    <input type="radio" name="radio1" id="star1" value="star1">
-                    <div class="face"></div>
-                    <i class="far fa-star star one-star"></i>
-                </label>
-                <label class="rate">
-                    <input type="radio" name="radio1" id="star2" value="star2">
-                    <div class="face"></div>
-                    <i class="far fa-star star two-star"></i>
-                </label>
-                <label class="rate">
-                    <input type="radio" name="radio1" id="star3" value="star3">
-                    <div class="face"></div>
-                    <i class="far fa-star star three-star"></i>
-                </label>
-                <label class="rate">
-                    <input type="radio" name="radio1" id="star4" value="star4">
-                    <div class="face"></div>
-                    <i class="far fa-star star four-star"></i>
-                </label>
-                <label class="rate">
-                    <input type="radio" name="radio1" id="star5" value="star5">
-                    <div class="face"></div>
-                    <i class="far fa-star star five-star"></i>
-                </label>
-            </div>
-        </div>
-        <div class="container" style="padding: 45px 0 0 0">
+        <div class="container">
             <div class="row">
                 <div class="col mb-8">
                     <div class="container">
@@ -110,6 +85,92 @@
                 </div>
             </div>
         </div>
+        <form>
+            <div class="" style="text-align: center; padding-bottom: 25px;">
+                {% if user_review.rate %}
+                    <p id="feedback">Спасибо за отзыв!</p>
+                {% else %}
+                    <p id="feedback">Как вам данный курс? <br> Оставьте свой отзыв:</p>
+                {% endif %}
+                <div class="stars">
+                    <label class="rate" id="star11">
+                        <input type="radio" name="radio1" id="star1" value="star1">
+                        <div class="face"></div>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 1 %}
+                                <i class="fa-star star one-star fas rate-active"></i>
+                            {% elif user_review.rate > 1 %}
+                                <i class="fa-star star one-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star one-star"></i>
+                            {% endif %}
+                        {% else %}
+                            <i class="far fa-star star one-star"></i>
+                        {% endif %}
+                    </label>
+                    <label class="rate" id="star22">
+                        <input type="radio" name="radio1" id="star2" value="star2">
+                        <div class="face"></div>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 2 %}
+                                <i class="fa-star star two-star fas rate-active"></i>
+                            {% elif user_review.rate > 2 %}
+                                <i class="fa-star star two-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star two-star"></i>
+                            {% endif %}
+                        {% else %}
+                            <i class="far fa-star star two-star"></i>
+                        {% endif %}
+                    </label>
+                    <label class="rate" id="star33">
+                        <input type="radio" name="radio1" id="star3" value="star3">
+                        <div class="face"></div>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 3 %}
+                                <i class="fa-star star three-star fas rate-active"></i>
+                            {% elif user_review.rate > 3 %}
+                                <i class="fa-star star three-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star three-star"></i>
+                            {% endif %}
+                        {% else %}
+                            <i class="far fa-star star three-star"></i>
+                        {% endif %}
+                    </label>
+                    <label class="rate" id="star44">
+                        <input type="radio" name="radio1" id="star4" value="star4">
+                        <div class="face"></div>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 4 %}
+                                <i class="fa-star star four-star fas rate-active"></i>
+                            {% elif user_review.rate > 4 %}
+                                <i class="fa-star star four-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star four-star"></i>
+                            {% endif %}
+                        {% else %}
+                            <i class="far fa-star star four-star"></i>
+                        {% endif %}
+                    </label>
+                    <label class="rate" id="star55">
+                        <input type="radio" name="radio1" id="star5" value="star5">
+                        <div class="face"></div>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 5 %}
+                                <i class="fa-star star five-star fas rate-active"></i>
+                            {% elif user_review.rate > 5 %}
+                                <i class="fa-star star four-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star five-star"></i>
+                            {% endif %}
+                        {% else %}
+                            <i class="far fa-star star five-star"></i>
+                        {% endif %}
+                    </label>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <script>
@@ -126,22 +187,28 @@
             }
         }, '.rate');
 
-
         $(document).on('click', '.rate', function() {
             if ( !$(this).find('.star').hasClass('rate-active') ) {
                 $(this).siblings().find('.star').addClass('far').removeClass('fas rate-active');
                 $(this).find('.star').addClass('rate-active fas').removeClass('far star-over');
                 $(this).prevAll().find('.star').addClass('fas').removeClass('far star-over');
-            } else {
-                console.log('has');
+
+                rate_to_send = document.getElementById($(this).attr('id').substring(0, 5)).value.substring(4)
+                url = '/api/set_rating/' + {{course.course_id}}
+                $.ajax({
+                    url: url,
+                    method: 'post',
+                    dataType: 'html',
+                    contentType:'application/json',
+                    data: JSON.stringify({rate: rate_to_send}),
+                    success: function(data){
+                        document.getElementById('feedback').innerHTML = data;
+                    }
+                });
             }
         });
 
     });
-
-
-
-
 </script>
 <style>
     body {
