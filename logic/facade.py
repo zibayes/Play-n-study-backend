@@ -1,4 +1,4 @@
-from data.types import SubRel, CourseRel, CourseUnit, Course, UserProgress
+from data.types import SubRel, CourseRel, CourseUnit, Course, UserProgress, Review
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
@@ -137,6 +137,17 @@ class LogicFacade:
             return tuple(['Прогресс успешно сохранён', 'success'])
         else:
             return tuple(['Ошибка при сохранении прогресса', 'error'])
+
+    def add_review(self, user_id, course_id, rate):
+        review = Review(None, user_id, course_id, rate, None)
+        return self.data.add_review(review)
+
+    def get_reviews_by_course_id(self, course_id):
+        return self.data.get_reviews_by_course_id(course_id)
+
+    def update_review(self, user_id, course_id, rate):
+        review = Review(None, user_id, course_id, rate, None)
+        return self.data.update_review(review)
 
     def change_user_data(self, form, current_user_id):
         # todo: вынести в отдельный файл

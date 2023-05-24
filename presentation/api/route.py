@@ -39,3 +39,22 @@ def handle_join_leave_course(course_id):
 @api_bp.route('/api/rendermd', methods=['POST'])
 def handle_rendermd():
     return markdown(request.json['text'])
+
+
+@api_bp.route('/api/set_rating/<int:course_id>', methods=['POST'])
+@login_required
+def handle_rate_course(course_id):
+    user_id = current_user.get_id()
+    reviews = logic.get_reviews_by_course_id(course_id)
+    if reviews:
+        for review in reviews:
+            if review.user_id == user_id:
+                response = logic.update_review(user_id, course_id, int(request.json['rate']))
+                if response:
+                    return "Спасибо за отзыв!"
+                flash('Ошибка при отправке отзыва', 'error')
+                return
+    response = logic.add_review(user_id, course_id, int(request.json['rate']))
+    if response:
+        return "Спасибо за отзыв!"
+    flash('Ошибка при отправке отзыва', 'error')

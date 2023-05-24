@@ -294,6 +294,18 @@ class ReviewRepository:
             return reviews_list
         return None
 
+    def update_review(self, review: Review) -> bool:
+        try:
+            review_to_update = self.session.query(ReviewsModel) \
+                .filter_by(course_id=review.course_id, user_id=review.user_id) \
+                .first()
+            review_to_update.rate = review.rate
+            review_to_update.text = review.text
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления отзыва в БД " + str(e))
+
 
 class SubRelRepository:
     session: Session = None

@@ -505,5 +505,15 @@ def handle_test_check_over(course_id, test_id, progress_id):
 @courses_bp.route('/course_preview/<int:course_id>')
 @login_required
 def handle_course(course_id):
-    course = logic.course_get_for_preview(course_id, current_user.get_id())
-    return render_template('course.html', course=course)
+    user_id = current_user.get_id()
+    course = logic.course_get_for_preview(course_id, user_id)
+    reviews = logic.get_reviews_by_course_id(course_id)
+    user_review = None
+    average_rate = 0
+    if reviews:
+        for review in reviews:
+            if review.user_id == user_id:
+                user_review = review
+                average_rate += review.rate
+        average_rate /= len(reviews)
+    return render_template('course.html', course=course, reviews=reviews, user_review=user_review, average_rate=average_rate)
