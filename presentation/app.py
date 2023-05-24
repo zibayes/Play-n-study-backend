@@ -59,7 +59,6 @@ def handle_course_ava(course_id):
     return h
 
 
-
 @app.route('/userava/<int:user_id>')
 def handle_userava(user_id):
     img = logic.get_user_avatar(app, user_id)

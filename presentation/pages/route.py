@@ -60,4 +60,5 @@ def handle_reviews():
 @pages_bp.route('/information')
 def handle_information():
     user = logic.get_user_by_id(current_user.get_id())
+    print(request)
     return render_template('information.html', user=user)
