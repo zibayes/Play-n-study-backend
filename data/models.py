@@ -1,4 +1,4 @@
-from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean, JSON
+from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean, JSON, TIMESTAMP
 from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -281,3 +281,35 @@ class UsersRolesModel(Base):
     def __init__(self, user_id, role_id):
         self.user_id = user_id
         self.role_id = role_id
+
+
+class ChatsModel(Base):
+    __tablename__ = "chats"
+
+    chat_id = Column(Integer, primary_key=True)
+    user1 = Column(Integer, ForeignKey("users.user_id"))
+    user2 = Column(Integer, ForeignKey("users.user_id"))
+    last_change = Column(TIMESTAMP)
+
+    def __init__(self, user1, user2, last_change):
+        self.user1 = user1
+        self.user2 = user2
+        self.last_change = last_change
+
+
+class ChatMessagesModel(Base):
+    __tablename__ = "chat_messages"
+
+    msg_id = Column(Integer, primary_key=True)
+    chat_id = Column(Integer, ForeignKey("chats.chat_id"))
+    msg_text = Column(Text)
+    msg_date = Column(TIMESTAMP)
+    msg_from = Column(Integer, ForeignKey("users.user_id"))
+    msg_to = Column(Integer, ForeignKey("users.user_id"))
+
+    def __init__(self, chat_id, msg_text, msg_date, msg_from, msg_to):
+        self.chat_id = chat_id
+        self.msg_text = msg_text
+        self.msg_date = msg_date
+        self.msg_from = msg_from
+        self.msg_to = msg_to

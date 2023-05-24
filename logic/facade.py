@@ -303,3 +303,26 @@ class LogicFacade:
 
     def curator_remove(self, user_id, course_id):
         return self.data.curator_remove(user_id, course_id)
+
+    def chats_get_user_chats_preview(self, user_id):
+        return self.data.chat_get_user_chats_preview(user_id)
+
+    def chats_get_dialog(self, user_id, chat_id):
+        return self.data.chat_get_dialog(user_id, chat_id)
+
+    def chats_send_message(self, req_json, user_id):
+        # if chat exists -> send message, else create_chat -> send_message
+        msg_text = req_json['msg_text']
+        msg_from = user_id
+        msg_to = int(req_json['msg_to'])
+
+        if self.__chat_exists(msg_from, msg_to):
+            #todo: full message
+            self.__chat_send_message("message")
+
+
+    def __chat_exists(self, user_from, user_to):
+        pass
+
+    def __chat_send_message(self, message):
+        pass

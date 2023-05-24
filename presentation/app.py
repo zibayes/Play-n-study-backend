@@ -15,6 +15,8 @@ from presentation.user.route import user_bp as user
 from presentation.pages.route import pages_bp as pages
 from presentation.api.route import api_bp as api
 from presentation.auth.route import auth_bp as auth
+from presentation.chat.route import chat_bp as chat
+
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
     echo=False
@@ -30,6 +32,7 @@ app.register_blueprint(api)
 app.register_blueprint(pages)
 app.register_blueprint(user)
 app.register_blueprint(auth)
+app.register_blueprint(chat)
 
 # login manager
 login_manager = LoginManager(app)

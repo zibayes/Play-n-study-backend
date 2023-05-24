@@ -7,7 +7,7 @@ from typing import Optional
 from data.models import *
 from data.types import *
 from sqlalchemy.orm.session import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 
 
 class AchievementRepository:
@@ -675,4 +675,71 @@ class RoleRepository:
             return roles
         else:
             return None
+
+
+class MessagesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_chat_messages(self, chat_id):
+        messages = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .all()
+        msgs = []
+        for message in messages:
+            msgs.append(convert.msg_db_to_msg(message))
+        return msgs
+
+
+class ChatRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_user_chats(self, user_id):
+        chats = self.session.query(ChatsModel) \
+            .filter_by(user1=user_id) \
+            .all()
+        chats1 = self.session.query(ChatsModel) \
+            .filter_by(user2=user_id) \
+            .all()
+        chats += chats1
+
+        if len(chats) == 0:
+            return None
+
+        chats = sorted(chats, key=lambda x: x.last_change)
+
+        normalized_chats = []
+        for chat in chats:
+            ids = [chat.user1, chat.user2]
+            ids.remove(user_id)
+            normalized_chats.append(Chat(chat.chat_id, ids[0], chat.last_change))
+        return normalized_chats
+
+
+class ChatMessageRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_last_chat_message_by_id(self, chat_id):
+        message = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .order_by(text("msg_date desc")) \
+            .first()
+        if message is not None:
+            return message
+        return None
+
+    def get_chat_messages_by_chat_id(self, chat_id):
+        messages = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .order_by(text("msg_date")) \
+            .all()
+        if len(messages) > 0:
+            return list(map(lambda x: convert.msg_db_to_msg(x), messages))
+        return None
+
+
+
+
 
