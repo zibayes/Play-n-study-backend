@@ -1,4 +1,6 @@
-from data.types import SubRel, CourseRel, CourseUnit, Course, UserProgress, Review
+from sqlalchemy import func
+
+from data.types import SubRel, CourseRel, CourseUnit, Course, UserProgress, Review, ChatMessage
 from logic.data_facade import DataFacade
 from logic.auth.auth import Auth
 from logic.test import get_test_from_form, get_test_result
@@ -285,7 +287,7 @@ class LogicFacade:
 
     def get_course_without_rel(self, course_id):
         return self.data.course_json_get_by_id(course_id)
-    
+
     def __role_get_user_role_by_user_id(self, user_id):
         return self.data.role_get_user_roles_by_user_id(user_id)
 
@@ -317,12 +319,28 @@ class LogicFacade:
         msg_to = int(req_json['msg_to'])
 
         if self.__chat_exists(msg_from, msg_to):
-            #todo: full message
-            self.__chat_send_message("message")
+            chat_id = self.data.chat_repository.get_chat_id(msg_from, msg_to)
+            if chat_id is not None:
+                return self.__chat_send_message(chat_id, msg_text, msg_from, msg_to)
+            return False
 
+        chat_id = None
+        created = self.__chat_create(msg_from, msg_to)
+        if created:
+            chat_id = self.data.chat_repository.get_chat_id(msg_from, msg_to)
+        else:
+            # create error
+            return False
+        if chat_id is not None:
+            return self.__chat_send_message(chat_id, msg_text, msg_from, msg_to)
+        return False
 
-    def __chat_exists(self, user_from, user_to):
-        pass
+    def __chat_send_message(self, chat_id, msg_text, msg_from, msg_to):
+        message = ChatMessage(None, chat_id, msg_text, None, msg_from, msg_to)
+        return self.data.chat_messages_repository.send_message(message)
 
-    def __chat_send_message(self, message):
-        pass
+    def __chat_exists(self, user_from, user_to) -> bool:
+        return self.data.chat_exists(user_from, user_to)
+
+    def __chat_create(self, msg_from, msg_to):
+        return self.data.chat_repository.create(msg_from, msg_to)

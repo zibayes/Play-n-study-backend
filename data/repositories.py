@@ -716,6 +716,48 @@ class ChatRepository:
             normalized_chats.append(Chat(chat.chat_id, ids[0], chat.last_change))
         return normalized_chats
 
+    def is_exist(self, user_from, user_to):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user_from) \
+            .filter_by(user2=user_to) \
+            .all()
+        if len(chat) > 0:
+            return True
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user_to) \
+            .filter_by(user2=user_from) \
+            .all()
+        if len(chat) > 0:
+            return True
+        return False
+
+    def get_chat_id(self, user1, user2):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user1) \
+            .filter_by(user2=user2) \
+            .first()
+        if chat is not None:
+            return chat.chat_id
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user2) \
+            .filter_by(user2=user1) \
+            .first()
+        if chat is not None:
+            return chat.chat_id
+        return None
+
+    def create(self, user_from, user_to):
+        try:
+            new_chat = ChatsModel(
+                user1=user_from,
+                user2=user_to
+            )
+            self.session.add(new_chat)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Error: " + str(e))
+            return False
 
 class ChatMessageRepository:
     def __init__(self, session):
@@ -739,6 +781,22 @@ class ChatMessageRepository:
             return list(map(lambda x: convert.msg_db_to_msg(x), messages))
         return None
 
+    def send_message(self, message):
+        try:
+            new_message = ChatMessagesModel(
+                chat_id=message.chat_id,
+                msg_text=message.msg_text,
+                msg_date=func.now(),
+                msg_from=message.msg_from,
+                msg_to=message.msg_to,
+                unread=True)
+
+            self.session.add(new_message)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Error " + str(e))
+            return False
 
 
 

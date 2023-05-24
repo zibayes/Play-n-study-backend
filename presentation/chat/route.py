@@ -31,9 +31,7 @@ def handle_get_chat_content():
 
 @chat_bp.route('/send_message', methods=['POST'])
 def handle_send_message():
-    logic.chats_send_message(request.json, current_user.get_id())
-
-# todo:
-#  1.отправить сообщение
-#  2.создать чат (при отправке первого сообщения)
-#  3.
+    response = logic.chats_send_message(request.json, 1)
+    if response:
+        return 'sent'
+    return 'fail'

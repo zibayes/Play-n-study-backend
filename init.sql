@@ -124,14 +124,14 @@ CREATE TABLE chats(
     chat_id serial PRIMARY KEY,
     user1 int REFERENCES users(user_id),
     user2 int REFERENCES users(user_id),
-    last_change timestamp
+    last_change timestamp DEFAULT now()
 );
 
 CREATE TABLE chat_messages(
     msg_id serial PRIMARY KEY,
     chat_id int REFERENCES chats(chat_id),
     msg_text text,
-    msg_date timestamp,
+    msg_date timestamp DEFAULT now(),
     msg_from int REFERENCES users(user_id),
     msg_to int REFERENCES users(user_id),
     unread boolean

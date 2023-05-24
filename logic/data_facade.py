@@ -303,3 +303,6 @@ class DataFacade:
             msg.pop('msg_to')
             msgs.append(msg)
         return json.dumps({"messages": msgs}, default=str)
+
+    def chat_exists(self, user_from, user_to):
+        return self.chat_repository.is_exist(user_from, user_to)
