@@ -514,6 +514,6 @@ def handle_course(course_id):
         for review in reviews:
             if review.user_id == user_id:
                 user_review = review
-                average_rate += review.rate
+            average_rate += review.rate
         average_rate /= len(reviews)
     return render_template('course.html', course=course, reviews=reviews, user_review=user_review, average_rate=average_rate)

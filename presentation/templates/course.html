@@ -96,10 +96,14 @@
                     <label class="rate" id="star11">
                         <input type="radio" name="radio1" id="star1" value="star1">
                         <div class="face"></div>
-                        {% if user_review.rate == 1 %}
-                            <i class="fa-star star one-star fas rate-active"></i>
-                        {% elif user_review.rate > 1 %}
-                            <i class="fa-star star one-star fas"></i>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 1 %}
+                                <i class="fa-star star one-star fas rate-active"></i>
+                            {% elif user_review.rate > 1 %}
+                                <i class="fa-star star one-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star one-star"></i>
+                            {% endif %}
                         {% else %}
                             <i class="far fa-star star one-star"></i>
                         {% endif %}
@@ -107,10 +111,14 @@
                     <label class="rate" id="star22">
                         <input type="radio" name="radio1" id="star2" value="star2">
                         <div class="face"></div>
-                        {% if user_review.rate == 2 %}
-                            <i class="fa-star star two-star fas rate-active"></i>
-                        {% elif user_review.rate > 2 %}
-                            <i class="fa-star star two-star fas"></i>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 2 %}
+                                <i class="fa-star star two-star fas rate-active"></i>
+                            {% elif user_review.rate > 2 %}
+                                <i class="fa-star star two-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star two-star"></i>
+                            {% endif %}
                         {% else %}
                             <i class="far fa-star star two-star"></i>
                         {% endif %}
@@ -118,10 +126,14 @@
                     <label class="rate" id="star33">
                         <input type="radio" name="radio1" id="star3" value="star3">
                         <div class="face"></div>
-                        {% if user_review.rate == 3 %}
-                            <i class="fa-star star three-star fas rate-active"></i>
-                        {% elif user_review.rate > 3 %}
-                            <i class="fa-star star three-star fas"></i>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 3 %}
+                                <i class="fa-star star three-star fas rate-active"></i>
+                            {% elif user_review.rate > 3 %}
+                                <i class="fa-star star three-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star three-star"></i>
+                            {% endif %}
                         {% else %}
                             <i class="far fa-star star three-star"></i>
                         {% endif %}
@@ -129,10 +141,14 @@
                     <label class="rate" id="star44">
                         <input type="radio" name="radio1" id="star4" value="star4">
                         <div class="face"></div>
-                        {% if user_review.rate == 4 %}
-                            <i class="fa-star star four-star fas rate-active"></i>
-                        {% elif user_review.rate > 4 %}
-                            <i class="fa-star star four-star fas"></i>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 4 %}
+                                <i class="fa-star star four-star fas rate-active"></i>
+                            {% elif user_review.rate > 4 %}
+                                <i class="fa-star star four-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star four-star"></i>
+                            {% endif %}
                         {% else %}
                             <i class="far fa-star star four-star"></i>
                         {% endif %}
@@ -140,10 +156,14 @@
                     <label class="rate" id="star55">
                         <input type="radio" name="radio1" id="star5" value="star5">
                         <div class="face"></div>
-                        {% if user_review.rate == 5 %}
-                            <i class="fa-star star five-star fas rate-active"></i>
-                        {% elif user_review.rate > 5 %}
-                            <i class="fa-star star four-star fas"></i>
+                        {% if user_review.rate %}
+                            {% if user_review.rate == 5 %}
+                                <i class="fa-star star five-star fas rate-active"></i>
+                            {% elif user_review.rate > 5 %}
+                                <i class="fa-star star four-star fas"></i>
+                            {% else %}
+                                <i class="far fa-star star five-star"></i>
+                            {% endif %}
                         {% else %}
                             <i class="far fa-star star five-star"></i>
                         {% endif %}
