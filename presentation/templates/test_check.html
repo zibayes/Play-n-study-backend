@@ -33,7 +33,13 @@
                                     {% else %}
                                         <p>Вопрос №{{ questionNum.value }}</p>
                                         <div style="display: flex;">
-                                            <p>Баллы: </p> <input name="score-{{questionNum.value}}" value="{{ question.current_score }}" style="width:35px; height: 26px;"> <p>/ {{ question.score }}</p>
+                                            <p>Баллы: </p> <input name="score-{{questionNum.value}}"
+                                                                  {% if question.current_score %}
+                                                                    value="{{ question.current_score }}"
+                                                                  {% else %}
+                                                                    value=""
+                                                                  {% endif %}
+                                                                  style="width:35px; height: 26px;"> <p>/ {{ question.score }}</p>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -88,21 +94,21 @@
 
                                     {% if question.type == "free" %}
                                         <hr>
-                                        {% for answer in question.answers %}
-                                            <div style="display: flex;">
-                                                {% if question.is_correct %}
-                                                    <div style="color: green;">✔</div>
-                                                {% else %}
-                                                    <div style="color: red;">✘</div>
-                                                {% endif %}
-                                                <textarea disabled id="freeAnswer" class="form-control" name="{{ answer }}" rows="1">{{ question.answer }}</textarea>
-                                            </div>
-                                        {% endfor %}
+                                        <div style="display: flex;">
+                                            {% if question.is_correct or question.answers[0].strip().lower() == question.answers[1].strip().lower()  %}
+                                                <div style="color: green;">✔</div>
+                                            {% else %}
+                                                <div style="color: red;">✘</div>
+                                            {% endif %}
+                                            <textarea disabled id="freeAnswer" class="form-control" name="{{ question.answers[0] }}" rows="1">{{ question.answers[1] }}</textarea>
+                                        </div>
                                     {% endif %}
 
                                     {% if question.type == "detailed_free" %}
                                         <hr>
-                                        <textarea disabled class="form-control" name="{{ question.ask }}" rows="8">{{ question.answer }}</textarea>
+                                        {% for answer in question.answers %}
+                                            <textarea disabled class="form-control" name="{{ question.ask }}" rows="8">{{ answer }}</textarea>
+                                        {% endfor %}
                                     {% endif %}
                                 </div>
                             </div>

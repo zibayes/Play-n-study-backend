@@ -73,11 +73,11 @@
 
                                     {% if question.type == "free" %}
                                         <hr>
-                                        {% for answer in question.answers %}
+                                        <!-- {% for answer in question.answers %} -->
                                             <div style="display: flex;">
                                                 <textarea id="freeAnswer" class="form-control" name="{{ question.ask }}" rows="1"></textarea>
                                             </div>
-                                        {% endfor %}
+                                        <!-- {% endfor %} -->
                                     {% endif %}
 
                                     {% if question.type == "detailed_free" %}

@@ -125,22 +125,28 @@ def get_test_result(test, form):
                                 if question.type == "multiple":
                                     score_part -= question.score / question.correct  # (question.correct * 2)
                             answers_count += 1
-                elif question.type in ("free", "detailed_free"):
-                    question.answer = value
+                elif question.type == "free":
+                    question.answers.append(value)
                     question.is_correct = False
-                    for answer in question.answers:
+                    for answer in question.answers[:1]:
                         if value.lower().strip() == answer.lower().strip():
                             question.current_score += question.score
                             question.is_correct = True
+                elif question.type == "detailed_free":
+                    question.answers.append(value)
+                    question.current_score = None
         if (score_part < 0 or (answers_count == len(question.answers) and question.correct != len(question.answers))) \
                 and question.type == "multiple":
             score_part = 0
-        question.current_score += score_part
+        if question.current_score is not None:
+            question.current_score += score_part
         if question.score:
             total_score += question.score
-            total_current_score += question.current_score
+            if question.current_score is not None:
+                total_current_score += question.current_score
         # if question.current_score < 0 or answers_count == len(question.answers):
         #     question.current_score = 0
-        question.current_score = ("%.2f" % question.current_score).replace(".00", "")
+        if question.current_score is not None:
+            question.current_score = ("%.2f" % question.current_score).replace(".00", "")
     result = round(float(total_current_score) / float(total_score) * 100, 2)
     return TestResult(total_score, total_current_score, total_time, result)
