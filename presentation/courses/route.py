@@ -514,8 +514,8 @@ def handle_course(course_id):
         for review in reviews:
             average_rate += review.rate
         average_rate /= len(reviews)
-    if len(reviews) > 5:
-        reviews = random.sample(reviews, 5)
+        if len(reviews) > 5:
+            reviews = random.sample(reviews, 5)
     user_review = None
     users_for_review = {}
     if reviews:
@@ -524,7 +524,7 @@ def handle_course(course_id):
                 user_review = review
             users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
     return render_template('course.html', course=course, reviews=reviews, users_for_review=users_for_review,
-                           user_review=user_review, average_rate=average_rate)
+                           user_review=user_review, average_rate=round(average_rate, 1))
 
 
 @courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
