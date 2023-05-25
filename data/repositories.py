@@ -7,7 +7,7 @@ from typing import Optional
 from data.models import *
 from data.types import *
 from sqlalchemy.orm.session import Session
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 
 
 class AchievementRepository:
@@ -675,4 +675,176 @@ class RoleRepository:
             return roles
         else:
             return None
+
+
+class MessagesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_chat_messages(self, chat_id):
+        messages = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .all()
+        msgs = []
+        for message in messages:
+            msgs.append(convert.msg_db_to_msg(message))
+        return msgs
+
+
+class ChatRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_user_chats(self, user_id):
+        chats = self.session.query(ChatsModel) \
+            .filter_by(user1=user_id) \
+            .all()
+        chats1 = self.session.query(ChatsModel) \
+            .filter_by(user2=user_id) \
+            .all()
+        chats += chats1
+
+        if len(chats) == 0:
+            return None
+
+        chats = sorted(chats, key=lambda x: x.last_change)
+
+        normalized_chats = []
+        for chat in chats:
+            ids = [chat.user1, chat.user2]
+            ids.remove(user_id)
+            unread = self.__is_unread_by_me(user_id, chat.chat_id)
+
+            normalized_chats.append(Chat(chat.chat_id, ids[0], chat.last_change, unread))
+        return normalized_chats
+
+    def is_exist(self, user_from, user_to):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user_from) \
+            .filter_by(user2=user_to) \
+            .all()
+        if len(chat) > 0:
+            return True
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user_to) \
+            .filter_by(user2=user_from) \
+            .all()
+        if len(chat) > 0:
+            return True
+        return False
+
+    def get_chat_id(self, user1, user2):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user1) \
+            .filter_by(user2=user2) \
+            .first()
+        if chat is not None:
+            return chat.chat_id
+        chat = self.session.query(ChatsModel) \
+            .filter_by(user1=user2) \
+            .filter_by(user2=user1) \
+            .first()
+        if chat is not None:
+            return chat.chat_id
+        return None
+
+    def create(self, user_from, user_to):
+        try:
+            new_chat = ChatsModel(
+                user1=user_from,
+                user2=user_to
+            )
+            self.session.add(new_chat)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Error: " + str(e))
+            return False
+
+    def __is_unread_by_me(self, user_id, chat_id):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(chat_id=chat_id) \
+            .first()
+        if chat is None:
+            return None
+
+        if chat.user1 == user_id:
+            return chat.user1_read
+
+        return chat.user2_read
+
+    def change_checked_status(self, chat_id, user_id, read=False):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(chat_id=chat_id) \
+            .first()
+
+        status = True
+
+        if chat is None:
+            return False
+
+        if not read:
+            status = False
+
+        if chat.user1 == user_id:
+            chat.user1_read = status
+        else:
+            chat.user2_read = status
+        self.session.commit()
+        return True
+
+    def is_user_chat(self, user_id, chat_id):
+        chat = self.session.query(ChatsModel) \
+                    .filter_by(chat_id=chat_id) \
+                    .first()
+        if chat is None:
+            return None
+
+        if chat.user1 == user_id:
+            return True
+        if chat.user2 == user_id:
+            return True
+        return False
+
+
+class ChatMessageRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def get_last_chat_message_by_id(self, chat_id):
+        message = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .order_by(text("msg_date desc")) \
+            .first()
+        if message is not None:
+            return message
+        return None
+
+    def get_chat_messages_by_chat_id(self, chat_id):
+        messages = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .order_by(text("msg_date")) \
+            .all()
+        if len(messages) > 0:
+            return list(map(lambda x: convert.msg_db_to_msg(x), messages))
+        return None
+
+    def send_message(self, message):
+        try:
+            new_message = ChatMessagesModel(
+                chat_id=message.chat_id,
+                msg_text=message.msg_text,
+                msg_date=func.now(),
+                msg_from=message.msg_from,
+                msg_to=message.msg_to)
+
+            self.session.add(new_message)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Error " + str(e))
+            return False
+
+
+
 

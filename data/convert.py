@@ -116,3 +116,16 @@ def progress_db_to_progress(progress: Type[UsersProgressModel]):
                         user_id=progress.user_id,
                         course_id=progress.course_id,
                         progress=Progress.from_json(json.loads(progress.progress)))
+
+
+def msg_db_to_msg(message):
+    return ChatMessage(msg_id=message.msg_id,
+                       chat_id=message.chat_id,
+                       msg_text=message.msg_text,
+                       msg_date=message.msg_date,
+                       msg_from=message.msg_from,
+                       msg_to=message.msg_to)
+
+
+def message_db_to_message(x):
+    return None

@@ -378,3 +378,52 @@ class Progress:
             'completed': progress_json['completed'],
             'type': progress_json['type']
         }
+
+
+class ChatMessage:
+    def __init__(self, msg_id, chat_id, msg_text, msg_date, msg_from, msg_to):
+        self.msg_id = msg_id
+        self.chat_id = chat_id
+        self.msg_text = msg_text
+        self.msg_date = msg_date
+        self.msg_from = msg_from
+        self.msg_to = msg_to
+
+    def to_dict(self):
+        return {
+            "msg_text": self.msg_text,
+            "msg_date": self.msg_date,
+            "msg_from": self.msg_from,
+            "msg_to": self.msg_to
+        }
+
+
+class Chat:
+    def __init__(self, chat_id, user_with, last_change, checked):
+        self.chat_id = chat_id
+        self.user_with = user_with
+        self.last_change = last_change
+        self.checked = checked
+
+
+class ChatPreview:
+    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id):
+        self.user_with = user_with
+        self.last_message = last_message
+        self.from_who = from_who
+        self.time = time
+        self.user_with_id = user_with_id
+        self.checked = checked
+        self.chat_id = chat_id
+
+    def to_dict(self):
+        return {
+            "user_with": self.user_with,
+            "last_message": self.last_message,
+            "from_who": self.from_who,
+            "time": self.time,
+            "user_with_id": self.user_with_id,
+            "checked": self.checked,
+            "chat_id": self.chat_id
+        }
+

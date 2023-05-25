@@ -19,6 +19,8 @@ class DataFacade:
         self.articles_repository = ArticlesRepository(session)
         self.user_progress_repository = UserProgressRepository(session)
         self.role_repository = RoleRepository(session)
+        self.chat_repository = ChatRepository(session)
+        self.chat_messages_repository = ChatMessageRepository(session)
 
     def __get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -262,3 +264,57 @@ class DataFacade:
 
     def curator_remove(self, user_id, course_id):
         return self.curator_repository.remove_curator(user_id, course_id)
+
+    def chat_get_user_chats_preview(self, user_id):
+        chats = self.chat_repository.get_user_chats(user_id)
+        previews = []
+        for chat in chats:
+            last_msg = self.chat_messages_repository.get_last_chat_message_by_id(chat.chat_id)
+
+            user_with = self.user_repository.get_user_by_id(chat.user_with)
+
+            user_with_username = user_with.username
+            user_with_id = user_with.user_id
+            last_message = last_msg.msg_text
+            from_user = self.user_repository.get_user_by_id(last_msg.msg_from).username
+            time = last_msg.msg_date
+
+            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id).to_dict())
+        return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
+
+    def chat_get_dialog(self, user_id, chat_id):
+        is_user_chat = self.chat_repository.is_user_chat(user_id, chat_id)
+
+        if not is_user_chat:
+            return "not your chat"
+
+        messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat_id)
+
+        user_with = ''
+        if messages is not None:
+            user_with = [messages[0].msg_to, messages[0].msg_from]
+            user_with.remove(user_id)
+            user_with = self.user_repository.get_user_by_id(user_with[0])
+        else:
+            return ""
+
+        msgs = []
+        for message in messages:
+            msg = message.to_dict()
+            if msg['msg_from'] == user_id:
+                msg['msg_from'] = "Я: "
+            else:
+                msg['msg_from'] = user_with.username + ": "
+            msg.pop('msg_to')
+            msgs.append(msg)
+
+        # change status of dialog
+        self.chat_repository.change_checked_status(chat_id, user_id, read=True)
+
+        return json.dumps({"messages": msgs}, default=str, ensure_ascii=False)
+
+    def chat_exists(self, user_from, user_to):
+        return self.chat_repository.is_exist(user_from, user_to)
+
+    def chat_change_check_status(self, chat_id, msg_to):
+        return self.chat_repository.change_checked_status(chat_id, msg_to)
