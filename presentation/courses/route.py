@@ -349,7 +349,14 @@ def handle_load_article(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('preview_article.html', user=user, course_id=course_id, article=article)
+    course = logic.get_course(course_id, user.user_id)
+    article_name = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == article_id and test.unit_type == 'article':
+                article_name = test.article_name
+    return render_template('preview_article.html', user=user, course_id=course_id, article=article,
+                           article_name=article_name)
 
 
 @login_required
@@ -483,7 +490,7 @@ def handle_test_check_over(course_id, test_id, progress_id):
     new_current_score = 0
     completed = True
     for question in progress.progress['content'].questions:
-        if question.current_score:
+        if question.current_score is not None:
             new_current_score += question.current_score
         else:
             completed = False

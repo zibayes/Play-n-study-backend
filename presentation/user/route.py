@@ -56,4 +56,4 @@ def handle_settings():
 def handle_upload():
     if request.method == 'POST':
         logic.user_avatar_upload(request.files['file'], current_user)
-    return redirect(url_for('handle_settings'))
+    return redirect(url_for('user.handle_settings'))

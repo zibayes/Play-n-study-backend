@@ -8,14 +8,14 @@
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
         <span class="fs-5 row m-3 justify-content-start lang">
-            Статья
+            {{article_name}}
         </span>
         <div class="row border"></div>
         <br>
         <p id="text-view" style="margin: 20px;"></p>
 
         <form action="/course/{{course_id}}/article/{{article.article_id}}" method="POST">
-            <button class="btn btn-primary position-relative m-3" type="submit">Лекция прочитана</button>
+            <button class="btn btn-primary position-relative m-3" type="submit">Статья прочитана</button>
         </form>
     </div>
 </div>

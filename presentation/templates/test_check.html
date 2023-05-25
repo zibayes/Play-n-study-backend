@@ -34,7 +34,7 @@
                                         <p>Вопрос №{{ questionNum.value }}</p>
                                         <div style="display: flex;">
                                             <p>Баллы: </p> <input name="score-{{questionNum.value}}"
-                                                                  {% if question.current_score %}
+                                                                  {% if question.current_score != None %}
                                                                     value="{{ question.current_score }}"
                                                                   {% else %}
                                                                     value=""
