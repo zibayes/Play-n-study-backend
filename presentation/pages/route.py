@@ -54,7 +54,7 @@ def handle_subscriptions(user_id):
 @pages_bp.route('/reviews')
 def handle_reviews():
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('reviews.html', user=user)
+    return render_template('reviews_1.html', user=user)
 
 
 @pages_bp.route('/information')

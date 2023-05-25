@@ -147,8 +147,8 @@ class LogicFacade:
     def get_reviews_by_course_id(self, course_id):
         return self.data.get_reviews_by_course_id(course_id)
 
-    def update_review(self, user_id, course_id, rate):
-        review = Review(None, user_id, course_id, rate, None)
+    def update_review(self, user_id, course_id, rate, text):
+        review = Review(None, user_id, course_id, rate, text)
         return self.data.update_review(review)
 
     def change_user_data(self, form, current_user_id):
