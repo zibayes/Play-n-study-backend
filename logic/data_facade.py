@@ -283,6 +283,11 @@ class DataFacade:
         return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
 
     def chat_get_dialog(self, user_id, chat_id):
+        is_user_chat = self.chat_repository.is_user_chat(user_id, chat_id)
+
+        if not is_user_chat:
+            return "not your chat"
+
         messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat_id)
 
         user_with = ''

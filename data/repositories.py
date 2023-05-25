@@ -793,6 +793,19 @@ class ChatRepository:
         self.session.commit()
         return True
 
+    def is_user_chat(self, user_id, chat_id):
+        chat = self.session.query(ChatsModel) \
+                    .filter_by(chat_id=chat_id) \
+                    .first()
+        if chat is None:
+            return None
+
+        if chat.user1 == user_id:
+            return True
+        if chat.user2 == user_id:
+            return True
+        return False
+
 
 class ChatMessageRepository:
     def __init__(self, session):
