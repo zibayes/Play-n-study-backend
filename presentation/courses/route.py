@@ -1,4 +1,5 @@
 import copy
+import random
 import time
 import json
 
@@ -508,12 +509,48 @@ def handle_course(course_id):
     user_id = current_user.get_id()
     course = logic.course_get_for_preview(course_id, user_id)
     reviews = logic.get_reviews_by_course_id(course_id)
-    user_review = None
     average_rate = 0
+    if reviews:
+        for review in reviews:
+            average_rate += review.rate
+        average_rate /= len(reviews)
+    if len(reviews) > 5:
+        reviews = random.sample(reviews, 5)
+    user_review = None
+    users_for_review = {}
     if reviews:
         for review in reviews:
             if review.user_id == user_id:
                 user_review = review
-            average_rate += review.rate
-        average_rate /= len(reviews)
-    return render_template('course.html', course=course, reviews=reviews, user_review=user_review, average_rate=average_rate)
+            users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
+    return render_template('course.html', course=course, reviews=reviews, users_for_review=users_for_review,
+                           user_review=user_review, average_rate=average_rate)
+
+
+@courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
+@login_required
+def handle_rate_course(course_id):
+    user_id = current_user.get_id()
+    reviews = logic.get_reviews_by_course_id(course_id)
+    user_rate = None
+    if reviews:
+        for review in reviews:
+            if review.user_id == user_id:
+                user_rate = review.rate
+    response = logic.update_review(user_id, course_id, user_rate, request.form['rate-comment'])
+    if response:
+        return redirect(f'/course_preview/{course_id}')
+    return flash('Ошибка при отправке отзыва', 'error')
+
+
+@courses_bp.route('/course_preview/<int:course_id>/reviews')
+@login_required
+def handle_reviews(course_id):
+    reviews = logic.get_reviews_by_course_id(course_id)
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    users_for_review = {}
+    if reviews:
+        for review in reviews:
+            users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
+    return render_template('reviews.html', course=course, reviews=reviews, users_for_review=users_for_review)

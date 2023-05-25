@@ -11,120 +11,73 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="container m-5" style="background-color: white">
-    <span class="row m-3 justify-content-start lang" key="reviews">Отзывы</span>
-    <div class="row border"></div>
-
-
-<!--    Для карусели отзывы-->
-          <div class="container-fluid" style="margin-top: 20px">
-            <div class="row">
-              <div class="col-2">
-                <img class="w-100" style="margin-bottom: 20px; max-height: 80px; max-width: 120px;" src="https://avatars.mds.yandex.net/i?id=74462653a39bba8eea738382b0969dc55a476bdf-5887216-images-thumbs&n=13" alt="avatar">
-              </div>
-              <div class="col-8">
-                <p><b>Тут имя и фамилия пользователя</b></p>
-                <h6>Тут отзыв</h6>
-              </div>
-              <div class="col-2">
-                <div class="rating-result">
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
+    <span class="row m-3 justify-content-start lang" key="reviews">Отзывы о курсе «{{course.name}}»</span>
+    <div class="row border" style="margin-bottom: 20px;"></div>
+    {% for review in reviews %}
+        <div class="d-flex align-items-center" style="display: inline; position:relative; padding-bottom: 10px;
+        padding-right: 185px; padding-left: 10px; padding-top: 10px; margin-bottom: 20px; border-radius: 10px;
+        {% if review.user_id == current_user.get_id() %}
+            background: #80008014;
+        {% else %}
+            background: white;
+        {% endif %}
+        ">
+            <img src="/userava/{{review.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+            <div class="ms-4">
+                <p class="fw-bold mb-1 lang">{{ users_for_review[review.user_id].username }}</p>
+                {% if review.text %}
+                    <p class="text-muted mb-0">{{ review.text }}</p>
+                {% else %}
+                    <p class="text-muted mb-0"><i>--- Отзыв без комментария ---</i></p>
+                {% endif %}
             </div>
-            <br>
-            <div class="row">
-              <div class="col-2">
-                <img style="margin-bottom: 20px; max-height: 80px;" src="https://avatars.mds.yandex.net/i?id=74462653a39bba8eea738382b0969dc55a476bdf-5887216-images-thumbs&n=13" alt="avatar">
-              </div>
-              <div class="col-8">
-                <p><b>Тут имя и фамилия пользователя</b></p>
-                <h6>Тут отзыв</h6>
-              </div>
-              <div class="col-2">
-                <div class="rating-result">
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
+            <div style="float:right; position: absolute; right: 5px; font-size: 24px;">
+                {% if review.rate %}
+                    {% if review.rate == 1 %}
+                        <i class="fa-star star one-star fas rate-active"></i>
+                    {% elif review.rate > 1 %}
+                        <i class="fa-star star one-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star one-star"></i>
+                    {% endif %}
+                    {% if review.rate == 2 %}
+                        <i class="fa-star star two-star fas rate-active"></i>
+                    {% elif review.rate > 2 %}
+                        <i class="fa-star star two-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star two-star"></i>
+                    {% endif %}
+                    {% if review.rate == 3 %}
+                        <i class="fa-star star three-star fas rate-active"></i>
+                    {% elif review.rate > 3 %}
+                        <i class="fa-star star three-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star three-star"></i>
+                    {% endif %}
+                    {% if review.rate == 4 %}
+                        <i class="fa-star star four-star fas rate-active"></i>
+                    {% elif review.rate > 4 %}
+                        <i class="fa-star star four-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star four-star"></i>
+                    {% endif %}
+                    {% if review.rate == 5 %}
+                        <i class="fa-star star five-star fas rate-active"></i>
+                    {% elif review.rate > 5 %}
+                        <i class="fa-star star four-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star five-star"></i>
+                    {% endif %}
+                {% endif %}
             </div>
-            <br>
-            <div class="row">
-              <div class="col-2">
-                <img style="margin-bottom: 20px; max-height: 80px;" height="80px" src="https://avatars.mds.yandex.net/i?id=74462653a39bba8eea738382b0969dc55a476bdf-5887216-images-thumbs&n=13" alt="avatar">
-              </div>
-              <div class="col-8">
-                <p><b>Тут имя и фамилия пользователя</b></p>
-                <h6>Тут отзыв</h6>
-              </div>
-              <div class="col-2">
-                <div class="rating-result">
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-            <br>
-            <div class="row">
-              <div class="col-2">
-                <img style="margin-bottom: 20px; max-height: 80px;" src="https://avatars.mds.yandex.net/i?id=74462653a39bba8eea738382b0969dc55a476bdf-5887216-images-thumbs&n=13" alt="avatar">
-              </div>
-              <div class="col-8">
-                <p><b>Тут имя и фамилия пользователя</b></p>
-                <h6>Тут отзыв</h6>
-              </div>
-              <div class="col-2">
-                <div class="rating-result">
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-            <br>
-            <div class="row">
-              <div class="col-2">
-                <img style="margin-bottom: 20px; max-height: 80px;" src="https://avatars.mds.yandex.net/i?id=74462653a39bba8eea738382b0969dc55a476bdf-5887216-images-thumbs&n=13" alt="avatar">
-              </div>
-              <div class="col-8">
-                <p><b>Тут имя и фамилия пользователя</b></p>
-                <h6>Тут отзыв</h6>
-              </div>
-              <div class="col-2">
-                <div class="rating-result">
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span class="active"></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-  <!--  Карусельные отзывы  -->
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-        </div>
-      </div>
-      <div class="carousel-item">
-        <img src="..." class="d-block w-100" alt="...">
-      </div>
-    </div>
+    {% endfor %}
   </div>
 </div>
+
+<style>
+    .star {
+        color: #91a6ff !important;
+    }
+</style>
 {% endblock %}

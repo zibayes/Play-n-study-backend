@@ -49,7 +49,7 @@ def handle_rate_course(course_id):
     if reviews:
         for review in reviews:
             if review.user_id == user_id:
-                response = logic.update_review(user_id, course_id, int(request.json['rate']))
+                response = logic.update_review(user_id, course_id, int(request.json['rate']), review.text)
                 if response:
                     return "Спасибо за отзыв!"
                 flash('Ошибка при отправке отзыва', 'error')
