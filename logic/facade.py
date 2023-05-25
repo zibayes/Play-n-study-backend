@@ -337,7 +337,14 @@ class LogicFacade:
 
     def __chat_send_message(self, chat_id, msg_text, msg_from, msg_to):
         message = ChatMessage(None, chat_id, msg_text, None, msg_from, msg_to)
-        return self.data.chat_messages_repository.send_message(message)
+
+        # sending message
+        response = self.data.chat_messages_repository.send_message(message)
+
+        # change checked status
+        response2 = self.data.chat_change_check_status(chat_id, msg_to)
+
+        return response, response2
 
     def __chat_exists(self, user_from, user_to) -> bool:
         return self.data.chat_exists(user_from, user_to)

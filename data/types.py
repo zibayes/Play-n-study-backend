@@ -399,19 +399,21 @@ class ChatMessage:
 
 
 class Chat:
-    def __init__(self, chat_id, user_with, last_change):
+    def __init__(self, chat_id, user_with, last_change, checked):
         self.chat_id = chat_id
         self.user_with = user_with
         self.last_change = last_change
+        self.checked = checked
 
 
 class ChatPreview:
-    def __init__(self, user_with, last_message, from_who, time, user_with_id):
+    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked):
         self.user_with = user_with
         self.last_message = last_message
         self.from_who = from_who
         self.time = time
         self.user_with_id = user_with_id
+        self.checked = checked
 
     def to_dict(self):
         return {
@@ -419,6 +421,7 @@ class ChatPreview:
             "last_message": self.last_message,
             "from_who": self.from_who,
             "time": self.time,
-            "user_with_id": self.user_with_id
+            "user_with_id": self.user_with_id,
+            "checked": self.checked
         }
 

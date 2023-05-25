@@ -124,7 +124,9 @@ CREATE TABLE chats(
     chat_id serial PRIMARY KEY,
     user1 int REFERENCES users(user_id),
     user2 int REFERENCES users(user_id),
-    last_change timestamp DEFAULT now()
+    last_change timestamp DEFAULT now(),
+    user1_read boolean DEFAULT TRUE,
+    user2_read boolean DEFAULT TRUE
 );
 
 CREATE TABLE chat_messages(
@@ -133,7 +135,6 @@ CREATE TABLE chat_messages(
     msg_text text,
     msg_date timestamp DEFAULT now(),
     msg_from int REFERENCES users(user_id),
-    msg_to int REFERENCES users(user_id),
-    unread boolean
+    msg_to int REFERENCES users(user_id)
 );
 

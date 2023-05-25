@@ -279,8 +279,8 @@ class DataFacade:
             from_user = self.user_repository.get_user_by_id(last_msg.msg_from).username
             time = last_msg.msg_date
 
-            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id).to_dict())
-        return json.dumps({"chats": previews}, default=str)
+            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked).to_dict())
+        return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
 
     def chat_get_dialog(self, user_id, chat_id):
         messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat_id)
@@ -302,7 +302,14 @@ class DataFacade:
                 msg['msg_from'] = user_with.username + ": "
             msg.pop('msg_to')
             msgs.append(msg)
-        return json.dumps({"messages": msgs}, default=str)
+
+        # change status of dialog
+        self.chat_repository.change_checked_status(chat_id, user_id, read=True)
+
+        return json.dumps({"messages": msgs}, default=str, ensure_ascii=False)
 
     def chat_exists(self, user_from, user_to):
         return self.chat_repository.is_exist(user_from, user_to)
+
+    def chat_change_check_status(self, chat_id, msg_to):
+        return self.chat_repository.change_checked_status(chat_id, msg_to)

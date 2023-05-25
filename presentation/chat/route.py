@@ -31,7 +31,7 @@ def handle_get_chat_content():
 
 @chat_bp.route('/send_message', methods=['POST'])
 def handle_send_message():
-    response = logic.chats_send_message(request.json, 1)
+    response = logic.chats_send_message(request.json, current_user.get_id())
     if response:
         return 'sent'
     return 'fail'

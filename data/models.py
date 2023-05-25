@@ -291,6 +291,8 @@ class ChatsModel(Base):
     user1 = Column(Integer, ForeignKey("users.user_id"))
     user2 = Column(Integer, ForeignKey("users.user_id"))
     last_change = Column(TIMESTAMP, onupdate=func.now(), server_default=func.now())
+    user1_read = Column(Boolean, default=False)
+    user2_read = Column(Boolean, default=False)
 
     def __init__(self, user1, user2):
         self.user1 = user1
@@ -306,12 +308,10 @@ class ChatMessagesModel(Base):
     msg_date = Column(TIMESTAMP, onupdate=func.now(), server_default=func.now())
     msg_from = Column(Integer, ForeignKey("users.user_id"))
     msg_to = Column(Integer, ForeignKey("users.user_id"))
-    unread = Column(Boolean)
 
-    def __init__(self, chat_id, msg_text, msg_date, msg_from, msg_to, unread):
+    def __init__(self, chat_id, msg_text, msg_date, msg_from, msg_to):
         self.chat_id = chat_id
         self.msg_text = msg_text
         self.msg_date = msg_date
         self.msg_from = msg_from
         self.msg_to = msg_to
-        self.unread = unread

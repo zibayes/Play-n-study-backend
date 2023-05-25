@@ -713,7 +713,9 @@ class ChatRepository:
         for chat in chats:
             ids = [chat.user1, chat.user2]
             ids.remove(user_id)
-            normalized_chats.append(Chat(chat.chat_id, ids[0], chat.last_change))
+            unread = self.__is_unread_by_me(user_id, chat.chat_id)
+
+            normalized_chats.append(Chat(chat.chat_id, ids[0], chat.last_change, unread))
         return normalized_chats
 
     def is_exist(self, user_from, user_to):
@@ -759,6 +761,39 @@ class ChatRepository:
             print("Error: " + str(e))
             return False
 
+    def __is_unread_by_me(self, user_id, chat_id):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(chat_id=chat_id) \
+            .first()
+        if chat is None:
+            return None
+
+        if chat.user1 == user_id:
+            return chat.user1_read
+
+        return chat.user2_read
+
+    def change_checked_status(self, chat_id, user_id, read=False):
+        chat = self.session.query(ChatsModel) \
+            .filter_by(chat_id=chat_id) \
+            .first()
+
+        status = True
+
+        if chat is None:
+            return False
+
+        if not read:
+            status = False
+
+        if chat.user1 == user_id:
+            chat.user1_read = status
+        else:
+            chat.user2_read = status
+        self.session.commit()
+        return True
+
+
 class ChatMessageRepository:
     def __init__(self, session):
         self.session = session
@@ -788,8 +823,7 @@ class ChatMessageRepository:
                 msg_text=message.msg_text,
                 msg_date=func.now(),
                 msg_from=message.msg_from,
-                msg_to=message.msg_to,
-                unread=True)
+                msg_to=message.msg_to)
 
             self.session.add(new_message)
             self.session.commit()
