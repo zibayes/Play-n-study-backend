@@ -279,7 +279,7 @@ class DataFacade:
             from_user = self.user_repository.get_user_by_id(last_msg.msg_from).username
             time = last_msg.msg_date
 
-            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked).to_dict())
+            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id).to_dict())
         return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
 
     def chat_get_dialog(self, user_id, chat_id):

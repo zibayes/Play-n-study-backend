@@ -407,13 +407,14 @@ class Chat:
 
 
 class ChatPreview:
-    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked):
+    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id):
         self.user_with = user_with
         self.last_message = last_message
         self.from_who = from_who
         self.time = time
         self.user_with_id = user_with_id
         self.checked = checked
+        self.chat_id = chat_id
 
     def to_dict(self):
         return {
@@ -422,6 +423,7 @@ class ChatPreview:
             "from_who": self.from_who,
             "time": self.time,
             "user_with_id": self.user_with_id,
-            "checked": self.checked
+            "checked": self.checked,
+            "chat_id": self.chat_id
         }
 
