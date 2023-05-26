@@ -268,11 +268,12 @@ class DataFacade:
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)
         previews = []
+        if chats == None:
+            return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
         for chat in chats:
             last_msg = self.chat_messages_repository.get_last_chat_message_by_id(chat.chat_id)
 
             user_with = self.user_repository.get_user_by_id(chat.user_with)
-
             user_with_username = user_with.username
             user_with_id = user_with.user_id
             last_message = last_msg.msg_text
