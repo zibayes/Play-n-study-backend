@@ -22,9 +22,11 @@
             background: white;
         {% endif %}
         ">
-            <img src="/userava/{{review.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+            <a href="/profiles/{{ review.user_id }}">
+                <img src="/userava/{{review.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+            </a>
             <div class="ms-4">
-                <p class="fw-bold mb-1 lang">{{ users_for_review[review.user_id].username }}</p>
+                <a href="/profiles/{{ review.user_id }}" class="fw-bold mb-1 lang">{{ users_for_review[review.user_id].username }}</a>
                 {% if review.text %}
                     <p class="text-muted mb-0">{{ review.text }}</p>
                 {% else %}

@@ -18,6 +18,11 @@ pages_bp = Blueprint('pages', __name__)
 
 
 @pages_bp.route('/')
+def handle_index():
+    return render_template('index.html')
+
+
+@pages_bp.route('/tasks')
 def handle_task():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
@@ -62,3 +67,12 @@ def handle_information():
     user = logic.get_user_by_id(current_user.get_id())
     print(request)
     return render_template('information.html', user=user)
+
+
+@login_required
+@pages_bp.route('/article_editor/<int:article_id>', methods=["GET"])
+def handle_article_editor(article_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    article = logic.article_get_by_id(article_id)
+    return render_template('article_editor.html', user=user,
+                           article=article)

@@ -1,0 +1,31 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Участники курса</title>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="container m-5" style="background-color: white">
+    <span class="row m-3 justify-content-start lang" key="reviews">Участники курса «{{course.name}}»</span>
+    <div class="row border" style="margin-bottom: 20px;"></div>
+    {% for participant in participants %}
+        <div class="d-flex align-items-center" style="display: inline; position:relative; padding-bottom: 10px;
+        padding-right: 185px; padding-left: 10px; padding-top: 10px; margin-bottom: 20px; border-radius: 10px;
+        {% if participant.user_id == current_user.get_id() %}
+            background: #80008014;
+        {% else %}
+            background: white;
+        {% endif %}
+        ">
+            <a href="/profiles/{{ participant.user_id }}">
+                <img src="/userava/{{participant.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+            </a>
+            <div class="ms-4">
+                <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang">{{ participant.username }}</a>
+            </div>
+        </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

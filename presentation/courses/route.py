@@ -87,19 +87,25 @@ def handle_test_preview(course_id, test_id):
 
     leaders = logic.get_progress_by_course_id_all(course_id)
     leaders_to_show = {}
+    leaders_hrefs = {}
+    graphic_data = {}
     for i in range(len(leaders)):
         if int(leaders[i].progress['test_id']) == test_id:
             leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
             user_for_table = logic.get_user_by_id(leaders[i].user_id).username
             if user_for_table not in leaders_to_show.keys():
                 leaders_to_show[user_for_table] = []
+                leaders_hrefs[user_for_table] = leaders[i].user_id
             leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
     for key in leaders_to_show.keys():
         leaders_to_show[key] = max(leaders_to_show[key])
+        if leaders_to_show[key] not in graphic_data.keys():
+            graphic_data[leaders_to_show[key]] = 0
+        graphic_data[leaders_to_show[key]] += 1
 
     return render_template("test_preview.html", user=user, test=test, course=course,
-                           progresses=progress, max_score=max_score,
-                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)))
+                           progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs)
 
 
 @login_required
@@ -517,18 +523,18 @@ def handle_course(course_id):
     course = logic.course_get_for_preview(course_id, user_id)
     reviews = logic.get_reviews_by_course_id(course_id)
     average_rate = 0
-    if reviews:
-        for review in reviews:
-            average_rate += review.rate
-        average_rate /= len(reviews)
-        if len(reviews) > 5:
-            reviews = random.sample(reviews, 5)
     user_review = None
-    users_for_review = {}
     if reviews:
         for review in reviews:
             if review.user_id == user_id:
                 user_review = review
+            average_rate += review.rate
+        average_rate /= len(reviews)
+        if len(reviews) > 5:
+            reviews = random.sample(reviews, 5)
+    users_for_review = {}
+    if reviews:
+        for review in reviews:
             users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
     return render_template('course.html', course=course, reviews=reviews, users_for_review=users_for_review,
                            user_review=user_review, average_rate=round(average_rate, 1))
@@ -550,14 +556,13 @@ def handle_rate_course(course_id):
     return flash('Ошибка при отправке отзыва', 'error')
 
 
-@courses_bp.route('/course_preview/<int:course_id>/reviews')
+@courses_bp.route('/course_participants/<int:course_id>')
 @login_required
-def handle_reviews(course_id):
-    reviews = logic.get_reviews_by_course_id(course_id)
+def handle_participants(course_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
-    users_for_review = {}
-    if reviews:
-        for review in reviews:
-            users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
-    return render_template('reviews.html', course=course, reviews=reviews, users_for_review=users_for_review)
+    participants = []
+    rels = logic.get_course_rels_all(course_id)
+    for rel in rels:
+        participants.append(logic.get_user_by_id(rel.user_id))
+    return render_template('participants.html', course=course, participants=participants)

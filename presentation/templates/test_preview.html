@@ -17,6 +17,8 @@
 <script>
     let result_time = 0;
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;">
         <span class="fs-5 row m-3 justify-content-start lang">
@@ -35,6 +37,7 @@
                     <div align="center">
                         <button disabled class="btn btn-primary" id="show_results">Поросмотр попыток</button>
                         <button class="btn btn-primary" id="show_leaders">Таблица лидеров</button>
+                        <button class="btn btn-primary" id="show_graphics">График прогресса</button>
                     </div>
                     <div id="test-results">
                         {% set progressNum = namespace(value=0) %}
@@ -104,20 +107,21 @@
                                 <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
                                 {% for leader, result in leaders.items() %}
 
-                                    {% if firstPlace.value < result %}
+                                    {% if firstPlace.value <= result %}
                                         {% set firstPlace.value = result %}
-                                    {% elif secondPlace.value < result %}
+                                    {% elif secondPlace.value <= result %}
                                         {% set secondPlace.value = result %}
-                                    {% elif thirdPlace.value < result %}
+                                    {% elif thirdPlace.value <= result %}
                                         {% set thirdPlace.value = result %}
                                         {% set otherPlace.value = result %}
                                     {% elif otherPlace.value > result %}
                                         {% set otherPlace.value = result %}
                                         {% set userNum.value = userNum.value + 1 %}
                                     {% endif %}
-
                                     <tr style="
-                                    {% if result == firstPlace.value %}
+                                    {% if leader == user.username %}
+                                        background: #80008040
+                                    {% elif result == firstPlace.value %}
                                         background: #ffd70066
                                     {% elif result == secondPlace.value %}
                                         background: #C0C0C066
@@ -137,7 +141,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {{ leader }}
+                                            <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
                                         </td>
                                         <td>
                                             {{ result }} / {{ progresses[0].progress.result.total_score }}
@@ -146,6 +150,52 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                    </div>
+
+                    <div id="progress-graphics" hidden="hidden">
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            График распределения пользователей по высшей оценке
+                        </span>
+                        <div>
+                          <canvas id="myChart"></canvas>
+                        </div>
+                        <script>
+                            let labels = []
+                            let data = []
+                            {% for key, value in graphic_data.items() %}
+                                labels.push({{key}})
+                                data.push({{value}})
+                            {% endfor %}
+                          const ctx = document.getElementById('myChart');
+                          new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                              labels: labels,
+                              datasets: [{
+                                label: 'Количество пользователей',
+                                data: data,
+                                borderWidth: 2
+                              }]
+                            },
+                            options: {
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                    title: {
+                                      display: true,
+                                      text: 'Количесвто пользователей'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                      display: true,
+                                      text: 'Количесвто набранных баллов'
+                                    }
+                                }
+                              }
+                            }
+                          });
+                        </script>
                     </div>
                 {% endif %}
                 <br>
@@ -163,23 +213,42 @@
 <script>
     let showResults = document.getElementById("show_results");
     let showLeaders = document.getElementById("show_leaders");
+    let showGraphics = document.getElementById("show_graphics");
     let results = document.getElementById("test-results");
     let leaders = document.getElementById("leaders-table");
+    let graphics = document.getElementById("progress-graphics");
     showResults.addEventListener("click", function(e) {
         showResults.setAttribute("disabled", "disabled");
         showLeaders.removeAttribute("disabled");
+        showGraphics.removeAttribute("disabled");
         $("#leaders-table").fadeOut(400);
+        $("#progress-graphics").fadeOut(400);
         leaders.setAttribute("hidden", "hidden");
+        graphics.setAttribute("hidden", "hidden");
         results.removeAttribute("hidden");
         $("#test-results").fadeIn(400);
     });
     showLeaders.addEventListener("click", function(e) {
         showLeaders.setAttribute("disabled", "disabled");
         showResults.removeAttribute("disabled");
+        showGraphics.removeAttribute("disabled");
         $("#test-results").fadeOut(400);
+        $("#progress-graphics").fadeOut(400);
+        graphics.setAttribute("hidden", "hidden");
         results.setAttribute("hidden", "hidden");
         leaders.removeAttribute("hidden");
         $("#leaders-table").fadeIn(400);
+    });
+    showGraphics.addEventListener("click", function(e) {
+        showGraphics.setAttribute("disabled", "disabled");
+        showResults.removeAttribute("disabled");
+        showLeaders.removeAttribute("disabled");
+        $("#test-results").fadeOut(400);
+        $("#leaders-table").fadeOut(400);
+        results.setAttribute("hidden", "hidden");
+        leaders.setAttribute("hidden", "hidden");
+        graphics.removeAttribute("hidden");
+        $("#progress-graphics").fadeIn(400);
     });
 </script>
 {% endblock %}
