@@ -6,76 +6,6 @@
 
 {% block content %}
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title lang" key="info" >Подробнее</h5>
-                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-1">
-                            <i class="fas fa-address-book ms-0"></i>
-                        </div>
-                        <div class="col-5">
-                            <p>id @{{user.user_id}}</p>
-                        </div>
-                    </div>
-                    <hr class="hr" />
-<!--                    <div class="row">-->
-<!--                        <div class="col-1">-->
-<!--                            <i class="fas fa-address-book ms-0"></i>-->
-<!--                        </div>-->
-<!--                        <div class="col-5">-->
-<!--                            Дата рождения:-->
-<!--                        </div>-->
-<!--                        <div class="col-5">-->
-<!--                            9 октября-->
-<!--                        </div>-->
-
-<!--                    </div>-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-1">-->
-<!--                            <i class="fas fa-address-book ms-0"></i>-->
-<!--                        </div>-->
-<!--                        <div class="col-5">-->
-<!--                            Образование:-->
-<!--                        </div>-->
-<!--                        <div class="col-5">-->
-<!--                            СФУ-->
-<!--                        </div>-->
-
-<!--                    </div>-->
-                    <hr class="hr" />
-                    <div class="row">
-                        <div class="col-1">
-                            <i class="fas fa-address-book ms-0"></i>
-                        </div>
-                        <div class="col-5">
-                            Город:
-                        </div>
-                        <div class="col-5">
-                            {{ user.city }}
-                        </div>
-                    </div>
-                    <hr class="hr" />
-                    <div class="row">
-                        <div class="col-6">
-                            {{ user.subs_count }} подписчиков
-                        </div>
-                        <div class="col-6">
-                             {{ user.sub_to_count }} подписки
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
         <span class="row m-3 justify-content-start lang">
@@ -256,3 +186,75 @@
 
 </script>
 {% endblock %}
+
+{% block modal_dialog %}
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title lang" key="info" >Подробнее</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-1">
+                                <i class="fas fa-address-book ms-0"></i>
+                            </div>
+                            <div class="col-5">
+                                <p>id @{{user.user_id}}</p>
+                            </div>
+                        </div>
+                        <hr class="hr" />
+    <!--                    <div class="row">-->
+    <!--                        <div class="col-1">-->
+    <!--                            <i class="fas fa-address-book ms-0"></i>-->
+    <!--                        </div>-->
+    <!--                        <div class="col-5">-->
+    <!--                            Дата рождения:-->
+    <!--                        </div>-->
+    <!--                        <div class="col-5">-->
+    <!--                            9 октября-->
+    <!--                        </div>-->
+
+    <!--                    </div>-->
+    <!--                    <div class="row">-->
+    <!--                        <div class="col-1">-->
+    <!--                            <i class="fas fa-address-book ms-0"></i>-->
+    <!--                        </div>-->
+    <!--                        <div class="col-5">-->
+    <!--                            Образование:-->
+    <!--                        </div>-->
+    <!--                        <div class="col-5">-->
+    <!--                            СФУ-->
+    <!--                        </div>-->
+
+    <!--                    </div>-->
+                        <hr class="hr" />
+                        <div class="row">
+                            <div class="col-1">
+                                <i class="fas fa-address-book ms-0"></i>
+                            </div>
+                            <div class="col-5">
+                                Город:
+                            </div>
+                            <div class="col-5">
+                                {{ user.city }}
+                            </div>
+                        </div>
+                        <hr class="hr" />
+                        <div class="row">
+                            <div class="col-6">
+                                {{ user.subs_count }} подписчиков
+                            </div>
+                            <div class="col-6">
+                                 {{ user.sub_to_count }} подписки
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock modal_dialog %}

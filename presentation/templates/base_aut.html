@@ -142,7 +142,7 @@
     </div>
   </div>
 </nav>
-<div class="modal fade " id="exit" tabindex="-1">
+<div class="modal fade" id="exit" tabindex="-1">
   <div class="modal-dialog modal-side">
     <div class="modal-content">
       <div class="modal-header">
@@ -177,10 +177,20 @@
   </div>
 </div>
 
+{% block modal_dialog %}
+{% endblock modal_dialog %}
 
 <div>
-  {% block content %}
-  {% endblock %}
+  <div class="parallax">
+      <div class="mouse-parallax">
+          <div class="mouse-parallax-bg">
+          </div>
+      </div>
+          <div class="content">
+            {% block content %}
+            {% endblock %}
+          </div>
+  </div>
 </div>
 
 <!-- MDB -->
@@ -196,8 +206,46 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .parallax {
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: fixed;
+  }
+  .mouse-parallax {
+      height: 885px;
+      position: relative;
+      overflow: hidden;
+  }
+  .mouse-parallax-bg {
+      position: absolute;
+      background-image: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1612749063_117-p-fon-dlya-prezentatsii-nezhno-goluboi-s-per-129.jpg);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 110%;
+      height: 125%;
+      transition: all 0.1s ease;
+  }
+  .content {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow-y: scroll;
+      margin:0 auto 0;
+  }
 </style>
 <script>
+    let bg = document.querySelector('.mouse-parallax-bg');
+    window.addEventListener('mousemove', function(e) {
+        let x = e.clientX / window.innerWidth;
+        let y = e.clientY / window.innerHeight;
+        bg.style.transform = 'translate(-' + x * 150 + 'px, -' + y * 150 + 'px)';
+    });
+
     function update(chat_id, date_message) {
 
     }

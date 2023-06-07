@@ -80,29 +80,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="modal fade" id="addTask-{{unit.unit_id}}" tabindex="-1">
-                              <div class="modal-dialog modal-side">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
-                                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-                                  </div>
-                                  <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
-                                      <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
-                                        <div style="display: flex; justify-content: center;">
-                                            <input id="checkbox-test" type="radio" name="TaskType" value="test">
-                                            <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
-                                            <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
-                                            <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
-                                        </div>
-                                      <div class="modal-footer">
-                                            <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
-                                      </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
                         </div>
                     </div>
                 {% endfor %}
@@ -126,24 +103,6 @@
         </form>
         <!-- </form> -->
     </div>
-</div>
-
-<div class="modal fade" id="addUnit" tabindex="-1">
-  <div class="modal-dialog modal-side">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание раздела</h5>
-        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form action="/course_editor/{{course.course_id}}" method="POST">
-          <div class="modal-body lang" key="areusure">Введите название раздела:</div>
-            <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-          <div class="modal-footer">
-                <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
-          </div>
-      </form>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -284,3 +243,48 @@
     });
 </script>
 {% endblock %}
+
+
+{% block modal_dialog %}
+    {% for unit in course.content.body %}
+        <div class="modal fade" id="addTask-{{unit.unit_id}}" tabindex="-1">
+          <div class="modal-dialog modal-side">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
+                  <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
+                    <div style="display: flex; justify-content: center;">
+                        <input id="checkbox-test" type="radio" name="TaskType" value="test">
+                        <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
+                        <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
+                        <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
+                    </div>
+                  <div class="modal-footer">
+                        <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+    <div class="modal fade" id="addUnit" tabindex="-1">
+      <div class="modal-dialog modal-side">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание раздела</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="/course_editor/{{course.course_id}}" method="POST">
+              <div class="modal-body lang" key="areusure">Введите название раздела:</div>
+                <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+              <div class="modal-footer">
+                    <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock modal_dialog %}
