@@ -566,6 +566,19 @@ def handle_rate_course(course_id):
     return flash('Ошибка при отправке отзыва', 'error')
 
 
+@courses_bp.route('/course_preview/<int:course_id>/reviews')
+@login_required
+def handle_reviews(course_id):
+    reviews = logic.get_reviews_by_course_id(course_id)
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    users_for_review = {}
+    if reviews:
+        for review in reviews:
+            users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
+    return render_template('reviews.html', course=course, reviews=reviews, users_for_review=users_for_review)
+
+
 @courses_bp.route('/course_participants/<int:course_id>')
 @login_required
 def handle_participants(course_id):
