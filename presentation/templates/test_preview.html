@@ -38,6 +38,7 @@
                         <button disabled class="btn btn-primary" id="show_results">Поросмотр попыток</button>
                         <button class="btn btn-primary" id="show_leaders">Таблица лидеров</button>
                         <button class="btn btn-primary" id="show_graphics">График прогресса</button>
+                        <button class="btn btn-primary" id="show_friends">Прогресс друзей</button>
                     </div>
                     <div id="test-results">
                         {% set progressNum = namespace(value=0) %}
@@ -197,6 +198,65 @@
                           });
                         </script>
                     </div>
+
+                    <div id="subscribers-table" hidden="hidden">
+                        {% set userNum = namespace(value=3) %}
+                        {% set firstPlace = namespace(value=0) %}
+                        {% set secondPlace = namespace(value=0) %}
+                        {% set thirdPlace = namespace(value=0) %}
+                        {% set otherPlace = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            Таблица лидеров среди друзей, на кого вы подписаны
+                        </span>
+                        <table class="table">
+                            <tbody>
+                                <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
+                                {% for leader, result in friends.items() %}
+
+                                    {% if firstPlace.value <= result %}
+                                        {% set firstPlace.value = result %}
+                                    {% elif secondPlace.value <= result %}
+                                        {% set secondPlace.value = result %}
+                                    {% elif thirdPlace.value <= result %}
+                                        {% set thirdPlace.value = result %}
+                                        {% set otherPlace.value = result %}
+                                    {% elif otherPlace.value > result %}
+                                        {% set otherPlace.value = result %}
+                                        {% set userNum.value = userNum.value + 1 %}
+                                    {% endif %}
+                                    <tr style="
+                                    {% if leader == user.username %}
+                                        background: #80008040
+                                    {% elif result == firstPlace.value %}
+                                        background: #ffd70066
+                                    {% elif result == secondPlace.value %}
+                                        background: #C0C0C066
+                                    {% elif result == thirdPlace.value %}
+                                        background: #cd7f3266
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {% if result == firstPlace.value %}
+                                                <p style="font-size: 28px;">🥇</p>
+                                            {% elif result == secondPlace.value %}
+                                                <p style="font-size: 28px;">🥈</p>
+                                            {% elif result == thirdPlace.value %}
+                                                <p style="font-size: 28px;">🥉</p>
+                                            {% else %}
+                                                {{ userNum.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
+                                        </td>
+                                        <td>
+                                            {{ result }} / {{ progresses[0].progress.result.total_score }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% endif %}
                 <br>
                 <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
@@ -214,17 +274,22 @@
     let showResults = document.getElementById("show_results");
     let showLeaders = document.getElementById("show_leaders");
     let showGraphics = document.getElementById("show_graphics");
+    let showFriends = document.getElementById("show_friends");
     let results = document.getElementById("test-results");
     let leaders = document.getElementById("leaders-table");
     let graphics = document.getElementById("progress-graphics");
+    let friends = document.getElementById("subscribers-table");
     showResults.addEventListener("click", function(e) {
         showResults.setAttribute("disabled", "disabled");
         showLeaders.removeAttribute("disabled");
         showGraphics.removeAttribute("disabled");
+        showFriends.removeAttribute("disabled");
         $("#leaders-table").fadeOut(400);
         $("#progress-graphics").fadeOut(400);
+        $("#subscribers-table").fadeOut(400);
         leaders.setAttribute("hidden", "hidden");
         graphics.setAttribute("hidden", "hidden");
+        friends.setAttribute("hidden", "hidden");
         results.removeAttribute("hidden");
         $("#test-results").fadeIn(400);
     });
@@ -232,6 +297,9 @@
         showLeaders.setAttribute("disabled", "disabled");
         showResults.removeAttribute("disabled");
         showGraphics.removeAttribute("disabled");
+        showFriends.removeAttribute("disabled");
+        $("#subscribers-table").fadeOut(400);
+        friends.setAttribute("hidden", "hidden");
         $("#test-results").fadeOut(400);
         $("#progress-graphics").fadeOut(400);
         graphics.setAttribute("hidden", "hidden");
@@ -243,12 +311,29 @@
         showGraphics.setAttribute("disabled", "disabled");
         showResults.removeAttribute("disabled");
         showLeaders.removeAttribute("disabled");
+        showFriends.removeAttribute("disabled");
+        $("#subscribers-table").fadeOut(400);
+        friends.setAttribute("hidden", "hidden");
         $("#test-results").fadeOut(400);
         $("#leaders-table").fadeOut(400);
         results.setAttribute("hidden", "hidden");
         leaders.setAttribute("hidden", "hidden");
         graphics.removeAttribute("hidden");
         $("#progress-graphics").fadeIn(400);
+    });
+    showFriends.addEventListener("click", function(e) {
+        showFriends.setAttribute("disabled", "disabled");
+        showResults.removeAttribute("disabled");
+        showLeaders.removeAttribute("disabled");
+        showGraphics.removeAttribute("disabled");
+        $("#progress-graphics").fadeOut(400);
+        graphics.setAttribute("hidden", "hidden");
+        $("#test-results").fadeOut(400);
+        $("#leaders-table").fadeOut(400);
+        results.setAttribute("hidden", "hidden");
+        leaders.setAttribute("hidden", "hidden");
+        friends.removeAttribute("hidden");
+        $("#subscribers-table").fadeIn(400);
     });
 </script>
 {% endblock %}

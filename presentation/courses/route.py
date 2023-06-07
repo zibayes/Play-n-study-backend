@@ -89,6 +89,10 @@ def handle_test_preview(course_id, test_id):
     leaders_to_show = {}
     leaders_hrefs = {}
     graphic_data = {}
+    friends = {}
+    subs = logic.get_user_for_subscriptions(user_id).sub_to
+    if subs:
+        subs = [user.username for user in subs]
     for i in range(len(leaders)):
         if int(leaders[i].progress['test_id']) == test_id:
             leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
@@ -96,16 +100,22 @@ def handle_test_preview(course_id, test_id):
             if user_for_table not in leaders_to_show.keys():
                 leaders_to_show[user_for_table] = []
                 leaders_hrefs[user_for_table] = leaders[i].user_id
+                if subs and user_for_table in subs or user_for_table == user.username:
+                    friends[user_for_table] = []
             leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
+            if subs and user_for_table in subs or user_for_table == user.username:
+                friends[user_for_table].append(leaders[i].progress['result'].total_current_score)
     for key in leaders_to_show.keys():
         leaders_to_show[key] = max(leaders_to_show[key])
+        if key in friends.keys():
+            friends[key] = max(friends[key])
         if leaders_to_show[key] not in graphic_data.keys():
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
 
     return render_template("test_preview.html", user=user, test=test, course=course,
                            progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
-                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs)
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
 
 
 @login_required
