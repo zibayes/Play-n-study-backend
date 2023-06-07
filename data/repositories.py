@@ -235,7 +235,8 @@ class CuratorRepository:
             .all()
         curators_list = []
         for curator in curators_db:
-            curators_list.append(convert.curator_db_to_curator(curator))
+            # curators_list.append(convert.curator_db_to_curator(curator))
+            curators_list.append(curator)
         if len(curators_list) > 0:
             return curators_list
         return None
@@ -643,6 +644,17 @@ class UserProgressRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка добавления прогресса в БД " + str(e))
 
+    def remove_progress(self, up_id) -> bool:
+        try:
+            self.session.query(UsersProgressModel) \
+                .filter_by(up_id=up_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления пользовательского прогресса :" + str(e))
+            return False
+
     def update_progress(self, user_progress):
         try:
             progress_to_update = self.session.query(UsersProgressModel) \
@@ -675,6 +687,29 @@ class RoleRepository:
             return roles
         else:
             return None
+
+    def add_user_role_admin(self, user_id):
+        try:
+            new_user_role = UsersRolesModel(
+                user_id=user_id,
+                role_id=1,
+            )
+            self.session.add(new_user_role)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления роли админа " + str(e))
+
+    def remove_user_role_admin(self, user_id) -> bool:
+        try:
+            self.session.query(UsersRolesModel) \
+                .filter_by(user_id=user_id, role_id=1) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления роли админа :" + str(e))
+            return False
 
 
 class MessagesRepository:

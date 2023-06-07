@@ -23,7 +23,24 @@
             </a>
             <div class="ms-4">
                 <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang">{{ participant.username }}</a>
+                <br>
+                {% if participant.is_curator %}
+                    <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang" style="color:purple">КУРАТОР</a>
+                {% endif %}
             </div>
+            {% if is_curator and not participant.is_curator %}
+                <form action="/course_participants/{{ course.course_id }}/add_curator/{{ participant.user_id }}" style="margin-right: -170px; margin-left: auto;">
+                    <div id="div_element_button">
+                        <button class="btn btn-outline-dark btn-rounded lang" id="add-admin-button" style="display: inline-block;">Выдать полномочия куратора</button>
+                    </div>
+                </form>
+            {% elif is_curator and participant.is_curator %}
+                <form action="/course_participants/{{ course.course_id }}/remove_curator/{{ participant.user_id }}" style="margin-right: -170px; margin-left: auto;">
+                    <div id="div_element_button">
+                        <button class="btn btn-outline-dark btn-rounded lang" id="remove-admin-button" style="display: inline-block;">Низложить полномочия куратора</button>
+                    </div>
+                </form>
+            {% endif %}
         </div>
     {% endfor %}
   </div>

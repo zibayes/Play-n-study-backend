@@ -229,6 +229,9 @@ class DataFacade:
     def add_progress(self, user_progress):
         return self.user_progress_repository.add_progress(user_progress)
 
+    def remove_progress(self, up_id):
+        return self.user_progress_repository.remove_progress(up_id)
+
     def user_get_progress_by_course_user_ids(self, user_id, course_id):
         return self.user_progress_repository.get_progress_by_user_course_ids(user_id, course_id)
 
@@ -256,8 +259,17 @@ class DataFacade:
     def role_get_user_roles_by_user_id(self, user_id):
         return self.role_repository.get_user_roles_by_id(user_id)
 
+    def add_user_role_admin(self, user_id):
+        return self.role_repository.add_user_role_admin(user_id)
+
+    def remove_user_role_admin(self, user_id):
+        return self.role_repository.remove_user_role_admin(user_id)
+
     def is_user_curator_of_course(self, user_id, course_id):
         return self.curator_repository.is_user_curator_of_course(user_id, course_id)
+
+    def get_curators_by_course_id(self, course_id):
+        return self.curator_repository.get_curators_by_course_id(course_id)
 
     def curator_add(self, user_id, course_id):
         return self.curator_repository.add_curator(Curator(user_id=user_id, course_id=course_id))

@@ -37,9 +37,28 @@ def about():
 @pages_bp.route('/profiles/<int:user_id>')
 @login_required
 def handle_profile(user_id):
+    roles = logic.role_get_user_role_by_user_id(user_id)
+    if roles:
+        is_admin = 'admin' in roles
+    else:
+        is_admin = False
     user = logic.get_user_for_profile(user_id, current_user.get_id())
     return render_template("profile.html", user=user,
-                           need_subscribe=user.need_subscribe, is_me=user.is_me)
+                           need_subscribe=user.need_subscribe, is_me=user.is_me, is_admin=is_admin)
+
+
+@pages_bp.route('/add_admin/<int:user_id>')
+@login_required
+def handle_add_admin(user_id):
+    logic.add_user_role_admin(user_id)
+    return redirect(f'/profiles/{user_id}')
+
+
+@pages_bp.route('/remove_admin/<int:user_id>')
+@login_required
+def handle_remove_admin(user_id):
+    logic.remove_user_role_admin(user_id)
+    return redirect(f'/profiles/{user_id}')
 
 
 @login_required

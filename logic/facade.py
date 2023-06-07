@@ -134,6 +134,12 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении прогресса', 'error'])
 
+    def remove_progress(self, up_id):
+        if self.data.remove_progress(up_id):
+            return tuple(['Прогресс успешно удалён', 'success'])
+        else:
+            return tuple(['Ошибка при удалении прогресса', 'error'])
+
     def update_progress(self, progress):
         if self.data.update_progress(progress):
             return tuple(['Прогресс успешно сохранён', 'success'])
@@ -291,6 +297,15 @@ class LogicFacade:
     def __role_get_user_role_by_user_id(self, user_id):
         return self.data.role_get_user_roles_by_user_id(user_id)
 
+    def role_get_user_role_by_user_id(self, user_id):
+        return self.data.role_get_user_roles_by_user_id(user_id)
+
+    def add_user_role_admin(self, user_id):
+        return self.data.add_user_role_admin(user_id)
+
+    def remove_user_role_admin(self, user_id):
+        return self.data.remove_user_role_admin(user_id)
+
     def is_user_admin(self, user_id):
         roles = self.__role_get_user_role_by_user_id(user_id)
         if roles and 'admin' in roles:
@@ -299,6 +314,9 @@ class LogicFacade:
 
     def is_user_curator_of_course(self, user_id, course_id):
         return self.data.is_user_curator_of_course(user_id, course_id)
+
+    def get_curators_by_course_id(self, course_id):
+        return self.data.get_curators_by_course_id(course_id)
 
     def curator_add(self, user_id, course_id):
         return self.data.curator_add(user_id, course_id)

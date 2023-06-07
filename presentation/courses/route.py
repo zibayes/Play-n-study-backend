@@ -138,6 +138,10 @@ def handle_delete_test(course_id, test_id):
         index_to_delete += 1
     course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
     logic.update_course(course)
+    progresses = logic.get_progress_by_course_id_all(course.course_id)
+    for progress in progresses:
+        if int(progress.progress['test_id']) == test_id:
+            logic.remove_progress(progress.up_id)
     logic.remove_test(test_id)
     return redirect(f'/course_editor/{course_id}')
 
@@ -162,6 +166,10 @@ def handle_delete_article(course_id, article_id):
         index_to_delete += 1
     course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
     logic.update_course(course)
+    progresses = logic.get_progress_by_course_id_all(course.course_id)
+    for progress in progresses:
+        if int(progress.progress['test_id']) == article_id:
+            logic.remove_progress(progress.up_id)
     logic.remove_article(article_id)
     return redirect(f'/course_editor/{course_id}')
 
@@ -171,6 +179,7 @@ def handle_delete_article(course_id, article_id):
 def handle_delete_unit(course_id, unit_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
+    progresses = logic.get_progress_by_course_id_all(course_id)
     index_to_delete = 0
     for unit in course.content['body']:
         if int(unit['unit_id']) == unit_id:
@@ -178,7 +187,13 @@ def handle_delete_unit(course_id, unit_id):
         index_to_delete += 1
 
     for test in course.content['body'][index_to_delete]['tests']:
-        logic.remove_test(test.test_id)
+        for progress in progresses:
+            if int(progress.progress['test_id']) == test.test_id:
+                logic.remove_progress(progress.up_id)
+        if test.unit_type == 'test':
+            logic.remove_test(test.test_id)
+        else:
+            logic.remove_article(test.test_id)
     course.content['body'].pop(index_to_delete)
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
@@ -189,12 +204,22 @@ def handle_delete_unit(course_id, unit_id):
 def handle_delete_course(course_id):
     user_id = current_user.get_id()
     course = logic.get_course_without_rel(course_id)
+    progresses = logic.get_progress_by_course_id_all(course_id)
     for unit in course.content['body']:
         for test in unit['tests']:
-            logic.remove_test(test.test_id)
+            for progress in progresses:
+                if int(progress.progress['test_id']) == test.test_id:
+                    logic.remove_progress(progress.up_id)
+            if test.unit_type == 'test':
+                logic.remove_test(test.test_id)
+            else:
+                logic.remove_article(test.test_id)
     rels = logic.get_course_rels_all(course.course_id)
     for rel in rels:
         logic.course_leave(rel.course_id, rel.user_id)
+    curators = logic.get_curators_by_course_id(course_id)
+    for curator in curators:
+        logic.curator_remove(curator.user_id, course_id)
     logic.remove_course(course.course_id)
     return redirect(f'/courses/{user_id}')
 
@@ -264,6 +289,7 @@ def handle_course_create(user_id):
     else:
         course_ava = None
     course_id = logic.add_course(course_name, course_desc, course_cat, course_ava, current_user, user_id)[2]
+    logic.curator_add(user_id, course_id)
     return redirect(f'/course_preview/{course_id}')
 
 
@@ -534,6 +560,12 @@ def handle_course(course_id):
     reviews = logic.get_reviews_by_course_id(course_id)
     average_rate = 0
     user_review = None
+    curators = logic.get_curators_by_course_id(course_id)
+    if curators:
+        curators = [curator.user_id for curator in curators]
+        is_curator = user_id in curators
+    else:
+        is_curator = False
     if reviews:
         for review in reviews:
             if review.user_id == user_id:
@@ -547,7 +579,7 @@ def handle_course(course_id):
         for review in reviews:
             users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
     return render_template('course.html', course=course, reviews=reviews, users_for_review=users_for_review,
-                           user_review=user_review, average_rate=round(average_rate, 1))
+                           user_review=user_review, average_rate=round(average_rate, 1), is_curator=is_curator)
 
 
 @courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
@@ -588,4 +620,29 @@ def handle_participants(course_id):
     rels = logic.get_course_rels_all(course_id)
     for rel in rels:
         participants.append(logic.get_user_by_id(rel.user_id))
-    return render_template('participants.html', course=course, participants=participants)
+    curators = logic.get_curators_by_course_id(course_id)
+    if curators:
+        curators = [curator.user_id for curator in curators]
+        is_curator = user.user_id in curators
+    else:
+        is_curator = False
+    for participant in participants:
+        if curators and participant.user_id in curators:
+            participant.is_curator = True
+        else:
+            participant.is_curator = False
+    return render_template('participants.html', course=course, participants=participants, is_curator=is_curator)
+
+
+@courses_bp.route('/course_participants/<int:course_id>/add_curator/<int:user_id>')
+@login_required
+def handle_add_curator(course_id, user_id):
+    logic.curator_add(user_id, course_id)
+    return redirect(f'/course_participants/{course_id}')
+
+
+@courses_bp.route('/course_participants/<int:course_id>/remove_curator/<int:user_id>')
+@login_required
+def handle_remove_curator(course_id, user_id):
+    logic.curator_remove(user_id, course_id)
+    return redirect(f'/course_participants/{course_id}')
