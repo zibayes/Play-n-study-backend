@@ -86,6 +86,11 @@
                 </div>
             </div>
         {% endfor %}
+        <form action="/course/{{course.course_id}}/summary" method="GET">
+            <div id="div_element_button" style="margin-right: 8px;">
+                <button class="btn btn-outline-dark btn-rounded lang" id="show-button" style="display: inline-block; margin-bottom: 10px;">Посмотреть сводку о прогрессе</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

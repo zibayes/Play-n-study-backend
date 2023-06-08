@@ -1,0 +1,75 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Тесты</title>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="fs-5 row m-3 justify-content-start lang">
+            {{ course.name }}
+        </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Сводка о курсе</li>
+          </ol>
+        </nav>
+        <div class="row border"></div>
+            <table class="table">
+                <tbody>
+                    <tr><th>Элемент курса</th><th>Тип</th><th>Статус</th><th>Оценка</th></tr>
+                    {% set notAllowed = namespace(value=0) %}
+                    {% for unit in course.content.body %}
+                        <td colspan="4" align="center"><strong>Раздел «{{ unit.name }}»</strong></td>
+                        {% for unit_test in unit.tests %}
+                            {% if unit_test.unit_type == "test" %}
+                                <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                            {% else %}
+                                <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                            {% endif %}
+                                <td>
+                                    {{unit_test.test.content.name}}
+                                </td>
+                                <td>
+                                    {% if unit_test.unit_type == "test" %}
+                                    Тест
+                                    {% else %}
+                                    Статья
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
+                                        Завершено
+                                    {% elif results[unit_test.test.test_id|string + unit_test.unit_type] == False %}
+                                        На проверке
+                                    {% else %}
+                                        Не выполнено
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if unit_test.unit_type == "test" and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
+                                    {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">
+                            <strong>Итог</strong>
+                        </td>
+                        <td colspan="3">
+                            <strong>{{ total }} / {{ total_max }}</strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+{% endblock %}

@@ -48,6 +48,43 @@ def handle_tests(course_id):
 
 
 @login_required
+@courses_bp.route('/course/<int:course_id>/summary')
+def handle_course_summary(course_id):
+    course = logic.get_course(course_id, current_user.get_id())
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    if course is None:
+        return render_template('index.html', user=user)
+    progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+    results = {}
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.unit_type == 'test':
+                test.test = logic.get_test_by_id(test.test_id)
+            else:
+                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+            for progress in progresses:
+                if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
+                    results[str(test.test_id) + test.unit_type] = progress.progress['completed']
+
+    marks = {}
+    max_marks = {}
+    for progress in progresses:
+        if progress.progress['result']:
+            progress.progress['result'] = TestResult.from_json(json.loads(progress.progress['result']))
+            if (str(progress.progress['test_id'])+progress.progress['type']) not in marks.keys():
+                marks[str(progress.progress['test_id']) + progress.progress['type']] = []
+                max_marks[str(progress.progress['test_id']) + progress.progress['type']] = progress.progress['result'].total_score
+            marks[str(progress.progress['test_id'])+progress.progress['type']].append(progress.progress['result'].total_current_score)
+    for key in marks.keys():
+        marks[key] = max(marks[key])
+    total = sum(marks.values())
+    total_max = sum(max_marks.values())
+    return render_template('course_summary.html', user=user, course=course, results=results,
+                           marks=marks, max_marks=max_marks, total=total, total_max=total_max)
+
+
+@login_required
 @courses_bp.route('/courses/<int:user_id>', methods=['POST', 'GET'])
 def handle_courses(user_id):
     match request.method:
@@ -463,8 +500,8 @@ def handle_check_test(course_id, test_id):
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = None
     for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == test_id and test.unit_type == 'test':
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
     completed = True
     for question in test.content.questions:
