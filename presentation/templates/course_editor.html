@@ -24,12 +24,12 @@
                     <div id="unit-{{unit.unit_id}}" class="unit_div">
                         <div class="row border"></div>
                         <span class="fw-bolder fs-5 row m-3 justify-content-center lang">
-                            <form action="/delete_unit/{{course.course_id}}/{{unit.unit_id}}" method="POST" style="display: flex;">
+                            <form style="display: flex;">
                                 <textarea required class="form-control toSend" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1">{{ unit.name }}</textarea>
                                 <div style="height: 30px; justify-content: center; display: flex;">
                                     <img src="../static/img/drag_n_drop.png" style="height: 40px; transform: rotate(90deg);" draggable="true" id="{{unit.unit_id}}" class="dnd-units">
                                 </div>
-                                <button id="delete-unit-button" style="background: transparent; border: transparent;">
+                                <button type="button" id="delete-unit-button" style="background: transparent; border: transparent;" data-mdb-target="#delete-{{unit.unit_id}}" data-mdb-toggle="modal">
                                     <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
                                 </button>
                             </form>
@@ -46,12 +46,8 @@
                                                     <img src="../static/img/drag_n_drop.png" style="height: 35px;" class="dnd {{ unit_test.test.test_id }}" id="{{ unit_test.test.test_id }}">
                                                 </div>
                                                 <h5 class="card-title">{{unit_test.test.content.name}}</h5>
-                                                {% if unit_test.unit_type == "test" %}
-                                                    <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST" style="position:absolute;top:8px; right:8px">
-                                                {% else %}
-                                                    <form action="/delete_article/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST" style="position:absolute;top:8px; right:8px">
-                                                {% endif %}
-                                                    <button id="delete-button" style="background: transparent; border: transparent;">
+                                                <form style="position:absolute;top:8px; right:8px">
+                                                    <button id="delete-button" style="background: transparent; border: transparent;" type="button" data-mdb-target="#deleteTest-{{unit_test.test_id}}" data-mdb-toggle="modal">
                                                         <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
                                                     </button>
                                                 </form>
@@ -277,6 +273,54 @@
             </div>
           </div>
         </div>
+
+        <div class="modal fade" id="delete-{{unit.unit_id}}" tabindex="-1">
+          <div class="modal-dialog modal-side">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления раздела</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body lang" key="areusure">Вы точно хотите удалить раздел «{{ unit.name }}»?</div>
+              <div class="modal-footer">
+                <form action="/delete_unit/{{course.course_id}}/{{unit.unit_id}}" method="POST">
+                    <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% for unit_test in unit.tests %}
+            <div class="modal fade" id="deleteTest-{{unit_test.test_id}}" tabindex="-1">
+              <div class="modal-dialog modal-side">
+                <div class="modal-content">
+                  <div class="modal-header">
+                      {% if unit_test.unit_type == "test" %}
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления теста</h5>
+                      {% else %}
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления статьи</h5>
+                      {% endif %}
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                    {% if unit_test.unit_type == "test" %}
+                        <div class="modal-body lang" key="areusure">Вы точно хотите удалить тест «{{ unit_test.test.content.name }}»?</div>
+                    {% else %}
+                        <div class="modal-body lang" key="areusure">Вы точно хотите удалить статью «{{ unit_test.test.content.name }}»?</div>
+                    {% endif %}
+                  <div class="modal-footer">
+                    {% if unit_test.unit_type == "test" %}
+                        <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
+                    {% else %}
+                        <form action="/delete_article/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
+                    {% endif %}
+                        <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
     {% endfor %}
     <div class="modal fade" id="addUnit" tabindex="-1">
       <div class="modal-dialog modal-side">

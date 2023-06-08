@@ -250,7 +250,7 @@ def handle_course_editor(course_id):
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>', methods=['POST'])
 def handle_course_editor_save_unit(course_id):
-    unit_name = request.form['newUnitName']
+    unit_name = request.form['newUnitName'].replace("'", '"').replace("`", '"').replace('"', '\"')
     logic.update_course_add_unit(course_id, unit_name)
     return redirect(f'/course_editor/{course_id}')
 
@@ -269,7 +269,7 @@ def handle_update_course(course_id):
                     new_units_order.append(unit)
     course.content['body'] = new_units_order
     for unit in course.content['body']:
-        unit['name'] = structure.pop('unitName-' + str(unit['unit_id']))
+        unit['name'] = structure.pop('unitName-' + str(unit['unit_id'])).replace("'", '"').replace("`", '"').replace('"', '\"')
         new_tests_order = []
         for unit_name, task in structure.items():
             if 'unitName' in unit_name:
@@ -333,7 +333,7 @@ def handle_article_editor(course_id, article_id):
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == article_id and test.unit_type == 'article':
-                article_name = test.article_name
+                article_name = test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
                 unit_name = unit['name']
     return render_template('article_editor.html', user=user, course_id=course_id, course=course,
                            article=article, article_name=article_name, unit_name=unit_name)
@@ -344,7 +344,7 @@ def handle_article_editor(course_id, article_id):
 def handle_article_update(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
-    article_text = request.form['Article']
+    article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     article = Article(article_id=article_id, course_id=course_id, content=article_text)
     unit_id = None
     for unit in course.content['body']:
@@ -374,7 +374,7 @@ def handle_article_constructor(course_id, unit_id):
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["POST"])
 def handle_article_save(course_id, unit_id):
-    article_text = request.form['Article']
+    article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     article = Article(article_id=None, course_id=course_id, content=article_text)
     response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'])
     if response[1] == 'success':
@@ -424,7 +424,7 @@ def handle_load_article(course_id, article_id):
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == article_id and test.unit_type == 'article':
-                article_name = test.article_name
+                article_name = test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
                 unit_name = unit['name']
     return render_template('preview_article.html', user=user, course=course, article=article,
                            article_name=article_name, unit_name=unit_name)

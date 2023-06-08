@@ -70,7 +70,7 @@
                                     </form>
                                     <form action="/delete_course/{{course.course_id}}" method="POST">
                                         <div id="div_element_button" style="margin-right: 8px;">
-                                            <button class="btn btn-outline-dark btn-rounded lang" id="delete-button" style="display: inline-block;">Удалить курс</button>
+                                            <button class="btn btn-outline-dark btn-rounded lang" id="delete-button" style="display: inline-block;" type="button" data-mdb-target="#delete_course" data-mdb-toggle="modal">Удалить курс</button>
                                         </div>
                                     </form>
                                 {% endif %}
@@ -435,3 +435,22 @@
     } */
 </style>
 {% endblock %}
+
+{% block modal_dialog %}
+    <div class="modal fade" id="delete_course" tabindex="-1">
+      <div class="modal-dialog modal-side">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления курса</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body lang" key="areusure">Вы точно хотите удалить курс «{{ course.name }}»?</div>
+          <div class="modal-footer">
+            <form action="/delete_course/{{course.course_id}}" method="POST">
+                <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock modal_dialog %}
