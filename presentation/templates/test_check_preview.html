@@ -22,6 +22,15 @@
         <span class="fs-5 row m-3 justify-content-start lang">
             {{ course.name }}
         </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Проверка теста «{{ test.content.name }}»</li>
+          </ol>
+        </nav>
         <div class="row border"></div>
 
         <div class="card">

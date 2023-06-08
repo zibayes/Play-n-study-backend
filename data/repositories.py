@@ -529,7 +529,7 @@ class UserRepository:
     def get_users_by_substring(self, substring: str) -> Optional[list]:
         users = []
         users_db = self.session.query(UsersModel) \
-            .filter(UsersModel.username.like(substring + "%")) \
+            .filter(UsersModel.username.ilike(substring + "%")) \
             .all()
 
         if users_db is not None:

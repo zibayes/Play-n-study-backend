@@ -8,9 +8,19 @@
 
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <span class="row m-3 justify-content-start lang">
+        <span class="fs-5 row m-3 justify-content-start lang">
             {{ test.name }}
         </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}">Тест «{{ test.name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Просмотр попытки</li>
+          </ol>
+        </nav>
         <div class="row border"></div>
         <br>
 

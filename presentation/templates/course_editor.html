@@ -8,6 +8,14 @@
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;" id="main-container">
         <!-- <form action="" method="POST"> -->
+            <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Редактирование курса</span>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb" style="margin-left: 15px;">
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Редактирование курса</li>
+              </ol>
+            </nav>
             <span class="fs-5 row m-3 justify-content-start lang">
                 <textarea required class="form-control toSend" maxlength="1000" placeholder="Название курса" name="courseName" rows="1">{{ course.name }}</textarea>
             </span>

@@ -8,9 +8,18 @@
 
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <span class="row m-3 justify-content-start lang">
+        <span class="fs-5 row m-3 justify-content-start lang">
             Конструктор тестов
         </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
+              <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Конструктор тестов</li>
+          </ol>
+        </nav>
         <div class="row border"></div>
         <br>
 
@@ -98,7 +107,7 @@
         let divDragCard = document.createElement('div');
         divDragCard.setAttribute('style', "height: 35px; justify-content: center; display: flex;");
         let dragImg = document.createElement('img');
-        dragImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragImg.setAttribute('src', "/static/img/drag_n_drop.png");
         dragImg.setAttribute('style', "height: 35px;");
         divDragCard.setAttribute('draggable', "True");
         divDragCard.addEventListener(`mouseover`, (evt) => {
@@ -217,7 +226,7 @@
         let divAnsCard = document.createElement('div');
         divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
         let dragAnsImg = document.createElement('img');
-        dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
         dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
         divAnsCard.setAttribute('draggable', "True");
         divAnsCard.addEventListener(`mouseover`, (evt) => {
@@ -327,7 +336,7 @@
                 let divAnsCard = document.createElement('div');
                 divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
                 let dragAnsImg = document.createElement('img');
-                dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+                dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
                 dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
                 divAnsCard.setAttribute('draggable', "True");
                 divAnsCard.addEventListener(`mouseover`, (evt) => {
@@ -514,7 +523,7 @@
         let divAnsCard = document.createElement('div');
         divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
         let dragAnsImg = document.createElement('img');
-        dragAnsImg.setAttribute('src', "static/img/drag_n_drop.png");
+        dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
         dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
         divAnsCard.setAttribute('draggable', "True");
         divAnsCard.addEventListener(`mouseover`, (evt) => {

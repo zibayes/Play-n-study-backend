@@ -72,6 +72,12 @@ def handle_test_preview(course_id, test_id):
     course = logic.get_course(test.course_id, user_id)
     user = logic.get_user_by_id(user_id)
 
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
+
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
     to_delete = []
     max_score = 0
@@ -113,7 +119,7 @@ def handle_test_preview(course_id, test_id):
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
 
-    return render_template("test_preview.html", user=user, test=test, course=course,
+    return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name,
                            progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
                            leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
 
@@ -297,7 +303,13 @@ def handle_course_create(user_id):
 @courses_bp.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
 def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        if unit_id == unit['unit_id']:
+            unit_name = unit['name']
+    return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name)
 
 
 @login_required
@@ -316,13 +328,15 @@ def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
+    unit_name = None
     article_name = None
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == article_id and test.unit_type == 'article':
                 article_name = test.article_name
-    return render_template('article_editor.html', user=user, course_id=course_id,
-                           article=article, article_name=article_name)
+                unit_name = unit['name']
+    return render_template('article_editor.html', user=user, course_id=course_id, course=course,
+                           article=article, article_name=article_name, unit_name=unit_name)
 
 
 @login_required
@@ -348,7 +362,13 @@ def handle_article_update(course_id, article_id):
 @courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["GET"])
 def handle_article_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('article_constructor.html', user=user, course_id=course_id, unit_id=unit_id)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        if unit_id == unit['unit_id']:
+            unit_name = unit['name']
+    return render_template('article_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name)
 
 
 @login_required
@@ -379,10 +399,17 @@ def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     total_score = 0
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
     for question in test.content.questions:
         if question.score:
             total_score += question.score
-    return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time())
+    return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
+                           course=course, unit_name=unit_name, test_id=test_id)
 
 
 @login_required
@@ -393,12 +420,14 @@ def handle_load_article(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
     article_name = None
+    unit_name = None
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == article_id and test.unit_type == 'article':
                 article_name = test.article_name
-    return render_template('preview_article.html', user=user, course_id=course_id, article=article,
-                           article_name=article_name)
+                unit_name = unit['name']
+    return render_template('preview_article.html', user=user, course=course, article=article,
+                           article_name=article_name, unit_name=unit_name)
 
 
 @login_required
@@ -406,7 +435,13 @@ def handle_load_article(course_id, article_id):
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('test_editor.html', user=user, test=test.content)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
+    return render_template('test_editor.html', user=user, test=test.content, course=course, unit_name=unit_name)
 
 
 @login_required
@@ -425,6 +460,12 @@ def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == test_id and test.unit_type == 'test':
+                unit_name = unit['name']
     completed = True
     for question in test.content.questions:
         if question.current_score is None:
@@ -434,7 +475,8 @@ def handle_check_test(course_id, test_id):
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=test.content, score=result.total_score,
-                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+                           total_score=result.total_current_score, result=result.result, total_time=result.total_time,
+                           course=course, unit_name=unit_name)
 
 
 @login_required
@@ -457,13 +499,19 @@ def handle_check_article(course_id, article_id):
 @courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["POST"])
 def handle_show_test_result(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']),
-                           score=result.total_score,
-                           total_score=result.total_current_score, result=result.result, total_time=result.total_time)
+                           score=result.total_score, total_score=result.total_current_score, test_id=test_id,
+                           result=result.result, total_time=result.total_time, course=course, unit_name=unit_name)
 
 
 @login_required
@@ -492,8 +540,14 @@ def handle_test_check_preview(course_id, test_id):
             username = logic.get_user_by_id(progress[i].user_id).username
             if username not in users.values():
                 users[progress[i].user_id] = username
+
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
     return render_template('test_check_preview.html', user=user, test=test, course=course, progresses=progress,
-                           users=users)
+                           users=users, unit_name=unit_name)
 
 
 @login_required
@@ -501,11 +555,19 @@ def handle_test_check_preview(course_id, test_id):
 def handle_test_check(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
+    username = logic.get_user_by_id(progress.user_id).username
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        for test_ in unit['tests']:
+            if test_.test_id == test_id and test_.unit_type == 'test':
+                unit_name = unit['name']
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_check.html', user=user, test=TestContent.from_json(progress.progress['content']),
-                           score=result.total_score,
+                           score=result.total_score, unit_name=unit_name,
+                           course=course, username=username, test_id=test_id,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 

@@ -8,9 +8,18 @@
 
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <span class="row m-3 justify-content-start lang">
+        <span class="fs-5 row m-3 justify-content-start lang">
             Редактор тестов
         </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
+              <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Редактор теста «{{ test.name }}»</li>
+          </ol>
+        </nav>
         <div class="row border"></div>
         <br>
 
@@ -35,14 +44,14 @@
 
                         <div class="card" style="background:#bde0ff; flex: 1;">
                             <div style="height: 35px; justify-content: center; display: flex;" id="dnd-{{ questionNum.value }}" class="{{ questionNum.value }}" draggable="true" >
-                                <img src="../static/img/drag_n_drop.png" style="height: 35px;" class="{{ questionNum.value }}">
+                                <img src="/static/img/drag_n_drop.png" style="height: 35px;" class="{{ questionNum.value }}">
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
                                     {% if question.type == "info" %}
-                                    <textarea maxlength="15000" required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                        <textarea maxlength="15000" required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
                                     {% else %}
-                                    <textarea maxlength="5000" required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                        <textarea maxlength="5000" required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
                                     {% endif %}
                                     <hr>
                                     <div id="addAns-{{ questionNum.value }}" class="row container-fluid" class="answer_div">
@@ -62,7 +71,7 @@
                                                         <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
-                                                            <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                         </div>
                                                     </div>
                                                     <br>
@@ -86,7 +95,7 @@
                                                         <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
-                                                            <img src="../static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                         </div>
                                                     </div>
                                                     <br>
@@ -278,7 +287,7 @@
                     let divAnsCard = document.createElement('div');
                     divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
                     let dragAnsImg = document.createElement('img');
-                    dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+                    dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
                     dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
                     divAnsCard.setAttribute('draggable', "True");
                     divAnsCard.addEventListener(`mouseover`, (evt) => {
@@ -431,7 +440,7 @@
             let divDragCard = document.createElement('div');
             divDragCard.setAttribute('style', "height: 35px; justify-content: center; display: flex;");
             let dragImg = document.createElement('img');
-            dragImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragImg.setAttribute('src', "/static/img/drag_n_drop.png");
             dragImg.setAttribute('style', "height: 35px;");
             divDragCard.setAttribute('draggable', "True");
             divDragCard.addEventListener(`mouseover`, (evt) => {
@@ -550,7 +559,7 @@
             let divAnsCard = document.createElement('div');
             divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
             let dragAnsImg = document.createElement('img');
-            dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
             dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
             divAnsCard.setAttribute('draggable', "True");
             divAnsCard.addEventListener(`mouseover`, (evt) => {
@@ -660,7 +669,7 @@
                     let divAnsCard = document.createElement('div');
                     divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
                     let dragAnsImg = document.createElement('img');
-                    dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+                    dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
                     dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
                     divAnsCard.setAttribute('draggable', "True");
                     divAnsCard.addEventListener(`mouseover`, (evt) => {
@@ -846,7 +855,7 @@
             let divAnsCard = document.createElement('div');
             divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
             let dragAnsImg = document.createElement('img');
-            dragAnsImg.setAttribute('src', "../static/img/drag_n_drop.png");
+            dragAnsImg.setAttribute('src', "/static/img/drag_n_drop.png");
             dragAnsImg.setAttribute('style', "height: 30px; transform: rotate(90deg);");
             divAnsCard.setAttribute('draggable', "True");
             divAnsCard.addEventListener(`mouseover`, (evt) => {

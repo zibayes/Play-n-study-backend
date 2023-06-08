@@ -9,8 +9,17 @@
     <div class="container m-5" style="background-color: white; border-radius: 10px">
         <form action="/course_editor/{{course_id}}/article_constructor/{{unit_id}}" method="POST">
             <span class="fs-5 row m-3 justify-content-start lang">
-                Составление статьи
+                Конструктор статей
             </span>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb" style="margin-left: 15px;">
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
+                  <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Конструктор статей</li>
+              </ol>
+            </nav>
             <div class="row border"></div>
             <textarea required class="form-control" maxlength="1000" placeholder="Название статьи" name="articleName" rows="1" style="margin: 8px;"></textarea>
             <div class="container">

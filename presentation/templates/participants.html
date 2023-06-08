@@ -7,7 +7,14 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="container m-5" style="background-color: white">
-    <span class="row m-3 justify-content-start lang" key="reviews">Участники курса «{{course.name}}»</span>
+    <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Участники курса «{{course.name}}»</span>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin-left: 15px;">
+        <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+        <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Участники курса</li>
+      </ol>
+    </nav>
     <div class="row border" style="margin-bottom: 20px;"></div>
     {% for participant in participants %}
         <div class="d-flex align-items-center" style="display: inline; position:relative; padding-bottom: 10px;
