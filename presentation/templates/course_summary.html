@@ -26,11 +26,25 @@
                     {% for unit in course.content.body %}
                         <td colspan="4" align="center"><strong>Раздел «{{ unit.name }}»</strong></td>
                         {% for unit_test in unit.tests %}
-                            {% if unit_test.unit_type == "test" %}
-                                <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                            {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
+                                {%  if notAllowed.value > 0 %}
+                                    <tr>
+                                {% else %}
+                                    {% if unit_test.unit_type == "test" %}
+                                        <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                    {% else %}
+                                        <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                    {% endif %}
+                                {% endif %}
+                                {% set notAllowed.value = notAllowed.value + 1 %}
                             {% else %}
-                                <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% if unit_test.unit_type == "test" %}
+                                    <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% else %}
+                                    <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% endif %}
                             {% endif %}
+
                                 <td>
                                     {{unit_test.test.content.name}}
                                 </td>
