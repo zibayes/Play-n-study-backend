@@ -510,10 +510,48 @@ def handle_check_test(course_id, test_id):
     progress = Progress(progress_id=None, completed=completed, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
+
+    users_progress = logic.get_progress_by_course_id_all(course_id)
+    users_progress_max = {}
+    for i in range(len(users_progress)):
+        if int(users_progress[i].progress['test_id']) == test_id:
+            users_progress[i].progress['result'] = TestResult.from_json(
+                json.loads(users_progress[i].progress['result']))
+            if users_progress[i].user_id not in users_progress_max.keys():
+                users_progress_max[users_progress[i].user_id] = []
+            users_progress_max[users_progress[i].user_id].append(
+                users_progress[i].progress['result'].total_current_score)
+    for key in users_progress_max.keys():
+        users_progress_max[key] = max(users_progress_max[key])
+    for i in range(len(users_progress)):
+        if int(users_progress[i].progress['test_id']) == test_id:
+            if users_progress_max[users_progress[i].user_id] == users_progress[i].progress['result'].total_current_score:
+                users_progress_max[users_progress[i].user_id] = users_progress[i]
+                users_progress_max[users_progress[i].user_id].progress['content'] = \
+                    TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
+
+    user_progress = TestContent.from_json(progress.content)
+    percents_for_tasks = {}
+    for value in users_progress_max.values():
+        for i in range(len(value.progress['content'].questions)):
+            is_identical = True
+            for j in range(len(value.progress['content'].questions[i].answers)):
+                if value.progress['content'].questions[i].answers[j] != user_progress.questions[i].answers[j]:
+                    is_identical = False
+            if value.progress['content'].questions[i].ask not in percents_for_tasks.keys():
+                percents_for_tasks[value.progress['content'].questions[i].ask] = 0
+            if is_identical:
+                percents_for_tasks[value.progress['content'].questions[i].ask] += 1
+
+    for key in percents_for_tasks.keys():
+        percents_for_tasks[key] -= 1
+        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1
+        percents_for_tasks[key] *= 100
+        percents_for_tasks[key] = round(percents_for_tasks[key], 2)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=test.content, score=result.total_score,
+    return render_template('test_result.html', user=user, test=test.content, score=result.total_score, test_id=test_id,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time,
-                           course=course, unit_name=unit_name)
+                           course=course, unit_name=unit_name, percents_for_tasks=percents_for_tasks)
 
 
 @login_required
@@ -533,7 +571,7 @@ def handle_check_article(course_id, article_id):
 
 
 @login_required
-@courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["POST"])
+@courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["GET"])
 def handle_show_test_result(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
@@ -545,8 +583,44 @@ def handle_show_test_result(course_id, test_id, progress_id):
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
+
+    users_progress = logic.get_progress_by_course_id_all(course_id)
+    users_progress_max = {}
+    for i in range(len(users_progress)):
+        if int(users_progress[i].progress['test_id']) == test_id:
+            users_progress[i].progress['result'] = TestResult.from_json(json.loads(users_progress[i].progress['result']))
+            if users_progress[i].user_id not in users_progress_max.keys():
+                users_progress_max[users_progress[i].user_id] = []
+            users_progress_max[users_progress[i].user_id].append(users_progress[i].progress['result'].total_current_score)
+    for key in users_progress_max.keys():
+        users_progress_max[key] = max(users_progress_max[key])
+    for i in range(len(users_progress)):
+        if int(users_progress[i].progress['test_id']) == test_id:
+            if users_progress_max[users_progress[i].user_id] == users_progress[i].progress['result'].total_current_score:
+                users_progress_max[users_progress[i].user_id] = users_progress[i]
+                users_progress_max[users_progress[i].user_id].progress['content'] = \
+                    TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
+
+    user_progress = TestContent.from_json(progress.progress['content'])
+    percents_for_tasks = {}
+    for value in users_progress_max.values():
+        for i in range(len(value.progress['content'].questions)):
+            is_identical = True
+            for j in range(len(value.progress['content'].questions[i].answers)):
+                if value.progress['content'].questions[i].answers[j] != user_progress.questions[i].answers[j]:
+                    is_identical = False
+            if value.progress['content'].questions[i].ask not in percents_for_tasks.keys():
+                percents_for_tasks[value.progress['content'].questions[i].ask] = 0
+            if is_identical:
+                percents_for_tasks[value.progress['content'].questions[i].ask] += 1
+
+    for key in percents_for_tasks.keys():
+        percents_for_tasks[key] -= 1
+        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1
+        percents_for_tasks[key] *= 100
+        percents_for_tasks[key] = round(percents_for_tasks[key], 2)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=TestContent.from_json(progress.progress['content']),
+    return render_template('test_result.html', user=user, test=user_progress, percents_for_tasks=percents_for_tasks,
                            score=result.total_score, total_score=result.total_current_score, test_id=test_id,
                            result=result.result, total_time=result.total_time, course=course, unit_name=unit_name)
 

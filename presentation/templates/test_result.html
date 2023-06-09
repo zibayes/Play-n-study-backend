@@ -129,6 +129,15 @@
                             </div>
                         </div>
                     </div>
+                    {% if question.type != "detailed_free" %}
+                        <div style="display: flex; padding-bottom: 20px; padding-left: 148px;">
+                            <div class="{{questionNum.value}} card" style="background:#c5bef7; flex: 1; padding-left: 12px; padding-top:12px;">
+                                <p>
+                                    <strong>{{ percents_for_tasks[question.ask] }}%</strong> пользователей дали такой же ответ на данное задание
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
                     {% if question.comment %}
                         <div style="display: flex; padding-bottom: 20px; padding-left: 148px;">
                             <div class="{{questionNum.value}} card" style="background:#FFEFAB; flex: 1; padding: 12px; display: inline;">

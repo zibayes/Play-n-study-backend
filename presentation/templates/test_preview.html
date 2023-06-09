@@ -80,7 +80,7 @@
                                             {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
                                         </td>
                                         <td>
-                                            <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="POST">
+                                            <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="GET">
                                                 <button class="btn btn-primary ">Посмотреть попытку</button>
                                             </form>
                                         </td>
