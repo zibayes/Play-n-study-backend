@@ -298,6 +298,8 @@ def handle_update_course(course_id):
     structure = request.form.to_dict()
     course = logic.get_course(course_id, current_user.get_id())
     course.name = structure.pop('courseName')
+    course.description = structure.pop('courseDesc')
+    course.category = structure.pop('courseCat')
     new_units_order = []
     for unit_name, task in structure.items():
         if 'unitName' in unit_name:
@@ -319,6 +321,14 @@ def handle_update_course(course_id):
         unit['tests'] = new_tests_order
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
+
+
+@courses_bp.route('/upload_course_ava/<int:course_id>', methods=["POST", "GET"])
+@login_required
+def handle_upload(course_id):
+    if request.method == 'POST':
+        logic.upload_course_avatar(request.files['file'], current_user, course_id)
+    return redirect(f'/course_preview/{course_id}')
 
 
 @login_required

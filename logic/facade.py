@@ -86,6 +86,20 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении курса', 'error'])
 
+    def upload_course_avatar(self, avatar_file, current_user, course_id):
+        if avatar_file and current_user.verify_ext(avatar_file.filename):
+            try:
+                avatar = avatar_file.read()
+                course = self.data.course_get_by_id(course_id)
+                course.avatar = avatar
+                if not self.data.update_course(course):
+                    return tuple(["Ошибка обновления аватара", "error"])
+                return tuple(["Аватар обновлен", "success"])
+            except FileNotFoundError as e:
+                return tuple(["Ошибка чтения файла", "error"])
+        else:
+            return tuple(["Ошибка обновление аватара", "error"])
+
     def update_course_add_unit(self, course_id, unit_name):
         course = self.data.course_get_by_id(course_id)
         course.content['unit_counter'] += 1

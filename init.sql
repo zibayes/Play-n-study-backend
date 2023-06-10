@@ -26,7 +26,7 @@ CREATE TABLE courses
 (
     course_id serial PRIMARY KEY,
     name text NOT NULL,
-    avatar text,
+    avatar bytea,
     description text,
     category text,
     content json

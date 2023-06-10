@@ -17,7 +17,16 @@
               </ol>
             </nav>
             <span class="fs-5 row m-3 justify-content-start lang">
-                <textarea required class="form-control toSend" maxlength="1000" placeholder="Название курса" name="courseName" rows="1">{{ course.name }}</textarea>
+                <textarea required class="form-control toSend" maxlength="1000" placeholder="Название курса" name="courseName" id="courseName" rows="1">{{ course.name }}</textarea>
+                <textarea required style="margin-top: 8px;" class="form-control toSend" maxlength="1000" placeholder="Описание курса" name="courseDesc" rows="3">{{ course.description }}</textarea>
+                <textarea required style="margin-top: 8px;" class="form-control toSend" maxlength="1000" placeholder="Категория" name="courseCat" rows="1">{{ course.category }}</textarea>
+                <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
+                    <img class="border border-2 rounded w-100" src="/courseava/{{ course.course_id }}" style="max-width: 290px; margin: 0 auto;">
+                    <form action="/upload_course_ava/{{ course.course_id }}" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
+                        <input type="file" name="file" class="form-control" id="customFile" />
+                        <a><button class="btn border border-2 w-100 lang" key="changeava" type="submit">Сменить аватар</button></a>
+                    </form>
+                </div>
             </span>
             <div class="row border" id="units_list">
                 {% for unit in course.content.body %}
