@@ -64,22 +64,7 @@
         </form>
     </div>
 </div>
-<script>
 
-    var input = document.getElementById('textAreaExample')
-    input.oninput = function() {
-        $.ajax({
-            url: '/api/rendermd',
-            method: 'post',
-            dataType: 'html',
-            contentType:'application/json',
-            data: JSON.stringify({text: input.value}),
-            success: function(data){
-                document.getElementById('1').innerHTML = data;
-            }
-        });
-
-    }
-
-</script>
+<!-- Scripts -->
+<script type="text/javascript" src="/static/js/article_constructor.js"></script>
 {% endblock %}

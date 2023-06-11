@@ -62,22 +62,7 @@
 </html>
 <!-- MDB -->
 <script type="text/javascript" src="static/js_mdb/mdb.min.js"></script>
-<script>
-
-
-	$(document).ready(function() {
-		$("body").css("display", "none");
-		$("body").fadeIn(2000);
-		$("a.transition").click(function(event){
-			event.preventDefault();
-			linkLocation = this.href;
-			$("body").fadeOut(1000, redirectPage);
-		});
-
-		function redirectPage() {
-			window.location = linkLocation;
-		}
-	});
-</script>
+<!-- Scripts -->
+<script type="text/javascript" src="/static/js/base.js"></script>
 {% block script %}
 {% endblock %}

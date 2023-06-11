@@ -114,16 +114,16 @@
                                 <div class="col-md-12">
                                     {% if user.courses %}
                                         {% for course in user.courses %}
-                                        <div class="d-flex align-items-center scale2" style="padding: 10px 0">
-                                            {% if course.avatar %}
-                                            {% endif %}
-                                            {% if not course.avatar %}
-                                            <img src="/static/img/nophoto.png" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                            {% endif %}
-                                            <div class="ms-4">
-                                                <p class="mb-0">{{course.name}}</p>
+                                            <div class="d-flex align-items-center scale2" style="padding: 10px 0">
+                                                {% if course.avatar %}
+                                                    <img src="/courseava/{{ course.course_id }}" alt="course avatar" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                                {% else %}
+                                                    <img src="/static/img/nophoto.png" alt="course avatar" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                                {% endif %}
+                                                <div class="ms-4">
+                                                    <p class="mb-0">{{course.name}}</p>
+                                                </div>
                                             </div>
-                                        </div>
                                         {% endfor %}
                                     {% endif %}
                                 </div>
@@ -166,41 +166,12 @@
 
     </div>
 </div>
-<style>
-    .scale {
-        transition: 0.5s; /* Время эффекта */
-    }
-    .scale:hover {
-        transform: scale(1.05); /* Увеличиваем масштаб */
-    }
-    .scale2 {
-        transition: 0.5s; /* Время эффекта */
-    }
-    .scale2:hover {
-        transform: scale(1.02); /* Увеличиваем масштаб */
-    }
-</style>
+<!-- CSS -->
+<link rel="stylesheet" href="/static/css/profile.css"/>
 {% endblock %}
 {% block script %}
-<script>
-    flag = false
-    $("#subscribe-button").on("click", function () {
-        if (flag === false){
-            flag = true
-            $(this).hide("slow", function () {
-                $(this).text("Отписаться")
-            })
-            $(this).show("slow")
-        } else{
-            flag = false
-            $(this).hide("slow", function () {
-                $(this).text("Подписаться")
-            })
-            $(this).show("slow")
-        }
-    })
-
-</script>
+<!-- Scripts -->
+<script type="text/javascript" src="/static/js/profile.js"></script>
 {% endblock %}
 
 {% block modal_dialog %}

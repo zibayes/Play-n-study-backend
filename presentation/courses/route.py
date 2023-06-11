@@ -555,7 +555,7 @@ def handle_check_test(course_id, test_id):
 
     for key in percents_for_tasks.keys():
         percents_for_tasks[key] -= 1
-        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1
+        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1 if len(users_progress_max.keys()) > 1 else 1
         percents_for_tasks[key] *= 100
         percents_for_tasks[key] = round(percents_for_tasks[key], 2)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
@@ -626,7 +626,7 @@ def handle_show_test_result(course_id, test_id, progress_id):
 
     for key in percents_for_tasks.keys():
         percents_for_tasks[key] -= 1
-        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1
+        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1  if len(users_progress_max.keys()) > 1 else 1
         percents_for_tasks[key] *= 100
         percents_for_tasks[key] = round(percents_for_tasks[key], 2)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
