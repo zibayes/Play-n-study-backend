@@ -1,4 +1,3 @@
-let questions_count = {{ test.questions|length }}
 let dnd_elems = []
 let card_elems = []
 let questionsTypes = []

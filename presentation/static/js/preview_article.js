@@ -39,4 +39,3 @@ function htmlspecialchars_decode (string, quoteStyle) {
   string = string.replace(/&amp;/g, '&')
   return string
 }
-document.getElementById('text-view').innerHTML = htmlspecialchars_decode(`{{ article.content }}`)

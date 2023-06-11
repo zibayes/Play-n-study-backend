@@ -186,5 +186,8 @@
 {% endblock %}
 {% block script %}
     <!-- Scripts -->
+    <script>
+        let questions_count = {{ test.questions|length }}
+    </script>
     <script type="text/javascript" src="/static/js/test_editor.js"></script>
 {% endblock %}

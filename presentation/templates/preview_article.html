@@ -31,4 +31,7 @@
 
 <!-- Scripts -->
 <script type="text/javascript" src="/static/js/preview_article.js"></script>
+<script>
+    document.getElementById('text-view').innerHTML = htmlspecialchars_decode(`{{ article.content }}`)
+</script>
 {% endblock %}

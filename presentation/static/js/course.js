@@ -19,7 +19,7 @@ $(function() {
             $(this).prevAll().find('.star').addClass('fas').removeClass('far star-over');
 
             rate_to_send = document.getElementById($(this).attr('id').substring(0, 5)).value.substring(4)
-            url = '/api/set_rating/' + {{course.course_id}}
+            url = '/api/set_rating/' + course_id
             $.ajax({
                 url: url,
                 method: 'post',

@@ -12,6 +12,5 @@ input.oninput = function() {
     });
 
 }
-input.textContent = `{{article.content}}`
 let event = new Event("input");
 input.dispatchEvent(event);
