@@ -45,6 +45,15 @@ document.querySelectorAll(".dnd").forEach(elem =>{
       document.body.style.cursor = '';
     })
     let divUnitTest = document.getElementById("unit_test-" + elem.id);
+
+    /*
+    new Sortable(divUnitTest, {
+        group: "shared",
+        animation: 200,
+        ghostClass: "blue-background-class"
+    });
+    */
+
     elem.addEventListener(`dragstart`, (evt) => {
       evt.dataTransfer.setDragImage(divUnitTest, divUnitTest.offsetWidth / 1.92, divUnitTest.offsetHeight / 8)
       setTimeout(() => {
@@ -57,6 +66,63 @@ document.querySelectorAll(".dnd").forEach(elem =>{
           divUnitTest.classList.remove(`selected`);
           divUnitTest.style.removeProperty("visibility")
       }, 0);
+    });
+});
+
+var isAbleToMove = true;
+
+document.querySelectorAll(".dnd-unit").forEach(elem => {
+    let divUnitTests = document.getElementById("unit_tests-" + elem.id);
+    divUnitTests.addEventListener(`dragover`, (evt) => {
+        evt.preventDefault();
+        let activeElement = divUnitTests.querySelector(`.selected`);
+        let currentElement = evt.target;
+        if (activeElement == null)
+            return;
+        let isMoveable = activeElement !== currentElement && isAbleToMove &&
+            currentElement.classList.contains(`test_div`) && activeElement.classList.contains(`test_div`) && childOf(activeElement, divUnitTests);
+        if (!isMoveable)
+            return;
+        isAbleToMove = false;
+        array_for_compare = Array.from(divUnitTests.children);
+        console.log(array_for_compare.indexOf(currentElement), array_for_compare.indexOf(activeElement))
+        if (array_for_compare.indexOf(currentElement) > array_for_compare.indexOf(activeElement)) {
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                activeElement.nextElementSibling :
+                currentElement;
+            nextElement.animate(
+              [
+                // keyframes
+                { transform: "translateX(" + currentElement.offsetWidth + "px)" },
+                { transform: "translateX(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 200,
+                iterations: 1,
+              }
+            );
+            divUnitTests.insertBefore(nextElement, activeElement);
+        }
+        else {
+            const nextElement = (currentElement === activeElement.nextElementSibling) ?
+                activeElement.nextElementSibling :
+                currentElement;
+            nextElement.animate(
+              [
+                // keyframes
+                { transform: "translateX(-" + currentElement.offsetWidth + "px)" },
+                { transform: "translateX(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 200,
+                iterations: 1,
+              }
+            );
+            divUnitTests.insertBefore(activeElement, nextElement);
+        }
+        setTimeout(() => {isAbleToMove = true;}, 400)
     });
 });
 
@@ -83,52 +149,50 @@ document.querySelectorAll(".dnd-units").forEach(elem =>{
     });
 });
 
-var isAbleToMove = true;
-
-document.querySelectorAll(".dnd-unit").forEach(elem => {
-    let divUnitTests = document.getElementById("unit_tests-" + elem.id);
-    divUnitTests.addEventListener(`dragover`, (evt) => {
-        evt.preventDefault();
-        let activeElement = divUnitTests.querySelector(`.selected`);
-        let currentElement = evt.target;
-        if (activeElement == null)
-            return;
-        let isMoveable = activeElement !== currentElement && isAbleToMove &&
-            currentElement.classList.contains(`test_div`) && activeElement.classList.contains(`test_div`) && childOf(activeElement, divUnitTests);
-        if (!isMoveable)
-            return;
-        isAbleToMove = false;
-        array_for_compare = Array.from(divUnitTests.children);
-        console.log(array_for_compare.indexOf(currentElement), array_for_compare.indexOf(activeElement))
-        if (array_for_compare.indexOf(currentElement) > array_for_compare.indexOf(activeElement)) {
-            const nextElement = (currentElement === activeElement.nextElementSibling) ?
-                activeElement.nextElementSibling :
-                currentElement;
-            divUnitTests.insertBefore(nextElement, activeElement);
-        }
-        else {
-            const nextElement = (currentElement === activeElement.nextElementSibling) ?
-                activeElement.nextElementSibling :
-                currentElement;
-            divUnitTests.insertBefore(activeElement, nextElement);
-        }
-        setTimeout(() => {isAbleToMove = true;}, 200)
-    });
-});
-
 function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
+
+var isAbleToMoveUnit = true;
 
 let units_list = document.getElementById("units_list")
 units_list.addEventListener(`dragover`, (evt) => {
     evt.preventDefault();
     const activeElement = units_list.querySelector(`.selected`);
     const currentElement = evt.target;
-    const isMoveable = activeElement !== currentElement &&
+    const isMoveable = activeElement !== currentElement && isAbleToMoveUnit &&
     currentElement.classList.contains(`unit_div`) && activeElement.classList.contains(`unit_div`);
     if (!isMoveable)
         return;
-    const nextElement = (currentElement === activeElement.nextElementSibling) ?
-      currentElement.nextElementSibling :
-      currentElement;
+    isAbleToMoveUnit = false;
+    let nextElement;
+    if(currentElement === activeElement.nextElementSibling){
+        nextElement = currentElement.nextElementSibling;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    } else {
+        nextElement = currentElement;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    }
     units_list.insertBefore(activeElement, nextElement);
+    setTimeout(() => {isAbleToMoveUnit = true;}, 400)
 });

@@ -67,18 +67,48 @@ for(i = 1; i <= questions_count; i++){
             let divDel = document.createElement('div');
             divDel.setAttribute('style', "padding-left: 5px;");
 
+            var isAbleToMove = true;
             divIndexNew.addEventListener(`dragover`, (evt) => {
                 evt.preventDefault();
                 const activeElement = questions_list.querySelector(`.selected`);
                 const currentElement = evt.target;
-                const isMoveable = activeElement !== currentElement &&
+                const isMoveable = activeElement !== currentElement && isAbleToMove &&
                 currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
                 if (!isMoveable)
                     return;
-                const nextElement = (currentElement === activeElement.nextElementSibling) ?
-                  currentElement.nextElementSibling :
-                  currentElement;
+                isAbleToMove = false;
+                let nextElement;
+                if(currentElement === activeElement.nextElementSibling){
+                    nextElement = currentElement.nextElementSibling;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                } else {
+                    nextElement = currentElement;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                }
                 divIndexNew.insertBefore(activeElement, nextElement);
+                setTimeout(() => {isAbleToMove = true;}, 400)
             });
             let divAnsCard = document.createElement('div');
             divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
@@ -166,18 +196,48 @@ for(i = 1; i <= questions_count; i++){
     });
 
     addAns_elems.push(document.getElementById("addAns-" + i))
+    var isAbleToMoveAdd = true;
     addAns_elems[i-1].addEventListener(`dragover`, (evt) => {
         evt.preventDefault();
         const activeElement = questions_list.querySelector(`.selected`);
         const currentElement = evt.target.parentElement.parentElement;
-        const isMoveable = activeElement !== currentElement &&
+        const isMoveable = activeElement !== currentElement && isAbleToMoveAdd &&
         currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, addAns_elems[parseInt(evt.target.id)-1]);
         if (!isMoveable)
             return;
-        const nextElement = (currentElement === activeElement.nextElementSibling) ?
-          currentElement.nextElementSibling :
-          currentElement;
+        isAbleToMoveAdd = false;
+        let nextElement;
+        if(currentElement === activeElement.nextElementSibling){
+            nextElement = currentElement.nextElementSibling;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        } else {
+            nextElement = currentElement;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        }
         addAns_elems[parseInt(evt.target.id)-1].insertBefore(activeElement, nextElement);
+        setTimeout(() => {isAbleToMoveAdd = true;}, 400)
     });
 }
 document.querySelectorAll(".dnd").forEach(elem =>{
@@ -205,18 +265,48 @@ document.querySelectorAll(".dnd").forEach(elem =>{
 
 function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
 let questions_list = document.getElementById("questionsList")
+var isAbleToMoveQue = true;
 questions_list.addEventListener(`dragover`, (evt) => {
     evt.preventDefault();
     const activeElement = questions_list.querySelector(`.selected`);
     const currentElement = evt.target;
-    const isMoveable = activeElement !== currentElement &&
+    const isMoveable = activeElement !== currentElement && isAbleToMoveQue &&
     currentElement.classList.contains(`question_div`) && activeElement.classList.contains(`question_div`);
     if (!isMoveable)
         return;
-    const nextElement = (currentElement === activeElement.nextElementSibling) ?
-      currentElement.nextElementSibling :
-      currentElement;
+    isAbleToMoveQue = false;
+    let nextElement;
+    if(currentElement === activeElement.nextElementSibling){
+        nextElement = currentElement.nextElementSibling;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    } else {
+        nextElement = currentElement;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    }
     questions_list.insertBefore(activeElement, nextElement);
+    setTimeout(() => {isAbleToMoveQue = true;}, 400)
 });
 
 // Добавление вопроса
@@ -339,18 +429,48 @@ addBtn.addEventListener("click", function(e) {
     let divDel = document.createElement('div');
     divDel.setAttribute('style', "padding-left: 5px;");
 
+    var isAbleToMoveDivInd = true;
     divIndex.addEventListener(`dragover`, (evt) => {
         evt.preventDefault();
         const activeElement = questions_list.querySelector(`.selected`);
         const currentElement = evt.target;
-        const isMoveable = activeElement !== currentElement &&
+        const isMoveable = activeElement !== currentElement && isAbleToMoveDivInd &&
         currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndex);
         if (!isMoveable)
             return;
-        const nextElement = (currentElement === activeElement.nextElementSibling) ?
-          currentElement.nextElementSibling :
-          currentElement;
+        isAbleToMoveDivInd = false;
+        let nextElement;
+        if(currentElement === activeElement.nextElementSibling){
+            nextElement = currentElement.nextElementSibling;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        } else {
+            nextElement = currentElement;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        }
         divIndex.insertBefore(activeElement, nextElement);
+        setTimeout(() => {isAbleToMoveDivInd = true;}, 400)
     });
     let divAnsCard = document.createElement('div');
     divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
@@ -449,18 +569,48 @@ addBtn.addEventListener("click", function(e) {
             let divDel = document.createElement('div');
             divDel.setAttribute('style', "padding-left: 5px;");
 
+            var isAbleToMoveDivIndNew = true
             divIndexNew.addEventListener(`dragover`, (evt) => {
                 evt.preventDefault();
                 const activeElement = questions_list.querySelector(`.selected`);
                 const currentElement = evt.target;
-                const isMoveable = activeElement !== currentElement &&
+                const isMoveable = activeElement !== currentElement && isAbleToMoveDivIndNew &&
                 currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
                 if (!isMoveable)
                     return;
-                const nextElement = (currentElement === activeElement.nextElementSibling) ?
-                  currentElement.nextElementSibling :
-                  currentElement;
+                isAbleToMoveDivIndNew = false;
+                let nextElement;
+                if(currentElement === activeElement.nextElementSibling){
+                    nextElement = currentElement.nextElementSibling;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                } else {
+                    nextElement = currentElement;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                }
                 divIndexNew.insertBefore(activeElement, nextElement);
+                setTimeout(() => {isAbleToMoveDivIndNew = true;}, 400)
             });
             let divAnsCard = document.createElement('div');
             divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");

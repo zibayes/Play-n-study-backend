@@ -1,5 +1,6 @@
 function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
 let questions_list = document.getElementById("questionsList")
+var isAbleToMoveQue = true;
 questions_list.addEventListener(`dragover`, (evt) => {
     // Разрешаем сбрасывать элементы в эту область
     evt.preventDefault();
@@ -11,20 +12,49 @@ questions_list.addEventListener(`dragover`, (evt) => {
     // Проверяем, что событие сработало:
     // 1. не на том элементе, который мы перемещаем,
     // 2. именно на элементе списка
-    const isMoveable = activeElement !== currentElement &&
+    const isMoveable = activeElement !== currentElement && isAbleToMoveQue &&
     currentElement.classList.contains(`question_div`) && activeElement.classList.contains(`question_div`);
 
     // Если нет, прерываем выполнение функции
     if (!isMoveable)
         return;
+    isAbleToMoveQue = false;
 
     // Находим элемент, перед которым будем вставлять
-    const nextElement = (currentElement === activeElement.nextElementSibling) ?
-      currentElement.nextElementSibling :
-      currentElement;
+    let nextElement;
+    if(currentElement === activeElement.nextElementSibling){
+        nextElement = currentElement.nextElementSibling;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    } else {
+        nextElement = currentElement;
+        currentElement.animate(
+          [
+            // keyframes
+            { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+            { transform: "translateY(" + 0 + "px)" },
+          ],
+          {
+            // timing options
+            duration: 300,
+            iterations: 1,
+          }
+        );
+    }
 
     // Вставляем activeElement перед nextElement
     questions_list.insertBefore(activeElement, nextElement);
+    setTimeout(() => {isAbleToMoveQue = true;}, 400)
 });
 
 // Добавление вопроса
@@ -147,18 +177,48 @@ addBtn.addEventListener("click", function(e) {
     let divDel = document.createElement('div');
     divDel.setAttribute('style', "padding-left: 5px;");
 
+    var isAbleToMoveDivInd = true;
     divIndex.addEventListener(`dragover`, (evt) => {
         evt.preventDefault();
         const activeElement = questions_list.querySelector(`.selected`);
         const currentElement = evt.target;
-        const isMoveable = activeElement !== currentElement &&
+        const isMoveable = activeElement !== currentElement && isAbleToMoveDivInd &&
         currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndex);
         if (!isMoveable)
             return;
-        const nextElement = (currentElement === activeElement.nextElementSibling) ?
-          currentElement.nextElementSibling :
-          currentElement;
+        isAbleToMoveDivInd = false;
+        let nextElement;
+        if(currentElement === activeElement.nextElementSibling){
+            nextElement = currentElement.nextElementSibling;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        } else {
+            nextElement = currentElement;
+            currentElement.animate(
+              [
+                // keyframes
+                { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                { transform: "translateY(" + 0 + "px)" },
+              ],
+              {
+                // timing options
+                duration: 300,
+                iterations: 1,
+              }
+            );
+        }
         divIndex.insertBefore(activeElement, nextElement);
+        setTimeout(() => {isAbleToMoveDivInd = true;}, 400)
     });
     let divAnsCard = document.createElement('div');
     divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
@@ -257,18 +317,48 @@ addBtn.addEventListener("click", function(e) {
             let divDel = document.createElement('div');
             divDel.setAttribute('style', "padding-left: 5px;");
 
+            var isAbleToMoveDivIndNew = true
             divIndexNew.addEventListener(`dragover`, (evt) => {
                 evt.preventDefault();
                 const activeElement = questions_list.querySelector(`.selected`);
                 const currentElement = evt.target;
-                const isMoveable = activeElement !== currentElement &&
+                const isMoveable = activeElement !== currentElement && isAbleToMoveDivIndNew &&
                 currentElement.classList.contains(`answer_div`) && activeElement.classList.contains(`answer_div`) && childOf(activeElement, divIndexNew);
                 if (!isMoveable)
                     return;
-                const nextElement = (currentElement === activeElement.nextElementSibling) ?
-                  currentElement.nextElementSibling :
-                  currentElement;
+                isAbleToMoveDivIndNew = false;
+                let nextElement;
+                if(currentElement === activeElement.nextElementSibling){
+                    nextElement = currentElement.nextElementSibling;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                } else {
+                    nextElement = currentElement;
+                    currentElement.animate(
+                      [
+                        // keyframes
+                        { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
+                        { transform: "translateY(" + 0 + "px)" },
+                      ],
+                      {
+                        // timing options
+                        duration: 300,
+                        iterations: 1,
+                      }
+                    );
+                }
                 divIndexNew.insertBefore(activeElement, nextElement);
+                setTimeout(() => {isAbleToMoveDivIndNew = true;}, 400)
             });
             let divAnsCard = document.createElement('div');
             divAnsCard.setAttribute('style', "height: 30px; justify-content: center; display: flex;");
