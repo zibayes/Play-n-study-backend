@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from logic.facade import LogicFacade
+from access import check_subscriber_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -41,8 +42,9 @@ def handle_rendermd():
     return markdown(request.json['text'])
 
 
-@api_bp.route('/api/set_rating/<int:course_id>', methods=['POST'])
 @login_required
+@api_bp.route('/api/set_rating/<int:course_id>', methods=['POST'])
+@check_subscriber_access(current_user)
 def handle_rate_course(course_id):
     user_id = current_user.get_id()
     reviews = logic.get_reviews_by_course_id(course_id)

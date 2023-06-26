@@ -12,6 +12,7 @@ from data.types import User, Progress, TestContent, Test, Article
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from markdown import markdown
+from access import check_curator_access, check_subscriber_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -27,6 +28,7 @@ courses_bp = Blueprint('courses', __name__)
 
 @login_required
 @courses_bp.route('/course/<int:course_id>')
+@check_subscriber_access(current_user)
 def handle_tests(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
@@ -49,6 +51,7 @@ def handle_tests(course_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/summary')
+@check_subscriber_access(current_user)
 def handle_course_summary(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
@@ -103,6 +106,7 @@ def handle_courses(user_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/test_preview/<int:test_id>')
+@check_subscriber_access(current_user)
 def handle_test_preview(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user_id = current_user.get_id()
@@ -163,6 +167,8 @@ def handle_test_preview(course_id, test_id):
 
 @login_required
 @courses_bp.route('/delete_test/<int:course_id>/<int:test_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_delete_test(course_id, test_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
@@ -191,6 +197,8 @@ def handle_delete_test(course_id, test_id):
 
 @login_required
 @courses_bp.route('/delete_article/<int:course_id>/<int:article_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_delete_article(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
@@ -219,6 +227,8 @@ def handle_delete_article(course_id, article_id):
 
 @login_required
 @courses_bp.route('/delete_unit/<int:course_id>/<int:unit_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_delete_unit(course_id, unit_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
@@ -244,6 +254,8 @@ def handle_delete_unit(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/delete_course/<int:course_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_delete_course(course_id):
     user_id = current_user.get_id()
     course = logic.get_course_without_rel(course_id)
@@ -269,6 +281,8 @@ def handle_delete_course(course_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>', methods=['GET'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_course_editor(course_id):
     course = logic.get_course(course_id, current_user.get_id())
     user_id = current_user.get_id()
@@ -286,6 +300,8 @@ def handle_course_editor(course_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_course_editor_save_unit(course_id):
     unit_name = request.form['newUnitName'].replace("'", '"').replace("`", '"').replace('"', '\"')
     logic.update_course_add_unit(course_id, unit_name)
@@ -294,6 +310,8 @@ def handle_course_editor_save_unit(course_id):
 
 @login_required
 @courses_bp.route('/update_course/<int:course_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_update_course(course_id):
     structure = request.form.to_dict()
     course = logic.get_course(course_id, current_user.get_id())
@@ -323,8 +341,10 @@ def handle_update_course(course_id):
     return redirect(f'/course_editor/{course_id}')
 
 
-@courses_bp.route('/upload_course_ava/<int:course_id>', methods=["POST", "GET"])
 @login_required
+@courses_bp.route('/upload_course_ava/<int:course_id>', methods=["POST", "GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_upload(course_id):
     if request.method == 'POST':
         logic.upload_course_avatar(request.files['file'], current_user, course_id)
@@ -348,6 +368,8 @@ def handle_course_create(user_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
@@ -361,6 +383,8 @@ def handle_test_constructor(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/test_constructor/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
     if response[1] == 'success':
@@ -371,6 +395,8 @@ def handle_result_test(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_editor/<int:article_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
@@ -388,6 +414,8 @@ def handle_article_editor(course_id, article_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_editor/<int:article_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_article_update(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
@@ -407,6 +435,8 @@ def handle_article_update(course_id, article_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_article_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
@@ -420,6 +450,8 @@ def handle_article_constructor(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/article_constructor/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_article_save(course_id, unit_id):
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     article = Article(article_id=None, course_id=course_id, content=article_text)
@@ -432,6 +464,8 @@ def handle_article_save(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/create_task/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_create_task(course_id, unit_id):
     task_type = request.form['TaskType']
     if task_type == 'test':
@@ -442,6 +476,7 @@ def handle_create_task(course_id, unit_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/tests/<int:test_id>', methods=["GET"])
+@check_subscriber_access(current_user)
 def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -461,6 +496,7 @@ def handle_load_test(course_id, test_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["GET"])
+@check_subscriber_access(current_user)
 def handle_load_article(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
@@ -479,6 +515,8 @@ def handle_load_article(course_id, article_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -493,6 +531,8 @@ def handle_edit_test(course_id, test_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_edit/<int:test_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_edit_test_save(course_id, test_id):
     response = logic.edit_test(request.form, test_id, course_id)
     if response[1] == 'success':
@@ -503,6 +543,7 @@ def handle_edit_test_save(course_id, test_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/tests/<int:test_id>', methods=["POST"])
+@check_subscriber_access(current_user)
 def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -566,6 +607,7 @@ def handle_check_test(course_id, test_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["POST"])
+@check_subscriber_access(current_user)
 def handle_check_article(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
@@ -582,6 +624,7 @@ def handle_check_article(course_id, article_id):
 
 @login_required
 @courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["GET"])
+@check_subscriber_access(current_user)
 def handle_show_test_result(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
@@ -637,6 +680,8 @@ def handle_show_test_result(course_id, test_id, progress_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_test_check_preview(course_id, test_id):
     progress = logic.get_progress_by_course_id_all(course_id)
     test = logic.get_test_by_id(test_id)
@@ -673,6 +718,8 @@ def handle_test_check_preview(course_id, test_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>/<int:progress_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_test_check(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
@@ -694,6 +741,8 @@ def handle_test_check(course_id, test_id, progress_id):
 
 @login_required
 @courses_bp.route('/course_editor/<int:course_id>/tests_check/<int:test_id>/<int:progress_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_test_check_over(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
@@ -735,8 +784,8 @@ def handle_test_check_over(course_id, test_id, progress_id):
     #                       total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 
 
-@courses_bp.route('/course_preview/<int:course_id>')
 @login_required
+@courses_bp.route('/course_preview/<int:course_id>')
 def handle_course(course_id):
     user_id = current_user.get_id()
     course = logic.course_get_for_preview(course_id, user_id)
@@ -765,8 +814,9 @@ def handle_course(course_id):
                            user_review=user_review, average_rate=round(average_rate, 1), is_curator=is_curator)
 
 
-@courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
 @login_required
+@courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
+@check_subscriber_access(current_user)
 def handle_rate_course(course_id):
     user_id = current_user.get_id()
     reviews = logic.get_reviews_by_course_id(course_id)
@@ -781,8 +831,8 @@ def handle_rate_course(course_id):
     return flash('Ошибка при отправке отзыва', 'error')
 
 
-@courses_bp.route('/course_preview/<int:course_id>/reviews')
 @login_required
+@courses_bp.route('/course_preview/<int:course_id>/reviews')
 def handle_reviews(course_id):
     reviews = logic.get_reviews_by_course_id(course_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -817,15 +867,19 @@ def handle_participants(course_id):
     return render_template('participants.html', course=course, participants=participants, is_curator=is_curator)
 
 
-@courses_bp.route('/course_participants/<int:course_id>/add_curator/<int:user_id>')
 @login_required
+@courses_bp.route('/course_participants/<int:course_id>/add_curator/<int:user_id>')
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_add_curator(course_id, user_id):
     logic.curator_add(user_id, course_id)
     return redirect(f'/course_participants/{course_id}')
 
 
-@courses_bp.route('/course_participants/<int:course_id>/remove_curator/<int:user_id>')
 @login_required
+@courses_bp.route('/course_participants/<int:course_id>/remove_curator/<int:user_id>')
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
 def handle_remove_curator(course_id, user_id):
     logic.curator_remove(user_id, course_id)
     return redirect(f'/course_participants/{course_id}')

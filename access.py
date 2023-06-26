@@ -2,7 +2,9 @@ import flask_login
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.repositories import RoleRepository
+from data.repositories import RoleRepository, CuratorRepository, CourseRepository
+from logic.facade import LogicFacade
+
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -11,7 +13,10 @@ engine = create_engine(
 Session = sessionmaker(bind=engine)
 session = Session()
 
+logic = LogicFacade(session)
 role_repository = RoleRepository(session)
+curator_repository = CuratorRepository(session)
+course_repository = CourseRepository(session)
 
 
 admin_permissions = [
@@ -47,6 +52,41 @@ def check_access(current_user, request):
 
             if command in allowed:
                 return func(*args, **kwargs)
+
+            return seal()
+
+        wrapper.__name__ = func.__name__
+        return wrapper
+    return decorator
+
+
+def check_curator_access(current_user):
+    def decorator(func):
+        def wrapper(course_id, *args, **kwargs):
+            user_id = current_user.get_id()
+
+            is_curator = curator_repository.is_user_curator_of_course(user_id, course_id)
+
+            if is_curator:
+                return func(course_id, *args, **kwargs)
+
+            return seal()
+
+        wrapper.__name__ = func.__name__
+        return wrapper
+    return decorator
+
+
+def check_subscriber_access(current_user):
+    def decorator(func):
+        def wrapper(course_id, *args, **kwargs):
+            user_id = current_user.get_id()
+
+            course = logic.course_get_for_preview(course_id, user_id)
+            is_subscriber = not course.can_subscribe
+
+            if is_subscriber:
+                return func(course_id, *args, **kwargs)
 
             return seal()
 

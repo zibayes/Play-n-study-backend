@@ -29,12 +29,12 @@ for(i = 1; i <= questions_count; i++){
     questionsTypes.push(document.getElementById("QT-" + i))
     questionsTypes[i-1].addEventListener("change", function() {
     let selectedOption = questionsTypes[parseInt(this.id.slice(3))-1].options[questionsTypes[parseInt(this.id.slice(3))-1].selectedIndex];
-        let textareaQuestion = document.getElementById("ask-" + (parseInt(this.name)))
+        let textareaQuestion = document.getElementById("ask-" + (parseInt(this.name.slice(13))))
         if(selectedOption.text === "Единственный ответ" ||  selectedOption.text === "Множественный ответ") {
             textareaQuestion.setAttribute('rows', "1");
             let divIndexNew = document.createElement('div');
             divIndexNew.setAttribute('class', "row container-fluid");
-            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
+            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name.slice(13)));
             let divTextLabel = document.createElement('div');
             divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
             divTextLabel.setAttribute('id', "delAns-" + answerIndex);
@@ -52,11 +52,11 @@ for(i = 1; i <= questions_count; i++){
             //input.setAttribute('required', 'true');
             if (selectedOption.text === "Единственный ответ") {
                 input.setAttribute('type', "radio");
-                input.setAttribute('name', "Right_Answer-" + parseInt(this.name));
+                input.setAttribute('name', "Right_Answer-" + parseInt(this.name.slice(13)));
             }
             if (selectedOption.text === "Множественный ответ") {
                 input.setAttribute('type', "checkbox");
-                input.setAttribute('name', "Right_Answer-" + parseInt(this.name) + "-" + answerIndex);
+                input.setAttribute('name', "Right_Answer-" + parseInt(this.name.slice(13)) + "-" + answerIndex);
             }
             let buttonDel = document.createElement('button');
             buttonDel.setAttribute('class', "btn");
@@ -144,16 +144,16 @@ for(i = 1; i <= questions_count; i++){
             divTextLabel.appendChild(divDel)
             divTextLabel.appendChild(divAnsCard)
             divAnsCard.appendChild(dragAnsImg)
-            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name.slice(13)))
             divIndexTmp.replaceWith(divIndexNew);
-            let buttonNew = document.getElementById(parseInt(this.name))
+            let buttonNew = document.getElementById(parseInt(this.name.slice(13)))
             buttonNew.removeAttribute("disabled");
         }
         if(selectedOption.text === "Свободный ответ" || selectedOption.text === "Краткий свободный ответ") {
             textareaQuestion.setAttribute('rows', "1");
             let divIndexNew = document.createElement('div');
             divIndexNew.setAttribute('class', "row container-fluid");
-            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
+            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name.slice(13)));
             let divTextLabel = document.createElement('div');
             divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
             divTextLabel.setAttribute('id', "delAns-" + answerIndex);
@@ -174,9 +174,9 @@ for(i = 1; i <= questions_count; i++){
             }
             divIndexNew.appendChild(divTextLabel)
             divTextLabel.appendChild(textareaAnswer)
-            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name.slice(13)))
             divIndexTmp.replaceWith(divIndexNew);
-            let buttonNew = document.getElementById(parseInt(this.name))
+            let buttonNew = document.getElementById(parseInt(this.name.slice(13)))
             buttonNew.setAttribute("disabled", "true");
         }
         if(selectedOption.text === "Информационный блок"){
@@ -184,10 +184,10 @@ for(i = 1; i <= questions_count; i++){
             textareaQuestion.setAttribute('rows', "8");
             let divIndexNew = document.createElement('div');
             divIndexNew.setAttribute('class', "row container-fluid");
-            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name));
-            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name))
+            divIndexNew.setAttribute('id', "addAns-" + parseInt(this.name.slice(13)));
+            let divIndexTmp = document.getElementById("addAns-" + parseInt(this.name.slice(13)))
             divIndexTmp.replaceWith(divIndexNew);
-            let buttonNew = document.getElementById(parseInt(this.name))
+            let buttonNew = document.getElementById(parseInt(this.name.slice(13)))
             buttonNew.setAttribute("disabled", "true");
         } else {
             textareaQuestion.setAttribute('placeholder', "Текст вопроса");
@@ -217,7 +217,7 @@ for(i = 1; i <= questions_count; i++){
               ],
               {
                 // timing options
-                duration: 300,
+                duration: 200,
                 iterations: 1,
               }
             );
@@ -247,7 +247,7 @@ document.querySelectorAll(".dnd").forEach(elem =>{
     elem.addEventListener(`mouseout`, (evt) => {
       document.body.style.cursor = '';
     })
-    let divTextLabel = document.getElementById("ans-" + elem.id);
+    let divTextLabel = document.getElementById("Answer-" + elem.id);
     elem.addEventListener(`dragstart`, (evt) => {
       evt.dataTransfer.setDragImage(divTextLabel, divTextLabel.offsetWidth / 1.032, divTextLabel.offsetHeight / 2)
       setTimeout(() => {
@@ -311,7 +311,7 @@ questions_list.addEventListener(`dragover`, (evt) => {
 
 // Добавление вопроса
 let addBtn = document.getElementById("addQuestion");
-var questionIndex = 0;
+var questionIndex = questions_count;
 var answerIndex = 0;
 addBtn.addEventListener("click", function(e) {
     // Внешний div
