@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from data.repositories import RoleRepository, CuratorRepository, CourseRepository
 from logic.facade import LogicFacade
 
-
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
     echo=False
@@ -17,7 +16,6 @@ logic = LogicFacade(session)
 role_repository = RoleRepository(session)
 curator_repository = CuratorRepository(session)
 course_repository = CourseRepository(session)
-
 
 admin_permissions = [
     'admin.handle_admin_add_curator',
@@ -57,7 +55,12 @@ def check_access(current_user, request):
 
         wrapper.__name__ = func.__name__
         return wrapper
+
     return decorator
+
+
+def seal():
+    return "Не разрешено"
 
 
 def check_curator_access(current_user):
@@ -70,10 +73,13 @@ def check_curator_access(current_user):
             if is_curator:
                 return func(course_id, *args, **kwargs)
 
-            return seal()
+            course_name = logic.get_course_without_rel(course_id).name
+            return "Вы не являетесь куратором курса \"" + course_name + "\", " \
+                                                                        "поэтому у вас нет доступа к данной странице"
 
         wrapper.__name__ = func.__name__
         return wrapper
+
     return decorator
 
 
@@ -88,12 +94,11 @@ def check_subscriber_access(current_user):
             if is_subscriber:
                 return func(course_id, *args, **kwargs)
 
-            return seal()
+            course_name = logic.get_course_without_rel(course_id).name
+            return "Вы не являетесь участником курса \"" + course_name + "\", " \
+                                                                         "поэтому у вас нет доступа к данной странице"
 
         wrapper.__name__ = func.__name__
         return wrapper
+
     return decorator
-
-
-def seal():
-    return "Не разрешено"

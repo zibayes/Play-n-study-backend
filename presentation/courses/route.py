@@ -836,7 +836,7 @@ def handle_rate_course(course_id):
 def handle_reviews(course_id):
     reviews = logic.get_reviews_by_course_id(course_id)
     user = logic.get_user_by_id(current_user.get_id())
-    course = logic.get_course(course_id, user.user_id)
+    course = logic.get_course_without_rel(course_id)
     users_for_review = {}
     if reviews:
         for review in reviews:
@@ -848,7 +848,7 @@ def handle_reviews(course_id):
 @login_required
 def handle_participants(course_id):
     user = logic.get_user_by_id(current_user.get_id())
-    course = logic.get_course(course_id, user.user_id)
+    course = logic.get_course_without_rel(course_id)
     participants = []
     rels = logic.get_course_rels_all(course_id)
     for rel in rels:
