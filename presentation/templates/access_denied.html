@@ -1,0 +1,34 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Доступ запрещён</title>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="container m-5" style="background-color: white">
+    <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Курс «{{course.name}}»</span>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb" style="margin-left: 15px;">
+        <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
+        <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Доступ запрещён</li>
+      </ol>
+    </nav>
+    <div class="row border" style="margin-bottom: 20px;"></div>
+    <div align="center" style="padding: 10px;">
+      <img src="/static/img/warning.png" alt="warning" style="height: 140px;">
+    </div>
+    <div align="center" style="padding: 25px;">
+      <strong style="font-size: 20px; ">{{ access_denied }}</strong>
+    </div>
+    {% if need_subscription %}
+      <div align="center" style="padding: 25px;">
+        <a href="/course_preview/{{ course.course_id }}">
+          Но вы можете получить доступ к материалам данного курса, подписавшись на него
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

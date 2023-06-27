@@ -1,6 +1,7 @@
 import flask_login
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from flask import redirect, render_template
 
 from data.repositories import RoleRepository, CuratorRepository, CourseRepository
 from logic.facade import LogicFacade
@@ -73,9 +74,11 @@ def check_curator_access(current_user):
             if is_curator:
                 return func(course_id, *args, **kwargs)
 
-            course_name = logic.get_course_without_rel(course_id).name
-            return "Вы не являетесь куратором курса \"" + course_name + "\", " \
-                                                                        "поэтому у вас нет доступа к данной странице"
+            course = logic.get_course_without_rel(course_id)
+            access_denied = "Вы не являетесь куратором " \
+                            "курса «" + course.name + "», поэтому у вас нет доступа к данной странице"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False)
 
         wrapper.__name__ = func.__name__
         return wrapper
@@ -94,9 +97,11 @@ def check_subscriber_access(current_user):
             if is_subscriber:
                 return func(course_id, *args, **kwargs)
 
-            course_name = logic.get_course_without_rel(course_id).name
-            return "Вы не являетесь участником курса \"" + course_name + "\", " \
-                                                                         "поэтому у вас нет доступа к данной странице"
+            course = logic.get_course_without_rel(course_id)
+            access_denied = "Вы не являетесь участником " \
+                            "курса «" + course.name + "», поэтому у вас нет доступа к данной странице"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=True)
 
         wrapper.__name__ = func.__name__
         return wrapper
