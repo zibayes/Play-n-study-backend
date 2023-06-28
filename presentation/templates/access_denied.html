@@ -12,12 +12,19 @@
       <ol class="breadcrumb" style="margin-left: 15px;">
         <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
         <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+        {% if not_enough %}
+          <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
+        {% endif %}
         <li class="breadcrumb-item active" aria-current="page">Доступ запрещён</li>
       </ol>
     </nav>
     <div class="row border" style="margin-bottom: 20px;"></div>
     <div align="center" style="padding: 10px;">
-      <img src="/static/img/warning.png" alt="warning" style="height: 140px;">
+      {% if not_enough %}
+        <img src="/static/img/not_enough_progress.png" alt="not_enough_progress" style="height: 140px;">
+      {% else %}
+        <img src="/static/img/warning.png" alt="warning" style="height: 140px;">
+      {% endif %}
     </div>
     <div align="center" style="padding: 25px;">
       <strong style="font-size: 20px; ">{{ access_denied }}</strong>

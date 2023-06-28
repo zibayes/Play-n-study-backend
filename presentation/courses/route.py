@@ -12,7 +12,7 @@ from data.types import User, Progress, TestContent, Test, Article
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from markdown import markdown
-from access import check_curator_access, check_subscriber_access
+from access import check_curator_access, check_subscriber_access, check_test_access, check_article_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -107,6 +107,7 @@ def handle_courses(user_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/test_preview/<int:test_id>')
 @check_subscriber_access(current_user)
+@check_test_access(current_user)
 def handle_test_preview(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user_id = current_user.get_id()
@@ -477,6 +478,7 @@ def handle_create_task(course_id, unit_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/tests/<int:test_id>', methods=["GET"])
 @check_subscriber_access(current_user)
+@check_test_access(current_user)
 def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -497,6 +499,7 @@ def handle_load_test(course_id, test_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["GET"])
 @check_subscriber_access(current_user)
+@check_article_access(current_user)
 def handle_load_article(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
@@ -544,6 +547,7 @@ def handle_edit_test_save(course_id, test_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/tests/<int:test_id>', methods=["POST"])
 @check_subscriber_access(current_user)
+@check_test_access(current_user)
 def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
@@ -608,6 +612,7 @@ def handle_check_test(course_id, test_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/article/<int:article_id>', methods=["POST"])
 @check_subscriber_access(current_user)
+@check_article_access(current_user)
 def handle_check_article(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
@@ -625,6 +630,7 @@ def handle_check_article(course_id, article_id):
 @login_required
 @courses_bp.route('/course/<int:course_id>/test_result/<int:test_id>/<int:progress_id>', methods=["GET"])
 @check_subscriber_access(current_user)
+@check_test_access(current_user)
 def handle_show_test_result(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
