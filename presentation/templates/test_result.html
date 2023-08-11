@@ -13,12 +13,12 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}">Тест «{{ test.name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Просмотр попытки</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}"><text class="lang" key="test">Тест</text> «{{ test.name }}»</a></li>
+            <li class="breadcrumb-item active lang" aria-current="page" key="try_showing">Просмотр попытки</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -46,14 +46,14 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     {% if question.type == "info" %}
-                                        <p>Информация</p>
+                                        <p class="lang" key="information">Информация</p>
                                     {% else %}
-                                        <p>Вопрос №{{ questionNum.value }}</p>
-                                        <p>Баллы:
+                                        <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
+                                        <p><text class="lang" key="score">Баллы:</text>
                                             {% if question.current_score %}
                                                 {{ question.current_score }}
                                             {% else %}
-                                                <br>Не оценено
+                                                <br><text class="lang" key="not_marked">Не оценено</text>
                                             {% endif %}
                                             / {{ question.score }}</p>
                                     {% endif %}
@@ -133,7 +133,7 @@
                         <div style="display: flex; padding-bottom: 20px; padding-left: 148px;">
                             <div class="{{questionNum.value}} card" style="background:#c5bef7; flex: 1; padding-left: 12px; padding-top:12px;">
                                 <p>
-                                    <strong>{{ percents_for_tasks[question.ask] }}%</strong> пользователей дали такой же ответ на данное задание
+                                    <strong>{{ percents_for_tasks[question.ask] }}%</strong> <text class="lang" key="the_same_answer">пользователей дали такой же ответ на данное задание</text>
                                 </p>
                             </div>
                         </div>
@@ -142,7 +142,7 @@
                         <div style="display: flex; padding-bottom: 20px; padding-left: 148px;">
                             <div class="{{questionNum.value}} card" style="background:#FFEFAB; flex: 1; padding: 12px; display: inline;">
                                 <p>
-                                    <strong style="font-size: 12px; padding: 5px;">Комментарий куратора:</strong> <br> {{question.comment}}
+                                    <strong style="font-size: 12px; padding: 5px;" class="lang" key="curator_comment">Комментарий куратора:</strong> <br> {{question.comment}}
                                 </p>
                             </div>
                         </div>
@@ -150,7 +150,7 @@
                 {% endfor %}
             </div>
             <div style="padding-bottom: 10px; display: flex;">
-                <div id="result_text">Ваш результат: {{ total_score }} / {{ score }} ({{ result }}%); Прошло времени: </div>
+                <div id="result_text"><text class="lang" key="your_result">Ваш результат:</text> {{ total_score }} / {{ score }} ({{ result }}%); <text class="lang" key="your_time_spent">Прошло времени </text><text id="result_time"></text></div>
                 <script>
                     let result_color = "";
                     let result = parseFloat({{result}});
@@ -168,7 +168,7 @@
                         result_time = "(мин): " + (Math.round(result_time / 6) / 10);
                     else
                         result_time = "(час): " + (Math.round(result_time / 360) / 10);
-                    document.getElementById("result_text").textContent += result_time;
+                    document.getElementById("result_time").textContent += result_time;
                 </script>
             </div>
         </form>

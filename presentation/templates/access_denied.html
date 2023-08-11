@@ -7,15 +7,19 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="container m-5" style="background-color: white">
-    <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Курс «{{course.name}}»</span>
+    <span class="fs-5 row m-3 justify-content-start">
+      <div>
+        <text class="lang" key="course">Курс</text> «{{course.name}}»
+      </div>
+    </span>
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb" style="margin-left: 15px;">
-        <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-        <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
+        <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
         {% if not_enough %}
-          <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
+          <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
         {% endif %}
-        <li class="breadcrumb-item active" aria-current="page">Доступ запрещён</li>
+        <li class="breadcrumb-item active lang" key="access_denied" aria-current="page">Доступ запрещён</li>
       </ol>
     </nav>
     <div class="row border" style="margin-bottom: 20px;"></div>
@@ -31,7 +35,7 @@
     </div>
     {% if need_subscription %}
       <div align="center" style="padding: 25px;">
-        <a href="/course_preview/{{ course.course_id }}">
+        <a href="/course_preview/{{ course.course_id }}" class="lang" key="but_you_can_subscribe">
           Но вы можете получить доступ к материалам данного курса, подписавшись на него
         </a>
       </div>

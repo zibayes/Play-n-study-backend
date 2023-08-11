@@ -7,13 +7,15 @@
 {% block content %}
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;">
-        <span class="fs-5 row m-3 justify-content-start lang">
-            Курс «{{ course.name }}»
+        <span class="fs-5 row m-3 justify-content-start">
+            <div>
+                <a style="color: black" class="lang" key="course">Курс</a> <a>«{{ course.name }}»</a>
+            </div>
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Курс «{{ course.name }}»</li>
+            <li class="breadcrumb-item" ><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item active lang" aria-current="page"><text class="lang" key="course">Курс</text> <a>«{{ course.name }}»</a></li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -32,11 +34,11 @@
                                     </div>
                                     {% if average_rate > 0 %}
                                         <div class="ms-4" style="padding-left: 80px;">
-                                            Рейтинг курса: {{average_rate}} <i class="fa-star star fas rate-active"></i>
+                                            <text class="lang" key="course_rating">Рейтинг курса:</text> {{average_rate}} <i class="fa-star star fas rate-active"></i>
                                         </div>
                                     {% else %}
                                         <div class="ms-4" style="padding-left: 80px;">
-                                            Данный курс пока не оценили, будьте первым! <i class="far fa-star star"></i>
+                                            <text class="lang" key="rate_first">Данный курс пока не оценили, будьте первым!</text> <i class="far fa-star star"></i>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -44,18 +46,18 @@
                                     {% if course.can_subscribe %}
                                             <form action="/api/joincourse/{{ course.course_id }}">
                                                 <div id="div_element_button">
-                                                    <button type="submit" class="btn btn-outline-dark btn-rounded lang" id="subscribe-button">Подписаться</button>
+                                                    <button type="submit" class="btn btn-outline-dark btn-rounded lang" key="subscribe" id="subscribe-button">Подписаться</button>
                                                 </div>
                                             </form>
                                     {% elif not course.can_subscribe %}
                                             <form action="/course/{{course.course_id}}">
                                                 <div id="div_element_button" style="margin-right: 8px;">
-                                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Перейти на курс</button>
+                                                    <button class="btn btn-outline-dark btn-rounded lang" key="go_to_course" id="subscribe-button" style="display: inline-block;">Перейти на курс</button>
                                                 </div>
                                             </form>
                                             <form action="/api/leavecourse/{{course.course_id}}">
                                                 <div id="div_element_button">
-                                                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block;">Отписаться</button>
+                                                    <button class="btn btn-outline-dark btn-rounded lang" key="unsubscribe" id="subscribe-button" style="display: inline-block;">Отписаться</button>
                                                 </div>
                                             </form>
                                     {% endif %}
@@ -65,18 +67,18 @@
                                 {% if is_curator %}
                                     <form action="/course_editor/{{course.course_id}}">
                                         <div id="div_element_button" style="margin-right: 8px;">
-                                            <button class="btn btn-outline-dark btn-rounded lang" id="edit-button" style="display: inline-block;">Редактировать курс</button>
+                                            <button class="btn btn-outline-dark btn-rounded lang" key="edit_course" id="edit-button" style="display: inline-block;">Редактировать курс</button>
                                         </div>
                                     </form>
                                     <form action="/delete_course/{{course.course_id}}" method="POST">
                                         <div id="div_element_button" style="margin-right: 8px;">
-                                            <button class="btn btn-outline-dark btn-rounded lang" id="delete-button" style="display: inline-block;" type="button" data-mdb-target="#delete_course" data-mdb-toggle="modal">Удалить курс</button>
+                                            <button class="btn btn-outline-dark btn-rounded lang" key="delete_course" id="delete-button" style="display: inline-block;" type="button" data-mdb-target="#delete_course" data-mdb-toggle="modal">Удалить курс</button>
                                         </div>
                                     </form>
                                 {% endif %}
                                 <form action="/course_participants/{{course.course_id}}" method="GET">
                                     <div id="div_element_button" style="margin-right: 8px;">
-                                        <button class="btn btn-outline-dark btn-rounded lang" id="show-button" style="display: inline-block;">Участники курса</button>
+                                        <button class="btn btn-outline-dark btn-rounded lang" key="course_participants" id="show-button" style="display: inline-block;">Участники курса</button>
                                     </div>
                                 </form>
                             </div>
@@ -90,7 +92,7 @@
                 <div class="col mb-8">
                     <div class="container">
                         <div class="">
-                            <span class="row m-3 justify-content-start lang">
+                            <span class="row m-3 justify-content-start lang" key="desc">
                                 Описание
                             </span>
                             <div class="row border mb-4"></div>
@@ -106,9 +108,9 @@
             <form>
                 <div class="" style="text-align: center; padding-bottom: 25px;">
                     {% if user_review.rate %}
-                        <p id="feedback">Спасибо за отзыв!</p>
+                        <p id="feedback" class="lang" key="thanks_for_your_feedback">Спасибо за отзыв!</p>
                     {% else %}
-                        <p id="feedback">Как вам данный курс? <br> Оставьте свой отзыв:</p>
+                        <p id="feedback"><text class="lang" key="how_do_you_like_this_course">Как вам данный курс?</text> <br> <text class="lang" key="give_us_feedback">Оставьте свой отзыв:</text></p>
                     {% endif %}
                     <div class="stars">
                         <label class="rate" id="star11">
@@ -190,7 +192,7 @@
                 </div>
             </form>
         <form hidden="hidden" id="feedback-comment" action="/course_preview/{{course.course_id}}/rate_course_with_comment" method="POST" style="text-align: center; padding-bottom: 25px;">
-            <p id="feedback">А как насчёт комментария?</p>
+            <p id="feedback" class="lang" key="what_about_comment">А как насчёт комментария?</p>
             <div class="container" align="center">
             <div class="row text-muted align-items-center" style="width: 500px;">
               <div class="col-md-10" style="padding: 0 0 0 0">
@@ -204,7 +206,7 @@
         </form>
         {% endif %}
         {% if reviews %}
-            <span class="row m-3 justify-content-start lang">
+            <span class="row m-3 justify-content-start lang" key="course_participants_feedback">
                 Отзывы участников курса
             </span>
             <div class="container">
@@ -230,7 +232,7 @@
                                             {% if review.text %}
                                                 <p class="text-muted mb-0">{{ review.text }}</p>
                                             {% else %}
-                                                <p class="text-muted mb-0"><i>--- Отзыв без комментария ---</i></p>
+                                                <p class="text-muted mb-0"><i class="lang" key="feedback_without_comment">--- Отзыв без комментария ---</i></p>
                                             {% endif %}
                                         </div>
                                         <div style="float:right; position: absolute; right: 5px; font-size: 24px;">
@@ -280,7 +282,7 @@
                 </div>
             </div>
             <form action="/course_preview/{{course.course_id}}/reviews" style="padding-bottom: 20px; text-align: center;">
-                <button class="btn btn-primary ">Посмотреть все отзывы о курсе</button>
+                <button class="btn btn-primary lang" key="show_all_feedback">Посмотреть все отзывы о курсе</button>
             </form>
         {% endif %}
     </div>
@@ -300,13 +302,13 @@
       <div class="modal-dialog modal-side">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления курса</h5>
+            <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_course">Подтверждение удаления курса</h5>
             <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body lang" key="areusure">Вы точно хотите удалить курс «{{ course.name }}»?</div>
+          <div class="modal-body lang"><text class="lang" key="are_u_sure_delete_course">Вы точно хотите удалить курс</text> «{{ course.name }}»?</div>
           <div class="modal-footer">
             <form action="/delete_course/{{course.course_id}}" method="POST">
-                <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+                <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px" href="/logout">Удалить</button>
             </form>
           </div>
         </div>

@@ -13,12 +13,12 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}">Тест «{{ test.name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Прохождение теста</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}"><text class="lang" key="test">Тест</text> «{{ test.name }}»</a></li>
+            <li class="breadcrumb-item active lang" key="unit" aria-current="page">Прохождение теста</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -39,10 +39,10 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     {% if question.type == "info" %}
-                                        <p>Информация</p>
+                                        <p class="lang" key="information">Информация</p>
                                     {% else %}
-                                        <p>Вопрос №{{ questionNum.value }}</p>
-                                        <p>Баллы: {{ question.score }}</p>
+                                        <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
+                                        <p><text class="lang" key="score">Баллы:</text> {{ question.score }}</p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
             </div>
             <input type="hidden" name="time" value="{{ time }}">
             <div style="padding-bottom: 10px; display: flex;">
-                <button class="btn btn-primary"
+                <button class="btn btn-primary lang" key="complete_test"
                         id="endTest" style=
                         "background-color:green;" type="submit">
                         Завершить тест

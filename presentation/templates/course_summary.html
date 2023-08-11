@@ -12,19 +12,19 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Сводка о курсе</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses"">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item active lang" key="course_summary" aria-current="page">Сводка о курсе</li>
           </ol>
         </nav>
         <div class="row border"></div>
             <table class="table">
                 <tbody>
-                    <tr><th>Элемент курса</th><th>Тип</th><th>Статус</th><th>Оценка</th></tr>
+                    <tr><th class="lang" key="course_unit">Элемент курса</th><th class="lang" key="tesk_type">Тип</th><th class="lang" key="status">Статус</th><th class="lang" key="mark">Оценка</th></tr>
                     {% set notAllowed = namespace(value=0) %}
                     {% for unit in course.content.body %}
-                        <td colspan="4" align="center"><strong>Раздел «{{ unit.name }}»</strong></td>
+                        <td colspan="4" align="center"><strong><text class="lang" key="unit">Раздел</text> «{{ unit.name }}»</strong></td>
                         {% for unit_test in unit.tests %}
                             {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                 {%  if notAllowed.value > 0 %}
@@ -50,18 +50,18 @@
                                 </td>
                                 <td>
                                     {% if unit_test.unit_type == "test" %}
-                                    Тест
+                                    <text class="lang" key="test">Тест</text>
                                     {% else %}
-                                    Статья
+                                    <text class="lang" key="article">Статья</text>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
-                                        Завершено
+                                        <text class="lang" key="done">Завершено</text>
                                     {% elif results[unit_test.test.test_id|string + unit_test.unit_type] == False %}
-                                        На проверке
+                                        <text class="lang" key="checking">На проверке</text>
                                     {% else %}
-                                        Не выполнено
+                                        <text class="lang" key="not_done">Не выполнено</text>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -74,9 +74,9 @@
                             </tr>
                         {% endfor %}
                     {% endfor %}
-                    <tr>
+                    <tr style="background: #80008040">
                         <td colspan="3">
-                            <strong>Итог</strong>
+                            <strong class="lang" key="result">Итог</strong>
                         </td>
                         <td colspan="3">
                             <strong>{{ total }} / {{ total_max }}</strong>

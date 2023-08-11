@@ -107,7 +107,7 @@
         </ul>
       </div>
       <div style="padding: 10px">
-        <a class="nav-link lang" href="#" key="support" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="fas fa-paper-plane"></i></a>
+        <a class="nav-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i class="fas fa-paper-plane"></i></a>
       </div>
 
       <!-- Avatar -->
@@ -120,16 +120,16 @@
             <a class="dropdown-item lang" href="/tasks" key="mainpage">Главная</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="/profiles/{{current_user.get_id()}}" key="profile">Мой профиль</a>
+            <a class="dropdown-item lang" href="/profiles/{{current_user.get_id()}}" key="my_profile">Мой профиль</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="/subscriptions/{{current_user.get_id()}}" key="friend">Мои подписки</a>
+            <a class="dropdown-item lang" href="/subscriptions/{{current_user.get_id()}}" key="my_friends">Мои подписки</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="/courses/{{current_user.get_id()}}" key="subscriptions">Мои курсы</a>
+            <a class="dropdown-item lang" href="/courses/{{current_user.get_id()}}" key="my_subscriptions">Мои курсы</a>
           </li>
           <li>
-            <a class="dropdown-item lang" href="/achievements/{{current_user.get_id()}}" key="achievements">Мои награды</a>
+            <a class="dropdown-item lang" href="/achievements/{{current_user.get_id()}}" key="my_achievements">Мои награды</a>
           </li>
           <li>
             <a class="dropdown-item lang" href="/settings" key="settings">Настройки</a>
@@ -167,7 +167,7 @@
 
 <div style="background: gainsboro; width: 450px" class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" >
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Ваши диалоги</h5>
+    <h5 class="offcanvas-title lang" key="your_chats" id="offcanvasWithBothOptionsLabel">Ваши диалоги</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <hr style="color: black; margin: 0 0 0 0">

@@ -8,16 +8,16 @@
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
         <form action="/course_editor/{{course_id}}/article_editor/{{article.article_id}}" method="POST">
-            <span class="fs-5 row m-3 justify-content-start lang">
+            <span class="fs-5 row m-3 justify-content-start lang" key="article_edit">
                 Составление статьи
             </span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
-                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
-                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Составление статьи «{{ article_name }}»</li>
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="article_edit_of">Составление статьи</text> «{{ article_name }}»</li>
               </ol>
             </nav>
             <div class="row border"></div>
@@ -27,14 +27,14 @@
                     <div class="col-md-12 col-lg-6">
                         <div class="card">
                             <div class="card-body">
-                                <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                                <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="enter_article">
                                     Ввод статьи (в Markdown)
                                 </span>
                                 <div class="row border"></div>
                                 <br>
                                 <div class="form-outline">
                                     <textarea class="form-control" maxlength="15000" id="textAreaExample" name="Article" rows="6"></textarea>
-                                    <label class="form-label" for="textAreaExample">Текст статьи</label>
+                                    <label class="form-label lang" key="article_text" for="textAreaExample">Текст статьи</label>
                                 </div>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                     <div class="col-md-12 col-lg-6">
                         <div class="card">
                             <div class="card-body">
-                                <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                                <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="article_preview">
                                     Превью вашей статьи
                                 </span>
                                 <div class="row border"></div>
@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-primary" type="submit"
+            <button class="btn btn-primary lang" key="save_article" type="submit"
                             id="saveTest" style=
                             "background-color:yellowgreen; margin: 10px;">
                             Сохранить статью

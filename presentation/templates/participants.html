@@ -7,12 +7,16 @@
 {% block content %}
 <div class="d-flex justify-content-center">
   <div class="container m-5" style="background-color: white">
-    <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Участники курса «{{course.name}}»</span>
+    <span class="fs-5 row m-3 justify-content-start">
+        <div>
+            <text class="lang" key="course_participants_of">Участники курса</text> «{{course.name}}»
+        </div>
+    </span>
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb" style="margin-left: 15px;">
-        <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-        <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Участники курса</li>
+        <li class="breadcrumb-item" ><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+        <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+        <li class="breadcrumb-item active lang"key="course_participants" aria-current="page">Участники курса</li>
       </ol>
     </nav>
     <div class="row border" style="margin-bottom: 20px;"></div>
@@ -29,22 +33,22 @@
                 <img src="/userava/{{participant.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
             </a>
             <div class="ms-4">
-                <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang">{{ participant.username }}</a>
+                <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1">{{ participant.username }}</a>
                 <br>
                 {% if participant.is_curator %}
-                    <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang" style="color:purple">КУРАТОР</a>
+                    <a href="/profiles/{{ participant.user_id }}" class="fw-bold mb-1 lang" key="curator" style="color:purple">КУРАТОР</a>
                 {% endif %}
             </div>
             {% if is_curator and not participant.is_curator %}
                 <form action="/course_participants/{{ course.course_id }}/add_curator/{{ participant.user_id }}" style="margin-right: -170px; margin-left: auto;">
                     <div id="div_element_button">
-                        <button class="btn btn-outline-dark btn-rounded lang" id="add-admin-button" style="display: inline-block;">Выдать полномочия куратора</button>
+                        <button class="btn btn-outline-dark btn-rounded lang" key="give_curator" id="add-admin-button" style="display: inline-block;">Выдать полномочия куратора</button>
                     </div>
                 </form>
             {% elif is_curator and participant.is_curator %}
                 <form action="/course_participants/{{ course.course_id }}/remove_curator/{{ participant.user_id }}" style="margin-right: -170px; margin-left: auto;">
                     <div id="div_element_button">
-                        <button class="btn btn-outline-dark btn-rounded lang" id="remove-admin-button" style="display: inline-block;">Низложить полномочия куратора</button>
+                        <button class="btn btn-outline-dark btn-rounded lang" key="remove_curator" id="remove-admin-button" style="display: inline-block;">Низложить полномочия куратора</button>
                     </div>
                 </form>
             {% endif %}

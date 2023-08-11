@@ -6,7 +6,7 @@
 {% block content %}
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;">
-        <span class="fs-5 row m-3 justify-content-start lang">
+        <span class="fs-5 row m-3 justify-content-start lang" key="my_subscriptions">
             Мои курсы
         </span>
         <div class="row border"></div>
@@ -31,7 +31,7 @@
             </div>
 
             {% if found %}
-                <p class="mt-2">Найдено по запросу:</p>
+                <p class="mt-2 lang" key="founded_by_request">Найдено по запросу:</p>
                             <hr>
                 {% for course in found %}
                     <div class="card">
@@ -51,7 +51,7 @@
             {% endif %}
                     <hr>
             {% if user.courses and not found %}
-                <p class="mt-2">Пользовательские курсы</p>
+                <p class="mt-2 lang" key="users_courses">Пользовательские курсы</p>
                 {% for course in user.courses %}
                      <div class="card">
                         <div class="card-body">
@@ -72,7 +72,7 @@
     </div>
         <!--<form action="/course_constructor">-->
             <div id="div_element_button" style="margin-right: 8px;">
-                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#addCourse" data-mdb-toggle="modal">Создать курс</button>
+                <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#addCourse" data-mdb-toggle="modal" key="create_course">Создать курс</button>
             </div>
         <!--<</form>-->
     </div>
@@ -87,10 +87,10 @@
       <div class="modal-dialog modal-side">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание курса</h5>
+            <h5 class="modal-title lang" id="exampleModalLabel" key="course_creation">Создание курса</h5>
             <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
           </div>
-              <div class="modal-body lang" key="areusure">Введите данные курса:</div>
+              <div class="modal-body lang" key="enter_course_data">Введите данные курса:</div>
                 <form id="form1" action="/create_course/{{user.user_id}}" method="POST">
                     <textarea required class="form-control" maxlength="1000" placeholder="Название" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
                     <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
@@ -99,7 +99,7 @@
                     <input type="file" name="file" class="form-control" id="customFile" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"/>
                 </form> -->
                     <div class="modal-footer">
-                          <button type="submit" class="btn badge-primary lang" style="border-radius: 25px ">Создать</button>
+                          <button type="submit" class="btn badge-primary lang" key="create" style="border-radius: 25px ">Создать</button>
                     </div>
                 </form>
         </div>

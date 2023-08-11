@@ -26,11 +26,11 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Тест «{{ test.content.name }}»</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="test">Тест</text> «{{ test.content.name }}»</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -44,19 +44,19 @@
                 <br>
                 {% if progresses %}
                     <div align="center">
-                        <button disabled class="btn btn-primary" id="show_results">Поросмотр попыток</button>
-                        <button class="btn btn-primary" id="show_leaders">Таблица лидеров</button>
-                        <button class="btn btn-primary" id="show_graphics">График прогресса</button>
-                        <button class="btn btn-primary" id="show_friends">Прогресс друзей</button>
+                        <button disabled class="btn btn-primary lang" key="show_tries" id="show_results">Просмотр попыток</button>
+                        <button class="btn btn-primary lang" key="leaders_table" id="show_leaders">Таблица лидеров</button>
+                        <button class="btn btn-primary lang" key="progress_graphic" id="show_graphics">График прогресса</button>
+                        <button class="btn btn-primary lang" key="friends_progress" id="show_friends">Прогресс друзей</button>
                     </div>
                     <div id="test-results">
                         {% set progressNum = namespace(value=0) %}
-                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="last_tries">
                             Результаты ваших предыдущих попыток
                         </span>
                         <table class="table">
                             <tbody>
-                                <tr><th>Номер попытки</th><th>Состояние</th><th>Оценка</th><th>Просмотр</th></tr>
+                                <tr><th class="lang" key="try_number">Номер попытки</th><th class="lang" key="condition">Состояние</th><th class="lang" key="mark">Оценка</th><th class="lang" key="viewing">Просмотр</th></tr>
                                 {% for progress in progresses %}
                                     {% set progressNum.value = progressNum.value + 1 %}
                                     <tr style="
@@ -67,21 +67,22 @@
                                         <td>
                                             {{ progressNum.value }}
                                         </td>
-                                        <td id="time-{{progress.up_id}}">
+                                        <td>
                                             {% if progress.progress.completed %}
-                                                Завершено
+                                                <text class="lang" key="done">Завершено</text>
                                             {% else %}
-                                                На проверке
+                                                <text class="lang" key="checking">На проверке</text>
                                             {% endif %}
                                             <br>
-                                            Потрачено времени на прохождение
+                                            <text class="lang" key="time_spent">Потрачено времени на прохождение</text>
+                                            <text id="time-{{progress.up_id}}"></text>
                                         </td>
                                         <td>
                                             {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
                                         </td>
                                         <td>
                                             <form action="/course/{{course.course_id}}/test_result/{{test.test_id}}/{{progress.up_id}}" method="GET">
-                                                <button class="btn btn-primary ">Посмотреть попытку</button>
+                                                <button class="btn btn-primary lang" key="show_try">Посмотреть попытку</button>
                                             </form>
                                         </td>
                                     </tr>
@@ -99,7 +100,9 @@
                             </tbody>
                         </table>
                         <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
-                                Высшая оценка: {{ max_score }} / {{ progresses[0].progress.result.total_score }}
+                            <div>
+                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score }} / {{ progresses[0].progress.result.total_score }}
+                            </div>
                         </span>
                     </div>
 
@@ -110,11 +113,13 @@
                         {% set thirdPlace = namespace(value=0) %}
                         {% set otherPlace = namespace(value=0) %}
                         <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
-                            Таблица лидеров ♕
+                            <div>
+                                <text class="lang" key="leaders_table">Таблица лидеров</text> ♕
+                            </div>
                         </span>
                         <table class="table">
                             <tbody>
-                                <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
+                                <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
                                 {% for leader, result in leaders.items() %}
 
                                     {% if firstPlace.value <= result %}
@@ -163,7 +168,7 @@
                     </div>
 
                     <div id="progress-graphics" hidden="hidden">
-                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="graphic_desc">
                             График распределения пользователей по высшей оценке
                         </span>
                         <div>
@@ -214,12 +219,12 @@
                         {% set secondPlace = namespace(value=0) %}
                         {% set thirdPlace = namespace(value=0) %}
                         {% set otherPlace = namespace(value=0) %}
-                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="friends_table_desc">
                             Таблица лидеров среди друзей, на кого вы подписаны
                         </span>
                         <table class="table">
                             <tbody>
-                                <tr><th>Место</th><th>Пользователь</th><th>Высшая оценка</th></tr>
+                                <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
                                 {% for leader, result in friends.items() %}
 
                                     {% if firstPlace.value <= result %}
@@ -268,10 +273,10 @@
                     </div>
                 {% endif %}
                 <br>
-                <span class="fw-bolder fs-5 row m-3 justify-content-center lang">Метод оценивания: Преподаватель</span>
+                <span class="fw-bolder fs-5 row m-3 justify-content-center lang" key="marking_method">Метод оценивания: Преподаватель</span>
                 <div class="d-flex justify-content-center m-5">
                     <form action="/course/{{course.course_id}}/tests/{{test.test_id}}">
-                        <button class="btn btn-primary ">Начать тест</button>
+                        <button class="btn btn-primary lang" key="start_test">Начать тест</button>
                     </form>
                 </div>
             </div>

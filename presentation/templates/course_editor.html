@@ -8,12 +8,12 @@
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;" id="main-container">
         <!-- <form action="" method="POST"> -->
-            <span class="fs-5 row m-3 justify-content-start lang" key="reviews">Редактирование курса</span>
+            <span class="fs-5 row m-3 justify-content-start lang" key="course_editing">Редактирование курса</span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
-                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Редактирование курса</li>
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item active lang" key="course_editing" aria-current="page">Редактирование курса</li>
               </ol>
             </nav>
             <span class="fs-5 row m-3 justify-content-start lang">
@@ -62,23 +62,23 @@
                                                 </form>
                                                 <p class="card-text">
                                                     {% if unit_test.unit_type == "test" %}
-                                                    Ответьте на вопросы и получите приз
+                                                    <text class="lang" key="test_desc">Ответьте на вопросы и получите приз</text>
                                                     {% else %}
-                                                    Прочтите статью и съешьте конфетку
+                                                    <text class="lang" key="article_desc">Прочтите статью и съешьте конфетку</text>
                                                     {% endif %}
                                                 </p>
                                                 <div class="d-flex justify-content-between">
                                                     {% if unit_test.unit_type == "test" %}
-                                                        <button disabled class="btn btn-outline-light" id="test-button">Тест</button>
+                                                        <button disabled class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
                                                         <form action="/course_editor/{{course.course_id}}/tests_check/{{unit_test.test.test_id}}">
-                                                            <button class="btn btn-outline-light" id="check-button">Проверка</button>
+                                                            <button class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
                                                         </form>
                                                         <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
                                                     {% else %}
-                                                        <button disabled class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                        <button disabled class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
                                                         <form action="/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}">
                                                     {% endif %}
-                                                        <button class="btn btn-outline-light" id="edit-button">Редактировать</button>
+                                                        <button class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -106,7 +106,7 @@
             </div>
             <br>
             <div class="row border" id="insert-place"></div>
-            <button class="btn btn-primary" type="submit"
+            <button class="btn btn-primary lang" key="save_course" type="submit"
                             id="saveTest" style=
                             "background-color:yellowgreen; margin-bottom: 18px; margin-top: 18px;"
                             onclick="submitForm()">
@@ -130,19 +130,19 @@
           <div class="modal-dialog modal-side">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title lang" id="exampleModalLabel1" key="confirmexit">Создание задания</h5>
+                <h5 class="modal-title lang" id="exampleModalLabel1" key="task_creation">Создание задания</h5>
                 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
               </div>
               <form action="/course_editor/{{course.course_id}}/create_task/{{unit.unit_id}}" method="POST">
-                  <div class="modal-body lang" key="areusure">Выберите тип создаваемого задания:</div>
+                  <div class="modal-body lang" key="choose_task_type">Выберите тип создаваемого задания:</div>
                     <div style="display: flex; justify-content: center;">
                         <input id="checkbox-test" type="radio" name="TaskType" value="test">
-                        <label for="checkbox-test" style="margin-left: 5px; font-size: 20px;">Тест</label>
+                        <label for="checkbox-test" class="lang" key="test" style="margin-left: 5px; font-size: 20px;">Тест</label>
                         <input id="checkbox-article" type="radio" name="TaskType" value="article" style="margin-left: 20px;">
-                        <label for="checkbox-article" style="margin-left: 5px; font-size: 20px;">Статья</label>
+                        <label for="checkbox-article" class="lang" key="article" style="margin-left: 5px; font-size: 20px;">Статья</label>
                     </div>
                   <div class="modal-footer">
-                        <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                        <button type="submit" class="btn badge-primary lang" key="create" style="border-radius: 25px">Создать</button>
                   </div>
               </form>
             </div>
@@ -153,13 +153,13 @@
           <div class="modal-dialog modal-side">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления раздела</h5>
+                <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_unit">Подтверждение удаления раздела</h5>
                 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body lang" key="areusure">Вы точно хотите удалить раздел «{{ unit.name }}»?</div>
+              <div class="modal-body"><text class="lang" key="are_u_sure_delete_unit">Вы точно хотите удалить раздел</text> «{{ unit.name }}»?</div>
               <div class="modal-footer">
                 <form action="/delete_unit/{{course.course_id}}/{{unit.unit_id}}" method="POST">
-                    <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+                    <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px" href="/logout">Удалить</button>
                 </form>
               </div>
             </div>
@@ -172,16 +172,16 @@
                 <div class="modal-content">
                   <div class="modal-header">
                       {% if unit_test.unit_type == "test" %}
-                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления теста</h5>
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_test">Подтверждение удаления теста</h5>
                       {% else %}
-                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Подтверждение удаления статьи</h5>
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_article">Подтверждение удаления статьи</h5>
                       {% endif %}
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                   </div>
                     {% if unit_test.unit_type == "test" %}
-                        <div class="modal-body lang" key="areusure">Вы точно хотите удалить тест «{{ unit_test.test.content.name }}»?</div>
+                        <div class="modal-body"><text class="lang" key="are_u_sure_delete_test">Вы точно хотите удалить тест</text> «{{ unit_test.test.content.name }}»?</div>
                     {% else %}
-                        <div class="modal-body lang" key="areusure">Вы точно хотите удалить статью «{{ unit_test.test.content.name }}»?</div>
+                        <div class="modal-body"><text class="lang" key="are_u_sure_delete_article">Вы точно хотите удалить статью</text> «{{ unit_test.test.content.name }}»?</div>
                     {% endif %}
                   <div class="modal-footer">
                     {% if unit_test.unit_type == "test" %}
@@ -189,7 +189,7 @@
                     {% else %}
                         <form action="/delete_article/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
                     {% endif %}
-                        <button type="submit" class="btn badge-danger lang" key="logout" style="border-radius: 25px" href="/logout">Удалить</button>
+                        <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px" href="/logout">Удалить</button>
                     </form>
                   </div>
                 </div>
@@ -201,14 +201,14 @@
       <div class="modal-dialog modal-side">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title lang" id="exampleModalLabel" key="confirmexit">Создание раздела</h5>
+            <h5 class="modal-title lang" id="exampleModalLabel" key="unit_creation">Создание раздела</h5>
             <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
           </div>
           <form action="/course_editor/{{course.course_id}}" method="POST">
-              <div class="modal-body lang" key="areusure">Введите название раздела:</div>
+              <div class="modal-body lang" key="enter_unit_name">Введите название раздела:</div>
                 <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
               <div class="modal-footer">
-                    <button type="submit" class="btn badge-primary lang" style="border-radius: 25px">Создать</button>
+                    <button type="submit" class="btn badge-primary lang" key="create" style="border-radius: 25px">Создать</button>
               </div>
           </form>
         </div>

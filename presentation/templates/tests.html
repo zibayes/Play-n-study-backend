@@ -12,9 +12,9 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Содержание курса</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item active lang" aria-current="page" key="course_content">Содержание курса</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -37,9 +37,9 @@
                                     <h5 class="card-title">{{unit_test.test.content.name}}</h5>
                                     <p class="card-text">
                                         {% if unit_test.unit_type == "test" %}
-                                        Ответьте на вопросы и получите приз
+                                        <text class="lang" key="test_desc">Ответьте на вопросы и получите приз</text>
                                         {% else %}
-                                        Прочтите статью и съешьте конфетку
+                                        <text class="lang" key="article_desc">Прочтите статью и съешьте конфетку</text>
                                         {% endif %}
                                     </p>
                                     <div class="d-flex justify-content-between">
@@ -47,13 +47,13 @@
                                             <form action="/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
-                                                        <button class="btn btn-outline-light" id="test-button" disabled>Тест</button>
+                                                        <button class="btn btn-outline-light lang" key="test" id="test-button" disabled>Тест</button>
                                                     {% else %}
-                                                        <button class="btn btn-outline-light" id="lection-button">Тест</button>
+                                                        <button class="btn btn-outline-light lang" key="test" id="lection-button">Тест</button>
                                                     {% endif %}
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
-                                                    <button class="btn btn-outline-light" id="test-button">Тест</button>
+                                                    <button class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
                                                 {% endif %}
 
                                             </form>
@@ -61,22 +61,22 @@
                                             <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
-                                                        <button class="btn btn-outline-light" id="lection-button" disabled>Статья</button>
+                                                        <button class="btn btn-outline-light lang" key="article" id="lection-button" disabled>Статья</button>
                                                     {% else %}
-                                                        <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                        <button class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
                                                     {% endif %}
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
-                                                    <button class="btn btn-outline-light" id="lection-button">Статья</button>
+                                                    <button class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
                                                 {% endif %}
                                             </form>
                                         {% endif %}
                                         {% if  results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
-                                            <span class="badge rounded-pill badge-success" style="padding: 11px">Выполнено</span>
+                                            <span class="badge rounded-pill badge-success lang" key="done" style="padding: 11px">Выполнено</span>
                                         {% elif results[unit_test.test.test_id|string + unit_test.unit_type] == False %}
-                                            <span class="badge rounded-pill badge-primary" style="padding: 11px">На проверке</span>
+                                            <span class="badge rounded-pill badge-primary lang" key="checking" style="padding: 11px">На проверке</span>
                                         {% else %}
-                                            <span class="badge rounded-pill badge-warning" style="padding: 11px">Не выполнено</span>
+                                            <span class="badge rounded-pill badge-warning lang" key="not_done" style="padding: 11px">Не выполнено</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@
         {% endfor %}
         <form action="/course/{{course.course_id}}/summary" method="GET">
             <div id="div_element_button" style="margin-right: 8px;">
-                <button class="btn btn-outline-dark btn-rounded lang" id="show-button" style="display: inline-block; margin-bottom: 10px;">Посмотреть сводку о прогрессе</button>
+                <button class="btn btn-outline-dark btn-rounded lang" key="show_summary" id="show-button" style="display: inline-block; margin-bottom: 10px;">Посмотреть сводку о прогрессе</button>
             </div>
         </form>
     </div>

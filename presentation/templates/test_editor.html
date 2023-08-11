@@ -8,16 +8,16 @@
 
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <span class="fs-5 row m-3 justify-content-start lang">
+        <span class="fs-5 row m-3 justify-content-start lang" key="test_editor">
             Редактор тестов
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}">Курс «{{ course.name }}»</a></li>
-            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Редактирование курса</a></li>
-              <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}">Раздел «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Редактор теста «{{ test.name }}»</li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="test_editor_of">Редактор теста</text> «{{ test.name }}»</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -35,8 +35,8 @@
                         <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
                             <div class="card-body">
                                 <div class="form-group">
-                                    <p>Вопрос №{{ questionNum.value }}</p>
-                                    <label for="score-{{questionNum.value}}">Баллы: </label>
+                                    <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
+                                    <label for="score-{{questionNum.value}}" class="lang" key="score">Баллы: </label>
                                     <input id="score-{{questionNum.value}}" name="score-{{questionNum.value}}" value="{{ question.score }}" style="width:40px;">
                                 </div>
                             </div>
@@ -121,37 +121,37 @@
                                 </div>
                                 <div style="display: flex;">
                                     <div style="padding-left: 5px;">
-                                        <button class="btn" style="background-color:transparent; color:black;" type="button" id="{{ questionNum.value }}" onclick="addAnswerOnButtonClick('addAns-' + this.id)">Добавить ответ</button>
+                                        <button class="btn lang" key="add_answer" style="background-color:transparent; color:black;" type="button" id="{{ questionNum.value }}" onclick="addAnswerOnButtonClick('addAns-' + this.id)">Добавить ответ</button>
                                     </div>
                                     <div style="padding-left: 5px;">
-                                        <button class="btn" style="background-color:red; color:white;" type="button" id="{{ questionNum.value }}" onclick="deleteElement('card-' + this.id)">Удалить вопрос</button>
+                                        <button class="btn lang" key="delete_answer" style="background-color:red; color:white;" type="button" id="{{ questionNum.value }}" onclick="deleteElement('card-' + this.id)">Удалить вопрос</button>
                                     </div>
                                     <div style="padding-left: 5px;">
                                         <select class="form-select" width="20px" id="QT-{{ questionNum.value }}" name="QuestionType-{{ questionNum.value }}">
                                             {% if question.type == "single" %}
-                                                <option selected>Единственный ответ</option>
+                                                <option selected class="lang" key="solo">Единственный ответ</option>
                                             {% else %}
-                                                <option>Единственный ответ</option>
+                                                <option class="lang" key="solo">Единственный ответ</option>
                                             {% endif %}
                                             {% if question.type == "multiple" %}
-                                                <option selected>Множественный ответ</option>
+                                                <option selected class="lang" key="multiple">Множественный ответ</option>
                                             {% else %}
-                                                <option>Множественный ответ</option>
+                                                <option class="lang" key="multiple">Множественный ответ</option>
                                             {% endif %}
                                             {% if question.type == "free" %}
-                                                <option selected>Краткий свободный ответ</option>
+                                                <option selected class="lang" key="free">Краткий свободный ответ</option>
                                             {% else %}
-                                                <option>Краткий свободный ответ</option>
+                                                <option class="lang" key="free">Краткий свободный ответ</option>
                                             {% endif %}
                                             {% if question.type == "detailed_free" %}
-                                                <option selected>Свободный ответ</option>
+                                                <option selected class="lang" key="detailed_free">Свободный ответ</option>
                                             {% else %}
-                                                <option>Свободный ответ</option>
+                                                <option class="lang" key="detailed_free">Свободный ответ</option>
                                             {% endif %}
                                             {% if question.type == "info" %}
-                                                <option selected>Информационный блок</option>
+                                                <option selected  class="lang" key="info_block">Информационный блок</option>
                                             {% else %}
-                                                <option>Информационный блок</option>
+                                                <option  class="lang" key="info_block">Информационный блок</option>
                                             {% endif %}
                                         </select>
                                     </div>
@@ -169,12 +169,12 @@
             </div>
             <hr>
             <div style="padding-bottom: 10px; display: flex;">
-                <button class="btn btn-primary"
+                <button class="btn btn-primary lang" key="add_question"
                         id="addQuestion" style=
                         "background-color:green;" type="button">
                         Добавить вопрос
                 </button>
-                <button class="btn btn-primary" type="submit"
+                <button class="btn btn-primary lang" key="save_test" type="submit"
                         id="saveTest" style=
                         "background-color:yellowgreen; margin-left: 5px;">
                         Сохранить тест
