@@ -454,6 +454,7 @@ var arrLang = {
     "mark": "Mark",
     "unit": "Unit",
     "result": "Result",
+    "unit_result": "Result of unit",
 
     "read_article": "The article was read",
 
@@ -540,6 +541,11 @@ var arrLang = {
 
     "access_denied": "Access denied",
     "but_you_can_subscribe": "But you can get access to the materials of this course by subscribing to it",
+
+    "new_note": "New note",
+    "name_": "Name:",
+    "note_": "Note:",
+    "exit": "Exit",
   },
   'ru': {
     'mainpage': 'Главная',
@@ -661,6 +667,7 @@ var arrLang = {
     "mark": "Оценка",
     "unit": "Раздел",
     "result": "Итог",
+    "unit_result": "Итог раздела",
 
     "read_article": "Статья прочитана",
 
@@ -744,7 +751,638 @@ var arrLang = {
 
     "access_denied": "Доступ запрещён",
     "but_you_can_subscribe": "Но вы можете получить доступ к материалам данного курса, подписавшись на него",
-  }
+
+    "new_note": "Новая заметка",
+    "name_": "Название:",
+    "note_": "Заметка:",
+  },
+  'de': {
+    'mainpage': 'Startseite',
+    'support': 'support',
+    'profile': 'Profil',
+    'my_profile': 'Mein Profil',
+    'my_friends': 'Meine Abonnements',
+    'my_subscriptions': 'Meine Kurse',
+    'my_achievements': 'Meine Belohnungen',
+    'achievements': 'Erfolge',
+    'timetable': 'Mein Zeitplan',
+    'settings': 'Einstellungen',
+    'reviews': 'Bewertungen',
+    'aboutus': 'Über uns',
+    'exit': 'Beenden',
+    'areusure': 'Möchten Sie unbedingt aussteigen?',
+    'confirmexit': 'Abmeldung bestätigen',
+    'logout': 'Abmelden von Ihrem Konto',
+    'flag': 'flag-germany',
+    'your_chats': 'Ihre Dialoge',
+    'admin': 'administrator',
+    'subscribe': 'Abonnieren',
+    'unsubscribe': 'Abbestellen',
+    'give_admin': 'Administratorberechtigungen erteilen',
+    'remove_admin': 'Administratorrechte ablegen',
+    'info': 'Weitere Informationen',
+    'subscriptions': 'Abonnements',
+    'subscriptions_': 'Abonnements',
+    'subscribers': 'Abonnenten',
+    'participant_in': 'Teilnehmer in',
+    'founded_by_request': 'Auf Anfrage gefunden:',
+
+    'users_courses': 'Benutzerdefinierte Kurse',
+    'create_course': 'Kurs erstellen',
+    'course_creation': 'Kurs erstellen',
+    'enter_course_data': 'Kursdaten eingeben:',
+    'create': 'Erstellen',
+
+    'createform': 'Formular erstellen',
+    'form': 'Form',
+
+    'maininfo': 'Grundlegende Informationen',
+    'changeava': 'Avatar ändern',
+    'anachievements': 'Erfolge',
+    'name': 'Name',
+    'surname': 'Nachname',
+    'phonenumber': 'Telefonnummer',
+    'email': 'E-Mail',
+    'city': 'Stadt:',
+    'city_': 'Stadt',
+    'university': 'Institut',
+    'specialization': 'Spezialität',
+    'group': 'Lerngruppe',
+    'save': 'Speichern',
+
+    'devteam': 'Entwicklerteam',
+    'pavel': 'Paul',
+    'pavinfo': 'Backend und Frontend Entwickler',
+    'online': 'Online',
+    'ilya': 'ilya',
+    'ilyinfo': 'Frontend-Entwickler',
+    'offline': 'Offline',
+    'anton': 'Anton',
+    'antinfo': 'Backend-Entwickler',
+    'afk': 'Schläft',
+    'devinfo': 'Entwicklerinformationen',
+
+    'my_notes': 'Meine Notizen',
+    'my_tasks': 'Meine Aufgaben',
+    'month': 'Monat',
+
+    "monday": "MO",
+    "tuesday": "W",
+    "wednesday": "MI",
+    "thursday": "DO",
+    "friday": "FR",
+    "saturday": "SA",
+    "sunday": "SUN",
+
+    "course": "Kurs",
+    "courses": "Kurse",
+    "course_rating": "Kursbewertung:",
+    "rate_first": "Dieser Kurs wurde noch nicht bewertet, sei der erste!",
+    "go_to_course": "Kurs wechseln",
+    "edit_course": "Kurs bearbeiten",
+    "delete_course": "Kurs löschen",
+    "course_participants": "Kursteilnehmer",
+    "desc": "Beschreibung",
+    "thanks_for_your_feedback": "Vielen Dank für Ihr Feedback!",
+    "how_do_you_like_this_course": "Wie gefällt Ihnen dieser Kurs?",
+    "give_us_feedback": "Hinterlassen Sie Ihr Feedback:",
+    "what_about_comment": "Was ist mit einem Kommentar?",
+    "course_participants_feedback": "Feedback der Kursteilnehmer",
+    "feedback_without_comment": "--- Feedback ohne Kommentar ---",
+    "show_all_feedback": "Alle Erfahrungsberichte anzeigen",
+    "confirm_delete_course": "Bestätigung, dass der Kurs gelöscht wird",
+    "are_u_sure_delete_course": "Sie möchten den Kurs unbedingt löschen",
+    "delete": "Löschen",
+
+    "course_participants_of": "Kursteilnehmer",
+    "curator": "KURATOR",
+    "give_curator": "Berechtigung zum Kurator erteilen",
+    "remove_curator": "Die Autorität des Kurators aufheben",
+
+    "course_content": "Kursinhalte",
+    "test": "Test",
+    "article": "Artikel",
+    "done": "Fertig",
+    "checking": "Im Check",
+    "not_done": "fehlgeschlagen",
+    "show_summary": "Fortschrittsbericht anzeigen",
+    "test_desc": "Beantworte die Fragen und erhalte einen Preis",
+    "article_desc": "Lesen Sie den Artikel und essen Sie Süßigkeiten",
+
+    "course_summary": "Kursübersicht",
+    "course_unit": "Kurselement",
+    "tesk_type": "Typ",
+    "status": "Status",
+    "mark": "Bewertung",
+    "unit": "Partition",
+    "result": "Ergebnis",
+    "unit_result": "Partitionszusammenfassung",
+
+    "read_article": "Artikel wurde gelesen",
+
+    "show_tries": "Versuche anzeigen",
+    "leaders_table": "Bestenliste",
+    "progress_graphic": "Fortschrittsplan",
+    "friends_progress": "Fortschritt von Freunden",
+    "last_tries": "Ergebnisse Ihrer vorherigen Versuche",
+    "try_number": "Versuchsnummer",
+    "condition": "Zustand",
+    "viewing": "Anzeigen",
+    "time_spent": "Zeitaufwand für das Durchlaufen",
+    "show_try": "Versuch ansehen",
+    "best_mark": "Höchste Bewertung:",
+    "best_mark_": "Höchste Bewertung",
+    "place": "Place",
+    "user": "Benutzer",
+    "graphic_desc": "Zeitplan für die Verteilung der Benutzer nach höchster Bewertung",
+    "friends_table_desc": "Die Bestenliste unter den Freunden, denen du abonniert hast",
+    "marking_method": "Bewertungsmethode: Lehrer",
+    "start_test": "Test starten",
+
+    "try_showing": "Einen Versuch anzeigen",
+    "information": "Information",
+    "question": "Frage",
+    "score": "Punkte:",
+    "not_marked": "Nicht bewertet",
+    "the_same_answer": "Benutzer haben dieselbe Antwort auf diese Aufgabe gegeben",
+    "curator_comment": "Kommentar des Kurators:",
+    "your_result": "Ihr Ergebnis ist:",
+    "your_time_spent": "Die Zeit ist vergangen ",
+
+    "passing_the_test": "Test bestehen",
+    "complete_test": "Test abschließen",
+
+    "course_reviews": "Kursbewertungen",
+
+    "course_editing": "Kurs bearbeiten",
+    "check": "Überprüfen",
+    "edit": "Bearbeiten",
+    "task_creation": "Auftrag erstellen",
+    "choose_task_type": "Wählen Sie den Typ des zu erstellenden Auftrags aus:",
+    "confirm_delete_unit": "Bestätigung des Löschens einer Partition",
+    "confirm_delete_test": "Bestätigung, dass der Test gelöscht wurde",
+    "confirm_delete_article": "Bestätigung des Löschens eines Artikels",
+    "are_u_sure_delete_unit": "Sie möchten die Partition unbedingt löschen",
+    "are_u_sure_delete_test": "Sie möchten den Test unbedingt löschen",
+    "are_u_sure_delete_article": "Sie möchten den Artikel unbedingt löschen",
+    "unit_creation": "Partition erstellen",
+    "enter_unit_name": "Geben Sie einen Namen für die Partition ein:",
+    "save_course": "Kurs speichern",
+
+    "article_edit": "Artikel erstellen",
+    "enter_article": "Artikel eingeben (in Markdown)",
+    "article_text": "Artikeltext",
+    "article_preview": "Vorschau Ihres Artikels",
+    "save_article": "Artikel speichern",
+
+    "article_constructor": "Artikel-Designer",
+
+    "test_checking": "Test prüfen",
+    "tires_results": "Ergebnisse der Versuche",
+    "check_try": "Versuch prüfen",
+
+    "test_checking_user": "Benutzerversuch prüfen",
+    "add_comment": "Kommentar hinzufügen",
+    "result_": "Ergebnis:",
+    "complete_checking": "Prüfung abschließen",
+
+    "test_editor_of": "Testeditor",
+    "test_editor": "Testeditor",
+    "solo": "Die einzige Antwort",
+    "multiple": "Multiple Antwort",
+    "free": "Kurze freie Antwort",
+    "detailed_free": "Freie Antwort",
+    "info_block": "Informationsblock",
+    "add_question": "Frage hinzufügen",
+    "save_test": "Test speichern",
+
+    "test_constructor": "Testkonstruktor",
+
+    "access_denied": "Zugriff verweigert",
+    "but_you_can_subscribe": "Sie können jedoch auf den Inhalt dieses Kurses zugreifen, indem Sie ihn abonnieren",
+
+    "new_note": "Neue Notiz",
+    "name_": "Name:",
+    "note_": "Hinweis:",
+    },
+    'fr': {
+      'mainpage': 'Accueil',
+      'support': 'Support',
+      'profile': 'Profil',
+      'my_profile': 'mon profil',
+      'my_friends': 'mes abonnements',
+      'my_subscriptions': 'mes cours',
+      'my_achievements': 'mes récompenses',
+      'achievements': 'Réalisations',
+      'timetable': 'mon horaire',
+      'settings': 'Paramètres',
+      'reviews': 'Avis',
+      'aboutus': 'À propos de nous',
+      'exit': 'Quitter',
+      'areusure': 'voulez-vous vraiment sortir?',
+      'confirmexit': 'confirmation de sortie',
+      'logout': 'Déconnexion du compte',
+      'flag': 'flag-france',
+      'your_chats': 'vos dialogues',
+      'admin': 'ADMINISTRATEUR',
+      'subscribe': 's\'Abonner',
+      'unsubscribe': 'se Désabonner',
+      'give_admin': 'Accorder des privilèges d\'administrateur',
+      'remove_admin': 'Supprimer les privilèges d\'administrateur',
+      'info': 'lire la Suite',
+      'subscriptions': 'Abonnements',
+      'subscriptions_': 'abonnements',
+      'subscribers': 'abonnés',
+      'participant_in': 'Participant à',
+      'founded_by_request': 'trouvé sur demande:',
+
+      'users_courses': 'cours Personnalisés',
+      'create_course': 'Créer un cours',
+      'course_creation': 'Création d\'un cours',
+      'enter_course_data': 'Entrez les données du cours:',
+      'create': 'Créer',
+
+      'createform': 'Créer un formulaire',
+      'form': 'Forme',
+
+      'maininfo': 'informations de Base',
+      'changeava': 'Changer d\'avatar',
+      'anachievements': 'Réalisations',
+      'name': 'Nom',
+      'surname':'nom de Famille',
+      'phonenumber': 'Numéro de téléphone',
+      'email': 'Email',
+      'city': 'Ville:',
+      'city_': 'Ville',
+      'university': 'Institut',
+      'specialization': 'Spécialité',
+      'group': 'groupe d\'Étude',
+      'save': 'Enregistrer',
+
+      'devteam': 'équipe de développement',
+      'pavel': 'Paul',
+      'pavinfo': 'backend and Frontend Developer',
+      'online': 'en ligne',
+      'ilya': 'Ilya',
+      'ilyinfo': 'Frontend Developer',
+      'offline': 'Offline',
+      'anton': 'Anton',
+      'antinfo': 'développeur Backend',
+      'afk': 'Dort',
+      'devinfo': 'informations sur le développeur',
+
+      'my_notes': 'mes notes',
+      'my_tasks': 'mes tâches',
+      'month': 'Mois',
+
+      "monday": "LUN",
+      "tuesday": "W",
+      "wednesday": "CF",
+      "thursday": "JEUDI",
+      "friday": "VEN",
+      "saturday": "SAT",
+      "sunday": "Sun",
+
+      "course": "Cours",
+      "courses": "Cours",
+      "course_rating": "Classement du cours:",
+      "rate_first": "ce cours n'a pas encore été évalué, soyez le premier!",
+      "go_to_course": "Aller au cours",
+      "edit_course":"Modifier le cours",
+      "delete_course": "Supprimer le cours",
+      "course_participants": "Participants au cours",
+      "desc": "Description",
+      "thanks_for_your_feedback": "Merci pour vos commentaires!",
+      "how_do_you_like_this_course": "comment Aimez-vous ce cours?",
+      "give_us_feedback": "Donnez votre avis:",
+      "what_about_comment": "qu'en est-il du commentaire?",
+      "course_participants_feedback": "Commentaires des participants au cours",
+      "feedback_without_comment": "- - - Commentaire sans commentaire - - -",
+      "show_all_feedback": "Voir tous les commentaires sur le cours",
+      "confirm_delete_course": "Confirmation de la suppression du cours",
+      "are_u_sure_delete_course":"vous voulez vraiment supprimer le cours",
+      "delete": "Supprimer",
+
+      "course_participants_of": "Participants au cours",
+      "curator": "CURATOR",
+      "give_curator":"Donner l'autorité du conservateur",
+      "remove_curator":"Supprimer l'autorité du conservateur",
+
+      "course_content": "Contenu du cours",
+      "test": "Test",
+      "article": "Article",
+      "done": "Terminé",
+      "checking": "en cours de vérification",
+      "not_done": "échec",
+      "show_summary":"Voir le résumé des progrès",
+      "test_desc":"Répondez aux questions et obtenez le prix",
+      "article_desc": "Lisez l'article et mangez des bonbons",
+
+      "course_summary":"Résumé du cours",
+      "course_unit": "élément de cours",
+      "tesk_type": "Type",
+      "status": "Status",
+      "mark": "Score",
+      "unit": "Partition",
+      "result": "Total",
+      "unit_result":"Total de la section",
+
+      "read_article": "Article lu",
+
+      "show_tries": "Afficher les tentatives",
+      "leaders_table": "classement",
+      "progress_graphic":"Graphique de progression",
+      "friends_progress": "Progression des amis",
+      "last_tries": "Résultats de vos tentatives précédentes",
+      "try_number": "numéro de tentative",
+      "condition": "Condition",
+      "viewing": "Viewing",
+      "time_spent":"temps Passé à passer",
+      "show_try": "Voir la tentative",
+      "best_mark": "meilleur score:",
+      "best_mark_":"meilleur score",
+      "place": "Place",
+      "user": "Utilisateur",
+      "graphic_desc": "Graphique de la répartition des utilisateurs selon l'évaluation la plus élevée",
+      "friends_table_desc": "classement des amis auxquels vous êtes abonné",
+      "marking_method":"méthode d'évaluation: Enseignant",
+      "start_test": "Commencer le test",
+
+      "try_showing":"Afficher la tentative",
+      "information": "Information",
+      "question": "Question",
+      "score": "Scores:",
+      "not_marked": "Non évalué",
+      "the_same_answer": "les utilisateurs ont donné la même réponse à cette tâche",
+      "curator_comment": "Commentaire du conservateur:",
+      "your_result": "votre résultat:",
+      "your_time_spent": "le temps s'est Écoulé",
+
+      "passing_the_test": "Passer le test",
+      "complete_test": "Terminer le test",
+
+      "course_reviews":"Avis sur le cours",
+
+      "course_editing": "Modification du cours",
+      "check": "Check",
+      "edit": "Modifier",
+      "task_creation": "Création d'une tâche",
+      "choose_task_type": "Choisissez le type de travail à créer:",
+      "confirm_delete_unit": "Confirmation de la suppression de la partition",
+      "confirm_delete_test": "Confirmation de la suppression du test",
+      "confirm_delete_article": "Confirmation de la suppression de l'article",
+      "are_u_sure_delete_unit":"vous voulez vraiment supprimer la partition",
+      "are_u_sure_delete_test": "voulez-vous vraiment supprimer le test",
+      "are_u_sure_delete_article": "vous voulez vraiment supprimer l'article",
+      "unit_creation": "Créer une partition",
+      "enter_unit_name": "Entrez le nom de la section:",
+      "save_course": "Enregistrer le cours",
+
+      "article_edit": "Rédaction de l'article",
+      "enter_article": "Entrée de l'article (dans Markdown)",
+      "article_text":"Texte de l'article",
+      "article_preview":"Aperçu de votre article",
+      "save_article": "Enregistrer l'article",
+
+      "article_constructor":"Constructeur d'articles",
+
+      "test_checking":"Vérification du test",
+      "tires_results": "résultats des tentatives",
+      "check_try": "Vérifier la tentative",
+
+      "test_checking_user":"Vérification de la tentative de l'utilisateur",
+      "add_comment": "Ajouter un commentaire",
+      "result_": "Résultat:",
+      "complete_checking": "Terminer la vérification",
+
+      "test_editor_of": "Éditeur de test",
+      "test_editor":"Éditeur de test",
+      "solo": "seule réponse",
+      "multiple": "réponse Multiple",
+      "free":"réponse Courte et gratuite",
+      "detailed_free": "réponse Libre",
+      "info_block": "bloc d'Informations",
+      "add_question": "Ajouter une question",
+      "save_test": "Enregistrer le test",
+
+      "test_constructor":"Constructeur de test",
+
+      "access_denied":"Accès refusé",
+      "but_you_can_subscribe":"Mais vous pouvez accéder au contenu de ce cours en vous inscrivant",
+
+      "new_note":"nouvelle Note",
+      "name_": "Titre:",
+      "note_":"Note:",
+    },
+    'es': {
+      'mainpage':'Inicio',
+      'support':'Support',
+      'profile':'Perfil',
+      'my_profile': 'mi perfil',
+      'my_friends' :' mis suscripciones',
+      'my_subscriptions' :' mis cursos',
+      'my_achievements' :' mis recompensas',
+      'achievements': 'Logros',
+      'timetable': 'mi horario',
+      'settings': 'Ajustes',
+      'reviews': 'Reviews',
+      'aboutus': 'Sobre nosotros',
+      'exit': 'Salir',
+      'areusure': '¿seguro que quieres salir?',
+      'confirmexit' :' confirmación de salida',
+      'logout': 'Cerrar sesión',
+      'flag': 'flag-spain',
+      'your_chats': 'Tus diálogos',
+      'admin':'ADMIN',
+      'subscribe':'Suscribirse',
+      'unsubscribe':'darse de Baja',
+      'give_admin': 'Otorgar privilegios de administrador',
+      'remove_admin': 'Deponer privilegios de administrador',
+      'info': 'Más información',
+      'subscriptions': 'Suscripciones',
+      'subscriptions_': 'suscripciones',
+      'subscribers': 'suscriptores',
+      'participant_in': 'Participante en',
+      'founded_by_request': 'Encontrado para:',
+
+      'users_courses': 'cursos Personalizados',
+      'create_course': 'Crear curso',
+      'course_creation': 'Crear un curso',
+      'enter_course_data': 'Introduzca los datos del curso:',
+      'create': 'Crear',
+
+      'createform': 'Crear un formulario',
+      'form': 'Forma',
+
+      'maininfo': 'información Básica',
+      'changeava': 'Cambiar avatar',
+      'anachievements': 'Logros',
+      'name':'Nombre',
+      'surname':'Apellido',
+      'phonenumber': 'número de Teléfono',
+      'email':'email',
+      'city':'Ciudad:',
+      'city_':'Ciudad',
+      'university':'Instituto',
+      'specialization':'Especialidad',
+      'group': 'grupo de Estudio',
+      'save': 'Guardar',
+
+      'devteam' :' equipo de desarrollo',
+      'pavel':'Pablo',
+      'pavinfo':'desarrollador de backend y Frontend',
+      'online': 'En línea',
+      'ilya':'Ilya',
+      'ilyinfo': 'desarrollador Frontend',
+      'offline': 'Offline',
+      'anton': 'Anton',
+      'antinfo': 'desarrollador de Backend',
+      'afk':'Durmiendo',
+      'devinfo': 'Información del desarrollador',
+
+      'my_notes' :' mis notas',
+      'my_tasks' :' mis tareas',
+      'month': 'Mes',
+
+      "monday": "LUNES",
+      "tuesday":"MARTES",
+      "wednesday": "MIÉ",
+      "thursday": "JUE",
+      "friday":"VIERNES",
+      "saturday": "SAT",
+      "sunday":"SUN",
+
+      "course":"Curso",
+      "courses": "Cursos",
+      "course_rating": "Clasificación del curso:",
+      "rate_first": "este curso aún no ha sido evaluado, ¡sea el primero!",
+      "go_to_course": "Ir al curso",
+      "edit_course": "Editar curso",
+      "delete_course": "Eliminar curso",
+      "course_participants": "Participantes del curso",
+      "desc":"Descripción",
+      "thanks_for_your_feedback": "¡Gracias por tus comentarios!",
+      "how_do_you_like_this_course": "¿qué te Parece este curso?",
+      "give_us_feedback": "Deja un comentario:",
+      "what_about_comment": "¿qué tal un comentario?",
+      "course_participants_feedback": "Opiniones de los participantes del curso",
+      "feedback_without_comment": "- - - Opinión sin comentarios - - -",
+      "show_all_feedback": "Ver todas las reseñas del curso",
+      "confirm_delete_course": "confirmación de la eliminación del curso",
+      "are_u_sure_delete_course": "seguro que quieres eliminar el curso",
+      "delete":"Eliminar",
+
+      "course_participants_of": "Participantes del curso",
+      "curator": "CURADOR",
+      "give_curator": "Otorgar credenciales de curador",
+      "remove_curator": "Deponer los poderes del curador",
+
+      "course_content": "Contenido del curso",
+      "test":"Test",
+      "article":"Artículo",
+      "hecho":"Hecho",
+      "checking": "en la verificación",
+      "not_done": "No ejecutado",
+      "show_summary": "Ver Resumen de progreso",
+      "test_desc": "Responde a las preguntas y consigue un premio",
+      "article_desc": "Lee el artículo y come un dulce",
+
+      "course_summary": "Resumen del curso",
+      "course_unit": "elemento de curso",
+      "tesk_type": "Tipo",
+      "status":"Status",
+      "mark": "Evaluación",
+      "unit":"Sección",
+      "result":"Resultado",
+      "unit_result": "Resumen de la partición",
+
+      "read_article": "Artículo leído",
+
+      "show_tries": "Ver intentos",
+      "leaders_table": "tabla de clasificación",
+      "progress_graphic": "Gráfico de progreso",
+      "friends_progress": "Progreso de amigos",
+      "last_tries": "Resultados de tus intentos anteriores",
+      "try_number": "número de intento",
+      "condition":"Estado",
+      "viewing":"Ver",
+      "time_spent": "Tiempo perdido",
+      "show_try": "Ver intento",
+      "best_mark":"Puntuación más Alta:",
+      "best_mark_":"Puntuación Más alta",
+      "place":"Lugar",
+      "user":"Usuario",
+      "graphic_desc": "Gráfico de la distribución de usuarios según la Puntuación más alta",
+      "friends_table_desc": "clasificación de amigos a los que sigues",
+      "marking_method": "Método de evaluación: Profesor",
+      "start_test": "Iniciar prueba",
+
+      "try_showing": "Ver intento",
+      "information":"Información",
+      "question":"Pregunta",
+      "score":"Puntos:",
+      "not_marked": "No evaluado",
+      "the_same_answer": "los usuarios dieron la misma respuesta a esta tarea",
+      "curator_comment": "Comentario del curador:",
+      "your_result":"tu resultado es:",
+      "your_time_spent": "ha Pasado el tiempo ",
+
+      "passing_the_test": "Pasar la prueba",
+      "complete_test": "Completar la prueba",
+
+      "course_reviews": "Opiniones sobre el curso",
+
+      "course_editing": "Edición del curso",
+      "check":"Check",
+      "editar":"Editar",
+      "task_creation": "Crear una tarea",
+      "choose_task_type": "Seleccione el tipo de trabajo que desea crear:",
+      "confirm_delete_unit": "confirmación de eliminación de partición",
+      "confirm_delete_test": "confirmación de eliminación de prueba",
+      "confirm_delete_article": "confirmación de la eliminación del artículo",
+      "are_u_sure_delete_unit": "definitivamente quieres eliminar la partición",
+      "are_u_sure_delete_test": "definitivamente quieres eliminar la prueba",
+      "are_u_sure_delete_article": "definitivamente quieres eliminar el artículo",
+      "unit_creation": "crear una partición",
+      "enter_unit_name": "Introduzca el nombre de la sección:",
+      "save_course": "Guardar curso",
+
+      "article_edit": "Redacción de un artículo",
+      "enter_article": "Introducir un artículo (en Markdown)",
+      "article_text": "Texto del artículo",
+      "article_preview": "vista Previa de tu artículo",
+      "save_article": "Guardar artículo",
+
+      "article_constructor": "constructor de artículos",
+
+      "test_checking": "Comprobación de prueba",
+      "tires_results": "Resultados de los intentos",
+      "check_try": "Comprobar intento",
+
+      "test_checking_user": "Comprobación del intento del usuario",
+      "add_comment": "Añadir un comentario",
+      "result_":"Resultado:",
+      "complete_checking": "Finalizar comprobación",
+
+      "test_editor_of": "Editor de pruebas",
+      "test_editor": "Editor de pruebas",
+      "solo": "La única respuesta",
+      "multiple": "respuesta Múltiple",
+      "free": "Breve respuesta libre",
+      "detailed_free":"respuesta Gratuita",
+      "info_block": "bloque de Información",
+      "add_question": "Añadir pregunta",
+      "save_test": "Guardar prueba",
+
+      "test_constructor": "constructor de pruebas",
+
+      "access_denied": "acceso denegado",
+      "but_you_can_subscribe": "pero puedes acceder a este curso suscribiéndote a él",
+
+      "new_note":"nueva nota",
+      "name_":"Nombre:",
+      "note_":"Nota:",
+    },
 }
 
   $(function() {
@@ -752,17 +1390,43 @@ var arrLang = {
       var lang = $(this).attr('id');
       $('.lang').each(function(index, item) {
         $(this).text(arrLang[lang][$(this).attr('key')]);
-		$('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').addClass(arrLang[lang][$('.curflag').attr('key')]);
+		$('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').addClass(arrLang[lang][$('.curflag').attr('key')]);
       });
-	  let vis = document.getElementById("ru-tick").style.visibility;
-		if (vis.valueOf() == "visible".valueOf()){
+		if (lang == "en"){
 			document.getElementById("ru-tick").style.visibility = "hidden";
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+			document.getElementById("es-tick").style.visibility = "hidden";
 			document.getElementById("en-tick").style.visibility = "visible";
 			localStorage.setItem('language', 'en')
-		} else {
+		} else if(lang == "ru") {
 			document.getElementById("ru-tick").style.visibility = "visible";
 			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("de-tick").style.visibility = "hidden";
 			localStorage.setItem('language', 'ru')
+		} else if(lang == "de") {
+			document.getElementById("de-tick").style.visibility = "visible";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+			localStorage.setItem('language', 'de')
+		} else if(lang == "fr") {
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "visible";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+			localStorage.setItem('language', 'fr')
+		} else if(lang == "es") {
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "visible";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+			localStorage.setItem('language', 'es')
 		}
     });
   });
@@ -770,12 +1434,36 @@ var arrLang = {
   let lang = localStorage.getItem('language');
   if(lang.valueOf() == 'en'.valueOf()){
       document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
       document.getElementById("en-tick").style.visibility = "visible";
-  } else {
+  } else if(lang.valueOf() == 'ru'.valueOf()){
       document.getElementById("ru-tick").style.visibility = "visible";
       document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+  } else if(lang.valueOf() == 'de'.valueOf()){
+      document.getElementById("de-tick").style.visibility = "visible";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+  } else if(lang.valueOf() == 'fr'.valueOf()){
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "visible";
+  } else if(lang.valueOf() == 'es'.valueOf()){
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "visible";
+      document.getElementById("ru-tick").style.visibility = "hidden";
   }
   $('.lang').each(function(index, item) {
       $(this).text(arrLang[lang][$(this).attr('key')]);
-      $('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').addClass(arrLang[lang][$('.curflag').attr('key')]);
+      $('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').addClass(arrLang[lang][$('.curflag').attr('key')]);
   });

@@ -1,4 +1,4 @@
-{% extends 'base_aut.html' %}
+<script src="../static/js/base_auth.js"></script>{% extends 'base_aut.html' %}
 
 {% block title %}
 <title>Тесты</title>
@@ -73,8 +73,16 @@
                                 </td>
                             </tr>
                         {% endfor %}
+                        <tr> <!-- style="background: #80008010" -->
+                        <td colspan="3">
+                            <strong><text class="lang" key="unit_result">Итог раздела</text> «{{ unit.name }}»</strong>
+                        </td>
+                        <td colspan="3">
+                            <strong>{{ units_cur[unit.unit_id] }} / {{ units_max[unit.unit_id] }}</strong>
+                        </td>
+                    </tr>
                     {% endfor %}
-                    <tr style="background: #80008040">
+                    <tr> <!-- style="background: #80008040" -->
                         <td colspan="3">
                             <strong class="lang" key="result">Итог</strong>
                         </td>

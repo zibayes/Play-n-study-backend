@@ -72,6 +72,8 @@ def handle_course_summary(course_id):
 
     marks = {}
     max_marks = {}
+    units_max = {}
+    units_cur = {}
     for progress in progresses:
         if progress.progress['result']:
             progress.progress['result'] = TestResult.from_json(json.loads(progress.progress['result']))
@@ -83,8 +85,25 @@ def handle_course_summary(course_id):
         marks[key] = max(marks[key])
     total = sum(marks.values())
     total_max = sum(max_marks.values())
-    return render_template('course_summary.html', user=user, course=course, results=results,
-                           marks=marks, max_marks=max_marks, total=total, total_max=total_max)
+
+    for unit in course.content['body']:
+        first_time = True
+        for test in unit['tests']:
+            for progress in progresses:
+                if progress.progress['result']:
+                    if (str(test.test_id) + test.unit_type) == (str(progress.progress['test_id']) + progress.progress['type']):
+                        if first_time:
+                            units_max[unit['unit_id']] = 0
+                            first_time = False
+                        if unit['unit_id'] not in units_cur.keys():
+                            units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
+                            units_max[unit['unit_id']] += progress.progress['result'].total_score
+                        else:
+                            if units_cur[unit['unit_id']] < progress.progress['result'].total_current_score:
+                                units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
+
+    return render_template('course_summary.html', user=user, course=course, results=results, units_cur=units_cur,
+                           units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max)
 
 
 @login_required
