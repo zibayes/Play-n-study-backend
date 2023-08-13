@@ -1383,6 +1383,633 @@ var arrLang = {
       "name_":"Nombre:",
       "note_":"Nota:",
     },
+  'pt': {
+    'mainpage': 'início',
+    'support':'Suporte',
+    'perfil':'perfil',
+    'my_profile' :' meu perfil',
+    'my_friends' :' Minhas Subscrições',
+    'my_subscriptions' :' meus cursos',
+    'my_achievements' :' minhas recompensas',
+    'achievements': 'realizações',
+    'timetable': 'minha agenda',
+    'settings': 'Configurações',
+    'reviews': 'comentários',
+    'aboutus': 'Sobre nós',
+    'exit': 'sair',
+    'areusure': 'tem certeza que quer sair?',
+    'confirmexit': 'confirmar a saída',
+    'logout': 'Sair da conta',
+    'flag': 'flag-portugal',
+    'your_chats': 'seus diálogos',
+    'admin':'administrador',
+    'subscribe': 'subscrever',
+    'unsubscribe': 'Cancelar subscrição',
+    'give_admin': 'conceder privilégios de administrador',
+    'remove_admin': 'remover privilégios de administrador',
+    'info': 'Saiba mais',
+    'subscriptions': 'Subscrições',
+    'subscriptions_': 'Subscrições',
+    'subscribers': 'subscritores',
+    'participant_in': 'participante em',
+    'founded_by_request': 'encontrado por:',
+
+    'users_courses': 'cursos personalizados',
+    'create_course': 'criar curso',
+    'course_creation': 'criar um curso',
+    'enter_course_data': 'introduza os dados do curso:',
+    'create': 'Criar',
+
+    'createform': 'criar um formulário',
+    'form':'form',
+
+    'maininfo': 'Informação básica',
+    'changeava': 'alterar Avatar',
+    'anachievements': 'realizações',
+    'name':'Name',
+    'surname': 'sobrenome',
+    'phonenumber': 'número de telefone',
+    'email':'email',
+    'city':'Cidade:',
+    'city_': 'cidade',
+    'Universidade': 'Instituto',
+    'specialization':'especialidade',
+    'group':'Grupo de estudo',
+    'save': 'Salvar',
+
+    'devteam': 'equipe de desenvolvimento',
+    'pavel': 'Pavel',
+    'pavinfo': 'desenvolvedor de back-end e Front-End',
+    'online':'no site',
+    'ilya': 'Ilya',
+    'ilyinfo': 'Desenvolvedor Front-End',
+    'offline': 'Offline',
+    'anton': 'Anton',
+    'antinfo': 'desenvolvedor de back-end',
+    'afk': 'dormindo',
+    'devinfo': 'informações do desenvolvedor',
+
+    'my_notes' :' minhas notas',
+    'my_tasks' :' minhas tarefas',
+    'month': 'mês',
+
+    "segunda-feira": "seg",
+    "tuesday": "ter",
+    "wednesday": "qua",
+    "thursday": "qui",
+    "sexta-feira": "PT",
+    "saturday": "SAT",
+    "sunday": "dom",
+
+    "curso": "Curso",
+    "Cursos": "Cursos",
+    "course_rating": "classificação do curso:",
+    "rate_first": "este curso ainda não foi avaliado, seja o primeiro!",
+    "go_to_course": "ir para o curso",
+    "edit_course": "editar curso",
+    "delete_course": "excluir curso",
+    "course_participants":"participantes do curso",
+    "desc": "Descrição",
+    "thanks_for_your_feedback": "obrigado pelo feedback!",
+    "how_do_you_like_this_course": "o que você acha deste curso?",
+    "give_us_feedback": "deixe seu comentário:",
+    "what_about_comment": "e quanto ao comentário?",
+    "course_participants_feedback": "comentários dos participantes do curso",
+    "feedback_without_comment": "- - - comentário Sem comentários ---",
+    "show_all_feedback": "ver todos os comentários do curso",
+    "confirm_delete_course": "confirmar a exclusão do curso",
+    "are_u_sure_delete_course": "você definitivamente deseja excluir um curso",
+    "delete": "Excluir",
+
+    "course_participants_of": "participantes do curso",
+    "curator":"curador",
+    "give_curator": "emitir Autoridade de curador",
+    "remove_curator": "destituir a autoridade do curador",
+
+    "course_content": "conteúdo do curso",
+    "test": "Teste",
+    "article": "artigo",
+    "done": "concluído",
+    "checking": "na verificação",
+    "not_done": "não concluído",
+    "show_summary": "Ver resumo do progresso",
+    "test_desc": "responda às perguntas e ganhe um prêmio",
+    "article_desc": "leia o artigo e coma um doce",
+
+    "course_summary": "Resumo do curso",
+    "course_unit": "elemento do curso",
+    "tesk_type": "Tipo",
+    "status":"Status",
+    "mark": "avaliação",
+    "unit": "seção",
+    "Resultado":"Resultado",
+    "unit_result": "total da seção",
+
+    "read_article": "artigo lido",
+
+    "show_tries": "ver tentativas",
+    "leaders_table": "tabela de líderes",
+    "progress_graphic": "Gráfico de progresso",
+    "friends_progress": "progresso dos amigos",
+    "last_tries": "resultados de suas tentativas anteriores",
+    "try_number": "número da tentativa",
+    "condition": "Estado",
+    "viewing": "ver",
+    "time_spent": "tempo gasto passando",
+    "show_try": "veja a tentativa",
+    "best_mark": "nota máxima:",
+    "best_mark_": "avaliação Superior",
+    "place":"Place",
+    "user":"Usuário",
+    "graphic_desc": "Gráfico de alocação de usuários por pontuação mais alta",
+    "friends_table_desc": "tabela de classificação entre amigos que você segue",
+    "marking_method": "método de avaliação: Professor",
+    "start_test": "Iniciar teste",
+
+    "try_showing": "ver tentativa",
+    "information":"informação",
+    "questão":"questão",
+    "score":"pontos:",
+    "not_marked": "Não avaliado",
+    "the_same_answer": "os usuários deram a mesma resposta a esta tarefa",
+    "curator_comment": "comentário do curador:",
+    "your_result": "seu resultado:",
+    "your_time_spent": "o tempo passou ",
+
+    "passing_the_test": "passar no teste",
+    "complete_test": "Complete o teste",
+
+    "course_reviews": "comentários do curso",
+
+    "course_editing": "editar curso",
+    "check":"Check",
+    "editar":"editar",
+    "task_creation": "criar uma tarefa",
+    "choose_task_type": "selecione o tipo de tarefa a ser criada:",
+    "confirm_delete_unit": "confirmar a remoção da partição",
+    "confirm_delete_test": "confirmar a remoção do teste",
+    "confirm_delete_article": "confirmar a exclusão do artigo",
+    "are_u_sure_delete_unit": "você definitivamente deseja excluir a partição",
+    "are_u_sure_delete_test": "você definitivamente deseja excluir o teste",
+    "are_u_sure_delete_article": "você definitivamente deseja excluir o artigo",
+    "unit_creation": "criar partição",
+    "enter_unit_name": "digite o nome da partição:",
+    "save_course": "salvar curso",
+
+    "article_edit": "elaboração do artigo",
+    "enter_article": "inserir um artigo (em Markdown)",
+    "article_text": "texto do artigo",
+    "article_preview": "pré-visualização do seu artigo",
+    "save_article": "salvar artigo",
+
+    "article_constructor": "construtor de artigos",
+
+    "test_checking": "teste de validação",
+    "tires_results": "resultados das tentativas",
+    "check_try": "verificar tentativa",
+
+    "test_checking_user": "verificação de tentativa do Usuário",
+    "add_comment": "Adicionar comentário",
+    "result_": "resultado:",
+    "complete_checking": "concluir verificação",
+
+    "test_editor_of":"editor de teste",
+    "test_editor":"editor de teste",
+    "solo": "a única resposta",
+    "multiple": "resposta múltipla",
+    "free": "Uma breve resposta livre",
+    "detailed_free":"resposta Livre",
+    "info_block": "Bloco de informações",
+    "add_question": "adicionar pergunta",
+    "save_test": "salvar teste",
+
+    "test_constructor": "construtor de testes",
+
+    "access_denied": "Acesso negado",
+    "but_you_can_subscribe": "mas você pode acessar o conteúdo deste curso inscrevendo-se nele",
+
+    "new_note":"nova nota",
+    "name_": "título:",
+    "note_": "Nota:",
+  },
+  'cn':{
+    "mainpage":"主页",
+    'support':'支持',
+    'profile':'个人资料',
+    'my_profile':'我的个人资料',
+    'my_friends':'我的订阅',
+    'my_subscriptions':'我的课程',
+    'my_achievements':'我的奖项',
+    "achievements":"成就",
+    "timetable":"我的时间表",
+    'settings':'设置',
+    "reviews":"评论",
+    "aboutus":'关于我们',
+    'exit':'退出',
+    'areusure':'你确定要出去吗？',
+    'confirmexit':'退出确认',
+    'logout':'从账户注销',
+    'flag': 'flag-china',
+    'your_chats':'你的对话',
+    'admin':'行政主任',
+    'subscribe':'订阅',
+    'unsubscribe':'取消订阅',
+    'give_admin':'授予管理员权限',
+    'remove_admin':'撤销管理员权限',
+    "info":"了解更多",
+    'subscriptions':'订阅',
+    'subscriptions_':'订阅',
+    "subscribers":"订户",
+    'participant_in':'参与',
+    'founded_by_request':'根据请求找到:',
+
+    'users_courses':'定制课程',
+    'create_course':'创建课程',
+    'course_creation':'创建课程',
+    'enter_course_data':'输入课程数据:',
+    'create':'创建',
+
+    'createform':'创建表单',
+    'form':'表格',
+
+    'maininfo':'基本信息',
+    'changeava':'改变头像',
+    "anachievements":"成就",
+    'name':'Name',
+    'surname':'姓',
+    'phonenumber':'电话号码',
+    'email':'电子邮件',
+    'city':'城市:',
+    'city_':'城市',
+    'university':'研究所',
+    'specialization':'专业',
+    'group':'勉強会',
+    'save':'保存',
+
+    'devteam':'开发团队',
+    'pavel':'帕维尔',
+    'pavinfo':'后端和前端开发人员',
+    "online":"在网站上",
+    'ilya':'伊利亚',
+    'ilyinfo':'前端开发人员',
+    'offline':'离线',
+    'anton':'安东',
+    'antinfo':'后端开发人员',
+    'afk':'睡觉',
+    'devinfo':'开发者信息',
+
+    'my_notes':'我的笔记',
+    'my_tasks':'我的任务',
+    'month':'月',
+
+    "monday":"星期一",
+    "tuesday":"星期二",
+    "wednesday":"星期三",
+    "thursday":"星期四",
+    "friday":"星期五",
+    "saturday":"星期六",
+    "sunday":"太阳",
+
+    "course":"课程",
+    "courses":"课程",
+    "course_rating":"课程评分:",
+    "rate_first":"这门课程还没有评估，做第一个！",
+    "go_to_course":"去课程",
+    "edit_course":"编辑课程",
+    "delete_course":"删除课程",
+    "course_participants":"课程参与者",
+    "desc":"描述",
+    "thanks_for_your_feedback":"感谢您的反馈！",
+    "how_do_you_like_this_course":"你觉得这门课程怎么样？",
+    "give_us_feedback":"留下您的反馈：",
+    "what_about_comment":"评论怎么样？",
+    "course_participants_feedback":"课程参与者的反馈",
+    "feedback_without_comment":"---评论不加评论---",
+    "show_all_feedback":"查看所有课程评论",
+    "confirm_delete_course":"确认课程删除",
+    "are_u_sure_delete_course":"你肯定想删除课程",
+    "delete":"删除",
+
+    "course_participants_of":"课程参与者",
+    "curator":"策展人",
+    "give_curator":"授予策展人权力",
+    "remove_curator":"撤销馆长权力",
+
+    "course_content":"课程内容",
+    "test":"测试",
+    "article":"文章",
+    "done":"完成",
+    "checking":"正在审查中",
+    "not_done":"未完成",
+    "show_summary":"查看进度摘要",
+    "test_desc":"回答问题并获得奖品",
+    "article_desc":"阅读文章，吃点糖果",
+
+    "course_summary":"课程总结",
+    "course_unit":"课程元素",
+    "tesk_type":"类型",
+    "status":"状态",
+    "mark":"等级",
+    "unit":"科",
+    "result":"摘要",
+    "unit_result":"章节摘要",
+
+    "read_article":"文章已被阅读",
+
+    "show_tries":"查看尝试",
+    "leaders_table":"排行榜",
+    "progress_graphic":"进度图",
+    "friends_progress":"朋友的进步",
+    "last_tries":"您之前尝试的结果",
+    "try_number":"尝试次数",
+    "condition":"状态",
+    "viewing":"查看",
+    "time_spent":"通过所花费的时间",
+    "show_try":"查看尝试",
+    "best_mark":"最高分:",
+    "best_mark_":"最高分",
+    "place":"地方",
+    "user":"用户",
+    "graphic_desc":"按最高评级划分的用户分布图",
+    "friends_table_desc":"您订阅的好友中排行榜",
+    "marking_method":"评价方式：老师",
+    "start_test":"开始测试",
+
+    "try_showing":"查看尝试",
+    "information":"资讯",
+    "question":"问题",
+    "score":"分数：",
+    "not_marked":"未评级",
+    "the_same_answer":"用户对此任务给出了相同的答案",
+    "curator_comment":"策展人评论:",
+    "your_result":"你的结果:",
+    "your_time_spent":"时间过去了",
+
+    "passing_the_test":"通过测试",
+    "complete_test":"完成测试",
+
+    "course_reviews":"课程评论",
+
+    "course_editing":"编辑课程",
+    "check":"检查",
+    "edit":"编辑",
+    "task_creation":"创建任务",
+    "choose_task_type":"选择要创建的任务类型:",
+    "confirm_delete_unit":"删除部分的确认",
+    "confirm_delete_test":"测试删除的确认",
+    "confirm_delete_article":"确认文章删除",
+    "are_u_sure_delete_unit":"你肯定想删除部分",
+    "are_u_sure_delete_test":"你肯定想删除测试",
+    "are_u_sure_delete_article":"你肯定想删除文章",
+    "unit_creation":"创建一个部分",
+    "enter_unit_name":"输入节的名称:",
+    "save_course":"保存课程",
+
+    "article_edit":"文章汇编",
+    "enter_article":"文章条目（在Markdown中）",
+    "article_text":"文章文本",
+    "article_preview":"文章预览",
+    "save_article":"保存文章",
+
+    "article_constructor":"文章构造函数",
+
+    "test_checking":"测试检查",
+    "tires_results":"尝试结果",
+    "check_try":"测试尝试",
+
+    "test_checking_user":"用户尝试验证",
+    "add_comment":"添加注释",
+    "result_":"结果:",
+    "complete_checking":"完成验证",
+
+    "test_editor_of":"测试编辑器",
+    "test_editor":"测试编辑器",
+    "solo":"单一答案",
+    "multiple":"多个答案",
+    "free":"简短的免费答案",
+    "detailed_free":"免费答案",
+    "info_block":"信息块",
+    "add_question":"添加问题",
+    "save_test":"保存测试",
+
+    "test_constructor":"测试构造函数",
+
+    "access_denied":"访问被拒绝",
+    "but_you_can_subscribe":"但您可以通过订阅它来访问本课程的材料",
+
+    "new_note":"新笔记",
+    "name_":"标题:",
+    "note_":"注：",
+  },
+  'jp':{
+    'mainpage':'ホーム',
+    'support':'サポート',
+    'profile':'プロフィール',
+    'my_profile':'私のプロフィール',
+    'my_friends':'マイサブスクリプション',
+    'my_subscriptions':'私のコース',
+    'my_achievements':'私の賞',
+    'achievements':'実績',
+    'timetable':'私のスケジュール',
+    'settings':'設定',
+    'reviews':'レビュー',
+    'aboutus':'私たちについて',
+    'exit':'出口',
+    'areusure':'本当に出て行きたいですか？',
+    'confirmexit':'終了確認',
+    'logout':'アカウントからログアウト',
+    'flag':'flag-japan',
+    'your_chats':'あなたの対話',
+    'admin':'管理者',
+    'subscribe':'購読する',
+    'unsubscribe':'登録解除',
+    'give_admin':'管理者権限の付与',
+    'remove_admin':'管理者の権限を削除します',
+    'info':'詳細を見る',
+    'subscriptions':'定期購読',
+    'subscribtions_':'サブスクリプション',
+    'subscribers':'加入者',
+    'participant_in':'参加者',
+    'founded_by_request':'リクエストに応じて見つかりました:',
+
+    'users_courses':'カスタムコース',
+    'create_course':'コースを作成する',
+    'course_creation':'コースの作成',
+    'enter_course_data':'コースデータの入力:',
+    'create':'Create',
+
+    'createform':'フォームの作成',
+    'form':'フォーム',
+
+    'maininfo':'基本情報',
+    'changeava':'アバターを変更',
+    'anachievements':'実績',
+    'name':'名前',
+    'surname':'姓',
+    'phonenumber':'電話番号',
+    'email':'メール',
+    'city':'市:',
+    'city_':'市',
+    'university':'研究所',
+    'specialization':'専門分野',
+    'group':'勉強会',
+    'save':'保存',
+
+    'devteam':'開発チーム',
+    'pavel':'Pavel',
+    'pavinfo':'バックエンドとフロントエンドの開発者',
+    'online':'サイト上',
+    'ilya':'イリヤ',
+    'ilyinfo':'フロントエンド開発者',
+    'offline':'オフライン',
+    'anton':'アントン',
+    'antinfo':'バックエンド開発者',
+    'afk':'眠っている',
+    'devinfo':'開発者情報',
+
+    'my_notes':'私のノート',
+    'my_tasks':'マイタスク',
+    'month':'月',
+
+    "monday":"月",
+    "tuesday":"火",
+    "wednesday":"水曜日",
+    "Thursday":"木曜日",
+    "Friday":"金曜日",
+    "saturday":"土",
+    "sunday":"日曜日",
+
+    "course":"コース",
+    "courses":"「コース」",
+    "course_rating":"コース評価:",
+    "rate_first":"このコースはまだ評価されていません。",
+    "go_to_course":"コースに移動",
+    "edit_course":"コースの編集",
+    "delete_course":"コースを削除",
+    "course_participants":"コース参加者",
+    "desc":"説明",
+    "thanks_for_your_feedback":"あなたのフィードバックをありがとう！",
+    "how_do_you_like_this_course":"このコースはどのように好きですか？",
+    "give_us_feedback":"フィードバックを残してください:",
+    "what_about_comment":"コメントはどうですか？",
+    "course_participants_feedback":"コース参加者からのフィードバック",
+    "feedback_without_comment":"---コメントなしのレビュー---",
+    "show_all_feedback":"すべてのコースレビューを表示する",
+    "confirm_delete_course":"コース削除の確認",
+    "are_u_sure_delete_course":"あなたは間違いなくコースを削除したいです",
+    "delete":"削除",
+
+    "course_participants_of":"コース参加者",
+    "curator":"キュレーター",
+    "give_curator":"学芸員権限を付与する",
+    "remove_curator":"キュレーター権限を削除する",
+
+    "course_content":"コースコンテンツ",
+    "test":"テスト",
+    "article":"記事",
+    "done":"完了",
+    "checking":"レビュー中",
+    "not_done":"完了していません",
+    "show_summary":"進行状況の概要を表示する",
+    "test_desc":"質問に答えて賞品を手に入れよう",
+    "article_desc":"記事を読んでお菓子を食べる",
+
+    "course_summary":"コースの概要",
+    "course_unit":"コース要素",
+    "tesk_type":"タイプ",
+    "status":"ステータス",
+    "mark":"「グレード」",
+    "unit":"セクション",
+    "result":"概要",
+    "unit_result":"セクションの概要",
+
+    "read_article":"記事が読み込まれました",
+
+    "show_tries":"ビューの試行",
+    "leaders_table":"リーダーボード",
+    "progress_graphic":"進捗グラフ",
+    "friends_progress":"友達の進捗状況",
+    "last_tries":"前回の試行の結果",
+    "try_number":"試行番号",
+    "condition":"状態",
+    "viewing":"表示",
+    "time_spent":"通過に費やされた時間",
+    "show_try":"ビューの試行",
+    "best_mark":"最高スコア:",
+    "best_mark_":"最高スコア",
+    "place":"Place",
+    "user":"ユーザー",
+    "graphic_desc":"最高評価によるユーザーの分布のグラフ",
+    "friends_table_desc":"あなたが購読している友人の間のリーダーボード",
+    "marking_method":"評価方法:教師",
+    "start_test":"テストを開始する",
+
+    "try_showing":"試行の表示",
+    "information":"情報",
+    "question":"質問",
+    "score":"スコア:",
+    "not_marked":"評価されていません",
+    "the_same_answer":"ユーザーはこのタスクに対して同じ答えを出しました",
+    "curator_comment":"キュレーターのコメント:",
+    "your_result":"あなたの結果:",
+    "your_time_spent":"時間が経過しました",
+
+    "passing_the_test":"テストに合格する",
+    "complete_test":"テストを完了する",
+
+    "course_reviews":"コースレビュー",
+
+    "course_editing":"コースの編集",
+    "check":"チェック",
+    "edit":"編集",
+    "task_creation":"タスクを作成する",
+    "choose_task_type":"作成するタスクのタイプを選択します:",
+    "confirm_delete_unit":"セクションの削除の確認",
+    "confirm_delete_test":"テストの削除の確認",
+    "confirm_delete_article":"記事削除の確認",
+    "are_u_sure_delete_unit":"セクションを確実に削除したい",
+    "are_u_sure_delete_test":"テストを削除します",
+    "are_u_sure_delete_article":"あなたは間違いなく記事を削除したいです",
+    "unit_creation":"セクションを作成する",
+    "enter_unit_name":"セクションの名前を入力します:",
+    "save_course":"コースを保存",
+
+    "article_edit":"記事の編集",
+    "enter_article":"記事エントリ(Markdown内)",
+    "article_text":"記事テキスト",
+    "article_preview":"記事のプレビュー",
+    "save_article":"記事を保存",
+
+    "article_constructor":"アーティクルコンストラクタ",
+
+    "test_checking":"テストチェック",
+    "tires_results":"試行結果",
+    "check_try":"テストの試行",
+
+    "test_checking_user":"ユーザーが検証を試みました",
+    "add_comment":"コメントを追加",
+    "result_":"結果:",
+    "complete_checking":"完全な検証",
+
+    "test_editor_of":"テストエディタ",
+    "test_editor":"テストエディタ",
+    "solo":"単一の答え",
+    "multiple":"複数の回答",
+    "free":"短い自由回答",
+    "detailed_free":"フリーアンサー",
+    "info_block":"情報ブロック",
+    "add_question":"質問を追加",
+    "save_test":"テストを保存",
+
+    "test_constructor":"テストコンストラクタ",
+
+    "access_denied":"アクセスが拒否されました",
+    "but_you_can_subscribe":"しかし、あなたはそれを購読することによって、このコースの材料にアクセスすることができます",
+
+    "new_note":"新しいノート",
+    "name_":"タイトル:",
+    "note_":"ノート:",
+    },
 }
 
   $(function() {
@@ -1390,13 +2017,16 @@ var arrLang = {
       var lang = $(this).attr('id');
       $('.lang').each(function(index, item) {
         $(this).text(arrLang[lang][$(this).attr('key')]);
-		$('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').addClass(arrLang[lang][$('.curflag').attr('key')]);
+		$('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').removeClass('flag-portugal').removeClass('flag-china').removeClass('flag-japan').addClass(arrLang[lang][$('.curflag').attr('key')]);
       });
 		if (lang == "en"){
 			document.getElementById("ru-tick").style.visibility = "hidden";
 			document.getElementById("de-tick").style.visibility = "hidden";
 			document.getElementById("fr-tick").style.visibility = "hidden";
 			document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
 			document.getElementById("en-tick").style.visibility = "visible";
 			localStorage.setItem('language', 'en')
 		} else if(lang == "ru") {
@@ -1405,6 +2035,9 @@ var arrLang = {
 			document.getElementById("fr-tick").style.visibility = "hidden";
             document.getElementById("es-tick").style.visibility = "hidden";
 			document.getElementById("de-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
 			localStorage.setItem('language', 'ru')
 		} else if(lang == "de") {
 			document.getElementById("de-tick").style.visibility = "visible";
@@ -1412,6 +2045,9 @@ var arrLang = {
 			document.getElementById("fr-tick").style.visibility = "hidden";
             document.getElementById("es-tick").style.visibility = "hidden";
 			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
 			localStorage.setItem('language', 'de')
 		} else if(lang == "fr") {
 			document.getElementById("de-tick").style.visibility = "hidden";
@@ -1419,6 +2055,9 @@ var arrLang = {
 			document.getElementById("fr-tick").style.visibility = "visible";
             document.getElementById("es-tick").style.visibility = "hidden";
 			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
 			localStorage.setItem('language', 'fr')
 		} else if(lang == "es") {
 			document.getElementById("de-tick").style.visibility = "hidden";
@@ -1426,7 +2065,40 @@ var arrLang = {
 			document.getElementById("fr-tick").style.visibility = "hidden";
             document.getElementById("es-tick").style.visibility = "visible";
 			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
 			localStorage.setItem('language', 'es')
+		} else if(lang == "pt") {
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "visible";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "hidden";
+			localStorage.setItem('language', 'pt')
+		} else if(lang == "cn") {
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "visible";
+			document.getElementById("jp-tick").style.visibility = "hidden";
+			localStorage.setItem('language', 'cn')
+		} else if(lang == "jp") {
+			document.getElementById("de-tick").style.visibility = "hidden";
+			document.getElementById("en-tick").style.visibility = "hidden";
+			document.getElementById("fr-tick").style.visibility = "hidden";
+            document.getElementById("es-tick").style.visibility = "hidden";
+			document.getElementById("ru-tick").style.visibility = "hidden";
+            document.getElementById("pt-tick").style.visibility = "hidden";
+			document.getElementById("cn-tick").style.visibility = "hidden";
+			document.getElementById("jp-tick").style.visibility = "visible";
+			localStorage.setItem('language', 'jp')
 		}
     });
   });
@@ -1437,6 +2109,9 @@ var arrLang = {
       document.getElementById("de-tick").style.visibility = "hidden";
       document.getElementById("fr-tick").style.visibility = "hidden";
       document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
       document.getElementById("en-tick").style.visibility = "visible";
   } else if(lang.valueOf() == 'ru'.valueOf()){
       document.getElementById("ru-tick").style.visibility = "visible";
@@ -1444,17 +2119,26 @@ var arrLang = {
       document.getElementById("de-tick").style.visibility = "hidden";
       document.getElementById("es-tick").style.visibility = "hidden";
       document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
   } else if(lang.valueOf() == 'de'.valueOf()){
       document.getElementById("de-tick").style.visibility = "visible";
       document.getElementById("en-tick").style.visibility = "hidden";
       document.getElementById("ru-tick").style.visibility = "hidden";
       document.getElementById("es-tick").style.visibility = "hidden";
       document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
   } else if(lang.valueOf() == 'fr'.valueOf()){
       document.getElementById("de-tick").style.visibility = "hidden";
       document.getElementById("en-tick").style.visibility = "hidden";
       document.getElementById("ru-tick").style.visibility = "hidden";
       document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
       document.getElementById("fr-tick").style.visibility = "visible";
   } else if(lang.valueOf() == 'es'.valueOf()){
       document.getElementById("de-tick").style.visibility = "hidden";
@@ -1462,8 +2146,38 @@ var arrLang = {
       document.getElementById("fr-tick").style.visibility = "hidden";
       document.getElementById("es-tick").style.visibility = "visible";
       document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
+  } else if(lang == "pt") {
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "visible";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "hidden";
+  } else if(lang == "cn") {
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "visible";
+      document.getElementById("jp-tick").style.visibility = "hidden";
+  } else if(lang == "jp") {
+      document.getElementById("de-tick").style.visibility = "hidden";
+      document.getElementById("en-tick").style.visibility = "hidden";
+      document.getElementById("fr-tick").style.visibility = "hidden";
+      document.getElementById("es-tick").style.visibility = "hidden";
+      document.getElementById("ru-tick").style.visibility = "hidden";
+      document.getElementById("pt-tick").style.visibility = "hidden";
+      document.getElementById("cn-tick").style.visibility = "hidden";
+      document.getElementById("jp-tick").style.visibility = "visible";
   }
   $('.lang').each(function(index, item) {
       $(this).text(arrLang[lang][$(this).attr('key')]);
-      $('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').addClass(arrLang[lang][$('.curflag').attr('key')]);
+      $('.curflag').removeClass('flag-united-kingdom').removeClass('flag-russia').removeClass('flag-germany').removeClass('flag-france').removeClass('flag-spain').removeClass('flag-portugal').removeClass('flag-china').removeClass('flag-japan').addClass(arrLang[lang][$('.curflag').attr('key')]);
   });
