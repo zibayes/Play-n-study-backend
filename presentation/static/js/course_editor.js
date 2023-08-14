@@ -1,3 +1,9 @@
+import {
+    addDragoverEventListener,
+    addDragndropDesignVoid,
+    childOf
+} from './test_constructor_functions.js';
+
 function submitForm(){
      const inputs = document.querySelectorAll('.toSend');
      let inputs_to_send = {}
@@ -38,12 +44,6 @@ function submitForm(){
      sending_form.submit();
 }
 document.querySelectorAll(".dnd").forEach(elem =>{
-    elem.addEventListener(`mouseover`, (evt) => {
-      document.body.style.cursor = 'move';
-    })
-    elem.addEventListener(`mouseout`, (evt) => {
-      document.body.style.cursor = '';
-    })
     let divUnitTest = document.getElementById("unit_test-" + elem.id);
 
     /*
@@ -54,19 +54,7 @@ document.querySelectorAll(".dnd").forEach(elem =>{
     });
     */
 
-    elem.addEventListener(`dragstart`, (evt) => {
-      evt.dataTransfer.setDragImage(divUnitTest, divUnitTest.offsetWidth / 1.92, divUnitTest.offsetHeight / 8)
-      setTimeout(() => {
-          divUnitTest.classList.add(`selected`);
-          divUnitTest.style.visibility  = "hidden"
-      }, 0);
-    })
-    elem.addEventListener(`dragend`, (evt) => {
-      setTimeout(() => {
-          divUnitTest.classList.remove(`selected`);
-          divUnitTest.style.removeProperty("visibility")
-      }, 0);
-    });
+    addDragndropDesignVoid(divUnitTest, elem, 'course')
 });
 
 var isAbleToMove = true;
@@ -84,7 +72,7 @@ document.querySelectorAll(".dnd-unit").forEach(elem => {
         if (!isMoveable)
             return;
         isAbleToMove = false;
-        array_for_compare = Array.from(divUnitTests.children);
+        let array_for_compare = Array.from(divUnitTests.children);
         console.log(array_for_compare.indexOf(currentElement), array_for_compare.indexOf(activeElement))
         if (array_for_compare.indexOf(currentElement) > array_for_compare.indexOf(activeElement)) {
             const nextElement = (currentElement === activeElement.nextElementSibling) ?
@@ -127,72 +115,9 @@ document.querySelectorAll(".dnd-unit").forEach(elem => {
 });
 
 document.querySelectorAll(".dnd-units").forEach(elem =>{
-    elem.addEventListener(`mouseover`, (evt) => {
-      document.body.style.cursor = 'move';
-    })
-    elem.addEventListener(`mouseout`, (evt) => {
-      document.body.style.cursor = '';
-    })
     let divUnit = document.getElementById("unit-" + elem.id);
-    elem.addEventListener(`dragstart`, (evt) => {
-      evt.dataTransfer.setDragImage(divUnit, divUnit.offsetWidth / 1.09, divUnit.offsetHeight / 8)
-      setTimeout(() => {
-          divUnit.classList.add(`selected`);
-          divUnit.style.visibility  = "hidden"
-      }, 0);
-    })
-    elem.addEventListener(`dragend`, (evt) => {
-      setTimeout(() => {
-          divUnit.classList.remove(`selected`);
-          divUnit.style.removeProperty("visibility")
-      }, 0);
-    });
+    addDragndropDesignVoid(divUnit, elem, 'unit');
 });
 
-function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
-
-var isAbleToMoveUnit = true;
-
-let units_list = document.getElementById("units_list")
-units_list.addEventListener(`dragover`, (evt) => {
-    evt.preventDefault();
-    const activeElement = units_list.querySelector(`.selected`);
-    const currentElement = evt.target;
-    const isMoveable = activeElement !== currentElement && isAbleToMoveUnit &&
-    currentElement.classList.contains(`unit_div`) && activeElement.classList.contains(`unit_div`);
-    if (!isMoveable)
-        return;
-    isAbleToMoveUnit = false;
-    let nextElement;
-    if(currentElement === activeElement.nextElementSibling){
-        nextElement = currentElement.nextElementSibling;
-        currentElement.animate(
-          [
-            // keyframes
-            { transform: "translateY(" + activeElement.offsetHeight + "px)" },
-            { transform: "translateY(" + 0 + "px)" },
-          ],
-          {
-            // timing options
-            duration: 300,
-            iterations: 1,
-          }
-        );
-    } else {
-        nextElement = currentElement;
-        currentElement.animate(
-          [
-            // keyframes
-            { transform: "translateY(-" + activeElement.offsetHeight + "px)" },
-            { transform: "translateY(" + 0 + "px)" },
-          ],
-          {
-            // timing options
-            duration: 300,
-            iterations: 1,
-          }
-        );
-    }
-    units_list.insertBefore(activeElement, nextElement);
-    setTimeout(() => {isAbleToMoveUnit = true;}, 400)
-});
+let units_list = document.getElementById("units_list");
+addDragoverEventListener(units_list, `unit_div`);

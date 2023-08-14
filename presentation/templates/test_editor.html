@@ -24,7 +24,7 @@
         <br>
 
         <form action="" method="POST">
-        <textarea maxlength="1000" required class="form-control" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
+        <textarea maxlength="1000" required class="form-control langp" key="test_name" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
         <hr>
 
             <div id="questionsList" style="padding-top: 8px;">
@@ -49,9 +49,9 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     {% if question.type == "info" %}
-                                        <textarea maxlength="15000" required rows="8" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                        <textarea maxlength="15000" required rows="8" class="form-control langp" key="information" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}" placeholder="Информация">{{ question.ask }}</textarea>
                                     {% else %}
-                                        <textarea maxlength="5000" required rows="1" class="form-control" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}">{{ question.ask }}</textarea>
+                                        <textarea maxlength="5000" required rows="1" class="form-control langp" key="question_text" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}" placeholder="Текст вопроса">{{ question.ask }}</textarea>
                                     {% endif %}
                                     <hr>
                                     <div id="addAns-{{ questionNum.value }}" class="row container-fluid" class="answer_div">
@@ -68,13 +68,13 @@
                                                             <input id="checkbox" type="radio" name="Right_Answer-{{ questionNum.value }}" value="{{ answerNum.value }}">
                                                         {% endif %}
                                                         </label>
-                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
-                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" id="{{ questionNum.value }}-{{ answerNum.value }}" onclick="deleteElement('Answer-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                         </div>
+                                                        <br>
                                                     </div>
-                                                    <br>
                                                 {% endfor %}
                                             {% endfor %}
                                         {% endif %}
@@ -92,13 +92,13 @@
                                                             <input id="checkbox" type="checkbox" name="Right_Answer-{{ questionNum.value }} -{{ answerNum.value }}" value="{{ answer_text }}">
                                                         {% endif %}
                                                         </label>
-                                                        <textarea maxlength="5000" required class="form-control" rows="1" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
-                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" onclick="deleteElement('delAns-' + this.id)">✖</button>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;" id="{{ questionNum.value }}-{{ answerNum.value }}" onclick="deleteElement('Answer-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                         </div>
+                                                        <br>
                                                     </div>
-                                                    <br>
                                                 {% endfor %}
                                             {% endfor %}
                                         {% endif %}
@@ -108,13 +108,13 @@
                                             {% for answer in question.answers %}
                                                 {% set answerNum.value = answerNum.value + 1 %}
                                                 <div style="display: flex;">
-                                                    <textarea maxlength="5000" required id="freeAnswer" class="form-control" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}" rows="1">{{ answer }}</textarea>
+                                                    <textarea maxlength="5000" required id="freeAnswer" class="form-control langp" key="short_answer" placeholder="Краткий ответ" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}" rows="1">{{ answer }}</textarea>
                                                 </div>
                                             {% endfor %}
                                         {% endif %}
 
                                         {% if question.type == "detailed_free" %}
-                                            <textarea maxlength="15000" disabled class="form-control" name="{{ question.ask }}" rows="8"></textarea>
+                                            <textarea maxlength="15000" disabled class="form-control langp" key="long_answer" placeholder="Развернутый ответ" name="{{ question.ask }}" rows="8"></textarea>
                                         {% endif %}
                                     </div>
                                     <br>
@@ -189,5 +189,5 @@
     <script>
         let questions_count = {{ test.questions|length }}
     </script>
-    <script type="text/javascript" src="/static/js/test_editor.js"></script>
+    <script type="module" src="/static/js/test_editor.js"></script>
 {% endblock %}

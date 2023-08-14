@@ -18,7 +18,7 @@
                         <div class="input-group mb-4">
                             <input id="text"
                                    type="text"
-                                   class="form-control"
+                                   class="form-control langp" key="courses_search"
                                    placeholder="Поиск курсов"
                                    name="query"
                             />
@@ -92,9 +92,9 @@
           </div>
               <div class="modal-body lang" key="enter_course_data">Введите данные курса:</div>
                 <form id="form1" action="/create_course/{{user.user_id}}" method="POST">
-                    <textarea required class="form-control" maxlength="1000" placeholder="Название" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-                    <textarea required class="form-control" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
-                    <textarea required class="form-control" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                    <textarea required class="form-control langp" key="title" maxlength="1000" placeholder="Название" name="courseName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                    <textarea required class="form-control langp" key="desc" maxlength="5000" placeholder="Описание" name="description" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                    <textarea required class="form-control langp" key="category" maxlength="1000" placeholder="Категория" name="category" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
                 <!-- <form id="form2" action="/create_course/{{user.user_id}}" method="POST" enctype="multipart/form-data">
                     <input type="file" name="file" class="form-control" id="customFile" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"/>
                 </form> -->

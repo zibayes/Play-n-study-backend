@@ -101,7 +101,7 @@
                         </table>
                         <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
                             <div>
-                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score }} / {{ progresses[0].progress.result.total_score }}
+                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score }} / {{ max_score_total }}
                             </div>
                         </span>
                     </div>
@@ -159,7 +159,7 @@
                                             <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
                                         </td>
                                         <td>
-                                            {{ result }} / {{ progresses[0].progress.result.total_score }}
+                                            {{ result }} / {{ leaders_total_score[leader] }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -264,7 +264,7 @@
                                             <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
                                         </td>
                                         <td>
-                                            {{ result }} / {{ progresses[0].progress.result.total_score }}
+                                            {{ result }} / {{ leaders_total_score[leader] }}
                                         </td>
                                     </tr>
                                 {% endfor %}

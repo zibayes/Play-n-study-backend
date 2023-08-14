@@ -24,7 +24,7 @@
         <br>
 
         <form action="" method="POST">
-            <textarea required class="form-control" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
+            <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
             <hr>
 
             <div id="questionsList" style="padding-top: 8px;"></div>
@@ -47,5 +47,5 @@
 {% endblock %}
 {% block script %}
     <!-- Scripts -->
-    <script type="text/javascript" src="/static/js/test_constructor.js"></script>
+    <script type="module" src="/static/js/test_constructor.js"></script>
 {% endblock %}

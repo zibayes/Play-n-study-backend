@@ -129,7 +129,7 @@
                         {% if not question.comment %}
                             <button class="addComment" type="button" style="background: transparent; border: transparent;" id="{{questionNum.value}}"><strong>+ </strong><text class="lang" key="add_comment">Добавить комментарий</text></button>
                         {% else %}
-                            <textarea class="form-control" placeholder="Комментарий" maxlength="5000" name="{{ questionNum.value }}" rows="2">{{ question.comment }}</textarea>
+                            <textarea class="form-control langp" key="comment" placeholder="Комментарий" maxlength="5000" name="{{ questionNum.value }}" rows="2">{{ question.comment }}</textarea>
                         {% endif %}
                     </div>
                 </div>

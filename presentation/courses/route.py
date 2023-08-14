@@ -142,6 +142,7 @@ def handle_test_preview(course_id, test_id):
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
     to_delete = []
     max_score = 0
+    max_score_total = 0
     for i in range(len(progress)):
         if int(progress[i].progress['test_id']) != test_id:
             to_delete.append(i)
@@ -149,11 +150,13 @@ def handle_test_preview(course_id, test_id):
             progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
             if progress[i].progress['result'].total_current_score > max_score:
                 max_score = progress[i].progress['result'].total_current_score
+                max_score_total = progress[i].progress['result'].total_score
     for i in reversed(to_delete):
         progress.pop(i)
 
     leaders = logic.get_progress_by_course_id_all(course_id)
     leaders_to_show = {}
+    leaders_total_score = {}
     leaders_hrefs = {}
     graphic_data = {}
     friends = {}
@@ -167,9 +170,13 @@ def handle_test_preview(course_id, test_id):
             if user_for_table not in leaders_to_show.keys():
                 leaders_to_show[user_for_table] = []
                 leaders_hrefs[user_for_table] = leaders[i].user_id
+                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
                 if subs and user_for_table in subs or user_for_table == user.username:
                     friends[user_for_table] = []
             leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
+            if leaders_to_show[user_for_table][-1] == max(leaders_to_show[user_for_table]):
+                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
+
             if subs and user_for_table in subs or user_for_table == user.username:
                 friends[user_for_table].append(leaders[i].progress['result'].total_current_score)
     for key in leaders_to_show.keys():
@@ -180,7 +187,7 @@ def handle_test_preview(course_id, test_id):
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
 
-    return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name,
+    return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
                            progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
                            leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
 

@@ -17,9 +17,9 @@
               </ol>
             </nav>
             <span class="fs-5 row m-3 justify-content-start lang">
-                <textarea required class="form-control toSend" maxlength="1000" placeholder="Название курса" name="courseName" id="courseName" rows="1">{{ course.name }}</textarea>
-                <textarea required style="margin-top: 8px;" class="form-control toSend" maxlength="1000" placeholder="Описание курса" name="courseDesc" rows="3">{{ course.description }}</textarea>
-                <textarea required style="margin-top: 8px;" class="form-control toSend" maxlength="1000" placeholder="Категория" name="courseCat" rows="1">{{ course.category }}</textarea>
+                <textarea required class="form-control toSend langp" key="course_name" maxlength="1000" placeholder="Название курса" name="courseName" id="courseName" rows="1">{{ course.name }}</textarea>
+                <textarea required style="margin-top: 8px;" class="form-control toSend langp" key="course_desc" maxlength="1000" placeholder="Описание курса" name="courseDesc" rows="3">{{ course.description }}</textarea>
+                <textarea required style="margin-top: 8px;" class="form-control toSend langp" key="course_cat" maxlength="1000" placeholder="Категория" name="courseCat" rows="1">{{ course.category }}</textarea>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
                     <img class="border border-2 rounded w-100" src="/courseava/{{ course.course_id }}" style="max-width: 290px; margin: 0 auto;">
                     <form action="/upload_course_ava/{{ course.course_id }}" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
@@ -34,7 +34,7 @@
                         <div class="row border"></div>
                         <span class="fw-bolder fs-5 row m-3 justify-content-center lang">
                             <form style="display: flex;">
-                                <textarea required class="form-control toSend" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1">{{ unit.name }}</textarea>
+                                <textarea required class="form-control toSend langp" key="unit_name" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1">{{ unit.name }}</textarea>
                                 <div style="height: 30px; justify-content: center; display: flex;">
                                     <img src="../static/img/drag_n_drop.png" style="height: 40px; transform: rotate(90deg);" draggable="true" id="{{unit.unit_id}}" class="dnd-units">
                                 </div>
@@ -120,7 +120,7 @@
 
 <!-- Scripts -->
 <script type="text/javascript" src="/static/js/Sortable.min.js" integrity="sha512-zYXldzJsDrNKV+odAwFYiDXV2Cy37cwizT+NkuiPGsa9X1dOz04eHvUWVuxaJ299GvcJT31ug2zO4itXBjFx4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script type="text/javascript" src="/static/js/course_editor.js"></script>
+<script type="module" src="/static/js/course_editor.js"></script>
 {% endblock %}
 
 
@@ -206,7 +206,7 @@
           </div>
           <form action="/course_editor/{{course.course_id}}" method="POST">
               <div class="modal-body lang" key="enter_unit_name">Введите название раздела:</div>
-                <textarea required class="form-control" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
+                <textarea required class="form-control langp" key="unit_name" maxlength="1000" placeholder="Название раздела" name="newUnitName" rows="1" style="margin-left: 25px; margin-bottom: 25px; width: 450px;"></textarea>
               <div class="modal-footer">
                     <button type="submit" class="btn badge-primary lang" key="create" style="border-radius: 25px">Создать</button>
               </div>
