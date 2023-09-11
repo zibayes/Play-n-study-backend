@@ -92,10 +92,62 @@ export function childOf(c,p){while((c=c.parentNode)&&c!==p);return !!c}
 
 // Добавление ответа на вопрос
 window.addAnswerOnButtonClick = function(index){
+    let questionType = document.getElementById(`QT-${index.substring(7)}`);
+    let selectedOption = questionType.options[questionType.selectedIndex];
+
     let div = document.createElement('div');
     div.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
     div.setAttribute('id', "delAns-" + answerIndex);
     div.setAttribute('class', "answer_div");
+
+    let textareaQuestionCom;
+    let comDiv;
+    if(selectedOption.getAttribute('key') === "compliance") {
+        textareaQuestionCom = document.createElement('textarea');
+        comDiv = document.createElement('div');
+        textareaQuestionCom.setAttribute('class', "form-control langp");
+        textareaQuestionCom.setAttribute('key', "question_text");
+        textareaQuestionCom.setAttribute('placeholder', "Текст вопроса");
+        textareaQuestionCom.setAttribute('name', "QuestionCom-" + questionIndex + "-" + answerIndex);
+        textareaQuestionCom.setAttribute('rows', "1");
+        textareaQuestionCom.setAttribute('maxlength', '5000');
+        comDiv.textContent = "-";
+        comDiv.setAttribute('style', "margin-left: 5px; margin-right: 5px;");
+    }
+
+    let optionDiv;
+    let optionText;
+    let optionNumText;
+    let groupDiv;
+    let groupSelect;
+    if(selectedOption.getAttribute('key') === "filling_gaps" || selectedOption.getAttribute('key') === "drag_to_text") {
+        optionDiv = document.createElement('div');
+        optionDiv.setAttribute('style', "width: 147px;");
+        optionText = document.createElement('text');
+        optionText.setAttribute('class', "lang");
+        optionText.setAttribute('key', "option");
+        optionText.textContent = "Вариант"
+        optionNumText = document.createElement('text');
+        optionNumText.textContent = " [[" + answerIndex + "]]"
+        if (selectedOption.getAttribute('key') === "filling_gaps") {
+            groupDiv = document.createElement('div');
+            groupDiv.setAttribute('style', "width: 70px; margin-left: 8px; margin-right: 4px;");
+            groupDiv.setAttribute('class', "lang");
+            groupDiv.setAttribute('key', "group_");
+            groupDiv.textContent = "Группа";
+            groupSelect = document.createElement('select');
+            groupSelect.setAttribute('class', "form-select");
+            groupSelect.setAttribute('style', "width: 60px;");
+            groupSelect.setAttribute('name', "Group-" + questionIndex + "-" + answerIndex);
+            let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            alphabet.forEach(elem => {
+                let option = document.createElement('option');
+                option.textContent = elem;
+                groupSelect.appendChild(option);
+            })
+        }
+    }
+
     let textarea = document.createElement('textarea');
     textarea.setAttribute('class', "form-control langp");
     textarea.setAttribute('key', "answer_text");
@@ -103,21 +155,25 @@ window.addAnswerOnButtonClick = function(index){
     textarea.setAttribute('placeholder', "Текст ответа");
     textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
     textarea.setAttribute('rows', "1");
-    let label = document.createElement('label');
-    label.setAttribute('for', "addAnswerText");
-    label.setAttribute('style', "padding-right: 8px;");
-    let input = document.createElement('input');
-    //input.setAttribute('required', 'true');
-    let questionType = document.getElementById(`QT-${index.substring(7)}`);
-    let selectedOption = questionType.options[questionType.selectedIndex];
-    if(selectedOption.getAttribute('key') === "solo") {
-        input.setAttribute("type", "radio");
-        input.setAttribute('name', `Right_Answer-${index.substring(7)}`);
+
+    let label;
+    let input;
+    if(selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
+        label = document.createElement('label');
+        input = document.createElement('input');
+        label.setAttribute('for', "addAnswerText");
+        label.setAttribute('style', "padding-right: 8px;");
+        //input.setAttribute('required', 'true');
+        if (selectedOption.getAttribute('key') === "solo") {
+            input.setAttribute("type", "radio");
+            input.setAttribute('name', `Right_Answer-${index.substring(7)}`);
+        }
+        if (selectedOption.getAttribute('key') === "multiple") {
+            input.setAttribute("type", "checkbox");
+            input.setAttribute('name', `Right_Answer-${index.substring(7)}-${answerIndex}`);
+        }
     }
-    if(selectedOption.getAttribute('key') === "multiple") {
-        input.setAttribute("type", "checkbox");
-        input.setAttribute('name', `Right_Answer-${index.substring(7)}-${answerIndex}`);
-    }
+
     let buttonDel = document.createElement('button');
     buttonDel.setAttribute('class', "btn");
     buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
@@ -129,9 +185,24 @@ window.addAnswerOnButtonClick = function(index){
 
     let divAnsCard = addDragndropDesign(div, 'answer')
 
-    label.appendChild(input)
-    div.appendChild(label)
-    div.appendChild(textarea)
+    if(selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
+        label.appendChild(input)
+        div.appendChild(label)
+        div.appendChild(textarea)
+    } else if(selectedOption.getAttribute('key') === "compliance"){
+        div.appendChild(textareaQuestionCom)
+        div.appendChild(comDiv)
+        div.appendChild(textarea)
+    } else if(selectedOption.getAttribute('key') === "filling_gaps" || selectedOption.getAttribute('key') === "drag_to_text"){
+        optionDiv.appendChild(optionText)
+        optionDiv.appendChild(optionNumText)
+        div.appendChild(optionDiv)
+        div.appendChild(textarea)
+        if (selectedOption.getAttribute('key') === "filling_gaps") {
+            div.appendChild(groupDiv)
+            div.appendChild(groupSelect)
+        }
+    }
     divDel.appendChild(buttonDel)
     div.appendChild(divDel)
     div.appendChild(divAnsCard)
@@ -270,7 +341,7 @@ export function addQuestionListener(addBtn) {
         button.setAttribute('key', "add_answer");
         button.setAttribute('id', questionIndex);
         button.setAttribute('type', "button");
-        input.setAttribute('name', "Right_Answer-" + answerIndex);
+        input.setAttribute('name', "Right_Answer-" + questionIndex);
         let buttonDelQuestion = document.createElement('button');
         buttonDelQuestion.setAttribute('class', "btn lang");
         buttonDelQuestion.setAttribute('type', "button");
@@ -326,6 +397,18 @@ export function addQuestionListener(addBtn) {
         check.setAttribute('class', "lang");
         check.setAttribute('key', "multiple");
         check.textContent = "Множественный ответ"
+        let compliance = document.createElement('option')
+        compliance.setAttribute('class', "lang");
+        compliance.setAttribute('key', "compliance");
+        compliance.textContent = "На соответствие"
+        let filling_gaps = document.createElement('option')
+        filling_gaps.setAttribute('class', "lang");
+        filling_gaps.setAttribute('key', "filling_gaps");
+        filling_gaps.textContent = "Заполнение пропусков"
+        let drag_to_text = document.createElement('option')
+        drag_to_text.setAttribute('class', "lang");
+        drag_to_text.setAttribute('key', "drag_to_text");
+        drag_to_text.textContent = "Перетаскивание в текст"
         let word = document.createElement('option')
         word.setAttribute('class', "lang");
         word.setAttribute('key', "free");
@@ -352,6 +435,9 @@ export function addQuestionListener(addBtn) {
         divQT.setAttribute('style', "width: 280px; padding-left: 5px;");
         questionType.appendChild(radio)
         questionType.appendChild(check)
+        questionType.appendChild(compliance)
+        questionType.appendChild(filling_gaps)
+        questionType.appendChild(drag_to_text)
         questionType.appendChild(word)
         questionType.appendChild(text)
         questionType.appendChild(info)
@@ -437,6 +523,9 @@ export function addQuestionListener(addBtn) {
 // Функция настройки смены типа задания при его выборе через выпадающий список
 export function questionTypeSet(questionType, textareaQuestion, questionIndexButtonId) {
     questionType.addEventListener("change", function () {
+        document.querySelectorAll(".to_del").forEach(elem =>{
+            elem.remove();
+        });
         let selectedOption = questionType.options[questionType.selectedIndex];
         if (selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
             textareaQuestion.setAttribute('rows', "1");
@@ -488,6 +577,143 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divTextLabel.appendChild(divAnsCard)
             let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
             divIndexTmp.replaceWith(divIndexNew);
+            let buttonNew = document.getElementById(questionIndexButtonId)
+            buttonNew.removeAttribute("disabled");
+        }
+        if (selectedOption.getAttribute('key') === "compliance"){
+            textareaQuestion.setAttribute('rows', "1");
+            let divIndexNew = document.createElement('div');
+            divIndexNew.setAttribute('class', "row container-fluid");
+            divIndexNew.setAttribute('id', "addAns-" + questionIndexButtonId);
+            let divTextLabel = document.createElement('div');
+            divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+            divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+            divTextLabel.setAttribute('class', "answer_div");
+            let textareaQuestionCom = document.createElement('textarea');
+            textareaQuestionCom.setAttribute('class', "form-control langp");
+            textareaQuestionCom.setAttribute('key', "question_text");
+            textareaQuestionCom.setAttribute('placeholder', "Текст вопроса");
+            textareaQuestionCom.setAttribute('name', "QuestionCom-" + questionIndex + "-" + answerIndex);
+            textareaQuestionCom.setAttribute('rows', "1");
+            textareaQuestionCom.setAttribute('maxlength', '5000');
+            let comDiv = document.createElement('div');
+            comDiv.textContent = "-";
+            comDiv.setAttribute('style', "margin-left: 5px; margin-right: 5px;");
+            let textareaAnswer = document.createElement('textarea');
+            textareaAnswer.setAttribute('class', "form-control langp");
+            textareaAnswer.setAttribute('key', "answer_text");
+            textareaAnswer.setAttribute('placeholder', "Текст ответа");
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('rows', "1");
+            textareaAnswer.setAttribute('maxlength', '5000');
+
+            let buttonDel = document.createElement('button');
+            buttonDel.setAttribute('class', "btn");
+            buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.textContent = "✖"
+            buttonDel.setAttribute('id', answerIndex);
+            let divDel = document.createElement('div');
+            divDel.setAttribute('style', "padding-left: 5px;");
+
+            addDragoverEventListener(divIndexNew, `answer_div`);
+            let divAnsCard = addDragndropDesign(divTextLabel, 'answer');
+
+            let comNote = document.createElement('div');
+            comNote.setAttribute('style', "color: gray; font-size: 14px;");
+            comNote.setAttribute('class', "to_del lang");
+            comNote.setAttribute('key', "compliance_note");
+            comNote.textContent = "*Примечание: если вы хотите добавить неверный ответ, то для пары вопрос-ответ поле с вопросом необходимо оставить пустым";
+
+            divIndexNew.appendChild(divTextLabel)
+            divTextLabel.appendChild(textareaQuestionCom)
+            divTextLabel.appendChild(comDiv)
+            divTextLabel.appendChild(textareaAnswer)
+            divDel.appendChild(buttonDel)
+            divTextLabel.appendChild(divDel)
+            divTextLabel.appendChild(divAnsCard)
+            let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
+            divIndexTmp.replaceWith(divIndexNew);
+            divIndexNew.parentElement.insertBefore(comNote, divIndexNew.nextElementSibling)
+            let buttonNew = document.getElementById(questionIndexButtonId)
+            buttonNew.removeAttribute("disabled");
+        }
+        if (selectedOption.getAttribute('key') === "filling_gaps" || selectedOption.getAttribute('key') === "drag_to_text") {
+            textareaQuestion.setAttribute('rows', "8");
+            let divIndexNew = document.createElement('div');
+            divIndexNew.setAttribute('class', "row container-fluid");
+            divIndexNew.setAttribute('id', "addAns-" + questionIndexButtonId);
+            let divTextLabel = document.createElement('div');
+            divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+            divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+            divTextLabel.setAttribute('class', "answer_div");
+            let optionDiv = document.createElement('div');
+            optionDiv.setAttribute('style', "width: 147px;");
+            let optionText = document.createElement('text');
+            optionText.setAttribute('class', "lang");
+            optionText.setAttribute('key', "option");
+            optionText.textContent = "Вариант"
+            let optionNumText = document.createElement('text');
+            optionNumText.textContent = " [[1]]"
+            let textareaAnswer = document.createElement('textarea');
+            textareaAnswer.setAttribute('class', "form-control langp");
+            textareaAnswer.setAttribute('key', "answer_text");
+            textareaAnswer.setAttribute('placeholder', "Текст ответа");
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('rows', "1");
+            textareaAnswer.setAttribute('maxlength', '5000');
+            let groupDiv;
+            let groupSelect;
+            if (selectedOption.getAttribute('key') === "filling_gaps") {
+                groupDiv = document.createElement('div');
+                groupDiv.setAttribute('style', "width: 70px; margin-left: 8px; margin-right: 4px;");
+                groupDiv.setAttribute('class', "lang");
+                groupDiv.setAttribute('key', "group_");
+                groupDiv.textContent = "Группа";
+                groupSelect = document.createElement('select');
+                groupSelect.setAttribute('class', "form-select");
+                groupSelect.setAttribute('style', "width: 60px;");
+                groupSelect.setAttribute('name', "Group-" + questionIndex + "-" + answerIndex);
+                let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                alphabet.forEach(elem => {
+                    let option = document.createElement('option');
+                    option.textContent = elem;
+                    groupSelect.appendChild(option);
+                })
+            }
+            let buttonDel = document.createElement('button');
+            buttonDel.setAttribute('class', "btn");
+            buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.textContent = "✖"
+            buttonDel.setAttribute('id', answerIndex);
+            let divDel = document.createElement('div');
+            divDel.setAttribute('style', "padding-left: 5px;");
+
+            addDragoverEventListener(divIndexNew, `answer_div`);
+            let divAnsCard = addDragndropDesign(divTextLabel, 'answer');
+
+            let fillNote = document.createElement('div');
+            fillNote.setAttribute('style', "color: gray; font-size: 14px;");
+            fillNote.setAttribute('class', "to_del lang");
+            fillNote.setAttribute('key', "filling_gaps_note");
+            fillNote.textContent = "*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов";
+
+            divIndexNew.appendChild(divTextLabel)
+            optionDiv.appendChild(optionText)
+            optionDiv.appendChild(optionNumText)
+            divTextLabel.appendChild(optionDiv)
+            divTextLabel.appendChild(textareaAnswer)
+            if (selectedOption.getAttribute('key') === "filling_gaps") {
+                divTextLabel.appendChild(groupDiv)
+                divTextLabel.appendChild(groupSelect)
+            }
+            divDel.appendChild(buttonDel)
+            divTextLabel.appendChild(divDel)
+            divTextLabel.appendChild(divAnsCard)
+            let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
+            divIndexTmp.replaceWith(divIndexNew);
+            divIndexNew.parentElement.insertBefore(fillNote, divIndexNew.nextElementSibling)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
         }
@@ -564,84 +790,31 @@ export function translate(lang) {
 }
 
 export function change_language(lang) {
-    if (lang == "en") {
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
+    document.querySelectorAll(".tick").forEach(elem =>{
+        elem.style.visibility = "hidden";
+    });
+    if (lang === "en") {
         document.getElementById("en-tick").style.visibility = "visible";
         localStorage.setItem('language', 'en')
-    } else if (lang == "ru") {
+    } else if (lang === "ru") {
         document.getElementById("ru-tick").style.visibility = "visible";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'ru')
-    } else if (lang == "de") {
+    } else if (lang === "de") {
         document.getElementById("de-tick").style.visibility = "visible";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'de')
-    } else if (lang == "fr") {
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("en-tick").style.visibility = "hidden";
+    } else if (lang === "fr") {
         document.getElementById("fr-tick").style.visibility = "visible";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'fr')
-    } else if (lang == "es") {
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
+    } else if (lang === "es") {
         document.getElementById("es-tick").style.visibility = "visible";
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'es')
-    } else if (lang == "pt") {
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("ru-tick").style.visibility = "hidden";
+    } else if (lang === "pt") {
         document.getElementById("pt-tick").style.visibility = "visible";
-        document.getElementById("cn-tick").style.visibility = "hidden";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'pt')
-    } else if (lang == "cn") {
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
+    } else if (lang === "cn") {
         document.getElementById("cn-tick").style.visibility = "visible";
-        document.getElementById("jp-tick").style.visibility = "hidden";
         localStorage.setItem('language', 'cn')
-    } else if (lang == "jp") {
-        document.getElementById("de-tick").style.visibility = "hidden";
-        document.getElementById("en-tick").style.visibility = "hidden";
-        document.getElementById("fr-tick").style.visibility = "hidden";
-        document.getElementById("es-tick").style.visibility = "hidden";
-        document.getElementById("ru-tick").style.visibility = "hidden";
-        document.getElementById("pt-tick").style.visibility = "hidden";
-        document.getElementById("cn-tick").style.visibility = "hidden";
+    } else if (lang === "jp") {
         document.getElementById("jp-tick").style.visibility = "visible";
         localStorage.setItem('language', 'jp')
     }

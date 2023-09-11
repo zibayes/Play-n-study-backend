@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
             <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="test_editor_of">Редактор теста</text> «{{ test.name }}»</li>
           </ol>
         </nav>
@@ -50,6 +50,8 @@
                                 <div class="form-group">
                                     {% if question.type == "info" %}
                                         <textarea maxlength="15000" required rows="8" class="form-control langp" key="information" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}" placeholder="Информация">{{ question.ask }}</textarea>
+                                    {% elif question.type == "filling_gaps" %}
+                                        <textarea maxlength="15000" required rows="8" class="form-control langp" key="question_text" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}" placeholder="Текст вопроса">{{ question.ask }}</textarea>
                                     {% else %}
                                         <textarea maxlength="5000" required rows="1" class="form-control langp" key="question_text" name="Question-{{ questionNum.value }}" id="ask-{{ questionNum.value }}" placeholder="Текст вопроса">{{ question.ask }}</textarea>
                                     {% endif %}
@@ -103,6 +105,78 @@
                                             {% endfor %}
                                         {% endif %}
 
+                                        {% if question.type == "compliance" %}
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                {% for question_text, answer_text in answer.items() %}
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                        <textarea maxlength="5000" class="form-control langp" key="question_text" rows="1" placeholder="Текст вопроса" name="QuestionCom-{{ questionNum.value }}-{{ answerNum.value }}">{{ question_text }}</textarea>
+                                                        <div style="margin-left: 5px; margin-right: 5px;">-</div>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="compliance_note">*Примечание: если вы хотите добавить неверный ответ, то для пары вопрос-ответ поле с вопросом необходимо оставить пустым</div>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if question.type == "filling_gaps" %}
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                {% for question_text, answer_text in answer.items() %}
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                        <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answerNum.value }}</text>]]</div>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <div style="width: 70px; margin-left: 8px; margin-right: 4px;" class="lang" key="group_">Группа</div>
+                                                        <select class="form-select" id="Group-{{ questionNum.value }}-{{ answerNum.value }}" style="width: 60px;" >
+                                                            <script>
+                                                                alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                                                                alphabet.forEach(elem =>{
+                                                                    select = document.getElementById("select_groups");
+                                                                    let option = document.createElement('option');
+                                                                    option.textContent = elem;
+                                                                    if(elem === "---[[THIS IS THE PLACE TO CHECK GROUP!!!]]---")
+                                                                        option.setAttribute("selected", "selected")
+                                                                    select.appendChild(option);
+                                                                })
+                                                            </script>
+                                                        </select>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="filling_gaps_note">*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов</div>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if question.type == "drag_to_text" %}
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                {% for question_text, answer_text in answer.items() %}
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                        <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answerNum.value }}</text>]]</div>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="filling_gaps_note">*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов</div>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+
                                         {% if question.type == "free" %}
                                             {% set answerNum = namespace(value=0) %}
                                             {% for answer in question.answers %}
@@ -137,6 +211,21 @@
                                                 <option selected class="lang" key="multiple">Множественный ответ</option>
                                             {% else %}
                                                 <option class="lang" key="multiple">Множественный ответ</option>
+                                            {% endif %}
+                                            {% if question.type == "compliance" %}
+                                                <option selected class="lang" key="compliance">На соответствие</option>
+                                            {% else %}
+                                                <option class="lang" key="compliance">На соответствие</option>
+                                            {% endif %}
+                                            {% if question.type == "filling_gaps" %}
+                                                <option selected class="lang" key="filling_gaps">Заполнение пропусков</option>
+                                            {% else %}
+                                                <option class="lang" key="filling_gaps">Заполнение пропусков</option>
+                                            {% endif %}
+                                            {% if question.type == "drag_to_text" %}
+                                                <option selected class="lang" key="drag_to_text">Перетаскивание в текст</option>
+                                            {% else %}
+                                                <option class="lang" key="drag_to_text">Перетаскивание в текст</option>
                                             {% endif %}
                                             {% if question.type == "free" %}
                                                 <option selected class="lang" key="free">Краткий свободный ответ</option>

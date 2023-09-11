@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
             <li class="breadcrumb-item active lang" key="test_constructor" aria-current="page">Конструктор тестов</li>
           </ol>
         </nav>
@@ -27,7 +27,9 @@
             <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
             <hr>
 
-            <div id="questionsList" style="padding-top: 8px;"></div>
+            <div id="questionsList" style="padding-top: 8px;">
+                <!-- Область добавления вопросов -->
+            </div>
             <hr>
             <div style="padding-bottom: 10px;">
                 <button class="btn btn-primary lang" key="add_question"
@@ -39,7 +41,7 @@
                         id="saveTest" style=
                         "background-color:yellowgreen;">
                         Сохранить тест
-                    </button>
+                </button>
             </div>
         </form>
     </div>
@@ -48,4 +50,5 @@
 {% block script %}
     <!-- Scripts -->
     <script type="module" src="/static/js/test_constructor.js"></script>
+    <script src="/static/js/ImageTools.js"></script>
 {% endblock %}

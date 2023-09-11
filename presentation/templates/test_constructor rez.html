@@ -1,0 +1,436 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Конструктор тестов</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="fs-5 row m-3 justify-content-start lang" key="test_constructor">
+            Конструктор тестов
+        </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active lang" key="test_constructor" aria-current="page">Конструктор тестов</li>
+          </ol>
+        </nav>
+        <div class="row border"></div>
+        <br>
+
+        <form action="" method="POST">
+            <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
+            <hr>
+
+            <div id="questionsList" style="padding-top: 8px;">
+                <!-- Область добавления вопросов -->
+
+                <div style="display: flex; padding-bottom: 20px;" class="question_div">
+                    <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <p><text class="lang" key="question">Вопрос</text> №</p>
+                                <label class="lang" key="score">Баллы: </label>
+                                <input style="width:40px;">
+                            </div>
+                        </div>
+                    </div>
+                <div class="card" style="background:#bde0ff; flex: 1;">
+                            <div style="height: 35px; justify-content: center; display: flex;" draggable="true" >
+                                <img src="/static/img/drag_n_drop.png" style="height: 35px;">
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                        <textarea maxlength="5000" required rows="1" class="form-control langp" key="question_text" placeholder="Текст вопроса"></textarea>
+                                    <hr>
+                                    <span class="fs-5 row m-3 justify-content-start lang">
+                                        <div class="flex-column">
+                                            <canvas id="canvas" width="600" height="600"></canvas>
+                                            <style>
+                                                #canvas{
+                                                    border:1px solid red;
+                                                    background-image: url("/courseava/{{ course.course_id }}") ;
+                                                }
+                                            </style>
+                                            <form action="" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
+                                                <input type="file" name="file" class="form-control" id="customFile" />
+                                                <a><button class="btn border border-2 w-100 lang" key="" type="submit">Добавить фоновое изображение</button></a>
+                                            </form>
+                                        </div>
+                                    </span>
+                                    <div  class="row container-fluid" class="answer_div">
+                                        <div style="padding-bottom: 10px; display: flex; align-items: center;" class="answer_div">
+                                            <div style="width: 75px; margin-right: 4px;" class="lang" key="marker">Маркер</div>
+                                            <textarea maxlength="5000" required class="form-control langp" key="marker_name" id="marker" rows="1" placeholder="Название маркера"></textarea>
+                                            <div style="width: 400px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Форма зоны</div>
+                                            <select class="form-select" id="ZoneFigure--" style="width: 180px;" >
+                                                <option class="lang" key="circle">Окружность</option>
+                                                <option selected class="lang" key="rectangle">Прямоугольник</option>
+                                                <option class="lang" key="polygon">Многоугольник</option>
+                                            </select>
+                                            <div style="width: 160px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Координаты</div>
+                                            <textarea maxlength="5000" required class="form-control langp" id="coordinates" key="zone_coordinates" rows="1" placeholder="Координаты зоны"></textarea>
+                                            <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;">✖</button>
+                                            <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" class="dnd answer_div">
+                                            </div>
+                                            <br>
+                                        </div>
+                                        <div style="color: gray; font-size: 14px;" class="lang to_del" key="">*Примечание: </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div style="display: flex;">
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn lang" key="add_answer" style="background-color:transparent; color:black;" type="button">Добавить ответ</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn lang" key="delete_answer" style="background-color:red; color:white;" type="button">Удалить вопрос</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <select class="form-select" width="20px" >
+                                                <option selected class="lang" key="drag_markers">Перетаскивание маркеров</option>
+                                                <option class="lang" key="solo">Единственный ответ</option>
+                                                <option class="lang" key="multiple">Множественный ответ</option>
+                                                <option class="lang" key="compliance">На соответствие</option>
+                                                <option class="lang" key="free">Краткий свободный ответ</option>
+                                                <option class="lang" key="detailed_free">Свободный ответ</option>
+                                                <option  class="lang" key="info_block">Информационный блок</option>
+                                        </select>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↑</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↓</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+            <hr>
+            <div style="padding-bottom: 10px;">
+                <button class="btn btn-primary lang" key="add_question"
+                        id="addQuestion" style=
+                        "background-color:green;" type="button">
+                        Добавить вопрос
+                    </button>
+                <button class="btn btn-primary lang" key="save_test" type="submit"
+                        id="saveTest" style=
+                        "background-color:yellowgreen;">
+                        Сохранить тест
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <!-- Scripts -->
+    <script type="module" src="/static/js/test_constructor.js"></script>
+
+<script>
+                                            window.onload=function(){
+                                                // get canvas related references
+                                                var canvas=document.getElementById("canvas");
+                                                var ctx=canvas.getContext("2d");
+                                                var BB=canvas.getBoundingClientRect();
+                                                var scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
+                                                var offsetX=BB.left;
+                                                var offsetY=BB.top;
+                                                var WIDTH = canvas.width;
+                                                var HEIGHT = canvas.height;
+                                                var vertexRadius = 6
+                                                let marker_name = "";
+
+                                                // drag related variables
+                                                var dragok = false;
+                                                var startX;
+                                                var startY;
+
+                                                // an array of objects that define different rectangles
+                                                var rects=[];
+                                                rects.push({x1:10,y1:10,x2:10,y2:60,x3:60,y3:60,x4:60,y4:10,v1:false,v2:false,v3:false,v4:false,fill:"#444444",isDragging:false,selected:false});
+
+                                                // listen for mouse events
+                                                canvas.onmousedown = myDown;
+                                                canvas.onmouseup = myUp;
+                                                canvas.onmousemove = myMove;
+
+                                                // call to draw the scene
+                                                draw_rect();
+
+                                                // draw a single rect
+                                                function rect(x1,y1,x2,y2,x3,y3,x4,y4) {
+                                                    for(var i=0;i<4;i++){
+                                                        ctx.beginPath();
+                                                        if(i===0){
+                                                            ctx.moveTo(x1,y1);
+                                                            ctx.lineTo(x2,y2);
+                                                        } else if(i===1){
+                                                            ctx.moveTo(x2,y2);
+                                                            ctx.lineTo(x3,y3);
+                                                        } else if(i===2){
+                                                            ctx.moveTo(x3,y3);
+                                                            ctx.lineTo(x4,y4);
+                                                        } else if(i===3){
+                                                            ctx.moveTo(x4,y4);
+                                                            ctx.lineTo(x1,y1);
+                                                        }
+                                                        ctx.stroke();
+                                                    }
+                                                    ctx.beginPath();
+                                                    let xm = (x1 + x2 + x3 + x4) / 4;
+                                                    let ym = (y1 + y2 + y3 + y4) / 4;
+                                                    ctx.fillStyle = "#FFF";
+                                                    ctx.textBaseline = "center";
+                                                    ctx.textAlign = "center";
+                                                    ctx.font = 'bold 26px sans-serif';
+                                                    ctx.fillText(marker_name, xm, ym);
+                                                    ctx.fill();
+                                                    ctx.lineWidth=1;
+                                                    ctx.strokeStyle = "#000";
+                                                    ctx.strokeText(marker_name, xm, ym);
+                                                    ctx.stroke();
+                                                    ctx.strokeStyle = "#000";
+                                                }
+
+                                                // clear the canvas
+                                                function clear() {
+                                                 ctx.clearRect(0, 0, WIDTH, HEIGHT);
+                                                }
+
+                                                // redraw the scene
+                                                function draw_rect(change_val=true) {
+                                                    clear();
+                                                    // redraw each rect in the rects[] array
+                                                    for(var i=0;i<rects.length;i++){
+                                                        var r=rects[i];
+                                                        ctx.strokeStyle=r.fill;
+                                                        ctx.lineWidth=3;
+                                                        rect(r.x1,r.y1,r.x2,r.y2,r.x3,r.y3,r.x4,r.y4);
+                                                        if(r.selected){
+                                                            draw_selection()
+                                                        }
+                                                        if(change_val){
+                                                            coordinates = document.getElementById("coordinates");
+                                                            coordinates.value = r.x1+","+r.y1+";"+r.x2+","+r.y2+";"+r.x3+","+r.y3+";"+r.x4+","+r.y4;
+                                                        }
+                                                    }
+                                                }
+                                                function draw_selection() {
+                                                    for(var i=0;i<4;i++){
+                                                        ctx.fillStyle="#ff0000";
+                                                        ctx.strokeStyle="#ffffff";
+                                                        ctx.lineWidth=3;
+                                                        ctx.beginPath();
+                                                        if(i===0){
+                                                            ctx.arc(rects[0].x1,rects[0].y1,vertexRadius,2*Math.PI,false);
+                                                        } else if(i===1){
+                                                            ctx.arc(rects[0].x2,rects[0].y2,vertexRadius,2*Math.PI,false);
+                                                        } else if(i===2){
+                                                            ctx.arc(rects[0].x3,rects[0].y3,vertexRadius,2*Math.PI,false);
+                                                        } else if(i===3){
+                                                            ctx.arc(rects[0].x4,rects[0].y4,vertexRadius,2*Math.PI,false);
+                                                        }
+                                                        ctx.stroke();
+                                                        ctx.closePath();
+                                                        ctx.fill();
+                                                    }
+                                                }
+
+
+                                                // handle mousedown events
+                                                function myDown(e){
+
+                                                    // tell the browser we're handling this mouse event
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+
+                                                    // get the current mouse position
+                                                    scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
+                                                    var mx=parseInt(e.clientX-offsetX);
+                                                    var my=parseInt(e.clientY-offsetY+scrollOffsetY);
+
+                                                    // test each rect to see if mouse is inside
+                                                    dragok=false;
+                                                    for(var i=0;i<rects.length;i++){
+                                                        var r=rects[i];
+                                                        let vertexSelected = false;
+                                                        if(r.selected) {
+                                                            for (var j = 0; j < 4; j++) {
+                                                                if (j === 0 && (Math.pow(mx - r.x1, 2) + Math.pow(my - r.y1, 2) <= Math.pow(vertexRadius, 2))) {
+                                                                    r.v1 = true;
+                                                                    r.v2 = false;
+                                                                    r.v3 = false;
+                                                                    r.v4 = false;
+                                                                    vertexSelected = true;
+                                                                } else if (j === 1 && (Math.pow(mx - r.x2, 2) + Math.pow(my - r.y2, 2) <= Math.pow(vertexRadius, 2))) {
+                                                                    r.v1 = false;
+                                                                    r.v2 = true;
+                                                                    r.v3 = false;
+                                                                    r.v4 = false;
+                                                                    vertexSelected = true;
+                                                                } else if (j === 2 && (Math.pow(mx - r.x3, 2) + Math.pow(my - r.y3, 2) <= Math.pow(vertexRadius, 2))) {
+                                                                    r.v1 = false;
+                                                                    r.v2 = false;
+                                                                    r.v3 = true;
+                                                                    r.v4 = false;
+                                                                    vertexSelected = true;
+                                                                } else if (j === 3 && (Math.pow(mx - r.x4, 2) + Math.pow(my - r.y4, 2) <= Math.pow(vertexRadius, 2))) {
+                                                                    r.v1 = false;
+                                                                    r.v2 = false;
+                                                                    r.v3 = false;
+                                                                    r.v4 = true;
+                                                                    vertexSelected = true;
+                                                                }
+                                                            }
+                                                        }
+                                                        let xm = (r.x1 + r.x2 + r.x3 + r.x4) / 4;
+                                                        let ym = (r.y1 + r.y2 + r.y3 + r.y4) / 4;
+                                                        if(mx>xm-32 && mx<xm+32 && my>ym-15 && my<ym+15 || vertexSelected === true){
+                                                            // if yes, set that rects isDragging=true
+                                                            dragok=true;
+                                                            if(!vertexSelected)
+                                                                r.isDragging=true;
+                                                            r.selected=true;
+                                                            r.fill="#ffffff";
+                                                        }
+                                                        else {
+                                                            r.selected=false;
+                                                        }
+                                                    }
+                                                    // save the current mouse position
+                                                    startX=mx;
+                                                    startY=my;
+                                                    draw_rect();
+                                                }
+
+
+                                                // handle mouseup events
+                                                function myUp(e){
+                                                    // tell the browser we're handling this mouse event
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+
+                                                    // clear all the dragging flags
+                                                    for(var i=0;i<rects.length;i++){
+                                                        var r=rects[i];
+                                                        r.isDragging=false;
+                                                        r.fill="#444444";
+                                                        r.v1 = false;
+                                                        r.v2 = false;
+                                                        r.v3 = false;
+                                                        r.v4 = false;
+                                                    }
+                                                    draw_rect();
+                                                }
+
+
+                                                // handle mouse moves
+                                                function myMove(e){
+                                                    // if we're dragging anything...
+                                                    if (dragok){
+
+                                                      // tell the browser we're handling this mouse event
+                                                      e.preventDefault();
+                                                      e.stopPropagation();
+
+                                                      // get the current mouse position
+                                                      scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
+                                                      var mx=parseInt(e.clientX-offsetX);
+                                                      var my=parseInt(e.clientY-offsetY+scrollOffsetY);
+
+                                                      // calculate the distance the mouse has moved
+                                                      // since the last mousemove
+                                                      var dx=mx-startX;
+                                                      var dy=my-startY;
+
+                                                      // move each rect that isDragging
+                                                      // by the distance the mouse has moved
+                                                      // since the last mousemove
+                                                      for(var i=0;i<rects.length;i++){
+                                                          var r=rects[i];
+                                                        for (var j = 0; j < 4; j++) {
+                                                            if (j === 0 && r.v1) {
+                                                                r.x1+=dx;
+                                                                r.y1+=dy;
+                                                            } else if (j === 1 && r.v2) {
+                                                                r.x2+=dx;
+                                                                r.y2+=dy;
+                                                            } else if (j === 2 && r.v3) {
+                                                                r.x3+=dx;
+                                                                r.y3+=dy;
+                                                            } else if (j === 3 && r.v4) {
+                                                                r.x4+=dx;
+                                                                r.y4+=dy;
+                                                            }
+                                                        }
+                                                        if(r.isDragging){
+                                                              r.x1+=dx;
+                                                              r.x2+=dx;
+                                                              r.x3+=dx;
+                                                              r.x4+=dx;
+                                                              r.y1+=dy;
+                                                              r.y2+=dy;
+                                                              r.y3+=dy;
+                                                              r.y4+=dy;
+                                                          }
+                                                      }
+
+                                                      // redraw the scene with the new rect positions
+                                                      draw_rect();
+
+                                                      // reset the starting mouse position for the next mousemove
+                                                      startX=mx;
+                                                      startY=my;
+
+                                                    }
+                                                }
+
+                                                marker = document.getElementById("marker");
+                                                marker.addEventListener('input', function (evt) {
+                                                    marker_name = marker.value;
+                                                });
+
+                                                coordinates = document.getElementById("coordinates");
+                                                coordinates.addEventListener('input', function (evt) {
+                                                    let string = coordinates.value;
+                                                    let delimiter = coordinates.value.indexOf(";");
+                                                    let coords = string.slice(0, delimiter);
+                                                    let comma = coords.indexOf(",");
+                                                    rects[0].x1 = parseInt(coords.slice(0, comma));
+                                                    rects[0].y1 = parseInt(coords.slice(comma+1));
+                                                    delimiter = string.indexOf(";");
+                                                    string = string.slice(delimiter+1);
+                                                    delimiter = string.indexOf(";");
+                                                    coords = string.slice(0, delimiter);
+                                                    comma = coords.indexOf(",");
+                                                    rects[0].x2 = parseInt(coords.slice(0, comma));
+                                                    rects[0].y2 = parseInt(coords.slice(comma+1));
+                                                    delimiter = string.indexOf(";");
+                                                    string = string.slice(delimiter+1);
+                                                    delimiter = string.indexOf(";");
+                                                    coords = string.slice(0, delimiter);
+                                                    comma = coords.indexOf(",");
+                                                    rects[0].x3 = parseInt(coords.slice(0, comma));
+                                                    rects[0].y3 = parseInt(coords.slice(comma+1));
+                                                    delimiter = string.indexOf(";");
+                                                    string = string.slice(delimiter+1);
+                                                    // delimiter = string.indexOf(";");
+                                                    // coords = string.slice(0, delimiter);
+                                                    coords = string;
+                                                    comma = coords.indexOf(",");
+                                                    rects[0].x4 = parseInt(coords.slice(0, comma));
+                                                    rects[0].y4 = parseInt(coords.slice(comma+1));
+                                                    draw_rect(false);
+                                                });
+                                            };
+                                            </script>
+{% endblock %}

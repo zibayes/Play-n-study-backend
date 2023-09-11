@@ -34,7 +34,7 @@
                         <div class="row border"></div>
                         <span class="fw-bolder fs-5 row m-3 justify-content-center lang">
                             <form style="display: flex;">
-                                <textarea required class="form-control toSend langp" key="unit_name" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1">{{ unit.name }}</textarea>
+                                <textarea required class="form-control toSend langp" key="unit_name" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1" id="{{ unit.name }}">{{ unit.name }}</textarea>
                                 <div style="height: 30px; justify-content: center; display: flex;">
                                     <img src="../static/img/drag_n_drop.png" style="height: 40px; transform: rotate(90deg);" draggable="true" id="{{unit.unit_id}}" class="dnd-units">
                                 </div>

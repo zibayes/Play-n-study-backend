@@ -15,7 +15,7 @@
             <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item lang"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
-            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
             <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="article">Статья</text> «{{ article_name }}»</li>
           </ol>
         </nav>
