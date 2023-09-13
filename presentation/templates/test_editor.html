@@ -37,7 +37,7 @@
                                 <div class="form-group">
                                     <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
                                     <label for="score-{{questionNum.value}}" class="lang" key="score">Баллы: </label>
-                                    <input id="score-{{questionNum.value}}" name="score-{{questionNum.value}}" value="{{ question.score }}" style="width:40px;">
+                                    <input type="number" id="score-{{questionNum.value}}" name="score-{{questionNum.value}}" value="{{ question.score }}" style="width:40px;">
                                 </div>
                             </div>
                         </div>
@@ -279,4 +279,5 @@
         let questions_count = {{ test.questions|length }}
     </script>
     <script type="module" src="/static/js/test_editor.js"></script>
+    <script type="module" src="/static/js/upload_file_size_limit.js"></script>
 {% endblock %}

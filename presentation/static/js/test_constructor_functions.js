@@ -463,6 +463,7 @@ export function addQuestionListener(addBtn) {
         question.appendChild(question_txt);
         question.appendChild(question_txt1);
         let inputScore = document.createElement('input');
+        inputScore.setAttribute('type', "number");
         inputScore.setAttribute('name', "score-" + questionIndex);
         inputScore.setAttribute('required', 'true');
         inputScore.setAttribute('style', 'width:40px;');
