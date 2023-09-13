@@ -55,8 +55,10 @@
                             Результаты ваших предыдущих попыток
                         </span>
                         <table class="table">
-                            <tbody>
+                            <thead>
                                 <tr><th class="lang" key="try_number">Номер попытки</th><th class="lang" key="condition">Состояние</th><th class="lang" key="mark">Оценка</th><th class="lang" key="viewing">Просмотр</th></tr>
+                            </thead>
+                            <tbody>
                                 {% for progress in progresses %}
                                     {% set progressNum.value = progressNum.value + 1 %}
                                     <tr style="
@@ -118,8 +120,10 @@
                             </div>
                         </span>
                         <table class="table">
-                            <tbody>
+                            <thead>
                                 <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
+                            </thead>
+                            <tbody>
                                 {% for leader, result in leaders.items() %}
 
                                     {% if firstPlace.value <= result %}
@@ -223,8 +227,10 @@
                             Таблица лидеров среди друзей, на кого вы подписаны
                         </span>
                         <table class="table">
-                            <tbody>
+                            <thead>
                                 <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
+                            </thead>
+                            <tbody>
                                 {% for leader, result in friends.items() %}
 
                                     {% if firstPlace.value <= result %}
@@ -285,5 +291,9 @@
 </div>
 
 <!-- Scripts -->
-<script type="text/javascript" src="/static/js/test_preview.js"></script>
+<script type="module" src="/static/js/test_preview.js"></script>
+<script type="module" src="/static/js/dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 {% endblock %}

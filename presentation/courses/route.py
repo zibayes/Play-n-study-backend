@@ -144,7 +144,7 @@ def handle_test_preview(course_id, test_id):
     max_score = 0
     max_score_total = 0
     for i in range(len(progress)):
-        if int(progress[i].progress['test_id']) != test_id:
+        if int(progress[i].progress['test_id']) != test_id or not progress[i].progress['result']:
             to_delete.append(i)
         else:
             progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
@@ -164,7 +164,7 @@ def handle_test_preview(course_id, test_id):
     if subs:
         subs = [user.username for user in subs]
     for i in range(len(leaders)):
-        if int(leaders[i].progress['test_id']) == test_id:
+        if int(leaders[i].progress['test_id']) == test_id and leaders[i].progress['result']:
             leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
             user_for_table = logic.get_user_by_id(leaders[i].user_id).username
             if user_for_table not in leaders_to_show.keys():
@@ -595,7 +595,7 @@ def handle_check_test(course_id, test_id):
     users_progress = logic.get_progress_by_course_id_all(course_id)
     users_progress_max = {}
     for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id:
+        if int(users_progress[i].progress['test_id']) == test_id and users_progress[i].progress['result']:
             users_progress[i].progress['result'] = TestResult.from_json(
                 json.loads(users_progress[i].progress['result']))
             if users_progress[i].user_id not in users_progress_max.keys():
@@ -605,7 +605,7 @@ def handle_check_test(course_id, test_id):
     for key in users_progress_max.keys():
         users_progress_max[key] = max(users_progress_max[key])
     for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id:
+        if int(users_progress[i].progress['test_id']) == test_id and users_progress[i].progress['result']:
             if users_progress_max[users_progress[i].user_id] == users_progress[i].progress['result'].total_current_score:
                 users_progress_max[users_progress[i].user_id] = users_progress[i]
                 users_progress_max[users_progress[i].user_id].progress['content'] = \
@@ -723,7 +723,7 @@ def handle_test_check_preview(course_id, test_id):
     to_delete = []
     max_score = 0
     for i in range(len(progress)):
-        if int(progress[i].progress['test_id']) != test_id:
+        if int(progress[i].progress['test_id']) != test_id or not progress[i].progress['result']:
             to_delete.append(i)
         else:
             progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
