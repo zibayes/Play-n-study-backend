@@ -1,0 +1,108 @@
+/*Кнопка*/
+.btn-format{
+    padding: 20px;
+    margin: 45px;
+    border-radius: 35px;
+
+}
+li{
+    margin: 50px 0;
+}
+p{
+    color: white;
+    margin-left: 45px;
+}
+.i-main{
+    font-size: 1.8em;
+    padding: 15px;
+    margin: -10px;
+    left: 25px;
+}
+.i-menu{
+    font-size: 1.5em;
+    padding: 15px;
+    margin: -30px;
+    left: 25px;
+}
+*{
+    box-sizing: border-box;
+}
+/*Изображение*/
+body{
+    background-image: url("https://catherineasquithgallery.com/uploads/posts/2021-02/1612749063_117-p-fon-dlya-prezentatsii-nezhno-goluboi-s-per-129.jpg");
+}
+/*Ссылки*/
+a{
+    color: white;
+}
+/*листы в правом меню*/
+.ul-type{
+    margin: 30px;
+
+}
+/*Правое меню*/
+.nav{
+    bottom: 0;
+    right: -300px;
+    top: 0;
+    position: fixed;
+    background-color: #f9f9f9;
+    padding: 10px;
+    width: 300px;
+
+}
+/*Цвет текста правого меню*/
+.color_b{
+    color: black;
+
+}
+/*Выдвинуто правое меню*/
+.nav.is-active{
+    right: 0;
+}
+/*Без скрола правое меню*/
+body.is-active{
+    overflow: hidden;
+}
+/*Текст*/
+.h1-right{
+    margin-left: 45px;
+    margin-top: 30px;
+    font-family: 'Playfair Display Bold', arial;
+
+}
+/*Меню изображения справа*/
+.img-format{
+    margin-top: 25px;
+    margin-right: 25px;
+}
+/*Сфу изображения слева*/
+.img-format-sfu{
+    margin-top: 25px;
+    margin-left: 25px;
+}
+.a{
+
+    padding: 100px 20px 5px 0;
+}
+
+.carousel img {
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 200px;
+    max-width: none;
+}
+.carousel-control-prev {
+    background-color: #f9f9f900;
+    border: none;
+}
+
+.carousel-control-next {
+    background-color: #f9f9f900;
+    border: none;
+}
+
+.flash-error {
+    color: red;
+}

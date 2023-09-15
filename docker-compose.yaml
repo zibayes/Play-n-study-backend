@@ -1,0 +1,13 @@
+version: "2.2"
+services:
+  db:
+    container_name: "my_postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    image: "postgres:14.4"
