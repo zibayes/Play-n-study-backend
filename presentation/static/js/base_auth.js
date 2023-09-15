@@ -3,19 +3,6 @@ import {
     translate
 } from './test_constructor_functions.js';
 
-let bg = document.querySelector('.mouse-parallax-bg');
-window.addEventListener('mousemove', function(e) {
-    let x = e.clientX / window.innerWidth;
-    let y = e.clientY / window.innerHeight;
-    bg.style.transform = 'translate(-' + x * 150 + 'px, -' + y * 150 + 'px)';
-});
-
-function update(chat_id, date_message) {
-
-}
-
-
-
 let div_main = document.getElementsByClassName('chats')[0]
 
 $.ajax({
@@ -23,7 +10,6 @@ $.ajax({
   method: 'post',
   dataType: 'json',
   success: function(json_data){
-    console.log(json_data)
     json_data.chats.sort(
             function (a, b){
               return new Date(b.time) - new Date(a.time)
@@ -35,7 +21,6 @@ $.ajax({
     }
   }
 });
-
 
 
 function add_element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id) {
@@ -194,7 +179,6 @@ $.ajax({
       data: JSON.stringify({"chat_id": chat_id}),
       success: function (data) {
         if(new Date(data.messages[data.messages.length - 1].msg_date) > new Date(date_message)){
-            // Собеседник
             var div_card_element = document.getElementById("div" + chat_id)
             let div_element_d_flex = document.createElement("div")
             div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-end mb-4 pt-1")
@@ -233,7 +217,7 @@ $.ajax({
   div_card.appendChild(div_card_body)
   div_card.appendChild(div_container)
   div_add.appendChild(div_card) // !
-  // 16!
+  // 16
   let br = document.createElement("br")
   // 17
   let a = document.createElement("a")
