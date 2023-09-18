@@ -43,7 +43,7 @@
                                     {% else %}
                                         <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
                                         <div style="display: flex;">
-                                            <p><text class="lang" key="score">Баллы:</text> </p> <input name="score-{{questionNum.value}}"
+                                            <p><text class="lang" key="score">Баллы:</text> </p> <input type="number" name="score-{{questionNum.value}}"
                                                                   {% if question.current_score != None %}
                                                                     value="{{ question.current_score }}"
                                                                   {% else %}
