@@ -1,7 +1,17 @@
 import {
     arrLang
 } from './translate_dictionary.js';
-
+import {
+    rect,
+    clear,
+    draw_rect,
+    draw_selection,
+    circle,
+    draw_circle,
+    myDown,
+    myUp,
+    myMove
+} from './markers_drag_functions.js';
 // Функция добавления слушателя события перетаскивания
 export function addDragoverEventListener(dragndropArea, tagContains, i=undefined, questions_list=undefined) {
     let isAbleToMove = true;
@@ -100,52 +110,110 @@ window.addAnswerOnButtonClick = function(index){
     div.setAttribute('id', "delAns-" + answerIndex);
     div.setAttribute('class', "answer_div");
 
-    let divMarker, textareaMarker, divZone, zoneType, circleVis, polygon, divCoords, textareaCoords;
+    let divMarker, textareaMarker, divZone, circleVis, polygon, divCoords//, textareaCoords, window.zoneType;
     if(selectedOption.getAttribute('key') === "markers_drag") {
-            divMarker = document.createElement('div');
-            divMarker.setAttribute('style', "width: 75px; margin-right: 4px;");
-            divMarker.setAttribute('key', "marker");
-            divMarker.setAttribute('class', "lang");
-            divMarker.textContent = "Маркер";
-            textareaMarker = document.createElement('textarea');
-            textareaMarker.setAttribute('class', "form-control langp");
-            textareaMarker.setAttribute('key', "marker_name");
-            textareaMarker.setAttribute('placeholder', "Название маркера");
-            textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
-            textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
-            textareaMarker.setAttribute('rows', "1");
-            textareaMarker.setAttribute('maxlength', '5000');
-            divZone = document.createElement('div');
-            divZone.setAttribute('style', "width: 450px; margin-left: 8px; margin-right: 2px;");
-            divZone.setAttribute('key', "zone_type");
-            divZone.setAttribute('class', "lang");
-            divZone.textContent = "Форма зоны";
-            zoneType = document.createElement('select')
-            zoneType.setAttribute('class', "form-select");
-            zoneType.setAttribute('style', "width: 180px;");
-            zoneType.setAttribute('id', "ZoneFigure" + questionIndex);
-            zoneType.setAttribute('name', "ZoneFigure" + questionIndex);
-            circleVis = document.createElement('option')
-            circleVis.setAttribute('class', "lang");
-            circleVis.setAttribute('key', "circle");
-            circleVis.textContent = "Окружность"
-            polygon = document.createElement('option')
-            polygon.setAttribute('class', "lang");
-            polygon.setAttribute('key', "polygon");
-            polygon.textContent = "Многоугольник"
-            divCoords = document.createElement('div');
-            divCoords.setAttribute('style', "width: 160px; margin-left: 8px; margin-right: 4px;");
-            divCoords.setAttribute('key', "coordinates");
-            divCoords.setAttribute('class', "lang");
-            divCoords.textContent = "Координаты";
-            textareaCoords = document.createElement('textarea');
-            textareaCoords.setAttribute('class', "form-control langp");
-            textareaCoords.setAttribute('key', "zone_coordinates");
-            textareaCoords.setAttribute('placeholder', "Координаты зоны");
-            textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
-            textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
-            textareaCoords.setAttribute('rows', "1");
-            textareaCoords.setAttribute('maxlength', '5000');
+        divMarker = document.createElement('div');
+        divMarker.setAttribute('style', "width: 75px; margin-right: 4px;");
+        divMarker.setAttribute('key', "marker");
+        divMarker.setAttribute('class', "lang");
+        divMarker.textContent = "Маркер";
+        textareaMarker = document.createElement('textarea');
+        textareaMarker.setAttribute('class', "form-control langp");
+        textareaMarker.setAttribute('key', "marker_name");
+        textareaMarker.setAttribute('placeholder', "Название маркера");
+        textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('rows', "1");
+        textareaMarker.setAttribute('maxlength', '5000');
+        divZone = document.createElement('div');
+        divZone.setAttribute('style', "width: 450px; margin-left: 8px; margin-right: 2px;");
+        divZone.setAttribute('key', "zone_type");
+        divZone.setAttribute('class', "lang");
+        divZone.textContent = "Форма зоны";
+        window.window.zoneType = document.createElement('select')
+        window.zoneType.setAttribute('class', "form-select");
+        window.zoneType.setAttribute('style', "width: 180px;");
+        window.zoneType.setAttribute('id', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        window.zoneType.setAttribute('name', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        circleVis = document.createElement('option')
+        circleVis.setAttribute('class', "lang");
+        circleVis.setAttribute('key', "circle");
+        circleVis.textContent = "Окружность"
+        polygon = document.createElement('option')
+        polygon.setAttribute('class', "lang");
+        polygon.setAttribute('key', "polygon");
+        polygon.textContent = "Многоугольник"
+        divCoords = document.createElement('div');
+        divCoords.setAttribute('style', "width: 160px; margin-left: 8px; margin-right: 4px;");
+        divCoords.setAttribute('key', "coordinates");
+        divCoords.setAttribute('class', "lang");
+        divCoords.textContent = "Координаты";
+        window.textareaCoords = document.createElement('textarea');
+        window.textareaCoords.setAttribute('class', "form-control langp");
+        window.textareaCoords.setAttribute('key', "zone_coordinates");
+        window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
+        window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
+        window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
+        window.textareaCoords.setAttribute('rows', "1");
+        window.textareaCoords.setAttribute('maxlength', '5000');
+        window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+
+        textareaMarker.addEventListener('input', function (evt) {
+            marker_name = textareaMarker.value;
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                draw_rect();
+            } else if(selectedOption.getAttribute('key') === "circle") {
+                draw_circle();
+            }
+        });
+
+        window.zoneType.addEventListener('change', function (evt) {
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+                draw_rect();
+            }else if(selectedOption.getAttribute('key') === "circle") {
+                window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
+                draw_circle();
+            }
+        });
+        window.textareaCoords.addEventListener('input', function (evt) {
+            let string = window.textareaCoords.value;
+
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                let coordsAmount = window.textareaCoords.value.match(/;/g).length;
+                let delimiter, coords, comma;
+                window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
+                for(let i = 0; i < coordsAmount; i++){
+                    if(i > 0){
+                        delimiter = string.indexOf(";");
+                        string = string.slice(delimiter+1);
+                    }
+                    delimiter = string.indexOf(";");
+                    if(delimiter > 0)
+                        coords = string.slice(0, delimiter);
+                    else
+                        coords = string
+                    comma = coords.indexOf(",");
+                    let new_x = parseInt(coords.slice(0, comma));
+                    let new_y = parseInt(coords.slice(comma+1));
+                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
+                }
+                draw_rect(false);
+            } else if(selectedOption.getAttribute('key') === "circle") {
+                let circle = window.zones.get(window.textareaCoords.id.substring(12));
+                let delimiter = string.indexOf(",");
+                circle.x = parseInt(string.slice(0, delimiter));
+                string = string.slice(delimiter+1);
+                delimiter = string.indexOf(",");
+                circle.y = parseInt(string.slice(0, delimiter));
+                string = string.slice(delimiter+1);
+                circle.radius = parseInt(string);
+                draw_circle(false);
+            }
+        });
     }
 
     let textareaQuestionCom, comDiv;
@@ -248,11 +316,11 @@ window.addAnswerOnButtonClick = function(index){
         div.appendChild(divMarker)
         div.appendChild(textareaMarker)
         div.appendChild(divZone)
-        div.appendChild(zoneType)
-        zoneType.appendChild(polygon)
-        zoneType.appendChild(circleVis)
+        div.appendChild(window.zoneType)
+        window.zoneType.appendChild(polygon)
+        window.zoneType.appendChild(circleVis)
         div.appendChild(divCoords)
-        div.appendChild(textareaCoords)
+        div.appendChild(window.textareaCoords)
     }
     divDel.appendChild(buttonDel)
     div.appendChild(divDel)
@@ -832,11 +900,12 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divZone.setAttribute('key', "zone_type");
             divZone.setAttribute('class', "lang");
             divZone.textContent = "Форма зоны";
-            let zoneType = document.createElement('select')
-            zoneType.setAttribute('class', "form-select");
-            zoneType.setAttribute('style', "width: 180px;");
-            zoneType.setAttribute('id', "ZoneFigure" + questionIndex);
-            zoneType.setAttribute('name', "ZoneFigure" + questionIndex);
+            // let zoneType = document.createElement('select')
+            window.zoneType = document.createElement('select')
+            window.zoneType.setAttribute('class', "form-select");
+            window.zoneType.setAttribute('style', "width: 180px;");
+            window.zoneType.setAttribute('id', "ZoneFigure" + questionIndex);
+            window.zoneType.setAttribute('name', "ZoneFigure" + questionIndex);
             let circleVis = document.createElement('option')
             circleVis.setAttribute('class', "lang");
             circleVis.setAttribute('key', "circle");
@@ -850,14 +919,15 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divCoords.setAttribute('key', "coordinates");
             divCoords.setAttribute('class', "lang");
             divCoords.textContent = "Координаты";
-            let textareaCoords = document.createElement('textarea');
-            textareaCoords.setAttribute('class', "form-control langp");
-            textareaCoords.setAttribute('key', "zone_coordinates");
-            textareaCoords.setAttribute('placeholder', "Координаты зоны");
-            textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
-            textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
-            textareaCoords.setAttribute('rows', "1");
-            textareaCoords.setAttribute('maxlength', '5000');
+            // let window.textareaCoords = document.createElement('textarea');
+            window.textareaCoords = document.createElement('textarea');
+            window.textareaCoords.setAttribute('class', "form-control langp");
+            window.textareaCoords.setAttribute('key', "zone_coordinates");
+            window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
+            window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
+            window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
+            window.textareaCoords.setAttribute('rows', "1");
+            window.textareaCoords.setAttribute('maxlength', '5000');
 
             let buttonDel = document.createElement('button');
             buttonDel.setAttribute('class', "btn");
@@ -888,11 +958,11 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divTextLabel.appendChild(divMarker)
             divTextLabel.appendChild(textareaMarker)
             divTextLabel.appendChild(divZone)
-            divTextLabel.appendChild(zoneType)
-            zoneType.appendChild(polygon)
-            zoneType.appendChild(circleVis)
+            divTextLabel.appendChild(window.zoneType)
+            window.zoneType.appendChild(polygon)
+            window.zoneType.appendChild(circleVis)
             divTextLabel.appendChild(divCoords)
-            divTextLabel.appendChild(textareaCoords)
+            divTextLabel.appendChild(window.textareaCoords)
             divDel.appendChild(buttonDel)
             divTextLabel.appendChild(divDel)
             divTextLabel.appendChild(divAnsCard)
@@ -903,21 +973,16 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
 
-            var ctx=canvas.getContext("2d");
+            window.ctx=canvas.getContext("2d");
             var BB=canvas.getBoundingClientRect();
-            var scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
-            var offsetX=BB.left;
-            var offsetY=BB.top;
-            var WIDTH = canvas.width;
-            var HEIGHT = canvas.height;
-            var vertexRadius = 6
-            let marker_name = "";
-            let selectedOption;
-
-            // drag related variables
-            var dragok = false;
-            var startX;
-            var startY;
+            window.scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
+            window.offsetX=BB.left;
+            window.offsetY=BB.top;
+            window.WIDTH = canvas.width;
+            window.HEIGHT = canvas.height;
+            window.vertexRadius = 6
+            window.marker_name = "";
+            window.selectedOption;
 
             // an array of objects that define different rectangles
             window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
@@ -936,286 +1001,9 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             // call to draw the scene
             draw_rect();
 
-            // draw a single rect
-            function rect(figure) {
-            let vertXsum = 0;
-            let vertYsum = 0;
-            for(var i=1;i<figure.vertexes.length + 1;i++){
-                ctx.beginPath();
-                if(i === figure.vertexes.length){
-                    ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
-                    ctx.lineTo(figure.vertexes[0].x,figure.vertexes[0].y);
-                }else{
-                   ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
-                   ctx.lineTo(figure.vertexes[i].x,figure.vertexes[i].y);
-                   vertXsum += figure.vertexes[i].x;
-                   vertYsum += figure.vertexes[i].y;
-                }
-                ctx.stroke();
-                if(i === 1){
-                    vertXsum += figure.vertexes[i-1].x;
-                    vertYsum += figure.vertexes[i-1].y;
-                }
-            }
-            ctx.beginPath();
-            let xm = vertXsum / figure.vertexes.length;
-            let ym = vertYsum / figure.vertexes.length;
-            ctx.fillStyle = "#FFF";
-            ctx.textBaseline = "center";
-            ctx.textAlign = "center";
-            ctx.font = 'bold 26px sans-serif';
-            ctx.fillText(marker_name, xm, ym);
-            ctx.fill();
-            ctx.lineWidth=1;
-            ctx.strokeStyle = "#000";
-            ctx.strokeText(marker_name, xm, ym);
-            ctx.stroke();
-            ctx.strokeStyle = "#000";
-            }
-
-            // clear the canvas
-            function clear() {
-            ctx.clearRect(0, 0, WIDTH, HEIGHT);
-            }
-
-            // redraw the scene
-            function draw_rect(change_val=true) {
-            clear();
-            // redraw each rect in the rects[] array
-            for (var [key, value] of window.zones) {
-                var r=value;
-                ctx.strokeStyle=r.fill;
-                ctx.lineWidth=3;
-                rect(r);
-                if(r.selected){
-                    draw_selection()
-                }
-                if(change_val){
-                    let str_to_show = ""
-                    for(var j=0;j<r.vertexes.length;j++){
-                        str_to_show += r.vertexes[j].x + "," + r.vertexes[j].y + ";"
-                    }
-                    textareaCoords.value = str_to_show;
-                }
-            }
-            }
-            function draw_selection(id) {
-                for(var i=0;i<window.zones.get(id).vertexes.length;i++){
-                    ctx.fillStyle="#ff0000";
-                    ctx.strokeStyle="#ffffff";
-                    ctx.lineWidth=3;
-                    ctx.beginPath();
-                    ctx.arc(window.zones.get(id).vertexes[i].x,window.zones.get(id).vertexes[i].y,vertexRadius,2*Math.PI,false);
-                    ctx.stroke();
-                    ctx.closePath();
-                    ctx.fill();
-                }
-            }
-
-            function circle(figure) {
-                ctx.beginPath();
-                ctx.arc(figure.x, figure.y, figure.radius, 0, 2 * Math.PI, false);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.fillStyle = "#FFF";
-                ctx.textBaseline = "center";
-                ctx.textAlign = "center";
-                ctx.font = 'bold 26px sans-serif';
-                ctx.fillText(marker_name, figure.x, figure.y);
-                ctx.fill();
-                ctx.lineWidth=1;
-                ctx.strokeStyle = "#000";
-                ctx.strokeText(marker_name, figure.x, figure.y);
-                ctx.stroke();
-                ctx.strokeStyle = "#000";
-            }
-            function draw_circle(change_val=true) {
-                clear();
-                // redraw each rect in the rects[] array
-                for(var i=0;i<circles.length;i++){
-                    var c=circles[i];
-                    ctx.strokeStyle="#ffffff";
-                    ctx.lineWidth=3;
-                    circle(c);
-                    if(c.selected){
-                        // draw_selection()
-                    }
-                    if(change_val){
-                        textareaCoords.value = c.x + "," + c.y + "," + c.radius;
-                    }
-                }
-            }
-
-
-            // handle mousedown events
-            function myDown(e){
-
-                // tell the browser we're handling this mouse event
-                e.preventDefault();
-                e.stopPropagation();
-
-                // get the current mouse position
-                scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
-                let canvasOffset = canvas.getBoundingClientRect().top + scrollOffsetY - 449.375
-                    if (canvasOffset > 0)
-                        canvasOffset -=  200;
-                var mx=parseInt(e.clientX-offsetX);
-                var my=parseInt(e.clientY-offsetY+scrollOffsetY);
-                //if (my < 0)
-                //    my += 210;
-
-                selectedOption = zoneType.options[zoneType.selectedIndex];
-                if(selectedOption.getAttribute('key') === "polygon") {
-                    // test each rect to see if mouse is inside
-                    dragok = false;
-                    for (var [key, value] of window.zones) {
-                        var r = value;
-                        let vertexSelected = false;
-                        let vertXsum = 0;
-                        let vertYsum = 0;
-                        if (r.selected) {
-                            for (var j = 0; j < r.vertexes.length; j++) {
-                                if (Math.pow(mx - r.vertexes[j].x, 2) + Math.pow(my - (r.vertexes[j].y+canvasOffset), 2) <= Math.pow(vertexRadius, 2)) {
-                                    r.vertexes[j].v = true;
-                                    vertexSelected = true;
-                                }
-                            }
-                        }
-                        for (j = 0; j < r.vertexes.length; j++) {
-                            vertXsum += r.vertexes[j].x;
-                            vertYsum += r.vertexes[j].y;
-                        }
-
-                        let xm = vertXsum / r.vertexes.length;
-                        let ym = vertYsum / r.vertexes.length + canvasOffset;
-                        console.log(scrollOffsetY)
-                        console.log(mx, my)
-                        console.log(canvasOffset)
-                        console.log(xm, ym)
-                        if (mx > xm - 32 && mx < xm + 32 && my > ym - 15 && my < ym + 15 || vertexSelected === true) {
-                            // if yes, set that rects isDragging=true
-                            dragok = true;
-                            if (!vertexSelected)
-                                r.isDragging = true;
-                            r.selected = true;
-                            r.fill = "#ffffff";
-                        } else {
-                            r.selected = false;
-                        }
-                    }
-                    draw_rect();
-                } else if(selectedOption.getAttribute('key') === "circle") {
-                    dragok = false;
-                    for (i = 0; i < circles.length; i++) {
-                        let c = circles[i]
-                        if (mx > c.x - 32 && mx < c.x + 32 && my > c.y - 15 && my < c.y + 15) {
-                            dragok = true;
-                            c.isDragging = true;
-                            c.selected = true;
-                            c.fill = "#ffffff";
-                        } else {
-                            c.selected = false;
-                        }
-                    }
-                    draw_circle();
-                }
-                // save the current mouse position
-                startX = mx;
-                startY = my;
-            }
-
-
-            // handle mouseup events
-            function myUp(e){
-                // tell the browser we're handling this mouse event
-                e.preventDefault();
-                e.stopPropagation();
-
-                selectedOption = zoneType.options[zoneType.selectedIndex];
-                if(selectedOption.getAttribute('key') === "polygon") {
-                    // clear all the dragging flags
-                    for (var [key, value] of window.zones) {
-                        var r=value;
-                        r.isDragging=false;
-                        r.fill="#444444";
-                        for (var j = 0; j < r.vertexes.length; j++) {
-                            r.vertexes[j].v = false
-                        }
-                    }
-                    draw_rect();
-                } else if(selectedOption.getAttribute('key') === "circle") {
-                    for(i=0;i<circles.length;i++){
-                        var c=circles[i];
-                        c.isDragging=false;
-                        c.fill="#444444";
-                    }
-                    draw_circle();
-                }
-            }
-
-
-            // handle mouse moves
-            function myMove(e){
-                // if we're dragging anything...
-                if (dragok){
-
-                  // tell the browser we're handling this mouse event
-                  e.preventDefault();
-                  e.stopPropagation();
-
-                  // get the current mouse position
-                  scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
-                  var mx=parseInt(e.clientX-offsetX);
-                  var my=parseInt(e.clientY-offsetY+scrollOffsetY);
-
-                  // calculate the distance the mouse has moved
-                  // since the last mousemove
-                  var dx=mx-startX;
-                  var dy=my-startY;
-
-                  selectedOption = zoneType.options[zoneType.selectedIndex];
-                  if(selectedOption.getAttribute('key') === "polygon") {
-                      // move each rect that isDragging
-                      // by the distance the mouse has moved
-                      // since the last mousemove
-                      for (var [key, value] of window.zones) {
-                          var r=value;
-                        for (var j = 0; j < r.vertexes.length; j++) {
-                            if (r.vertexes[j].v) {
-                                r.vertexes[j].x+=dx;
-                                r.vertexes[j].y+=dy;
-                            }
-                        }
-                        if(r.isDragging){
-                            for (j = 0; j < r.vertexes.length; j++) {
-                                r.vertexes[j].x+=dx;
-                                r.vertexes[j].y+=dy;
-                            }
-                          }
-                      }
-                      // redraw the scene with the new rect positions
-                      draw_rect();
-                  } else if(selectedOption.getAttribute('key') === "circle") {
-                      for(let i=0;i<circles.length;i++){
-                        let c=circles[i];
-                        if(c.isDragging){
-                            c.x+=dx;
-                            c.y+=dy;
-                          }
-                      }
-                      draw_circle();
-                  }
-
-                  // reset the starting mouse position for the next mousemove
-                  startX=mx;
-                  startY=my;
-
-                }
-            }
-
             textareaMarker.addEventListener('input', function (evt) {
                 marker_name = textareaMarker.value;
-                selectedOption = zoneType.options[zoneType.selectedIndex];
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
                 if(selectedOption.getAttribute('key') === "polygon") {
                     draw_rect();
                 } else if(selectedOption.getAttribute('key') === "circle") {
@@ -1223,12 +1011,14 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                 }
             });
 
-            zoneType.addEventListener('change', function (evt) {
-                selectedOption = zoneType.options[zoneType.selectedIndex];
+            window.zoneType.addEventListener('change', function (evt) {
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
                 if(selectedOption.getAttribute('key') === "polygon") {
+                    window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
                     draw_rect();
                 }else if(selectedOption.getAttribute('key') === "circle") {
-                    draw_circle()
+                    window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
+                    draw_circle();
                 }
             });
 
@@ -1267,14 +1057,14 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                 reader.readAsDataURL(file);
             });
 
-            textareaCoords.addEventListener('input', function (evt) {
-                let string = textareaCoords.value;
+            window.textareaCoords.addEventListener('input', function (evt) {
+                let string = window.textareaCoords.value;
 
-                selectedOption = zoneType.options[zoneType.selectedIndex];
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
                 if(selectedOption.getAttribute('key') === "polygon") {
-                    let coordsAmount = textareaCoords.value.match(/;/g).length;
+                    let coordsAmount = window.textareaCoords.value.match(/;/g).length;
                     let delimiter, coords, comma;
-                    window.zones.get(id).vertexes = []
+                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
                     for(let i = 0; i < coordsAmount; i++){
                         if(i > 0){
                             delimiter = string.indexOf(";");
@@ -1288,18 +1078,19 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                         comma = coords.indexOf(",");
                         let new_x = parseInt(coords.slice(0, comma));
                         let new_y = parseInt(coords.slice(comma+1));
-                        window.zones.get(id).vertexes.push({x:new_x, y: new_y, v:false})
+                        window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
                     }
                     draw_rect(false);
                 } else if(selectedOption.getAttribute('key') === "circle") {
+                    let circle = window.zones.get(window.textareaCoords.id.substring(12));
                     let delimiter = string.indexOf(",");
-                    circles[0].x = parseInt(string.slice(0, delimiter));
+                    circle.x = parseInt(string.slice(0, delimiter));
                     string = string.slice(delimiter+1);
                     delimiter = string.indexOf(",");
-                    circles[0].y = parseInt(string.slice(0, delimiter));
+                    circle.y = parseInt(string.slice(0, delimiter));
                     string = string.slice(delimiter+1);
-                    circles[0].radius = parseInt(string);
-                    draw_circle();
+                    circle.radius = parseInt(string);
+                    draw_circle(false);
                 }
             });
         }
