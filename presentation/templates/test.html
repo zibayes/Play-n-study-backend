@@ -18,7 +18,7 @@
             <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
             <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/test_preview/{{ test_id }}"><text class="lang" key="test">Тест</text> «{{ test.name }}»</a></li>
-            <li class="breadcrumb-item active lang" key="unit" aria-current="page">Прохождение теста</li>
+            <li class="breadcrumb-item active lang" key="passing_the_test" aria-current="page">Прохождение теста</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -49,9 +49,9 @@
                         </div>
 
                         <div class="card" style="background:#bde0ff; flex: 1;">
-                            <div class="card-body">
+                            <div class="card-body" id="content">
                                 <div class="form-group" id="scoreCount">
-                                    {{ question.ask }}
+                                    <p class="fromMarkdown">{{ question.ask }}</p>
                                     <!--<input type="hidden" name="ask-{{ questionNum.value }}" value="{{ question.ask }}">-->
                                     {% if question.type == "solo" %}
                                         <hr>
@@ -59,7 +59,7 @@
                                             {% for answer_text, is_right in answer.items() %}
                                                 <div style="display: flex;">
                                                     <input id="checkbox" type="radio" name="{{ question.ask }}" value="{{ answer_text }}">
-                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                    <label class="fromMarkdown" style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
                                                 </div>
                                                 <br>
                                             {% endfor %}
@@ -74,7 +74,7 @@
                                             {% for answer_text, is_right in answer.items() %}
                                                 <div style="display: flex;">
                                                     <input id="checkbox" type="checkbox" name="{{ question.ask }}-{{ answerNum.value }}" value="{{ answer_text }}">
-                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                    <label class="fromMarkdown" style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
                                                 </div>
                                                 <br>
                                             {% endfor %}
@@ -114,4 +114,5 @@
 
 {% endblock %}
 {% block script %}
+    <script type="module" src="/static/js/markdown.js"></script>
 {% endblock %}

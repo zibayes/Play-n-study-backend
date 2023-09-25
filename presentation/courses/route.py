@@ -516,6 +516,12 @@ def handle_load_test(course_id, test_id):
             if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
     for question in test.content.questions:
+        question.ask = markdown(question.ask)
+        if question.answers:
+            for i in range(len(question.answers)):
+                print(markdown(list(question.answers[i].keys())[0]))
+                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
+                del question.answers[i][list(question.answers[i].keys())[0]]
         if question.score:
             total_score += question.score
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
@@ -586,6 +592,13 @@ def handle_check_test(course_id, test_id):
                 unit_name = unit['name']
     completed = True
     for question in test.content.questions:
+        question.ask = markdown(question.ask)
+        if question.answers:
+            for i in range(len(question.answers)):
+                print(markdown(list(question.answers[i].keys())[0]))
+                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
+                    list(question.answers[i].keys())[0]]
+                del question.answers[i][list(question.answers[i].keys())[0]]
         if question.current_score is None:
             completed = False
     progress = Progress(progress_id=None, completed=completed, type='test',
@@ -687,6 +700,14 @@ def handle_show_test_result(course_id, test_id, progress_id):
                     TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
 
     user_progress = TestContent.from_json(progress.progress['content'])
+    for question in user_progress.questions:
+        question.ask = markdown(question.ask)
+        if question.answers:
+            for i in range(len(question.answers)):
+                print(markdown(list(question.answers[i].keys())[0]))
+                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
+                del question.answers[i][list(question.answers[i].keys())[0]]
+
     percents_for_tasks = {}
     for value in users_progress_max.values():
         for i in range(len(value.progress['content'].questions)):
@@ -704,6 +725,7 @@ def handle_show_test_result(course_id, test_id, progress_id):
         percents_for_tasks[key] /= len(users_progress_max.keys()) - 1  if len(users_progress_max.keys()) > 1 else 1
         percents_for_tasks[key] *= 100
         percents_for_tasks[key] = round(percents_for_tasks[key], 2)
+
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=user_progress, percents_for_tasks=percents_for_tasks,
                            score=result.total_score, total_score=result.total_current_score, test_id=test_id,
@@ -764,8 +786,16 @@ def handle_test_check(course_id, test_id, progress_id):
         for test_ in unit['tests']:
             if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
+    test = TestContent.from_json(progress.progress['content'])
+    for question in test.questions:
+        question.ask = markdown(question.ask)
+        if question.answers:
+            for i in range(len(question.answers)):
+                print(markdown(list(question.answers[i].keys())[0]))
+                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
+                del question.answers[i][list(question.answers[i].keys())[0]]
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_check.html', user=user, test=TestContent.from_json(progress.progress['content']),
+    return render_template('test_check.html', user=user, test=test,
                            score=result.total_score, unit_name=unit_name,
                            course=course, username=username, test_id=test_id,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time)
