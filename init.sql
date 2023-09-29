@@ -11,7 +11,7 @@
 -- DROP TABLE  courses CASCADE;
 -- DROP TABLE  users CASCADE;
 
-
+-- Пользователи
 CREATE TABLE users
 (
     user_id serial PRIMARY KEY,
@@ -21,7 +21,7 @@ CREATE TABLE users
     avatar bytea NULL,
     password text NOT NULL
 );
-
+-- Курсы
 CREATE TABLE courses
 (
     course_id serial PRIMARY KEY,
@@ -31,14 +31,14 @@ CREATE TABLE courses
     category text,
     content json
 );
-
+-- Кураторы
 CREATE TABLE curators
 (
     cur_rel_id serial PRIMARY KEY ,
     user_id integer REFERENCES users(user_id),
     course_id integer REFERENCES courses(course_id)
 );
-
+-- Ачивки
 CREATE TABLE achievements
 (
     ach_id serial PRIMARY KEY,
@@ -46,7 +46,7 @@ CREATE TABLE achievements
     name text UNIQUE NOT NULL,
     image bytea
 );
-
+-- Задания
 CREATE TABLE tasks
 (
     task_id serial PRIMARY KEY,

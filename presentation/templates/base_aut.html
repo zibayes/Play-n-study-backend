@@ -13,8 +13,7 @@
   <!-- Favicon -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="/static/css/base_auth.css"/>
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <!-- Google Fonts Roboto -->
@@ -234,18 +233,10 @@
 {% block modal_dialog %}
 {% endblock modal_dialog %}
 
-<div>
-  <div class="parallax">
-      <div class="mouse-parallax">
-          <div class="mouse-parallax-bg">
-          </div>
-      </div>
-          <div class="content">
-            {% block content %}
-            {% endblock %}
-          </div>
-  </div>
-</div>
+
+{% block content %}
+{% endblock %}
+
 
 <!-- MDB -->
 <script type="text/javascript" src="/static/js_mdb/mdb.min.js"></script>

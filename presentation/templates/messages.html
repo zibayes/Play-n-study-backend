@@ -1,0 +1,57 @@
+{% extends 'base_aut.html' %}
+{% block title%}
+<title>Сообщения</title>
+{% endblock %}
+{% block content %}
+<style>
+    .li{
+        border-radius: 15px;
+    }
+    .li:hover{
+        background-color: #eee;
+    }
+    .li:active{
+        background-color: #eee;
+    }
+    
+</style>
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="fs-5 row m-3 justify-content-start lang">
+            Чаты
+        </span>
+        <div class="row border"></div>
+        <br>
+        <section >
+              <div class="row" >
+                <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+                  <div class="card overflow-auto" style="height:810px;" >
+                    <div class="card-body">
+                      <ul id="ul_chat" class="list-unstyled mb-0 " data-mdb-perfect-scrollbar="true">
+{#                   ----------------------------------                          #}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div id="div_area" style="padding: 20px;" class="col-md-6 col-lg-7 col-xl-8 card">
+                  <ul id="ul_chat_item" class="list-unstyled" style="overflow: scroll; height: 580px"></ul>
+                    <div class="bg-white mb-3">
+                      <div class="form-outline">
+                        <textarea class="form-control" id="textAreaExample2" rows="4"></textarea>
+                        <label class="form-label" for="textAreaExample2">Message</label>
+                      </div>
+                        <button type="button" class="btn btn-info btn-rounded float-end" style="margin-top: 10px">Send</button>
+                    </div>
+
+                </div>
+              </div>
+          
+            
+          </section>
+    </div>
+</div>
+<!-- Scripts -->
+<script type="module" src="/static/js/message.js"></script>
+
+
+{% endblock  %}
