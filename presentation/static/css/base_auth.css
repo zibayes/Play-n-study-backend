@@ -1,0 +1,37 @@
+.truncate-text {
+  width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.parallax {
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+}
+.mouse-parallax {
+  height: 885px;
+  position: relative;
+  overflow: hidden;
+}
+.mouse-parallax-bg {
+  position: absolute;
+  background-image: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1612749063_117-p-fon-dlya-prezentatsii-nezhno-goluboi-s-per-129.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 126%;
+  height: 125%;
+  transition: all 0.1s ease;
+}
+.content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: scroll;
+  margin:0 auto 0;
+}

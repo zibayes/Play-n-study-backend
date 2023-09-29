@@ -12,6 +12,8 @@
 
   <!-- Favicon -->
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+  <!-- CSS -->
+  <link rel="stylesheet" href="/static/css/base_auth.css"/>
 
 
   <!-- Font Awesome -->
@@ -234,8 +236,18 @@
 {% endblock modal_dialog %}
 
 
-{% block content %}
-{% endblock %}
+<div>
+  <div class="parallax">
+      <div class="mouse-parallax">
+          <div class="mouse-parallax-bg">
+          </div>
+      </div>
+          <div class="content">
+            {% block content %}
+            {% endblock %}
+          </div>
+  </div>
+</div>
 
 
 <!-- MDB -->
