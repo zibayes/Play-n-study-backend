@@ -33,6 +33,11 @@ def handle_task():
 def about():
     return "About"
 
+@pages_bp.route('/messages')
+def messages():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    return render_template('messages.html', user=user)
 
 @pages_bp.route('/profiles/<int:user_id>')
 @login_required

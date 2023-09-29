@@ -170,36 +170,7 @@ $.ajax({
       });
     }
   })
-  setInterval(function () {
-    $.ajax({
-      url: '/get_dialog',
-      method: 'post',
-      dataType: 'json',
-      contentType: 'application/json',
-      data: JSON.stringify({"chat_id": chat_id}),
-      success: function (data) {
-        if(new Date(data.messages[data.messages.length - 1].msg_date) > new Date(date_message)){
-            var div_card_element = document.getElementById("div" + chat_id)
-            let div_element_d_flex = document.createElement("div")
-            div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-end mb-4 pt-1")
-            let div_element = document.createElement("div")
-            let image = document.createElement("img")
-            image.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
-            image.alt = ""
-            image.style = "width: 45px; height: 100%;"
-            let p1 = document.createElement("p")
-            p1.setAttribute("class", "small p-2 me-3 mb-1 text-white rounded-3 bg-info")
-            p1.textContent = data.messages[data.messages.length - 1].msg_text
-            div_element.appendChild(p1)
-            div_element_d_flex.appendChild(div_element)
-            div_element_d_flex.appendChild(image)
-            div_card_element.appendChild(div_element_d_flex)
-            date_message = data.messages[data.messages.length - 1].msg_date
-        }
-      }
-    })
-    console.log(date_message)
-  }, 500)
+
   // 15
   let i2 = document.createElement("i")
   i2.setAttribute("class", "fas fa-paper-plane")
