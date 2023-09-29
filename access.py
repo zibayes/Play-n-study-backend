@@ -127,7 +127,7 @@ def check_test_access(current_user):
                         if test_id == test.test_id:
                             test_name = test.test.content.name
                     else:
-                        test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
                     if first_task is None:
                         first_task = str(test.test_id) + test.unit_type
                     for progress in progresses:
@@ -173,7 +173,7 @@ def check_article_access(current_user):
                     if test.unit_type == 'test':
                         test.test = logic.get_test_by_id(test.test_id)
                     else:
-                        test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
                         if article_id == test.test_id:
                             article_name = test.article_name
                     if first_task is None:

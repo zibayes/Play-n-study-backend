@@ -40,7 +40,7 @@ def handle_tests(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
             for progress in progresses:
                 if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                     results[str(test.test_id) + test.unit_type] = progress.progress['completed']
@@ -65,7 +65,7 @@ def handle_course_summary(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
             for progress in progresses:
                 if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                     results[str(test.test_id) + test.unit_type] = progress.progress['completed']
@@ -319,7 +319,7 @@ def handle_course_editor(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, TestContent(test.article_name, None))
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
@@ -481,7 +481,7 @@ def handle_article_constructor(course_id, unit_id):
 @check_subscriber_access(current_user)
 def handle_article_save(course_id, unit_id):
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
-    article = Article(article_id=None, course_id=course_id, content=article_text)
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text)
     response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'])
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -494,6 +494,8 @@ def handle_article_save(course_id, unit_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_create_task(course_id, unit_id):
+    if 'TaskType' not in request.form.keys():
+        return redirect(f'/course_editor/{course_id}')
     task_type = request.form['TaskType']
     if task_type == 'test':
         return redirect(url_for('courses.handle_test_constructor', course_id=course_id, unit_id=unit_id))
@@ -516,14 +518,10 @@ def handle_load_test(course_id, test_id):
             if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
     for question in test.content.questions:
-        question.ask = markdown(question.ask)
-        if question.answers:
-            for i in range(len(question.answers)):
-                print(markdown(list(question.answers[i].keys())[0]))
-                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
-                del question.answers[i][list(question.answers[i].keys())[0]]
         if question.score:
             total_score += question.score
+        if question.shuffle == 'on':
+            random.shuffle(question.answers)
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
                            course=course, unit_name=unit_name, test_id=test_id)
 
@@ -554,6 +552,7 @@ def handle_load_article(course_id, article_id):
 @check_subscriber_access(current_user)
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
+    print(test.content.toJSON())
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = None
@@ -569,7 +568,13 @@ def handle_edit_test(course_id, test_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_edit_test_save(course_id, test_id):
-    response = logic.edit_test(request.form, test_id, course_id)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_id = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == test_id and test.unit_type == 'test':
+                unit_id = unit['unit_id']
+    response = logic.edit_test(request.form, test_id, course_id, unit_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')
@@ -595,7 +600,6 @@ def handle_check_test(course_id, test_id):
         question.ask = markdown(question.ask)
         if question.answers:
             for i in range(len(question.answers)):
-                print(markdown(list(question.answers[i].keys())[0]))
                 question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
                     list(question.answers[i].keys())[0]]
                 del question.answers[i][list(question.answers[i].keys())[0]]
@@ -603,7 +607,7 @@ def handle_check_test(course_id, test_id):
             completed = False
     progress = Progress(progress_id=None, completed=completed, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
-    logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
+    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='test', task_id=test_id, progress=Progress.to_json(progress))
 
     users_progress = logic.get_progress_by_course_id_all(course_id)
     users_progress_max = {}
@@ -662,7 +666,7 @@ def handle_check_article(course_id, article_id):
     if need_to_add is True:
         progress = Progress(progress_id=None, completed=True, type='article',
                             content=None, test_id=article_id, result=None)
-        logic.add_progress(course_id=course_id, user_id=user.user_id, progress=Progress.to_json(progress))
+        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='article', task_id=article_id, progress=Progress.to_json(progress))
     return redirect(f'/course/{course_id}')
 
 
@@ -700,13 +704,6 @@ def handle_show_test_result(course_id, test_id, progress_id):
                     TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
 
     user_progress = TestContent.from_json(progress.progress['content'])
-    for question in user_progress.questions:
-        question.ask = markdown(question.ask)
-        if question.answers:
-            for i in range(len(question.answers)):
-                print(markdown(list(question.answers[i].keys())[0]))
-                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
-                del question.answers[i][list(question.answers[i].keys())[0]]
 
     percents_for_tasks = {}
     for value in users_progress_max.values():
@@ -787,13 +784,6 @@ def handle_test_check(course_id, test_id, progress_id):
             if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
     test = TestContent.from_json(progress.progress['content'])
-    for question in test.questions:
-        question.ask = markdown(question.ask)
-        if question.answers:
-            for i in range(len(question.answers)):
-                print(markdown(list(question.answers[i].keys())[0]))
-                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][list(question.answers[i].keys())[0]]
-                del question.answers[i][list(question.answers[i].keys())[0]]
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_check.html', user=user, test=test,
                            score=result.total_score, unit_name=unit_name,

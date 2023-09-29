@@ -1,5 +1,5 @@
--- DROP TABLE  articles CASCADE ;
 -- DROP TABLE  users_progress CASCADE;
+-- DROP TABLE  articles CASCADE ;
 -- DROP TABLE  tests CASCADE;
 -- DROP TABLE  sub_rel CASCADE;
 -- DROP TABLE  reviews CASCADE;
@@ -76,7 +76,7 @@ CREATE TABLE reviews(
     rev_id serial PRIMARY KEY,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
-    rate int NOT NULL CHECK ( rate BETWEEN 0 AND 10),
+    rate int NOT NULL CHECK ( rate BETWEEN 0 AND 5), -- NEW! ( rate BETWEEN 0 AND 10) -> ( rate BETWEEN 0 AND 5)
     text text
 );
 
@@ -89,12 +89,18 @@ CREATE TABLE sub_rel(
 CREATE TABLE tests(
     test_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
+	unit_id int NOT NULL, -- NEW!
+	avatar bytea NULL, -- NEW!
+	description text, -- NEW!
     content json
 );
 
 CREATE TABLE articles(
     article_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
+	unit_id int NOT NULL, -- NEW!
+	avatar bytea NULL, -- NEW!
+	description text, -- NEW!
     content text
 );
 
@@ -102,6 +108,9 @@ CREATE TABLE users_progress(
     up_id serial PRIMARY KEY ,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
+	task_id int NOT NULL, -- NEW! (TASK = ARTICLE/TEST)
+	task_type text, -- NEW!
+	date_of_completion timestamp DEFAULT now(), -- NEW!
     progress json
 );
 

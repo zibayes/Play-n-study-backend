@@ -132,6 +132,7 @@ class Task:
 def downcast(base, derived):
     derived.ask = base.ask
     derived.answers = base.answers
+    derived.shuffle = base.shuffle
     derived.correct = base.correct
     derived.score = base.score
     derived.current_score = base.current_score
@@ -143,6 +144,7 @@ def downcast(base, derived):
 def upcast(derived, base):
     base.ask = derived.ask
     base.answers = derived.answers
+    base.shuffle = derived.shuffle
     base.correct = derived.correct
     base.score = derived.score
     base.current_score = derived.current_score
@@ -152,9 +154,10 @@ def upcast(derived, base):
 
 
 class Test:
-    def __init__(self, test_id, course_id, content):
+    def __init__(self, test_id, course_id, unit_id, content):
         self.test_id = test_id
         self.course_id = course_id
+        self.unit_id = unit_id
         self.content = content
 
 
@@ -195,9 +198,10 @@ class TestContent:
 
 
 class Question:
-    def __init__(self, ask=None, answers=None, correct=None, score=None, current_score=None, type=None, comment=None):
+    def __init__(self, ask=None, answers=None, shuffle=None, correct=None, score=None, current_score=None, type=None, comment=None):
         self.ask = ask if ask != 'null' else None
         self.answers = None if answers == 'null' else answers
+        self.shuffle = None if shuffle == 'null' else shuffle
         self.correct = None if correct == 'null' else correct
         self.score = None if score == 'null' else score
         self.current_score = None if current_score == 'null' else current_score
@@ -206,13 +210,14 @@ class Question:
 
     @staticmethod
     def from_json(qbase_json):
-        return Question(qbase_json['ask'], qbase_json['answers'], qbase_json['correct'],
+        return Question(qbase_json['ask'], qbase_json['answers'], qbase_json['shuffle'], qbase_json['correct'],
                         qbase_json['score'], qbase_json['current_score'], qbase_json['type'], qbase_json['comment'])
 
     def toJSON(self):
         return {
             "ask": self.ask,
             "answers": self.answers,
+            "shuffle": self.shuffle,
             "correct": self.correct,
             "score": self.score,
             "current_score": self.current_score,
@@ -224,6 +229,7 @@ class Question:
     def downcast(base, derived):
         derived.ask = base.ask
         derived.answers = base.answers
+        derived.shuffle = base.shuffle
         derived.correct = base.correct
         derived.score = base.score
         derived.current_score = base.current_score
@@ -234,7 +240,7 @@ class Question:
 
 class QInfo(Question):
     def __init__(self, ask, type):
-        super().__init__(ask=ask, type=ask)
+        super().__init__(ask=ask, type=type)
 
     @staticmethod
     def from_json(qinfo_json):
@@ -262,24 +268,64 @@ class QFree(Question):
         return downcast(base, QFree(None, None, None, None, None))
 
 
+class QMarkersDrag(Question):
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
+
+    @staticmethod
+    def from_json(qmarkers_drag_json):
+        base = Question.from_json(qmarkers_drag_json)
+        return downcast(base, QMarkersDrag(None, None, None, None, None, None))
+
+
+class QDragToText(Question):
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
+
+    @staticmethod
+    def from_json(qdrag_to_text_json):
+        base = Question.from_json(qdrag_to_text_json)
+        return downcast(base, QDragToText(None, None, None, None, None, None))
+
+
+class QFillingGaps(Question):
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
+
+    @staticmethod
+    def from_json(qfilling_gaps_json):
+        base = Question.from_json(qfilling_gaps_json)
+        return downcast(base, QFillingGaps(None, None, None, None, None, None))
+
+
+class QCompliance(Question):
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
+
+    @staticmethod
+    def from_json(qcompliance_json):
+        base = Question.from_json(qcompliance_json)
+        return downcast(base, QCompliance(None, None, None, None, None, None))
+
+
 class QMultiple(Question):
-    def __init__(self, ask, answers, correct, score, type):
-        super().__init__(ask, answers, correct, score, type)
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
 
     @staticmethod
     def from_json(qmultiple_json):
         base = Question.from_json(qmultiple_json)
-        return downcast(base, QMultiple(None, None, None, None, None))
+        return downcast(base, QMultiple(None, None, None, None, None, None))
 
 
 class QSolo(Question):
-    def __init__(self, ask, answers, correct, score, type):
-        super().__init__(ask, answers, correct, score, type)
+    def __init__(self, ask, answers, shuffle, correct, score, type):
+        super().__init__(ask, answers, shuffle, correct, score, type)
 
     @staticmethod
     def from_json(qsolo_json):
         base = Question.from_json(qsolo_json)
-        return downcast(base, QSolo(None, None, None, None, None))
+        return downcast(base, QSolo(None, None, None, None, None, None))
 
 
 # контент курсов
@@ -330,17 +376,20 @@ class CourseUnit:
 
 
 class Article:
-    def __init__(self, article_id, course_id, content):
+    def __init__(self, article_id, course_id, unit_id, content):
         self.article_id = article_id
         self.course_id = course_id
+        self.unit_id = unit_id
         self.content = content
 
 
 class UserProgress:
-    def __init__(self, up_id, user_id, course_id, progress):
+    def __init__(self, up_id, user_id, course_id, task_id, task_type, progress):
         self.up_id = up_id
         self.user_id = user_id
         self.course_id = course_id
+        self.task_id = task_id
+        self.task_type = task_type
         # это поле типа Progress
         self.progress = progress
 

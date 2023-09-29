@@ -1,17 +1,16 @@
 import {
     arrLang
 } from './translate_dictionary.js';
+
 import {
-    rect,
-    clear,
-    draw_rect,
-    draw_selection,
-    circle,
-    draw_circle,
+    draw_figures,
     myDown,
     myUp,
     myMove
 } from './markers_drag_functions.js';
+
+window.draw_figures = draw_figures;
+
 // Функция добавления слушателя события перетаскивания
 export function addDragoverEventListener(dragndropArea, tagContains, i=undefined, questions_list=undefined) {
     let isAbleToMove = true;
@@ -112,6 +111,8 @@ window.addAnswerOnButtonClick = function(index){
 
     let divMarker, textareaMarker, divZone, circleVis, polygon, divCoords//, textareaCoords, window.zoneType;
     if(selectedOption.getAttribute('key') === "markers_drag") {
+        window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:""});
+
         divMarker = document.createElement('div');
         divMarker.setAttribute('style', "width: 75px; margin-right: 4px;");
         divMarker.setAttribute('key', "marker");
@@ -121,20 +122,21 @@ window.addAnswerOnButtonClick = function(index){
         textareaMarker.setAttribute('class', "form-control langp");
         textareaMarker.setAttribute('key', "marker_name");
         textareaMarker.setAttribute('placeholder', "Название маркера");
-        textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
-        textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('name', "Marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('id', "Marker-" + questionIndex + "-" + answerIndex);
         textareaMarker.setAttribute('rows', "1");
         textareaMarker.setAttribute('maxlength', '5000');
+        textareaMarker.setAttribute('value', '');
         divZone = document.createElement('div');
         divZone.setAttribute('style', "width: 450px; margin-left: 8px; margin-right: 2px;");
         divZone.setAttribute('key', "zone_type");
         divZone.setAttribute('class', "lang");
         divZone.textContent = "Форма зоны";
-        window.window.zoneType = document.createElement('select')
-        window.zoneType.setAttribute('class', "form-select");
-        window.zoneType.setAttribute('style', "width: 180px;");
-        window.zoneType.setAttribute('id', "ZoneFigure-" + questionIndex + "-" + answerIndex);
-        window.zoneType.setAttribute('name', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        window.zones.get(textareaMarker.id.substring(7)).zoneType = document.createElement('select')
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('class', "form-select");
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('style', "width: 180px;");
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('id', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('name', "ZoneFigure-" + questionIndex + "-" + answerIndex);
         circleVis = document.createElement('option')
         circleVis.setAttribute('class', "lang");
         circleVis.setAttribute('key', "circle");
@@ -148,44 +150,38 @@ window.addAnswerOnButtonClick = function(index){
         divCoords.setAttribute('key', "coordinates");
         divCoords.setAttribute('class', "lang");
         divCoords.textContent = "Координаты";
-        window.textareaCoords = document.createElement('textarea');
-        window.textareaCoords.setAttribute('class', "form-control langp");
-        window.textareaCoords.setAttribute('key', "zone_coordinates");
-        window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
-        window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
-        window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
-        window.textareaCoords.setAttribute('rows', "1");
-        window.textareaCoords.setAttribute('maxlength', '5000');
-        window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords = document.createElement('textarea');
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('class', "form-control langp");
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('key', "zone_coordinates");
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('placeholder', "Координаты зоны");
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('name', "Coordinates-" + questionIndex + "-" + answerIndex);
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('id', "Coordinates-" + questionIndex + "-" + answerIndex);
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('rows', "1");
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('maxlength', '5000');
 
         textareaMarker.addEventListener('input', function (evt) {
-            marker_name = textareaMarker.value;
-            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
-            if(selectedOption.getAttribute('key') === "polygon") {
-                draw_rect();
-            } else if(selectedOption.getAttribute('key') === "circle") {
-                draw_circle();
-            }
+            window.zones.get(textareaMarker.id.substring(7)).marker_name = textareaMarker.value;
+            draw_figures();
         });
 
-        window.zoneType.addEventListener('change', function (evt) {
-            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.addEventListener('change', function (evt) {
+            selectedOption = window.zones.get(textareaMarker.id.substring(7)).zoneType.options[window.zones.get(textareaMarker.id.substring(7)).zoneType.selectedIndex];
             if(selectedOption.getAttribute('key') === "polygon") {
-                window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
-                draw_rect();
+                window.zones.set(textareaMarker.id.substring(7), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:window.zones.get(textareaMarker.id.substring(7)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.zones.get(textareaMarker.id.substring(7)).textareaCoords});
             }else if(selectedOption.getAttribute('key') === "circle") {
-                window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
-                draw_circle();
+                window.zones.set(textareaMarker.id.substring(7), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:window.zones.get(textareaMarker.id.substring(7)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.zones.get(textareaMarker.id.substring(7)).textareaCoords});
             }
+            draw_figures();
         });
-        window.textareaCoords.addEventListener('input', function (evt) {
-            let string = window.textareaCoords.value;
 
-            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+        window.zones.get(textareaMarker.id.substring(7)).textareaCoords.addEventListener('input', function (evt) {
+            let string = window.zones.get(textareaMarker.id.substring(7)).textareaCoords.value;
+
+            selectedOption = window.zones.get(textareaMarker.id.substring(7)).zoneType.options[window.zones.get(textareaMarker.id.substring(7)).zoneType.selectedIndex];
             if(selectedOption.getAttribute('key') === "polygon") {
-                let coordsAmount = window.textareaCoords.value.match(/;/g).length;
+                let coordsAmount = window.zones.get(textareaMarker.id.substring(7)).textareaCoords.value.match(/;/g).length;
                 let delimiter, coords, comma;
-                window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
+                window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12)).vertexes = []
                 for(let i = 0; i < coordsAmount; i++){
                     if(i > 0){
                         delimiter = string.indexOf(";");
@@ -199,11 +195,10 @@ window.addAnswerOnButtonClick = function(index){
                     comma = coords.indexOf(",");
                     let new_x = parseInt(coords.slice(0, comma));
                     let new_y = parseInt(coords.slice(comma+1));
-                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
+                    window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
                 }
-                draw_rect(false);
             } else if(selectedOption.getAttribute('key') === "circle") {
-                let circle = window.zones.get(window.textareaCoords.id.substring(12));
+                let circle = window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12));
                 let delimiter = string.indexOf(",");
                 circle.x = parseInt(string.slice(0, delimiter));
                 string = string.slice(delimiter+1);
@@ -211,9 +206,11 @@ window.addAnswerOnButtonClick = function(index){
                 circle.y = parseInt(string.slice(0, delimiter));
                 string = string.slice(delimiter+1);
                 circle.radius = parseInt(string);
-                draw_circle(false);
             }
+            draw_figures(false);
         });
+
+        draw_figures();
     }
 
     let textareaQuestionCom, comDiv;
@@ -287,9 +284,10 @@ window.addAnswerOnButtonClick = function(index){
     let buttonDel = document.createElement('button');
     buttonDel.setAttribute('class', "btn");
     buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-    buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+    buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id); window.zones.delete(this.name + \"-\" + this.id); window.draw_figures();");
     buttonDel.textContent = "✖"
     buttonDel.setAttribute('id', answerIndex);
+    buttonDel.setAttribute('name', parseInt(index.substring(7)) + 1);
     let divDel = document.createElement('div');
     divDel.setAttribute('style', "padding-left: 5px;");
 
@@ -316,11 +314,11 @@ window.addAnswerOnButtonClick = function(index){
         div.appendChild(divMarker)
         div.appendChild(textareaMarker)
         div.appendChild(divZone)
-        div.appendChild(window.zoneType)
-        window.zoneType.appendChild(polygon)
-        window.zoneType.appendChild(circleVis)
+        div.appendChild(window.zones.get(textareaMarker.id.substring(7)).zoneType)
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.appendChild(polygon)
+        window.zones.get(textareaMarker.id.substring(7)).zoneType.appendChild(circleVis)
         div.appendChild(divCoords)
-        div.appendChild(window.textareaCoords)
+        div.appendChild(window.zones.get(textareaMarker.id.substring(7)).textareaCoords)
     }
     divDel.appendChild(buttonDel)
     div.appendChild(divDel)
@@ -503,6 +501,23 @@ export function addQuestionListener(addBtn) {
         addDragoverEventListener(divIndex, `answer_div`);
         let divAnsCard = addDragndropDesign(divTextLabel, 'answer');
 
+        let div_shuffle = document.createElement('div');
+        div_shuffle.setAttribute('class', "to_del");
+        let text_shuffle = document.createElement('text');
+        text_shuffle.setAttribute('class', "lang");
+        text_shuffle.setAttribute('key', "shuffle");
+        text_shuffle.textContent = "Перемешивать варианты ответов между собой";
+        let label_for_shuffle = document.createElement('label');
+        label_for_shuffle.setAttribute('for', "Shuffle-" + questionIndex);
+        label_for_shuffle.setAttribute('style', "padding-right: 8px;");
+        let input_shuffle = document.createElement('input');
+        input_shuffle.setAttribute('style', "margin-right: 10px; margin-top: 12px;");
+        input_shuffle.setAttribute('type', "checkbox");
+        input_shuffle.setAttribute('name', "Shuffle-" + questionIndex);
+        label_for_shuffle.appendChild(text_shuffle)
+        div_shuffle.appendChild(input_shuffle)
+        div_shuffle.appendChild(label_for_shuffle)
+
         let questionType = document.createElement('select')
         questionType.setAttribute('class', "form-select");
         questionType.setAttribute('width', "20px");
@@ -633,6 +648,7 @@ export function addQuestionListener(addBtn) {
         divController.appendChild(divUP)
         divController.appendChild(divDW)
         formGroup.appendChild(divController)
+        formGroup.insertBefore(div_shuffle, br)
 
         let answersElm = document.getElementById("questionsList");
         answersElm.appendChild(div)
@@ -654,7 +670,29 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
         $(".to_del", $(textareaQuestion).parent("div:first")).each  (function (){
             this.remove();
         });
+
         let selectedOption = questionType.options[questionType.selectedIndex];
+
+        let div_shuffle, text_shuffle, label_for_shuffle, input_shuffle;
+        if (["solo", "multiple", "compliance", "filling_gaps", "drag_to_text", "markers_drag"].indexOf(selectedOption.getAttribute('key')) !== -1) {
+            div_shuffle = document.createElement('div');
+            div_shuffle.setAttribute('class', "to_del");
+            text_shuffle = document.createElement('text');
+            text_shuffle.setAttribute('class', "lang");
+            text_shuffle.setAttribute('key', "shuffle");
+            text_shuffle.textContent = "Перемешивать варианты ответов между собой";
+            label_for_shuffle = document.createElement('label');
+            label_for_shuffle.setAttribute('for', "Shuffle-" + questionIndex);
+            label_for_shuffle.setAttribute('style', "padding-right: 8px;");
+            input_shuffle = document.createElement('input');
+            input_shuffle.setAttribute('style', "margin-right: 10px; margin-top: 12px;");
+            input_shuffle.setAttribute('type', "checkbox");
+            input_shuffle.setAttribute('name', "Shuffle-" + questionIndex);
+            label_for_shuffle.appendChild(text_shuffle)
+            div_shuffle.appendChild(input_shuffle)
+            div_shuffle.appendChild(label_for_shuffle)
+        }
+
         if (selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
             textareaQuestion.setAttribute('rows', "1");
             let divIndexNew = document.createElement('div');
@@ -705,6 +743,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divTextLabel.appendChild(divAnsCard)
             let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
             divIndexTmp.replaceWith(divIndexNew);
+            divIndexNew.parentElement.insertBefore(div_shuffle, divIndexNew.nextElementSibling)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
         }
@@ -763,6 +802,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
             divIndexTmp.replaceWith(divIndexNew);
             divIndexNew.parentElement.insertBefore(comNote, divIndexNew.nextElementSibling)
+            divIndexNew.parentElement.insertBefore(div_shuffle, comNote)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
         }
@@ -842,10 +882,13 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
             divIndexTmp.replaceWith(divIndexNew);
             divIndexNew.parentElement.insertBefore(fillNote, divIndexNew.nextElementSibling)
+            divIndexNew.parentElement.insertBefore(div_shuffle, fillNote)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
         }
         if (selectedOption.getAttribute('key') === "markers_drag"){
+            window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+
             textareaQuestion.setAttribute('rows', "1");
             let span = document.createElement('span');
             span.setAttribute('class', "fs-5 row m-3 justify-content-start to_del");
@@ -865,8 +908,8 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             form.setAttribute('style', "max-width: 290px; margin: 0 auto;");
             let inputFile = document.createElement('input');
             inputFile.setAttribute('type', "file");
-            inputFile.setAttribute('name', "file" + questionIndexButtonId);
-            inputFile.setAttribute('id', "customFile" + questionIndexButtonId);
+            inputFile.setAttribute('name', "File-" + questionIndexButtonId);
+            inputFile.setAttribute('id', "File-" + questionIndexButtonId);
             inputFile.setAttribute('class', "form-control");
             let aForButton = document.createElement('a');
             let aButton = document.createElement('Button');
@@ -891,8 +934,8 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             textareaMarker.setAttribute('class', "form-control langp");
             textareaMarker.setAttribute('key', "marker_name");
             textareaMarker.setAttribute('placeholder', "Название маркера");
-            textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
-            textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
+            textareaMarker.setAttribute('name', "Marker-" + questionIndex + "-" + answerIndex);
+            textareaMarker.setAttribute('id', "Marker-" + questionIndex + "-" + answerIndex);
             textareaMarker.setAttribute('rows', "1");
             textareaMarker.setAttribute('maxlength', '5000');
             let divZone = document.createElement('div');
@@ -901,11 +944,13 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divZone.setAttribute('class', "lang");
             divZone.textContent = "Форма зоны";
             // let zoneType = document.createElement('select')
-            window.zoneType = document.createElement('select')
-            window.zoneType.setAttribute('class', "form-select");
-            window.zoneType.setAttribute('style', "width: 180px;");
-            window.zoneType.setAttribute('id', "ZoneFigure" + questionIndex);
-            window.zoneType.setAttribute('name', "ZoneFigure" + questionIndex);
+            //window.zones.set(questionIndex + "-" + answerIndex, window.zones.get(textareaMarker.id.substring(7)).zoneType = document.createElement('select'))
+            window.zones.get(textareaMarker.id.substring(7)).zoneType = document.createElement('select')
+            // window.zoneType = document.createElement('select')
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('class', "form-select");
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('style', "width: 180px;");
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('id', "ZoneFigure-" + questionIndex);
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.setAttribute('name', "ZoneFigure-" + questionIndex);
             let circleVis = document.createElement('option')
             circleVis.setAttribute('class', "lang");
             circleVis.setAttribute('key', "circle");
@@ -919,22 +964,23 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divCoords.setAttribute('key', "coordinates");
             divCoords.setAttribute('class', "lang");
             divCoords.textContent = "Координаты";
-            // let window.textareaCoords = document.createElement('textarea');
-            window.textareaCoords = document.createElement('textarea');
-            window.textareaCoords.setAttribute('class', "form-control langp");
-            window.textareaCoords.setAttribute('key', "zone_coordinates");
-            window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
-            window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
-            window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
-            window.textareaCoords.setAttribute('rows', "1");
-            window.textareaCoords.setAttribute('maxlength', '5000');
+            // let window.zones.get(textareaMarker.id.substring(7)).textareaCoords = document.createElement('textarea');
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords = document.createElement('textarea');
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('class', "form-control langp");
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('key', "zone_coordinates");
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('placeholder', "Координаты зоны");
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('name', "Coordinates-" + questionIndex + "-" + answerIndex);
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('id', "Coordinates-" + questionIndex + "-" + answerIndex);
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('rows', "1");
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.setAttribute('maxlength', '5000');
 
             let buttonDel = document.createElement('button');
             buttonDel.setAttribute('class', "btn");
             buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id); window.zones.delete(this.name + \"-\" + this.id); window.draw_figures();");
             buttonDel.textContent = "✖"
             buttonDel.setAttribute('id', answerIndex);
+            buttonDel.setAttribute('name', questionIndex);
             let divDel = document.createElement('div');
             divDel.setAttribute('style', "padding-left: 5px;");
 
@@ -958,11 +1004,11 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divTextLabel.appendChild(divMarker)
             divTextLabel.appendChild(textareaMarker)
             divTextLabel.appendChild(divZone)
-            divTextLabel.appendChild(window.zoneType)
-            window.zoneType.appendChild(polygon)
-            window.zoneType.appendChild(circleVis)
+            divTextLabel.appendChild(window.zones.get(textareaMarker.id.substring(7)).zoneType)
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.appendChild(polygon)
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.appendChild(circleVis)
             divTextLabel.appendChild(divCoords)
-            divTextLabel.appendChild(window.textareaCoords)
+            divTextLabel.appendChild(window.zones.get(textareaMarker.id.substring(7)).textareaCoords)
             divDel.appendChild(buttonDel)
             divTextLabel.appendChild(divDel)
             divTextLabel.appendChild(divAnsCard)
@@ -970,6 +1016,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divIndexTmp.replaceWith(divIndexNew);
             divIndexNew.parentElement.insertBefore(span, divIndexNew)
             divIndexNew.parentElement.insertBefore(markNote, divIndexNew.nextElementSibling)
+            divIndexNew.parentElement.insertBefore(div_shuffle, markNote)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
 
@@ -981,17 +1028,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             window.WIDTH = canvas.width;
             window.HEIGHT = canvas.height;
             window.vertexRadius = 6
-            window.marker_name = "";
-            window.selectedOption;
-
-            // an array of objects that define different rectangles
-            window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
-            /*
-            var rects=[];
-            rects.push({vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
-            let circles=[];
-            circles.push({x:60,y:60,radius:40,isDragging:false,selected:false})
-            */
+            window.zones.get(textareaMarker.id.substring(7)).marker_name = "";
 
             // listen for mouse events
             canvas.onmousedown = myDown;
@@ -999,27 +1036,21 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             canvas.onmousemove = myMove;
 
             // call to draw the scene
-            draw_rect();
+            draw_figures();
 
             textareaMarker.addEventListener('input', function (evt) {
-                marker_name = textareaMarker.value;
-                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
-                if(selectedOption.getAttribute('key') === "polygon") {
-                    draw_rect();
-                } else if(selectedOption.getAttribute('key') === "circle") {
-                    draw_circle();
-                }
+                window.zones.get(textareaMarker.id.substring(7)).marker_name = textareaMarker.value;
+                draw_figures();
             });
 
-            window.zoneType.addEventListener('change', function (evt) {
-                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            window.zones.get(textareaMarker.id.substring(7)).zoneType.addEventListener('change', function (evt) {
+                selectedOption = window.zones.get(textareaMarker.id.substring(7)).zoneType.options[window.zones.get(textareaMarker.id.substring(7)).zoneType.selectedIndex];
                 if(selectedOption.getAttribute('key') === "polygon") {
-                    window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
-                    draw_rect();
+                    window.zones.set(textareaMarker.id.substring(7), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:window.zones.get(textareaMarker.id.substring(7)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.zones.get(textareaMarker.id.substring(7)).textareaCoords});
                 }else if(selectedOption.getAttribute('key') === "circle") {
-                    window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
-                    draw_circle();
+                    window.zones.set(textareaMarker.id.substring(7), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:window.zones.get(textareaMarker.id.substring(7)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.zones.get(textareaMarker.id.substring(7)).textareaCoords});
                 }
+                draw_figures();
             });
 
             aButton.addEventListener('click', function (evt) {
@@ -1044,6 +1075,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                                 divCanv.setAttribute("height", height + "px");
                                 divCanv.setAttribute("width", width + "px");
                                 $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + window.URL.createObjectURL(blob) + ')');
+                                draw_figures();
                             });
                         }else{
                             canvas.height = height;
@@ -1051,20 +1083,21 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                             divCanv.setAttribute("height", height + "px");
                             divCanv.setAttribute("width", width + "px");
                             $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + image.src + ')');
+                            draw_figures();
                         }
                     };
                 };
                 reader.readAsDataURL(file);
             });
 
-            window.textareaCoords.addEventListener('input', function (evt) {
-                let string = window.textareaCoords.value;
+            window.zones.get(textareaMarker.id.substring(7)).textareaCoords.addEventListener('input', function (evt) {
+                let string = window.zones.get(textareaMarker.id.substring(7)).textareaCoords.value;
 
-                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+                selectedOption = window.zones.get(textareaMarker.id.substring(7)).zoneType.options[window.zones.get(textareaMarker.id.substring(7)).zoneType.selectedIndex];
                 if(selectedOption.getAttribute('key') === "polygon") {
-                    let coordsAmount = window.textareaCoords.value.match(/;/g).length;
+                    let coordsAmount = window.zones.get(textareaMarker.id.substring(7)).textareaCoords.value.match(/;/g).length;
                     let delimiter, coords, comma;
-                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
+                    window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12)).vertexes = []
                     for(let i = 0; i < coordsAmount; i++){
                         if(i > 0){
                             delimiter = string.indexOf(";");
@@ -1078,11 +1111,10 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                         comma = coords.indexOf(",");
                         let new_x = parseInt(coords.slice(0, comma));
                         let new_y = parseInt(coords.slice(comma+1));
-                        window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
+                        window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
                     }
-                    draw_rect(false);
                 } else if(selectedOption.getAttribute('key') === "circle") {
-                    let circle = window.zones.get(window.textareaCoords.id.substring(12));
+                    let circle = window.zones.get(window.zones.get(textareaMarker.id.substring(7)).textareaCoords.id.substring(12));
                     let delimiter = string.indexOf(",");
                     circle.x = parseInt(string.slice(0, delimiter));
                     string = string.slice(delimiter+1);
@@ -1090,8 +1122,8 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                     circle.y = parseInt(string.slice(0, delimiter));
                     string = string.slice(delimiter+1);
                     circle.radius = parseInt(string);
-                    draw_circle(false);
                 }
+                draw_figures(false);
             });
         }
         if (selectedOption.getAttribute('key') === "detailed_free" || selectedOption.getAttribute('key') === "free") {
@@ -1149,6 +1181,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                 textareaQuestion.setAttribute('class', extareaQuestion.className + " langp");
             textareaQuestion.setAttribute('key', "question_text");
         }
+
         answerIndex += 1;
 
         let lang = localStorage.getItem('language');

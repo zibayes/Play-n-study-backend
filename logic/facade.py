@@ -55,8 +55,7 @@ class LogicFacade:
         return self.data.get_user_avatar(app, user_id)
 
     def save_test(self, form, course_id, unit_id):
-        test = get_test_from_form(form)
-        test.course_id = course_id
+        test = get_test_from_form(form=form, unit_id=unit_id, course_id=course_id)
         if self.data.add_test(test):
             test = self.data.get_last_test_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
@@ -130,8 +129,8 @@ class LogicFacade:
     def get_all_tests(self):
         return self.data.get_all_tests()
 
-    def edit_test(self, form, test_id, course_id):
-        test = get_test_from_form(form, test_id, course_id)
+    def edit_test(self, form, test_id, course_id, unit_id):
+        test = get_test_from_form(form=form, test_id=test_id, course_id=course_id, unit_id=unit_id)
 
         if self.data.update_test(test):
             return tuple(['Тест успешно сохранён', 'success'])
@@ -141,8 +140,8 @@ class LogicFacade:
     def get_test_result(self, test, form):
         return get_test_result(test, form)
 
-    def add_progress(self, course_id, user_id, progress):
-        user_progress = UserProgress(up_id=None, course_id=course_id, user_id=user_id, progress=progress)
+    def add_progress(self, course_id, user_id, task_id, task_type, progress):
+        user_progress = UserProgress(up_id=None, course_id=course_id, user_id=user_id, task_id=task_id, task_type=task_type, progress=progress)
         if self.data.add_progress(user_progress):
             return tuple(['Прогресс успешно сохранён', 'success'])
         else:

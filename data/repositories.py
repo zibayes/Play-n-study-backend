@@ -429,6 +429,7 @@ class TestRepository:
         try:
             new_test = TestsModel(
                 course_id=test.course_id,
+                unit_id=test.unit_id,
                 content=test.content
             )
             self.session.add(new_test)
@@ -548,6 +549,7 @@ class ArticlesRepository:
         try:
             new_article = ArticlesModel(
                 course_id=article.course_id,
+                unit_id=article.unit_id,
                 content=article.content
             )
             self.session.add(new_article)
@@ -636,6 +638,8 @@ class UserProgressRepository:
             new_user_progress = UsersProgressModel(
                 user_id=user_progress.user_id,
                 course_id=user_progress.course_id,
+                task_type=user_progress.task_type,
+                task_id=user_progress.task_id,
                 progress=user_progress.progress
             )
             self.session.add(new_user_progress)

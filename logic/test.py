@@ -26,7 +26,7 @@ class TestResult:
                           result_json['total_time'], result_json['result'])
 
 
-def get_test_from_form(form, test_id=None, course_id=1):
+def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
     test_form = form.to_dict()
     print(test_form)
     test_name = test_form.pop("testName")
@@ -43,11 +43,19 @@ def get_test_from_form(form, test_id=None, course_id=1):
             if "Question-" in key:
                 question.ask = value
                 question.answers = []
-            if "QuestionType-" in key:
+            if "QuestionType-" in key: # TODO: поменять с содержимого текста на id или name!
                 if value == "Единственный ответ":
                     question.type = "solo"
                 if value == "Множественный ответ":
                     question.type = "multiple"
+                if value == "На соответствие":
+                    question.type = "compliance"
+                if value == "Заполнение пропусков":
+                    question.type = "filling_gaps"
+                if value == "Перетаскивание в текст":
+                    question.type = "drag_to_text"
+                if value == "Перетаскивание маркеров":
+                    question.type = "markers_drag"
                 if value == "Краткий свободный ответ":
                     question.type = "free"
                 if value == "Свободный ответ":
@@ -56,7 +64,65 @@ def get_test_from_form(form, test_id=None, course_id=1):
                     question.type = "info"
                 break
         new_form = copy.deepcopy(test_form)
-        if question.type in ("solo", "multiple"):
+        if question.type == "compliance":
+            for key, value in test_form.items():
+                if "QuestionCom-" in key:
+                    right_answers_count += 1
+                    question.answers.append({value: ""})
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    question.answers[-1][list(question.answers[-1].keys())[0]] = value
+                if "score-" in key:
+                    question.score = int(value)
+                    score += int(value)
+                if "Shuffle-" in key:
+                    question.shuffle = value
+                if "QuestionType-" in key:
+                    question.correct = right_answers_count
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question.type in ("filling_gaps", "drag_to_text"):
+            for key, value in test_form.items():
+                if "Answer-" in key and "Right_Answer-" not in key:
+                    right_answers_count += 1
+                    question.answers.append({"answer": value, "mark": key[key.rfind('-'):]})
+                if "Group-" in key:
+                    question.answers[-1]['group'] = value
+                if "score-" in key:
+                    question.score = int(value)
+                    score += int(value)
+                if "Shuffle-" in key:
+                    question.shuffle = value
+                if "QuestionType-" in key:
+                    question.correct = right_answers_count
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question.type == "markers_drag":
+            for key, value in test_form.items():
+                if "Marker-" in key:
+                    right_answers_count += 1
+                    question.answers.append({"marker": value})
+                if "ZoneFigure-" in key:
+                    question.answers[-1]['figure'] = value
+                if "Coordinates-" in key:
+                    question.answers[-1]['coordinates'] = value
+                if "File-" in key:
+                    question.file = value
+                if "score-" in key:
+                    question.score = int(value)
+                    score += int(value)
+                if "Shuffle-" in key:
+                    question.shuffle = value
+                if "QuestionType-" in key:
+                    question.correct = right_answers_count
+                    new_form.pop(key)
+                    break
+                new_form.pop(key)
+            test_form = new_form
+        if question.type in ("solo", "multiple",):
             is_right_answer = False
             for key, value in test_form.items():
                 if "Answer-" in key and "Right_Answer-" not in key:
@@ -68,6 +134,8 @@ def get_test_from_form(form, test_id=None, course_id=1):
                 if "score-" in key:
                     question.score = int(value)
                     score += int(value)
+                if "Shuffle-" in key:
+                    question.shuffle = value
                 if "QuestionType-" in key:
                     question.correct = right_answers_count
                     new_form.pop(key)
@@ -100,7 +168,7 @@ def get_test_from_form(form, test_id=None, course_id=1):
         test_body.append(question)
     test_content = TestContent(test_name, test_body)
 
-    return Test(test_id, course_id, test_content.toJSON())
+    return Test(test_id, course_id, unit_id, test_content.toJSON())
 
 
 def get_test_result(test, form):

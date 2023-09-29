@@ -228,10 +228,14 @@ class TestsModel(Base):
     __tablename__ = 'tests'
     test_id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.course_id"))
+    unit_id = Column(Integer)
+    avatar = Column(LargeBinary)
+    description = Column(Text)
     content = Column(JSON)
 
-    def __init__(self, course_id, content):
+    def __init__(self, course_id, unit_id, content):
         self.course_id = course_id
+        self.unit_id = unit_id
         self.content = content
 
     # __repr__ impl
@@ -241,10 +245,14 @@ class ArticlesModel(Base):
     __tablename__ = 'articles'
     article_id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.course_id"))
+    unit_id = Column(Integer)
+    avatar = Column(LargeBinary)
+    description = Column(Text)
     content = Column(Text)
 
-    def __init__(self, course_id, content):
+    def __init__(self, course_id, unit_id, content):
         self.course_id = course_id
+        self.unit_id = unit_id
         self.content = content
 
 
@@ -254,11 +262,16 @@ class UsersProgressModel(Base):
     up_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"))
     course_id = Column(Integer, ForeignKey("courses.course_id"))
+    task_id = Column(Integer)
+    task_type = Column(Text)
+    date_of_completion = Column(TIMESTAMP, onupdate=func.now(), server_default=func.now())
     progress = Column(JSON)
 
-    def __init__(self, user_id, course_id, progress):
+    def __init__(self, user_id, course_id, task_id, task_type, progress):
         self.user_id = user_id
         self.course_id = course_id
+        self.task_id = task_id
+        self.task_type = task_type
         self.progress = progress
 
 

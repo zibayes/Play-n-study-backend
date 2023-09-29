@@ -30,11 +30,11 @@ export function rect(figure) {
     window.ctx.textBaseline = "center";
     window.ctx.textAlign = "center";
     window.ctx.font = 'bold 26px sans-serif';
-    window.ctx.fillText(window.marker_name, xm, ym);
+    window.ctx.fillText(figure.marker_name, xm, ym);
     window.ctx.fill();
     window.ctx.lineWidth=1;
     window.ctx.strokeStyle = "#000";
-    window.ctx.strokeText(window.marker_name, xm, ym);
+    window.ctx.strokeText(figure.marker_name, xm, ym);
     window.ctx.stroke();
     window.ctx.strokeStyle = "#000";
 }
@@ -45,33 +45,46 @@ export function clear() {
 }
 
 // redraw the scene
-export function draw_rect(change_val=true) {
+export function draw_figures(change_val=true) {
     clear();
-    // redraw each rect in the rects[] array
+    // перерисовка всех фигур
     for (var [key, value] of window.zones) {
-        var r=value;
-        window.ctx.strokeStyle=r.fill;
-        window.ctx.lineWidth=3;
-        rect(r);
-        if(r.selected){
-            draw_selection(key)
-        }
-        if(change_val){
-            let str_to_show = ""
-            for(var j=0;j<r.vertexes.length;j++){
-                str_to_show += r.vertexes[j].x + "," + r.vertexes[j].y + ";"
+        if (value.x === undefined) {
+            window.ctx.strokeStyle = value.fill;
+            window.ctx.lineWidth = 3;
+            rect(value);
+            if (value.selected && value.x === undefined) {
+                draw_selection(value)
             }
-            window.textareaCoords.value = str_to_show;
+            if (change_val) {
+                let str_to_show = ""
+                for (var j = 0; j < value.vertexes.length; j++) {
+                    str_to_show += value.vertexes[j].x + "," + value.vertexes[j].y + ";"
+                }
+                value.textareaCoords.value = str_to_show;
+            }
+        } else{
+            window.ctx.strokeStyle = "#ffffff";
+            window.ctx.lineWidth = 3;
+            circle(value);
+            if (value.selected) {
+                // draw_selection()
+            }
+            if (change_val) {
+                value.textareaCoords.value = value.x + "," + value.y + "," + value.radius;
+            }
         }
     }
 }
-export function draw_selection(key) {
-    for(var i=0;i<window.zones.get(key).vertexes.length;i++){
+
+// отображение выделения
+export function draw_selection(figure) {
+    for(var i=0;i<figure.vertexes.length;i++){
         window.ctx.fillStyle="#ff0000";
         window.ctx.strokeStyle="#ffffff";
         window.ctx.lineWidth=3;
         window.ctx.beginPath();
-        window.ctx.arc(window.zones.get(key).vertexes[i].x,window.zones.get(key).vertexes[i].y,window.vertexRadius,2*Math.PI,false);
+        window.ctx.arc(figure.vertexes[i].x,figure.vertexes[i].y,window.vertexRadius,2*Math.PI,false);
         window.ctx.stroke();
         window.ctx.closePath();
         window.ctx.fill();
@@ -87,29 +100,13 @@ export function circle(figure) {
     window.ctx.textBaseline = "center";
     window.ctx.textAlign = "center";
     window.ctx.font = 'bold 26px sans-serif';
-    window.ctx.fillText(window.marker_name, figure.x, figure.y);
+    window.ctx.fillText(figure.marker_name, figure.x, figure.y);
     window.ctx.fill();
     window.ctx.lineWidth=1;
     window.ctx.strokeStyle = "#000";
-    window.ctx.strokeText(window.marker_name, figure.x, figure.y);
+    window.ctx.strokeText(figure.marker_name, figure.x, figure.y);
     window.ctx.stroke();
     window.ctx.strokeStyle = "#000";
-}
-export function draw_circle(change_val=true) {
-    clear();
-    // redraw each rect in the rects[] array
-    for(var [key, value] of window.zones) {
-        var c=value;
-        window.ctx.strokeStyle="#ffffff";
-        window.ctx.lineWidth=3;
-        circle(c);
-        if(c.selected){
-            // draw_selection()
-        }
-        if(change_val){
-            window.textareaCoords.value = c.x + "," + c.y + "," + c.radius;
-        }
-    }
 }
 
 // handle mousedown events
@@ -132,30 +129,27 @@ export function myDown(e){
     //if (my < 0)
     //    my += 210;
 
-    window.selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
-    if(window.selectedOption.getAttribute('key') === "polygon") {
-        // test each rect to see if mouse is inside
-        dragok = false;
-        for (var [key, value] of window.zones) {
-            var r = value;
+    dragok = false;
+    for (var [key, value] of window.zones) {
+        if (value.x === undefined){
             let vertexSelected = false;
             let vertXsum = 0;
             let vertYsum = 0;
-            if (r.selected) {
-                for (var j = 0; j < r.vertexes.length; j++) {
-                    if (Math.pow(mx - r.vertexes[j].x, 2) + Math.pow(my - (r.vertexes[j].y+canvasOffset), 2) <= Math.pow(window.vertexRadius, 2)) {
-                        r.vertexes[j].v = true;
+            if (value.selected) {
+                for (var j = 0; j < value.vertexes.length; j++) {
+                    if (Math.pow(mx - value.vertexes[j].x, 2) + Math.pow(my - (value.vertexes[j].y+canvasOffset), 2) <= Math.pow(window.vertexRadius, 2)) {
+                        value.vertexes[j].v = true;
                         vertexSelected = true;
                     }
                 }
             }
-            for (j = 0; j < r.vertexes.length; j++) {
-                vertXsum += r.vertexes[j].x;
-                vertYsum += r.vertexes[j].y;
+            for (j = 0; j < value.vertexes.length; j++) {
+                vertXsum += value.vertexes[j].x;
+                vertYsum += value.vertexes[j].y;
             }
 
-            let xm = vertXsum / r.vertexes.length;
-            let ym = vertYsum / r.vertexes.length // + canvasOffset;
+            let xm = vertXsum / value.vertexes.length;
+            let ym = vertYsum / value.vertexes.length // + canvasOffset;
             /*
             console.log(window.scrolloffsetY)
             console.log(mx, my)
@@ -166,28 +160,25 @@ export function myDown(e){
                 // if yes, set that rects isDragging=true
                 dragok = true;
                 if (!vertexSelected)
-                    r.isDragging = true;
-                r.selected = true;
-                r.fill = "#ffffff";
+                    value.isDragging = true;
+                value.selected = true;
+                value.fill = "#ffffff";
             } else {
-                r.selected = false;
+                value.selected = false;
             }
-        }
-        draw_rect();
-    } else if(window.selectedOption.getAttribute('key') === "circle") {
-        dragok = false;
-        for (var [key, value] of window.zones) {
-            let c = value
-            if (mx > c.x - 32 && mx < c.x + 32 && my > c.y - 15 && my < c.y + 15) {
-                dragok = true;
-                c.isDragging = true;
-                c.selected = true;
-                c.fill = "#ffffff";
+            draw_figures();
+        } else{
+            if (mx > value.x - 32 && mx < value.x + 32 && my > value.y - 15 && my < value.y + 15) {
+            dragok = true;
+            value.isDragging = true;
+            value.selected = true;
+            value.fill = "#ffffff";
+
             } else {
-                c.selected = false;
+                value.selected = false;
             }
+            draw_figures();
         }
-        draw_circle();
     }
     // save the current mouse position
     startX = mx;
@@ -201,25 +192,19 @@ export function myUp(e){
     e.preventDefault();
     e.stopPropagation();
 
-    window.selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
-    if(window.selectedOption.getAttribute('key') === "polygon") {
-        // clear all the dragging flags
-        for (var [key, value] of window.zones) {
-            var r=value;
-            r.isDragging=false;
-            r.fill="#444444";
-            for (var j = 0; j < r.vertexes.length; j++) {
-                r.vertexes[j].v = false
+    for (var [key, value] of window.zones) {
+        if (value.x === undefined){
+            value.isDragging=false;
+            value.fill="#444444";
+            for (var j = 0; j < value.vertexes.length; j++) {
+                value.vertexes[j].v = false
             }
+            draw_figures();
+        } else {
+            value.isDragging=false;
+            value.fill="#444444";
+            draw_figures();
         }
-        draw_rect();
-    } else if(window.selectedOption.getAttribute('key') === "circle") {
-        for (var [key, value] of window.zones) {
-            var c=value;
-            c.isDragging=false;
-            c.fill="#444444";
-        }
-        draw_circle();
     }
 }
 
@@ -243,37 +228,32 @@ export function myMove(e){
       var dx=mx-startX;
       var dy=my-startY;
 
-      window.selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
-      if(window.selectedOption.getAttribute('key') === "polygon") {
-          // move each rect that isDragging
-          // by the distance the mouse has moved
-          // since the last mousemove
-          for (var [key, value] of window.zones) {
-              var r=value;
-            for (var j = 0; j < r.vertexes.length; j++) {
-                if (r.vertexes[j].v) {
-                    r.vertexes[j].x+=dx;
-                    r.vertexes[j].y+=dy;
+      for (var [key, value] of window.zones) {
+          if (value.x === undefined){
+            for (var j = 0; j < value.vertexes.length; j++) {
+                if (value.vertexes[j].v) {
+                    value.vertexes[j].x+=dx;
+                    value.vertexes[j].y+=dy;
                 }
             }
-            if(r.isDragging){
-                for (j = 0; j < r.vertexes.length; j++) {
-                    r.vertexes[j].x+=dx;
-                    r.vertexes[j].y+=dy;
+            if(value.isDragging){
+                for (j = 0; j < value.vertexes.length; j++) {
+                    value.vertexes[j].x+=dx;
+                    value.vertexes[j].y+=dy;
                 }
-              }
+                draw_figures();
+            } else {
+                draw_figures(false);
+            }
+          } else {
+            if(value.isDragging){
+                value.x+=dx;
+                value.y+=dy;
+                draw_figures();
+            } else {
+                draw_figures(false);
+            }
           }
-          // redraw the scene with the new rect positions
-          draw_rect();
-      } else if(window.selectedOption.getAttribute('key') === "circle") {
-          for(var [key, value] of window.zones) {
-            let c=value;
-            if(c.isDragging){
-                c.x+=dx;
-                c.y+=dy;
-              }
-          }
-          draw_circle();
       }
 
       // reset the starting mouse position for the next mousemove

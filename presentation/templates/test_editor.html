@@ -191,6 +191,16 @@
                                             <textarea maxlength="15000" disabled class="form-control langp" key="long_answer" placeholder="Развернутый ответ" name="{{ question.ask }}" rows="8"></textarea>
                                         {% endif %}
                                     </div>
+                                    {% if question.type in ["solo", "multiple", "compliance", "filling_gaps", "drag_to_text", "markers_drag"] %}
+                                        <div class="to_del">
+                                            {% if question.shuffle == 'on' %}
+                                                <input type="checkbox" checked style="margin-right: 10px; margin-top: 12px;" id="Shuffle-{{ questionNum.value }}" name="Shuffle-{{ questionNum.value }}">
+                                            {% else %}
+                                                <input type="checkbox" style="margin-right: 10px; margin-top: 12px;" id="Shuffle-{{ questionNum.value }}" name="Shuffle-{{ questionNum.value }}">
+                                            {% endif %}
+                                            <label style="padding-right: 8px;" for="Shuffle-{{ questionNum.value }}"><text class="lang" key="shuffle">Перемешивать варианты ответов между собой</text></label>
+                                        </div>
+                                    {% endif %}
                                     <br>
                                 </div>
                                 <div style="display: flex;">
