@@ -43,7 +43,7 @@
                                     {% else %}
                                         <p><text class="lang" key="question">Вопрос</text> №{{ questionNum.value }}</p>
                                         <div style="display: flex;">
-                                            <p><text class="lang" key="score">Баллы:</text> </p> <input name="score-{{questionNum.value}}"
+                                            <p><text class="lang" key="score">Баллы:</text> </p> <input type="number" name="score-{{questionNum.value}}"
                                                                   {% if question.current_score != None %}
                                                                     value="{{ question.current_score }}"
                                                                   {% else %}
@@ -57,9 +57,9 @@
                         </div>
 
                         <div class="card" style="background:#bde0ff; flex: 1;">
-                            <div class="card-body">
+                            <div class="card-body" id="content">
                                 <div class="form-group" id="scoreCount">
-                                    {{ question.ask }}
+                                    <p class="fromMarkdown">{{ question.ask }}</p>
                                     {% if question.type == "solo" %}
                                         <hr>
                                         {% for answer in question.answers %}
@@ -74,7 +74,7 @@
                                                     {% else %}
                                                         <input disabled id="checkbox" type="radio" name="{{ question.ask }}" value="{{ is_right }}">
                                                     {% endif %}
-                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                    <label class="fromMarkdown" style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
                                                 </div>
                                                 <br>
                                             {% endfor %}
@@ -95,7 +95,7 @@
                                                     {% else %}
                                                         <input disabled id="checkbox" type="checkbox" name="{{ question.ask }}" value="{{ is_right }}">
                                                     {% endif %}
-                                                    <label style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
+                                                    <label class="fromMarkdown" style="padding-left: 5px;" for="{{ question.ask }}">{{ answer_text }}</label>
                                                 </div>
                                                 <br>
                                             {% endfor %}
@@ -110,14 +110,14 @@
                                             {% else %}
                                                 <div style="color: red;">✘</div>
                                             {% endif %}
-                                            <textarea disabled id="freeAnswer" class="form-control" name="{{ question.answers[0] }}" rows="1">{{ question.answers[1] }}</textarea>
+                                            <textarea disabled id="freeAnswer" class="form-control fromMarkdown" name="{{ question.answers[0] }}" rows="1">{{ question.answers[1] }}</textarea>
                                         </div>
                                     {% endif %}
 
                                     {% if question.type == "detailed_free" %}
                                         <hr>
                                         {% for answer in question.answers %}
-                                            <textarea disabled class="form-control" name="{{ question.ask }}" rows="8">{{ answer }}</textarea>
+                                            <textarea disabled class="form-control fromMarkdown" name="{{ question.ask }}" rows="8">{{ answer }}</textarea>
                                         {% endfor %}
                                     {% endif %}
                                 </div>
@@ -164,5 +164,6 @@
 {% endblock %}
 {% block script %}
 <!-- Scripts -->
-<script type="text/javascript" src="/static/js/test_check.js"></script>
+<script type="module" src="/static/js/markdown.js"></script>
+<script type="module" src="/static/js/test_check.js"></script>
 {% endblock %}

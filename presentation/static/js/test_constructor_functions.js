@@ -1,7 +1,17 @@
 import {
     arrLang
 } from './translate_dictionary.js';
-
+import {
+    rect,
+    clear,
+    draw_rect,
+    draw_selection,
+    circle,
+    draw_circle,
+    myDown,
+    myUp,
+    myMove
+} from './markers_drag_functions.js';
 // Функция добавления слушателя события перетаскивания
 export function addDragoverEventListener(dragndropArea, tagContains, i=undefined, questions_list=undefined) {
     let isAbleToMove = true;
@@ -100,8 +110,113 @@ window.addAnswerOnButtonClick = function(index){
     div.setAttribute('id', "delAns-" + answerIndex);
     div.setAttribute('class', "answer_div");
 
-    let textareaQuestionCom;
-    let comDiv;
+    let divMarker, textareaMarker, divZone, circleVis, polygon, divCoords//, textareaCoords, window.zoneType;
+    if(selectedOption.getAttribute('key') === "markers_drag") {
+        divMarker = document.createElement('div');
+        divMarker.setAttribute('style', "width: 75px; margin-right: 4px;");
+        divMarker.setAttribute('key', "marker");
+        divMarker.setAttribute('class', "lang");
+        divMarker.textContent = "Маркер";
+        textareaMarker = document.createElement('textarea');
+        textareaMarker.setAttribute('class', "form-control langp");
+        textareaMarker.setAttribute('key', "marker_name");
+        textareaMarker.setAttribute('placeholder', "Название маркера");
+        textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('rows', "1");
+        textareaMarker.setAttribute('maxlength', '5000');
+        divZone = document.createElement('div');
+        divZone.setAttribute('style', "width: 450px; margin-left: 8px; margin-right: 2px;");
+        divZone.setAttribute('key', "zone_type");
+        divZone.setAttribute('class', "lang");
+        divZone.textContent = "Форма зоны";
+        window.window.zoneType = document.createElement('select')
+        window.zoneType.setAttribute('class', "form-select");
+        window.zoneType.setAttribute('style', "width: 180px;");
+        window.zoneType.setAttribute('id', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        window.zoneType.setAttribute('name', "ZoneFigure-" + questionIndex + "-" + answerIndex);
+        circleVis = document.createElement('option')
+        circleVis.setAttribute('class', "lang");
+        circleVis.setAttribute('key', "circle");
+        circleVis.textContent = "Окружность"
+        polygon = document.createElement('option')
+        polygon.setAttribute('class', "lang");
+        polygon.setAttribute('key', "polygon");
+        polygon.textContent = "Многоугольник"
+        divCoords = document.createElement('div');
+        divCoords.setAttribute('style', "width: 160px; margin-left: 8px; margin-right: 4px;");
+        divCoords.setAttribute('key', "coordinates");
+        divCoords.setAttribute('class', "lang");
+        divCoords.textContent = "Координаты";
+        window.textareaCoords = document.createElement('textarea');
+        window.textareaCoords.setAttribute('class', "form-control langp");
+        window.textareaCoords.setAttribute('key', "zone_coordinates");
+        window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
+        window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
+        window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
+        window.textareaCoords.setAttribute('rows', "1");
+        window.textareaCoords.setAttribute('maxlength', '5000');
+        window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+
+        textareaMarker.addEventListener('input', function (evt) {
+            marker_name = textareaMarker.value;
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                draw_rect();
+            } else if(selectedOption.getAttribute('key') === "circle") {
+                draw_circle();
+            }
+        });
+
+        window.zoneType.addEventListener('change', function (evt) {
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+                draw_rect();
+            }else if(selectedOption.getAttribute('key') === "circle") {
+                window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
+                draw_circle();
+            }
+        });
+        window.textareaCoords.addEventListener('input', function (evt) {
+            let string = window.textareaCoords.value;
+
+            selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+            if(selectedOption.getAttribute('key') === "polygon") {
+                let coordsAmount = window.textareaCoords.value.match(/;/g).length;
+                let delimiter, coords, comma;
+                window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
+                for(let i = 0; i < coordsAmount; i++){
+                    if(i > 0){
+                        delimiter = string.indexOf(";");
+                        string = string.slice(delimiter+1);
+                    }
+                    delimiter = string.indexOf(";");
+                    if(delimiter > 0)
+                        coords = string.slice(0, delimiter);
+                    else
+                        coords = string
+                    comma = coords.indexOf(",");
+                    let new_x = parseInt(coords.slice(0, comma));
+                    let new_y = parseInt(coords.slice(comma+1));
+                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
+                }
+                draw_rect(false);
+            } else if(selectedOption.getAttribute('key') === "circle") {
+                let circle = window.zones.get(window.textareaCoords.id.substring(12));
+                let delimiter = string.indexOf(",");
+                circle.x = parseInt(string.slice(0, delimiter));
+                string = string.slice(delimiter+1);
+                delimiter = string.indexOf(",");
+                circle.y = parseInt(string.slice(0, delimiter));
+                string = string.slice(delimiter+1);
+                circle.radius = parseInt(string);
+                draw_circle(false);
+            }
+        });
+    }
+
+    let textareaQuestionCom, comDiv;
     if(selectedOption.getAttribute('key') === "compliance") {
         textareaQuestionCom = document.createElement('textarea');
         comDiv = document.createElement('div');
@@ -115,11 +230,7 @@ window.addAnswerOnButtonClick = function(index){
         comDiv.setAttribute('style', "margin-left: 5px; margin-right: 5px;");
     }
 
-    let optionDiv;
-    let optionText;
-    let optionNumText;
-    let groupDiv;
-    let groupSelect;
+    let optionDiv, optionText, optionNumText, groupDiv, groupSelect;
     if(selectedOption.getAttribute('key') === "filling_gaps" || selectedOption.getAttribute('key') === "drag_to_text") {
         optionDiv = document.createElement('div');
         optionDiv.setAttribute('style', "width: 147px;");
@@ -156,8 +267,7 @@ window.addAnswerOnButtonClick = function(index){
     textarea.setAttribute('name', `Answer-${index.substring(7)}-${answerIndex}`);
     textarea.setAttribute('rows', "1");
 
-    let label;
-    let input;
+    let label, input;
     if(selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
         label = document.createElement('label');
         input = document.createElement('input');
@@ -202,6 +312,15 @@ window.addAnswerOnButtonClick = function(index){
             div.appendChild(groupDiv)
             div.appendChild(groupSelect)
         }
+    } else if (selectedOption.getAttribute('key') === "markers_drag") {
+        div.appendChild(divMarker)
+        div.appendChild(textareaMarker)
+        div.appendChild(divZone)
+        div.appendChild(window.zoneType)
+        window.zoneType.appendChild(polygon)
+        window.zoneType.appendChild(circleVis)
+        div.appendChild(divCoords)
+        div.appendChild(window.textareaCoords)
     }
     divDel.appendChild(buttonDel)
     div.appendChild(divDel)
@@ -409,6 +528,10 @@ export function addQuestionListener(addBtn) {
         drag_to_text.setAttribute('class', "lang");
         drag_to_text.setAttribute('key', "drag_to_text");
         drag_to_text.textContent = "Перетаскивание в текст"
+        let markers_drag = document.createElement('option')
+        markers_drag.setAttribute('class', "lang");
+        markers_drag.setAttribute('key', "markers_drag");
+        markers_drag.textContent = "Перетаскивание маркеров"
         let word = document.createElement('option')
         word.setAttribute('class', "lang");
         word.setAttribute('key', "free");
@@ -438,6 +561,7 @@ export function addQuestionListener(addBtn) {
         questionType.appendChild(compliance)
         questionType.appendChild(filling_gaps)
         questionType.appendChild(drag_to_text)
+        questionType.appendChild(markers_drag)
         questionType.appendChild(word)
         questionType.appendChild(text)
         questionType.appendChild(info)
@@ -521,11 +645,14 @@ export function addQuestionListener(addBtn) {
     });
 }
 
+window.zones  = new Map();
+
 // Функция настройки смены типа задания при его выборе через выпадающий список
 export function questionTypeSet(questionType, textareaQuestion, questionIndexButtonId) {
     questionType.addEventListener("change", function () {
-        document.querySelectorAll(".to_del").forEach(elem =>{
-            elem.remove();
+
+        $(".to_del", $(textareaQuestion).parent("div:first")).each  (function (){
+            this.remove();
         });
         let selectedOption = questionType.options[questionType.selectedIndex];
         if (selectedOption.getAttribute('key') === "solo" || selectedOption.getAttribute('key') === "multiple") {
@@ -717,6 +844,255 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divIndexNew.parentElement.insertBefore(fillNote, divIndexNew.nextElementSibling)
             let buttonNew = document.getElementById(questionIndexButtonId)
             buttonNew.removeAttribute("disabled");
+        }
+        if (selectedOption.getAttribute('key') === "markers_drag"){
+            textareaQuestion.setAttribute('rows', "1");
+            let span = document.createElement('span');
+            span.setAttribute('class', "fs-5 row m-3 justify-content-start to_del");
+            let divFlex = document.createElement('div');
+            divFlex.setAttribute('class', "flex-column");
+            let divCanv = document.createElement('div');
+            divCanv.setAttribute('style', "height: 586px; overflow-y: hidden; overflow-x: visible");
+            divCanv.setAttribute('id', "canvasContainer" + questionIndexButtonId);
+            let canvas = document.createElement('canvas');
+            canvas.setAttribute('id', "canvas-" + questionIndexButtonId);
+            canvas.setAttribute('width', "1036px");
+            canvas.setAttribute('height', "9999px");
+            canvas.setAttribute('style', "border:1px solid red; background-repeat: repeat; background-position: 0 0; background-image: url(\"/static/img/nophoto.png\"");
+            let form = document.createElement('form');
+            form.setAttribute('method', "POST");
+            form.setAttribute('enctype', "multipart/form-data");
+            form.setAttribute('style', "max-width: 290px; margin: 0 auto;");
+            let inputFile = document.createElement('input');
+            inputFile.setAttribute('type', "file");
+            inputFile.setAttribute('name', "file" + questionIndexButtonId);
+            inputFile.setAttribute('id', "customFile" + questionIndexButtonId);
+            inputFile.setAttribute('class', "form-control");
+            let aForButton = document.createElement('a');
+            let aButton = document.createElement('Button');
+            aButton.setAttribute('class', "btn border border-2 w-100 lang");
+            aButton.setAttribute('key', "add_background_image");
+            aButton.setAttribute('id', "addBackgroundImage");
+            aButton.setAttribute('type', "button");
+            aButton.setAttribute('textContent', "Добавить фоновое изображение");
+            let divIndexNew = document.createElement('div');
+            divIndexNew.setAttribute('class', "row container-fluid");
+            divIndexNew.setAttribute('id', "addAns-" + questionIndexButtonId);
+            let divTextLabel = document.createElement('div');
+            divTextLabel.setAttribute('style', "padding-bottom: 10px; display: flex; align-items: center;");
+            divTextLabel.setAttribute('id', "delAns-" + answerIndex);
+            divTextLabel.setAttribute('class', "answer_div");
+            let divMarker = document.createElement('div');
+            divMarker.setAttribute('style', "width: 75px; margin-right: 4px;");
+            divMarker.setAttribute('key', "marker");
+            divMarker.setAttribute('class', "lang");
+            divMarker.textContent = "Маркер";
+            let textareaMarker = document.createElement('textarea');
+            textareaMarker.setAttribute('class', "form-control langp");
+            textareaMarker.setAttribute('key', "marker_name");
+            textareaMarker.setAttribute('placeholder', "Название маркера");
+            textareaMarker.setAttribute('name', "marker-" + questionIndex + "-" + answerIndex);
+            textareaMarker.setAttribute('id', "marker-" + questionIndex + "-" + answerIndex);
+            textareaMarker.setAttribute('rows', "1");
+            textareaMarker.setAttribute('maxlength', '5000');
+            let divZone = document.createElement('div');
+            divZone.setAttribute('style', "width: 450px; margin-left: 8px; margin-right: 2px;");
+            divZone.setAttribute('key', "zone_type");
+            divZone.setAttribute('class', "lang");
+            divZone.textContent = "Форма зоны";
+            // let zoneType = document.createElement('select')
+            window.zoneType = document.createElement('select')
+            window.zoneType.setAttribute('class', "form-select");
+            window.zoneType.setAttribute('style', "width: 180px;");
+            window.zoneType.setAttribute('id', "ZoneFigure" + questionIndex);
+            window.zoneType.setAttribute('name', "ZoneFigure" + questionIndex);
+            let circleVis = document.createElement('option')
+            circleVis.setAttribute('class', "lang");
+            circleVis.setAttribute('key', "circle");
+            circleVis.textContent = "Окружность"
+            let polygon = document.createElement('option')
+            polygon.setAttribute('class', "lang");
+            polygon.setAttribute('key', "polygon");
+            polygon.textContent = "Многоугольник"
+            let divCoords = document.createElement('div');
+            divCoords.setAttribute('style', "width: 160px; margin-left: 8px; margin-right: 4px;");
+            divCoords.setAttribute('key', "coordinates");
+            divCoords.setAttribute('class', "lang");
+            divCoords.textContent = "Координаты";
+            // let window.textareaCoords = document.createElement('textarea');
+            window.textareaCoords = document.createElement('textarea');
+            window.textareaCoords.setAttribute('class', "form-control langp");
+            window.textareaCoords.setAttribute('key', "zone_coordinates");
+            window.textareaCoords.setAttribute('placeholder', "Координаты зоны");
+            window.textareaCoords.setAttribute('name', "coordinates-" + questionIndex + "-" + answerIndex);
+            window.textareaCoords.setAttribute('id', "coordinates-" + questionIndex + "-" + answerIndex);
+            window.textareaCoords.setAttribute('rows', "1");
+            window.textareaCoords.setAttribute('maxlength', '5000');
+
+            let buttonDel = document.createElement('button');
+            buttonDel.setAttribute('class', "btn");
+            buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
+            buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id)");
+            buttonDel.textContent = "✖"
+            buttonDel.setAttribute('id', answerIndex);
+            let divDel = document.createElement('div');
+            divDel.setAttribute('style', "padding-left: 5px;");
+
+            addDragoverEventListener(divIndexNew, `answer_div`);
+            let divAnsCard = addDragndropDesign(divTextLabel, 'answer');
+
+            let markNote = document.createElement('div');
+            markNote.setAttribute('style', "color: gray; font-size: 14px;");
+            markNote.setAttribute('class', "to_del lang");
+            markNote.setAttribute('key', "markNote");
+            markNote.textContent = "*Примечание: в координатах зоны последовательно указаны координаты x, y каждой вершины многоуголинка, или же координаты центра и радиус для окружности";
+
+            span.appendChild(divFlex)
+            divFlex.appendChild(divCanv)
+            divCanv.appendChild(canvas)
+            divFlex.appendChild(form)
+            form.appendChild(inputFile)
+            form.appendChild(aForButton)
+            aForButton.appendChild(aButton)
+            divIndexNew.appendChild(divTextLabel)
+            divTextLabel.appendChild(divMarker)
+            divTextLabel.appendChild(textareaMarker)
+            divTextLabel.appendChild(divZone)
+            divTextLabel.appendChild(window.zoneType)
+            window.zoneType.appendChild(polygon)
+            window.zoneType.appendChild(circleVis)
+            divTextLabel.appendChild(divCoords)
+            divTextLabel.appendChild(window.textareaCoords)
+            divDel.appendChild(buttonDel)
+            divTextLabel.appendChild(divDel)
+            divTextLabel.appendChild(divAnsCard)
+            let divIndexTmp = document.getElementById("addAns-" + questionIndexButtonId)
+            divIndexTmp.replaceWith(divIndexNew);
+            divIndexNew.parentElement.insertBefore(span, divIndexNew)
+            divIndexNew.parentElement.insertBefore(markNote, divIndexNew.nextElementSibling)
+            let buttonNew = document.getElementById(questionIndexButtonId)
+            buttonNew.removeAttribute("disabled");
+
+            window.ctx=canvas.getContext("2d");
+            var BB=canvas.getBoundingClientRect();
+            window.scrollOffsetY = document.getElementsByClassName("content")[0].scrollTop;
+            window.offsetX=BB.left;
+            window.offsetY=BB.top;
+            window.WIDTH = canvas.width;
+            window.HEIGHT = canvas.height;
+            window.vertexRadius = 6
+            window.marker_name = "";
+            window.selectedOption;
+
+            // an array of objects that define different rectangles
+            window.zones.set(questionIndex + "-" + answerIndex, {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+            /*
+            var rects=[];
+            rects.push({vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+            let circles=[];
+            circles.push({x:60,y:60,radius:40,isDragging:false,selected:false})
+            */
+
+            // listen for mouse events
+            canvas.onmousedown = myDown;
+            canvas.onmouseup = myUp;
+            canvas.onmousemove = myMove;
+
+            // call to draw the scene
+            draw_rect();
+
+            textareaMarker.addEventListener('input', function (evt) {
+                marker_name = textareaMarker.value;
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+                if(selectedOption.getAttribute('key') === "polygon") {
+                    draw_rect();
+                } else if(selectedOption.getAttribute('key') === "circle") {
+                    draw_circle();
+                }
+            });
+
+            window.zoneType.addEventListener('change', function (evt) {
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+                if(selectedOption.getAttribute('key') === "polygon") {
+                    window.zones.set(window.zoneType.id.substring(11), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false});
+                    draw_rect();
+                }else if(selectedOption.getAttribute('key') === "circle") {
+                    window.zones.set(window.zoneType.id.substring(11), {x:60,y:60,radius:40,isDragging:false,selected:false});
+                    draw_circle();
+                }
+            });
+
+            aButton.addEventListener('click', function (evt) {
+                let file = inputFile.files[0];
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    const image = new Image();
+                    image.src = event.target.result;
+                    image.onload = function () {
+                        let height = this.height;
+                        let width = this.width;
+                        if(width > 1036){
+                            let ratio = height / width;
+                            width = 1036;
+                            height = width * ratio;
+                            ImageTools.resize(file, {
+                                width: width,
+                                height: height
+                            }, function(blob, didItResize) {
+                                canvas.height = height;
+                                canvas.width = width;
+                                divCanv.setAttribute("height", height + "px");
+                                divCanv.setAttribute("width", width + "px");
+                                $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + window.URL.createObjectURL(blob) + ')');
+                            });
+                        }else{
+                            canvas.height = height;
+                            canvas.width = width;
+                            divCanv.setAttribute("height", height + "px");
+                            divCanv.setAttribute("width", width + "px");
+                            $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + image.src + ')');
+                        }
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+
+            window.textareaCoords.addEventListener('input', function (evt) {
+                let string = window.textareaCoords.value;
+
+                selectedOption = window.zoneType.options[window.zoneType.selectedIndex];
+                if(selectedOption.getAttribute('key') === "polygon") {
+                    let coordsAmount = window.textareaCoords.value.match(/;/g).length;
+                    let delimiter, coords, comma;
+                    window.zones.get(window.textareaCoords.id.substring(12)).vertexes = []
+                    for(let i = 0; i < coordsAmount; i++){
+                        if(i > 0){
+                            delimiter = string.indexOf(";");
+                            string = string.slice(delimiter+1);
+                        }
+                        delimiter = string.indexOf(";");
+                        if(delimiter > 0)
+                            coords = string.slice(0, delimiter);
+                        else
+                            coords = string
+                        comma = coords.indexOf(",");
+                        let new_x = parseInt(coords.slice(0, comma));
+                        let new_y = parseInt(coords.slice(comma+1));
+                        window.zones.get(window.textareaCoords.id.substring(12)).vertexes.push({x:new_x, y: new_y, v:false})
+                    }
+                    draw_rect(false);
+                } else if(selectedOption.getAttribute('key') === "circle") {
+                    let circle = window.zones.get(window.textareaCoords.id.substring(12));
+                    let delimiter = string.indexOf(",");
+                    circle.x = parseInt(string.slice(0, delimiter));
+                    string = string.slice(delimiter+1);
+                    delimiter = string.indexOf(",");
+                    circle.y = parseInt(string.slice(0, delimiter));
+                    string = string.slice(delimiter+1);
+                    circle.radius = parseInt(string);
+                    draw_circle(false);
+                }
+            });
         }
         if (selectedOption.getAttribute('key') === "detailed_free" || selectedOption.getAttribute('key') === "free") {
             textareaQuestion.setAttribute('rows', "1");

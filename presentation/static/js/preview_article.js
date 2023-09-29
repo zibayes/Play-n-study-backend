@@ -5,9 +5,12 @@ function htmlspecialchars_decode (string, quoteStyle) {
   if (typeof quoteStyle === 'undefined') {
     quoteStyle = 2
   }
+  let width = $("#content").width() - 35;
   string = string.toString()
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/&#34;/g, '"')
+    .replace("img", "img style=\"max-width:" + width + "px;\"")
   const OPTS = {
     ENT_NOQUOTES: 0,
     ENT_HTML_QUOTE_SINGLE: 1,

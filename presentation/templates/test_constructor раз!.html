@@ -1,0 +1,140 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Конструктор тестов</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <span class="fs-5 row m-3 justify-content-start lang" key="test_constructor">
+            Конструктор тестов
+        </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active lang" key="test_constructor" aria-current="page">Конструктор тестов</li>
+          </ol>
+        </nav>
+        <div class="row border"></div>
+        <br>
+
+        <form action="" method="POST">
+            <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
+            <hr>
+
+            <div id="questionsList" style="padding-top: 8px;">
+                <!-- Область добавления вопросов -->
+
+                <div style="display: flex; padding-bottom: 20px;" class="question_div">
+                    <div class="card" style="background:#d9d9d9; height: 115px; margin-right: 10px;">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <p><text class="lang" key="question">Вопрос</text> №</p>
+                                <label class="lang" key="score">Баллы: </label>
+                                <input style="width:40px;">
+                            </div>
+                        </div>
+                    </div>
+                <div class="card" style="background:#bde0ff; flex: 1;">
+                            <div style="height: 35px; justify-content: center; display: flex;" draggable="true" >
+                                <img src="/static/img/drag_n_drop.png" style="height: 35px;">
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                        <textarea maxlength="5000" required rows="1" class="form-control langp" key="question_text" placeholder="Текст вопроса"></textarea>
+                                    <hr>
+                                    <span class="fs-5 row m-3 justify-content-start lang">
+                                        <div class="flex-column">
+                                            <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
+                                                <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                            </div>
+                                            <style>
+                                                #canvas{
+                                                    border:1px solid red;
+                                                    background-image: url("/courseava/{{ course.course_id }}") ;
+                                                }
+                                            </style>
+                                            <form action="" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
+                                                <input type="file" name="file" class="form-control" id="customFile" />
+                                                <a><button class="btn border border-2 w-100 lang" key="" id="addBackgroundImage" type="button">Добавить фоновое изображение</button></a>
+                                            </form>
+                                        </div>
+                                    </span>
+                                    <div  class="row container-fluid" class="answer_div">
+                                        <div style="padding-bottom: 10px; display: flex; align-items: center;" class="answer_div">
+                                            <div style="width: 75px; margin-right: 4px;" class="lang" key="marker">Маркер</div>
+                                            <textarea maxlength="5000" required class="form-control langp" key="marker_name" id="marker" rows="1" placeholder="Название маркера"></textarea>
+                                            <div style="width: 400px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Форма зоны</div>
+                                            <select class="form-select" id="ZoneFigure" style="width: 180px;" >
+                                                <option class="lang" key="circle">Окружность</option>
+                                                <option selected class="lang" key="polygon">Многоугольник</option>
+                                            </select>
+                                            <div style="width: 160px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Координаты</div>
+                                            <textarea maxlength="5000" required class="form-control langp" id="coordinates" key="zone_coordinates" rows="1" placeholder="Координаты зоны"></textarea>
+                                            <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;">✖</button>
+                                            <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" class="dnd answer_div">
+                                            </div>
+                                            <br>
+                                        </div>
+                                        <div style="color: gray; font-size: 14px;" class="lang to_del" key="">*Примечание: </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div style="display: flex;">
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn lang" key="add_answer" style="background-color:transparent; color:black;" type="button">Добавить ответ</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button class="btn lang" key="delete_answer" style="background-color:red; color:white;" type="button">Удалить вопрос</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <select class="form-select" width="20px" >
+                                                <option selected class="lang" key="drag_markers">Перетаскивание маркеров</option>
+                                                <option class="lang" key="solo">Единственный ответ</option>
+                                                <option class="lang" key="multiple">Множественный ответ</option>
+                                                <option class="lang" key="compliance">На соответствие</option>
+                                                <option class="lang" key="free">Краткий свободный ответ</option>
+                                                <option class="lang" key="detailed_free">Свободный ответ</option>
+                                                <option  class="lang" key="info_block">Информационный блок</option>
+                                        </select>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↑</button>
+                                    </div>
+                                    <div style="padding-left: 5px;">
+                                        <button type="button" class="btn" style="background-color:white; color:black; padding: 4px; width: 35px; height: 35px; font-size:20px;">↓</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+            <hr>
+            <div style="padding-bottom: 10px;">
+                <button class="btn btn-primary lang" key="add_question"
+                        id="addQuestion" style=
+                        "background-color:green;" type="button">
+                        Добавить вопрос
+                    </button>
+                <button class="btn btn-primary lang" key="save_test" type="submit"
+                        id="saveTest" style=
+                        "background-color:yellowgreen;">
+                        Сохранить тест
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <!-- Scripts -->
+    <script type="module" src="/static/js/upload_file_size_limit.js"></script>
+    <script type="module" src="/static/js/test_constructor.js"></script>
+    <script src="/static/js/ImageTools.js"></script>
+{% endblock %}
