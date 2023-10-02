@@ -86,7 +86,7 @@ def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
             for key, value in test_form.items():
                 if "Answer-" in key and "Right_Answer-" not in key:
                     right_answers_count += 1
-                    question.answers.append({"answer": value, "mark": key[key.rfind('-'):]})
+                    question.answers.append({"answer": value, "mark": key[key.rfind('-')+1:]})
                 if "Group-" in key:
                     question.answers[-1]['group'] = value
                 if "score-" in key:

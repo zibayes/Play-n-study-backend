@@ -522,6 +522,13 @@ def handle_load_test(course_id, test_id):
             total_score += question.score
         if question.shuffle == 'on':
             random.shuffle(question.answers)
+        question.ask = markdown(question.ask)
+        if question.answers:
+            for i in range(len(question.answers)):
+                if question.type not in ('filling_gaps', 'drag_to_text'):
+                    question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
+                        list(question.answers[i].keys())[0]]
+                    del question.answers[i][list(question.answers[i].keys())[0]]
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
                            course=course, unit_name=unit_name, test_id=test_id)
 

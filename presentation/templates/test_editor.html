@@ -114,13 +114,12 @@
                                                         <textarea maxlength="5000" class="form-control langp" key="question_text" rows="1" placeholder="Текст вопроса" name="QuestionCom-{{ questionNum.value }}-{{ answerNum.value }}">{{ question_text }}</textarea>
                                                         <div style="margin-left: 5px; margin-right: 5px;">-</div>
                                                         <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
-                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" id="{{ questionNum.value }}-{{ answerNum.value }}" onclick="deleteElement('Answer-' + this.id)">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                         </div>
                                                         <br>
                                                     </div>
-                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="compliance_note">*Примечание: если вы хотите добавить неверный ответ, то для пары вопрос-ответ поле с вопросом необходимо оставить пустым</div>
                                                 {% endfor %}
                                             {% endfor %}
                                         {% endif %}
@@ -129,32 +128,29 @@
                                             {% set answerNum = namespace(value=0) %}
                                             {% for answer in question.answers %}
                                                 {% set answerNum.value = answerNum.value + 1 %}
-                                                {% for question_text, answer_text in answer.items() %}
-                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
-                                                        <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answerNum.value }}</text>]]</div>
-                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
-                                                        <div style="width: 70px; margin-left: 8px; margin-right: 4px;" class="lang" key="group_">Группа</div>
-                                                        <select class="form-select" id="Group-{{ questionNum.value }}-{{ answerNum.value }}" style="width: 60px;" >
-                                                            <script>
-                                                                alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-                                                                alphabet.forEach(elem =>{
-                                                                    select = document.getElementById("select_groups");
-                                                                    let option = document.createElement('option');
-                                                                    option.textContent = elem;
-                                                                    if(elem === "---[[THIS IS THE PLACE TO CHECK GROUP!!!]]---")
-                                                                        option.setAttribute("selected", "selected")
-                                                                    select.appendChild(option);
-                                                                })
-                                                            </script>
-                                                        </select>
-                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
-                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
-                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
-                                                        </div>
-                                                        <br>
+                                                <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                    <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer['mark'] }}</text>]]</div>
+                                                    <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer['answer'] }}</textarea>
+                                                    <div style="width: 70px; margin-left: 8px; margin-right: 4px;" class="lang" key="group_">Группа</div>
+                                                    <select class="form-select" id="Group-{{ questionNum.value }}-{{ answerNum.value }}" name="Group-{{ questionNum.value }}-{{ answerNum.value }}" style="width: 60px;" >
+                                                        <script>
+                                                            alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                                                            alphabet.forEach(elem =>{
+                                                                select = document.getElementById("Group-{{ questionNum.value }}-{{ answerNum.value }}");
+                                                                let option = document.createElement('option');
+                                                                option.textContent = elem;
+                                                                if(elem === `{{ answer['group'] }}`)
+                                                                    option.setAttribute("selected", "selected")
+                                                                select.appendChild(option);
+                                                            })
+                                                        </script>
+                                                    </select>
+                                                    <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" id="{{ questionNum.value }}-{{ answerNum.value }}" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                    <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                        <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                     </div>
-                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="filling_gaps_note">*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов</div>
-                                                {% endfor %}
+                                                    <br>
+                                                </div>
                                             {% endfor %}
                                         {% endif %}
 
@@ -162,18 +158,15 @@
                                             {% set answerNum = namespace(value=0) %}
                                             {% for answer in question.answers %}
                                                 {% set answerNum.value = answerNum.value + 1 %}
-                                                {% for question_text, answer_text in answer.items() %}
-                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
-                                                        <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answerNum.value }}</text>]]</div>
-                                                        <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer_text }}</textarea>
-                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" onclick="deleteElement('Answer-' + this.id)">✖</button>
-                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
-                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
-                                                        </div>
-                                                        <br>
+                                                <div style="padding-bottom: 10px; display: flex; align-items: center;" id="Answer-{{ questionNum.value }}-{{ answerNum.value }}" class="answer_div">
+                                                    <div style="width: 147px;"><text class="lang" key="option">Вариант</text> [[<text id="Option-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer['mark'] }}</text>]]</div>
+                                                    <textarea maxlength="5000" required class="form-control langp" key="answer_text" rows="1" placeholder="Текст ответа" name="Answer-{{ questionNum.value }}-{{ answerNum.value }}">{{ answer['answer'] }}</textarea>
+                                                    <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 45px; margin-left: 5px;" id="{{ questionNum.value }}-{{ answerNum.value }}" onclick="deleteElement('Answer-' + this.id)">✖</button>
+                                                    <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                        <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" id="{{ questionNum.value }}-{{ answerNum.value }}" class="dnd answer_div">
                                                     </div>
-                                                    <div style="color: gray; font-size: 14px;" class="lang to_del" key="filling_gaps_note">*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов</div>
-                                                {% endfor %}
+                                                    <br>
+                                                </div>
                                             {% endfor %}
                                         {% endif %}
 
@@ -191,6 +184,13 @@
                                             <textarea maxlength="15000" disabled class="form-control langp" key="long_answer" placeholder="Развернутый ответ" name="{{ question.ask }}" rows="8"></textarea>
                                         {% endif %}
                                     </div>
+
+                                    {% if question.type == "compliance" %}
+                                        <div style="color: gray; font-size: 14px;" class="lang to_del" key="compliance_note">*Примечание: если вы хотите добавить неверный ответ, то для пары вопрос-ответ поле с вопросом необходимо оставить пустым</div>
+                                    {% elif question.type == "filling_gaps" or question.type == "drag_to_text" %}
+                                        <div style="color: gray; font-size: 14px;" class="lang to_del" key="filling_gaps_note">*Примечание: текст вопроса должен содержать метки-заполнители, например [[1]], для обозначения местонахождения пропущенных слов</div>
+                                    {% endif %}
+
                                     {% if question.type in ["solo", "multiple", "compliance", "filling_gaps", "drag_to_text", "markers_drag"] %}
                                         <div class="to_del">
                                             {% if question.shuffle == 'on' %}

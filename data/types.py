@@ -178,6 +178,14 @@ class TestContent:
                     test_questions.append(QSolo.from_json(question))
                 case 'multiple':
                     test_questions.append(QMultiple.from_json(question))
+                case 'compliance':
+                    test_questions.append(QCompliance.from_json(question))
+                case 'filling_gaps':
+                    test_questions.append(QFillingGaps.from_json(question))
+                case 'drag_to_text':
+                    test_questions.append(QDragToText.from_json(question))
+                case 'markers_drag':
+                    test_questions.append(QMarkersDrag.from_json(question))
                 case 'free':
                     test_questions.append(QFree.from_json(question))
                 case 'detailed_free':

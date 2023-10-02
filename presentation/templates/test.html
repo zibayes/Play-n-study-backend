@@ -51,7 +51,9 @@
                         <div class="card" style="background:#bde0ff; flex: 1;">
                             <div class="card-body" id="content">
                                 <div class="form-group" id="scoreCount">
-                                    <p class="fromMarkdown">{{ question.ask }}</p>
+                                    {% if question.type not in ("filling_gaps", "drag_to_text") %}
+                                        <p class="fromMarkdown">{{ question.ask }}</p>
+                                    {% endif %}
                                     <!--<input type="hidden" name="ask-{{ questionNum.value }}" value="{{ question.ask }}">-->
                                     {% if question.type == "solo" %}
                                         <hr>
@@ -79,6 +81,69 @@
                                                 <br>
                                             {% endfor %}
                                         {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "compliance" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for question_text in answer.keys() %}
+                                                <div style="display: inline-block;">
+                                                    <label for="Select-{{ questionNum.value }}-{{ answerNum.value }}" class="fromMarkdown">{{ question_text }}</label>
+                                                    <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="Select-{{ questionNum.value }}-{{ answerNum.value }}">
+                                                        <option selected></option>
+                                                        {% for answer_comp in question.answers %}
+                                                            {% for answer_text in answer_comp.values() %}
+                                                                <option>{{ answer_text }}</option>
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "filling_gaps" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                        <p class="fromMarkdown" id="Filling-{{ questionNum.value }}">{{ question.ask }}</p>
+                                        <script>
+                                            let select_elem, group, mark;
+                                            let filling = document.getElementById('Filling-{{ questionNum.value }}');
+                                            {% for answer_main in question.answers %}
+                                                group = `{{ answer_main['group'] }}`;
+                                                mark = `{{ answer_main['mark'] }}`;
+                                                select_elem = '<select><option selected></option>';
+                                                {% for answer in question.answers %}
+                                                    if (group === `{{ answer['group'] }}`){
+                                                        select_elem += `<option>{{ answer['answer'] }}</option>`
+                                                    }
+                                                {% endfor %}
+                                                select_elem += `</select>`
+                                                filling.textContent = filling.textContent.replace(`[[` + mark + `]]`, select_elem)
+                                            {% endfor %}
+                                        </script>
+                                    {% endif %}
+
+                                    {% if question.type == "drag_to_text" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}">{{ question.ask }}</p>
+                                        <script>
+                                            let mark_d;
+                                            let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');
+                                            {% for answer in question.answers %}
+                                                mark_d = `{{ answer['mark'] }}`;
+                                                filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<input>`)
+                                            {% endfor %}
+                                        </script>
+                                        <hr>
+                                        <p class="fromMarkdown" id="DragToText-answers-{{ questionNum.value }}"></p>
+                                        <script>
+                                            let answers_d = document.getElementById('DragToText-answers-{{ questionNum.value }}');
+                                            {% for answer in question.answers %}
+                                                answers_d.textContent += `{{ answer['answer'] }}<br>`
+                                            {% endfor %}
+                                        </script>
                                     {% endif %}
 
                                     {% if question.type == "free" %}
@@ -115,4 +180,7 @@
 {% endblock %}
 {% block script %}
     <script type="module" src="/static/js/markdown.js"></script>
+    <script>
+        let select, option;
+    </script>
 {% endblock %}
