@@ -18,7 +18,7 @@ $.ajax({
   method: 'post',
   dataType: 'json',
   success: function(json_data){
-    console.log(json_data)
+
     json_data.chats.sort(
             function (a, b){
               return new Date(b.time) - new Date(a.time)
@@ -30,7 +30,7 @@ $.ajax({
     }
   },
   error: function(json_data){
-    console.log(json_data.responseText)
+
   }
 });
 }, 400)
