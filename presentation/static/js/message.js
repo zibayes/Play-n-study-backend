@@ -1,5 +1,3 @@
-let ul_chat_item = document.getElementById("ul_chat_item")
-let ul_chat = document.getElementById("ul_chat")
 
 function element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id) {
 
@@ -21,7 +19,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     div_element_chat.setAttribute("class", "d-flex flex-row")
     img_element_chat.setAttribute("class", "rounded-circle d-flex align-self-center me-3 shadow-1-strong")
     img_element_chat.style = "width: 60px"
-    img_element_chat.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
+    img_element_chat.src = '/userava/' + user_with_id
     div_element_chat_pt_message.setAttribute("class", "pt-1")
     p_element_name.setAttribute("class", "fw-bold mb-0")
     p_element_name.textContent = from_who
@@ -29,7 +27,17 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     p_element_message.textContent = last_message
     div_element_chat_pt_time.setAttribute("class", "pt-1")
     p_element_time.setAttribute("class", "small text-muted mb-1")
-    p_element_time.textContent = time
+    let time_mes = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(time))
+    let time_message_hour_sec = new Date(time)
+    let time_message = new Date(time).getTime()
+    let time_now = new Date().getTime()
+    if (Math.floor(time_message / 1000) + 120 >= Math.floor(time_now / 1000)){
+         p_element_time.textContent = 'сейчас'
+    }else{
+        let sec = time_message_hour_sec.getSeconds() < 10 ?  '0' + time_message_hour_sec.getSeconds() : time_message_hour_sec.getSeconds()
+        p_element_time.textContent = time_mes + " " + time_message_hour_sec.getHours() + ":" + sec + " "
+    }
+
     span_element_counter.setAttribute("class", "badge bg-danger float-end")
     span_element_counter.textContent = checked? null : 1
 
@@ -41,8 +49,8 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
           contentType: 'application/json',
           data: JSON.stringify({"chat_id": chat_id}),
           success: function (data) {
+              console.log(data)
                 ul_chat_item.innerHTML = ''
-
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)
                     ul_chat_item.appendChild(li_item)
@@ -87,7 +95,7 @@ function getLiItem(message){
     li_item.setAttribute("class", "d-flex mb-4")
     img_item.setAttribute("class", "")
     img_item.style = "width: 60px"
-    img_item.src = "https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp"
+
     div_card_item.setAttribute("class", "card")
     div_card_header_item.setAttribute("class", "card-header d-flex justify-content-between p-3")
     p_item_name.setAttribute("class", "fw-bold mb-0")
@@ -101,8 +109,9 @@ function getLiItem(message){
     p_item_text.setAttribute("class", "mb-0")
     p_item_text.textContent = message.msg_text
 
-    if (message.msg_from === "Я: "){
+    if (message.msg_from === "Я"){
         img_item.setAttribute("class", "rounded-circle d-flex align-self-start shadow-1-strong me-3")
+        img_item.src = '/userava/' + message.msg_from_id
         div_item_card_body.style = "width: 350px"
         div_item_card_body.appendChild(p_item_text)
         p_item_time.appendChild(i_item_time)
@@ -114,6 +123,7 @@ function getLiItem(message){
         li_item.appendChild(div_card_item)
     }else{
         img_item.setAttribute("class", "rounded-circle d-flex align-self-start shadow-1-strong ms-3")
+        img_item.src = '/userava/' + message.msg_from_id
         div_w_100.style = "margin-left: 20px"
         div_item_card_body.appendChild(p_item_text)
         p_item_time.appendChild(i_item_time)
@@ -127,6 +137,8 @@ function getLiItem(message){
     return li_item
 
 }
+let ul_chat_item = document.getElementById("ul_chat_item")
+let ul_chat = document.getElementById("ul_chat")
 
 $.ajax({
   url: '/get_chats',
@@ -145,3 +157,4 @@ $.ajax({
   }
 });
 
+// chat
