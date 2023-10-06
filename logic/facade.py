@@ -438,3 +438,6 @@ class LogicFacade:
 
     def __chat_create(self, msg_from, msg_to):
         return self.data.chat_repository.create(msg_from, msg_to)
+
+    def remove_chat(self, chat_id):
+        return self.data.remove_chat(chat_id)

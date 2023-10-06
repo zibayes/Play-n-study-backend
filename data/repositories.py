@@ -855,6 +855,17 @@ class ChatRepository:
             return True
         return False
 
+    def remove_chat(self, chat_id) -> bool:
+        try:
+            self.session.query(ChatsModel) \
+                .filter_by(chat_id=chat_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления чата :" + str(e))
+            return False
+
 
 class ChatMessageRepository:
     def __init__(self, session):

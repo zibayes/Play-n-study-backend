@@ -49,3 +49,11 @@ def handle_remove_message(msg_id):
     if response:
         return 'removed'
     return 'fail'
+
+
+@chat_bp.route('/remove_chat/<int:chat_id>', methods=['POST'])
+def handle_remove_chat(chat_id):
+    response = logic.remove_chat(chat_id)
+    if response:
+        return 'removed'
+    return 'fail'

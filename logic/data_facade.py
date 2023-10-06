@@ -416,3 +416,9 @@ class DataFacade:
 
     def chat_change_check_status(self, chat_id, msg_to):
         return self.chat_repository.change_checked_status(chat_id, msg_to)
+
+    def remove_chat(self, chat_id):
+        messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat_id)
+        for message in messages:
+            self.remove_message(message.msg_id)
+        return self.chat_repository.remove_chat(chat_id)
