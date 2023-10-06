@@ -28,8 +28,8 @@ class TestResult:
 
 def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
     test_form = form.to_dict()
-    print(test_form)
     test_name = test_form.pop("testName")
+    test_desc = test_form.pop("testDesc")
     questions_count = 0
     for key in test_form.keys():
         if "Question-" in key:
@@ -168,7 +168,7 @@ def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
         test_body.append(question)
     test_content = TestContent(test_name, test_body)
 
-    return Test(test_id, course_id, unit_id, test_content.toJSON())
+    return Test(test_id, course_id, unit_id, test_content.toJSON(), description=test_desc)
 
 
 def get_test_result(test, form):

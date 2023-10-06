@@ -23,8 +23,17 @@
         <div class="row border"></div>
         <br>
 
-        <form action="" method="POST">
-            <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
+        <form action="" method="POST" enctype="multipart/form-data" id="sendingForm">
+            <span class="fs-5 row m-3 justify-content-start lang">
+                <textarea required class="form-control langp" key="test_name" maxlength="1000" placeholder="Название теста" name="testName" rows="1"></textarea>
+                <textarea style="margin-top: 8px;" class="form-control toSend langp" maxlength="1000" key="test_desc" placeholder="Описание теста" name="testDesc" rows="1"></textarea>
+                <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px;">
+                    <img class="border border-2 rounded w-100" src="/static/img/nophoto.png" style="max-width: 290px; margin: 0 auto;">
+                    <div style="max-width: 290px; margin: 0 auto;">
+                        <input type="file" name="file" class="form-control" id="customFile" />
+                    </div>
+                </div>
+            </span>
             <hr>
 
             <div id="questionsList" style="padding-top: 8px;">

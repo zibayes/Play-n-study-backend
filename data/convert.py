@@ -93,7 +93,7 @@ def sub_db_to_sub(sub: Type[SubRelModel]):
 
 
 def test_db_to_test(test_db: Type[TestsModel]):
-    test = Test(test_id=test_db.test_id, course_id=test_db.course_id, unit_id=test_db.unit_id, content=None)
+    test = Test(test_id=test_db.test_id, course_id=test_db.course_id, unit_id=test_db.unit_id, content=None, avatar=test_db.avatar, description=test_db.description)
     test.content = TestContent.from_json(test_db.content)
     return test
 
@@ -108,6 +108,8 @@ def courses_db_to_courses(courses):
 def article_db_to_article(article: Type[ArticlesModel]):
     return Article(article_id=article.article_id,
                    course_id=article.course_id,
+                   avatar=article.avatar,
+                   description=article.description,
                    unit_id=article.unit_id,
                    content=article.content)
 

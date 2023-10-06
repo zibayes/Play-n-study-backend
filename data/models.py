@@ -1,6 +1,6 @@
 from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean, JSON, TIMESTAMP
 from sqlalchemy.sql import func
-from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary
+from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary, event
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -233,9 +233,11 @@ class TestsModel(Base):
     description = Column(Text)
     content = Column(JSON)
 
-    def __init__(self, course_id, unit_id, content):
+    def __init__(self, course_id, unit_id, content, avatar=None, description=None):
         self.course_id = course_id
         self.unit_id = unit_id
+        self.avatar = avatar
+        self.description = description
         self.content = content
 
     # __repr__ impl
@@ -250,9 +252,11 @@ class ArticlesModel(Base):
     description = Column(Text)
     content = Column(Text)
 
-    def __init__(self, course_id, unit_id, content):
+    def __init__(self, course_id, unit_id, content, avatar=None, description=None):
         self.course_id = course_id
         self.unit_id = unit_id
+        self.avatar = avatar
+        self.description = description
         self.content = content
 
 
@@ -328,3 +332,7 @@ class ChatMessagesModel(Base):
         self.msg_date = msg_date
         self.msg_from = msg_from
         self.msg_to = msg_to
+
+@event.listens_for(ChatMessagesModel, "after_insert")
+def get_message(mapped_class, base_connection, chat_message):
+    return mapped_class, base_connection, chat_message

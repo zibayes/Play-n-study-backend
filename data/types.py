@@ -154,11 +154,13 @@ def upcast(derived, base):
 
 
 class Test:
-    def __init__(self, test_id, course_id, unit_id, content):
+    def __init__(self, test_id, course_id, unit_id, content, avatar=None, description=None):
         self.test_id = test_id
         self.course_id = course_id
         self.unit_id = unit_id
         self.content = content
+        self.avatar = avatar
+        self.description = description
 
 
 class TestContent:
@@ -384,10 +386,12 @@ class CourseUnit:
 
 
 class Article:
-    def __init__(self, article_id, course_id, unit_id, content):
+    def __init__(self, article_id, course_id, unit_id, content, description=None, avatar=None):
         self.article_id = article_id
         self.course_id = course_id
         self.unit_id = unit_id
+        self.avatar = avatar
+        self.description = description
         self.content = content
 
 

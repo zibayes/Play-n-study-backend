@@ -56,6 +56,7 @@ class LogicFacade:
 
     def save_test(self, form, course_id, unit_id):
         test = get_test_from_form(form=form, unit_id=unit_id, course_id=course_id)
+        print(test.description)
         if self.data.add_test(test):
             test = self.data.get_last_test_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
@@ -66,6 +67,22 @@ class LogicFacade:
             return tuple(['Тест успешно сохранён', 'success'])
         else:
             return tuple(['Ошибка при сохранении теста', 'error'])
+
+    def upload_test_avatar(self, avatar_file, current_user, test_id):
+        if avatar_file and current_user.verify_ext(avatar_file.filename):
+            try:
+                avatar = avatar_file.read()
+                test = self.data.get_test_by_id(test_id)
+                test.avatar = avatar
+                test.content = test.content.toJSON()
+                if not self.data.update_test(test):
+                    return tuple(["Ошибка обновления аватара", "error"])
+                return tuple(["Аватар обновлен", "success"])
+            except FileNotFoundError as e:
+                return tuple(["Ошибка чтения файла", "error"])
+        else:
+            return tuple(["Ошибка обновление аватара", "error"])
+
 
     def add_course(self, course_name, course_desc, course_cat, avatar_file, current_user, user_id):
         '''
@@ -85,19 +102,14 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении курса', 'error'])
 
-    def upload_course_avatar(self, avatar_file, current_user, course_id):
+    def upload_course_avatar(self, avatar_file, current_user):
         if avatar_file and current_user.verify_ext(avatar_file.filename):
             try:
-                avatar = avatar_file.read()
-                course = self.data.course_get_by_id(course_id)
-                course.avatar = avatar
-                if not self.data.update_course(course):
-                    return tuple(["Ошибка обновления аватара", "error"])
-                return tuple(["Аватар обновлен", "success"])
+                return avatar_file.read()
             except FileNotFoundError as e:
                 return tuple(["Ошибка чтения файла", "error"])
         else:
-            return tuple(["Ошибка обновление аватара", "error"])
+            return tuple(["Ошибка обновления аватара", "error"])
 
     def update_course_add_unit(self, course_id, unit_name):
         course = self.data.course_get_by_id(course_id)
@@ -131,6 +143,7 @@ class LogicFacade:
 
     def edit_test(self, form, test_id, course_id, unit_id):
         test = get_test_from_form(form=form, test_id=test_id, course_id=course_id, unit_id=unit_id)
+        test.avatar = self.data.get_test_by_id(test_id).avatar
 
         if self.data.update_test(test):
             return tuple(['Тест успешно сохранён', 'success'])
@@ -208,6 +221,12 @@ class LogicFacade:
             return True
         else:
             return False
+
+    def article_get_avatar(self, app, article_id):
+        return self.data.article_get_avatar(app, article_id)
+
+    def test_get_avatar(self, app, test_id):
+        return self.data.test_get_avatar(app, test_id)
 
     def course_get_avatar(self, app, course_id):
         return self.data.course_get_avatar(app, course_id)
@@ -336,6 +355,10 @@ class LogicFacade:
 
     def curator_remove(self, user_id, course_id):
         return self.data.curator_remove(user_id, course_id)
+
+    def chats_start_dialog(self, current_user_id, user_id):
+        if not self.data.chat_exists(current_user_id, user_id):
+            return self.data.chats_start_dialog(current_user_id, user_id)
 
     def chats_get_user_chats_preview(self, user_id):
         return self.data.chat_get_user_chats_preview(user_id)

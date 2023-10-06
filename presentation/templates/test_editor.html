@@ -23,9 +23,18 @@
         <div class="row border"></div>
         <br>
 
-        <form action="" method="POST">
-        <textarea maxlength="1000" required class="form-control langp" key="test_name" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
-        <hr>
+        <form action="" enctype="multipart/form-data" method="POST">
+            <span class="fs-5 row m-3 justify-content-start lang">
+                <textarea required style="margin-top: 8px;" class="form-control toSend langp" maxlength="1000" key="test_name" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
+                <textarea style="margin-top: 8px;" class="form-control toSend langp" maxlength="1000" key="test_desc" placeholder="Описание теста" name="testDesc" rows="1">{{ test_tmp.description }}</textarea>
+                <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px;">
+                    <img class="border border-2 rounded w-100" src="/testava/{{ test_id }}" style="max-width: 290px; margin: 0 auto;">
+                    <div style="max-width: 290px; margin: 0 auto;">
+                        <input type="file" name="file" class="form-control" id="customFile" />
+                    </div>
+                </div>
+            </span>
+            <hr>
 
             <div id="questionsList" style="padding-top: 8px;">
                 {% set questionNum = namespace(value=0) %}

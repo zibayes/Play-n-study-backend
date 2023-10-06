@@ -430,6 +430,8 @@ class TestRepository:
             new_test = TestsModel(
                 course_id=test.course_id,
                 unit_id=test.unit_id,
+                avatar=test.avatar,
+                description=test.description,
                 content=test.content
             )
             self.session.add(new_test)
@@ -444,6 +446,9 @@ class TestRepository:
                 .filter_by(test_id=test.test_id) \
                 .first()
             test_to_update.course_id = test.course_id
+            test_to_update.unit_id = test.unit_id
+            test_to_update.avatar = test.avatar
+            test_to_update.description = test.description
             test_to_update.content = test.content
             self.session.commit()
             return True
@@ -550,6 +555,8 @@ class ArticlesRepository:
             new_article = ArticlesModel(
                 course_id=article.course_id,
                 unit_id=article.unit_id,
+                avatar=article.avatar,
+                description=article.description,
                 content=article.content
             )
             self.session.add(new_article)
@@ -582,6 +589,9 @@ class ArticlesRepository:
                 .filter_by(article_id=article.article_id) \
                 .first()
             article_to_update.course_id = article.course_id
+            article_to_update.unit_id = article.unit_id
+            article_to_update.avatar = article.avatar
+            article_to_update.description = article.description
             article_to_update.content = article.content
             self.session.commit()
             return True

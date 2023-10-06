@@ -171,6 +171,32 @@ class DataFacade:
             return user
         return user
 
+    def article_get_avatar(self, app, article_id):
+        img = None
+        article = self.articles_repository.get_article_by_id(article_id)
+        if not article.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = article.avatar
+        return img
+
+    def test_get_avatar(self, app, test_id):
+        img = None
+        test = self.test_repository.get_test_by_id(test_id)
+        if not test.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = test.avatar
+        return img
+
     def course_get_avatar(self, app, course_id):
         img = None
         course = self.course_repository.get_course_by_course_id(course_id)
@@ -277,6 +303,9 @@ class DataFacade:
     def curator_remove(self, user_id, course_id):
         return self.curator_repository.remove_curator(user_id, course_id)
 
+    def chats_start_dialog(self, current_user_id, user_id):
+        return self.chat_repository.create(current_user_id, user_id)
+
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)
         previews = []
@@ -288,9 +317,13 @@ class DataFacade:
             user_with = self.user_repository.get_user_by_id(chat.user_with)
             user_with_username = user_with.username
             user_with_id = user_with.user_id
-            last_message = last_msg.msg_text
-            from_user = self.user_repository.get_user_by_id(last_msg.msg_from).username
-            time = last_msg.msg_date
+            from_user = self.user_repository.get_user_by_id(chat.user_with).username
+            last_message = ''
+            time = ''
+            if last_msg:
+                from_user = self.user_repository.get_user_by_id(last_msg.msg_from).username
+                last_message = last_msg.msg_text
+                time = last_msg.msg_date
 
             previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id).to_dict())
         return json.dumps({"chats": previews}, default=str, ensure_ascii=False)

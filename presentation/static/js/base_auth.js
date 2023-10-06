@@ -12,11 +12,13 @@ window.addEventListener('mousemove', function(e) {
 
 let div_main = document.getElementsByClassName('chats')[0]
 
+setTimeout(() => {
 $.ajax({
   url: '/get_chats',
   method: 'post',
   dataType: 'json',
   success: function(json_data){
+    console.log(json_data)
     json_data.chats.sort(
             function (a, b){
               return new Date(b.time) - new Date(a.time)
@@ -26,8 +28,12 @@ $.ajax({
       let div = add_element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id)
       div_main.appendChild(div)
     }
+  },
+  error: function(json_data){
+    console.log(json_data.responseText)
   }
 });
+}, 400)
 
 
 function add_element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id) {
@@ -173,6 +179,9 @@ $.ajax({
         data: JSON.stringify({"msg_text": input.value, "msg_to": user_with_id}),
         success: function(data){
           input.value = ""
+        },
+        error: function(data){
+          console.log(data.responseText);
         }
       });
     }

@@ -18,6 +18,12 @@ logic = LogicFacade(session)
 chat_bp = Blueprint('chat', __name__)
 
 
+@chat_bp.route('/start_dialog/<int:user_id>', methods=['POST'])
+def handle_start_chat(user_id):
+    logic.chats_start_dialog(current_user.get_id(), user_id)
+    return redirect(f'/messages')
+
+
 @chat_bp.route('/get_chats', methods=['POST'])
 def handle_get_chats():
     return logic.chats_get_user_chats_preview(current_user.get_id())

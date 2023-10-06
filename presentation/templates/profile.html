@@ -43,6 +43,13 @@
                                             </div>
                                         </form>
                                 {% endif %}
+                                {% if not is_me %}
+                                    <form method="POST" action="/start_dialog/{{user.user_id}}">
+                                        <div id="div_element_button">
+                                            <button class="btn btn-outline-dark btn-rounded lang" id="write_message" key="write_message" style="display: inline-block;">Написать сообщение</button>
+                                        </div>
+                                    </form>
+                                {% endif %}
                                 {% if is_me and not is_admin %}
                                     <form action="/add_admin/{{user.user_id}}">
                                         <div id="div_element_button">
@@ -60,7 +67,7 @@
 
                             </div>
                             <div class="card-footer border-0 bg-light  d-flex justify-content-around" >
-                                <button class="btn btn-link m-0 text-reset lang" key="info" data-mdb-toggle="modal" data-mdb-target="#exampleModal"  role="button" data-ripple-color="primary">Подробнее<i class="fas fa-envelope ms-2"></i></button>
+                                <button class="btn btn-link m-0 text-reset"  data-mdb-toggle="modal" data-mdb-target="#exampleModal"  role="button" data-ripple-color="primary"><text class="lang" key="info">Подробнее</text><i class="fas fa-envelope ms-2"></i></button>
                             </div>
                         </div>
                     </div>

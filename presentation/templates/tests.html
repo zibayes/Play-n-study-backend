@@ -32,14 +32,20 @@
                 <div class="row">
                     {% for unit_test in unit.tests %}
                         <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
+                            {% if unit_test.test.avatar == None %}
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');" id="{{unit.unit_id}}">
+                            {% elif unit_test.unit_type == "test" %}
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/testava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                            {% elif unit_test.unit_type == "article" %}
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/articleava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                            {% endif %}
                                 <div class="card-body text-white">
-                                    <h5 class="card-title">{{unit_test.test.content.name}}</h5>
+                                    <h5 class="card-title" style="text-shadow: 2px 2px 2px black;">{{unit_test.test.content.name}}</h5>
                                     <p class="card-text">
-                                        {% if unit_test.unit_type == "test" %}
-                                        <text class="lang" key="test_desc">Ответьте на вопросы и получите приз</text>
+                                        {% if unit_test.test.description != None %}
+                                            <div style="text-shadow: 2px 2px 2px black; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{unit_test.test.description}}</div>
                                         {% else %}
-                                        <text class="lang" key="article_desc">Прочтите статью и съешьте конфетку</text>
+                                            <text class="lang" key="desc" style="text-shadow: 2px 2px 2px black;">Описание</text>
                                         {% endif %}
                                     </p>
                                     <div class="d-flex justify-content-between">
@@ -47,13 +53,13 @@
                                             <form action="/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
-                                                        <button class="btn btn-outline-light lang" key="test" id="test-button" disabled>Тест</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="test-button" disabled>Тест</button>
                                                     {% else %}
-                                                        <button class="btn btn-outline-light lang" key="test" id="lection-button">Тест</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="lection-button">Тест</button>
                                                     {% endif %}
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
-                                                    <button class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
+                                                    <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
                                                 {% endif %}
 
                                             </form>
@@ -61,13 +67,13 @@
                                             <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
-                                                        <button class="btn btn-outline-light lang" key="article" id="lection-button" disabled>Статья</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="article" id="lection-button" disabled>Статья</button>
                                                     {% else %}
-                                                        <button class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
                                                     {% endif %}
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
-                                                    <button class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
+                                                    <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
                                                 {% endif %}
                                             </form>
                                         {% endif %}

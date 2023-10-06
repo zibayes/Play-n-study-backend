@@ -7,12 +7,12 @@
 {% block content %}
 <div class="d-flex justify-content-center">
     <div class="container border border-1 rounded m-5" style="background-color: white;" id="main-container">
-        <!-- <form action="" method="POST"> -->
+        <form action="/update_course/{{course.course_id}}" enctype="multipart/form-data" method="POST" id="sendingForm">
             <span class="fs-5 row m-3 justify-content-start lang" key="course_editing">Редактирование курса</span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
                 <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
-            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
                 <li class="breadcrumb-item active lang" key="course_editing" aria-current="page">Редактирование курса</li>
               </ol>
             </nav>
@@ -22,10 +22,9 @@
                 <textarea required style="margin-top: 8px;" class="form-control toSend langp" key="course_cat" maxlength="1000" placeholder="Категория" name="courseCat" rows="1">{{ course.category }}</textarea>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
                     <img class="border border-2 rounded w-100" src="/courseava/{{ course.course_id }}" style="max-width: 290px; margin: 0 auto;">
-                    <form action="/upload_course_ava/{{ course.course_id }}" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
+                    <div style="max-width: 290px; margin: 0 auto;">
                         <input type="file" name="file" class="form-control" id="customFile" />
-                        <a><button class="btn border border-2 w-100 lang" key="changeava" type="submit">Сменить аватар</button></a>
-                    </form>
+                    </div>
                 </div>
             </span>
             <div class="row border" id="units_list">
@@ -33,7 +32,7 @@
                     <div id="unit-{{unit.unit_id}}" class="unit_div">
                         <div class="row border"></div>
                         <span class="fw-bolder fs-5 row m-3 justify-content-center lang">
-                            <form style="display: flex;">
+                            <div style="display: flex;">
                                 <textarea required class="form-control toSend langp" key="unit_name" maxlength="1000" placeholder="Название раздела" name="unitName-{{unit.unit_id}}" rows="1" id="{{ unit.name }}">{{ unit.name }}</textarea>
                                 <div style="height: 30px; justify-content: center; display: flex;">
                                     <img src="../static/img/drag_n_drop.png" style="height: 40px; transform: rotate(90deg);" draggable="true" id="{{unit.unit_id}}" class="dnd-units">
@@ -41,7 +40,7 @@
                                 <button type="button" id="delete-unit-button" style="background: transparent; border: transparent;" data-mdb-target="#delete-{{unit.unit_id}}" data-mdb-toggle="modal">
                                     <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
                                 </button>
-                            </form>
+                            </div>
                         </span>
                         <div class="row border"></div>
                         <br>
@@ -49,37 +48,41 @@
                             <div class="row" id="unit_tests-{{unit.unit_id}}">
                                 {% for unit_test in unit.tests %}
                                     <div class="col-lg-4 col-md-6 mb-4 test_div toSend-{{unit.unit_id}} {{unit_test.unit_type}}-{{ unit_test.test.test_id }}" id="unit_test-{{ unit_test.test.test_id }}">
-                                        <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');" id="{{unit.unit_id}}">
+                                        {% if unit_test.test.avatar == None %}
+                                            <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');" id="{{unit.unit_id}}">
+                                        {% elif unit_test.unit_type == "test" %}
+                                            <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/testava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                                        {% elif unit_test.unit_type == "article" %}
+                                            <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/articleava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                                        {% endif %}
                                             <div class="card-body text-white">
                                                 <div style="position:absolute; top:-2px; left:185px; height: 30px; justify-content: center; display: flex;" id="dnd-{{ unit_test.test.test_id }}" class="{{ unit_test.test.test_id }}" draggable="true" >
                                                     <img src="../static/img/drag_n_drop.png" style="height: 35px;" class="dnd {{ unit_test.test.test_id }}" id="{{ unit_test.test.test_id }}">
                                                 </div>
-                                                <h5 class="card-title">{{unit_test.test.content.name}}</h5>
-                                                <form style="position:absolute;top:8px; right:8px">
+                                                <h5 class="card-title" style="text-shadow: 2px 2px 2px black;">{{unit_test.test.content.name}}</h5>
+                                                <div style="position:absolute;top:8px; right:8px">
                                                     <button id="delete-button" style="background: transparent; border: transparent;" type="button" data-mdb-target="#deleteTest-{{unit_test.test_id}}" data-mdb-toggle="modal">
                                                         <img src="https://cdn-icons-png.flaticon.com/512/9790/9790368.png" width="35px;" >
                                                     </button>
-                                                </form>
+                                                </div>
+                                                <input hidden="hidden" name="task-{{unit_test.unit_type}}-{{unit_test.test.test_id}}" value="{{unit_test.unit_type}}-{{unit_test.test.test_id}}">
                                                 <p class="card-text">
-                                                    {% if unit_test.unit_type == "test" %}
-                                                    <text class="lang" key="test_desc">Ответьте на вопросы и получите приз</text>
+                                                    {% if unit_test.test.description != None %}
+                                                        <div style="text-shadow: 2px 2px 2px black; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{unit_test.test.description}}</div>
                                                     {% else %}
-                                                    <text class="lang" key="article_desc">Прочтите статью и съешьте конфетку</text>
+                                                        <text class="lang" key="desc" style="text-shadow: 2px 2px 2px black;">Описание</text>
                                                     {% endif %}
+
                                                 </p>
                                                 <div class="d-flex justify-content-between">
                                                     {% if unit_test.unit_type == "test" %}
-                                                        <button disabled class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
-                                                        <form action="/course_editor/{{course.course_id}}/tests_check/{{unit_test.test.test_id}}">
-                                                            <button class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
-                                                        </form>
-                                                        <form action="/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}">
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" disabled class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/tests_check/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/tests_edit/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% else %}
-                                                        <button disabled class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
-                                                        <form action="/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}">
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" disabled class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/article_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% endif %}
-                                                        <button class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
-                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,7 +90,7 @@
                                 {% endfor %}
                                 <div class="col-lg-4 col-md-6 mb-4">
                                     <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
-                                        <button class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addTask-{{unit.unit_id}}" data-mdb-toggle="modal">
+                                        <button type="button" class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addTask-{{unit.unit_id}}" data-mdb-toggle="modal">
                                             <h1 style="font-size: 84px; text-align: center;">+</h1>
                                         </button>
                                     </div>
@@ -100,7 +103,7 @@
             <div class="row border" id="insert-place"></div>
             <br>
             <div class="mb-2 bg-image card shadow-1-strong" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');">
-                <button class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addUnit" data-mdb-toggle="modal">
+                <button type="button" class="card-body text-white" style="background: transparent; border: transparent;" data-mdb-target="#addUnit" data-mdb-toggle="modal">
                     <h1 style="font-size: 84px; text-align: center;">+</h1>
                 </button>
             </div>
@@ -112,9 +115,7 @@
                             onclick="submitForm()">
                             Сохранить курс
             </button>
-        <form action="/update_course/{{course.course_id}}" method="POST" id="sendingForm">
         </form>
-        <!-- </form> -->
     </div>
 </div>
 

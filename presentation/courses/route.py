@@ -40,7 +40,9 @@ def handle_tests(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
+                article = logic.article_get_by_id(test.test_id)
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None),
+                                 description=article.description, avatar=article.avatar)
             for progress in progresses:
                 if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                     results[str(test.test_id) + test.unit_type] = progress.progress['completed']
@@ -319,7 +321,8 @@ def handle_course_editor(course_id):
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
             else:
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
+                article = logic.article_get_by_id(test.test_id)
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None), description=article.description, avatar=article.avatar)
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
@@ -345,6 +348,8 @@ def handle_update_course(course_id):
     course.name = structure.pop('courseName')
     course.description = structure.pop('courseDesc')
     course.category = structure.pop('courseCat')
+    if request.files['file']:
+        course.avatar = logic.upload_course_avatar(request.files['file'], current_user)
     new_units_order = []
     for unit_name, task in structure.items():
         if 'unitName' in unit_name:
@@ -366,6 +371,26 @@ def handle_update_course(course_id):
         unit['tests'] = new_tests_order
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/upload_test_ava/<int:course_id>/<int:test_id>', methods=["POST", "GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_upload_test_ava(course_id, test_id):
+    if request.method == 'POST':
+        logic.upload_test_avatar(request.files['file'], current_user, test_id)
+    return redirect(f'/course_editor/{course_id}/tests_edit/{test_id}')
+
+
+@login_required
+@courses_bp.route('/upload_article_ava/<int:course_id>/<int:article_id>', methods=["POST", "GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_upload_article_ava(course_id, article_id):
+    if request.method == 'POST':
+        logic.upload_article_avatar(request.files['file'], current_user, article_id)
+    return redirect(f'/course_editor/{course_id}/article_editor/{article_id}')
 
 
 @login_required
@@ -414,6 +439,9 @@ def handle_test_constructor(course_id, unit_id):
 @check_subscriber_access(current_user)
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
+    test_id = logic.data.get_last_test_by_course(course_id).test_id
+    if request.files['file']:
+        logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')
@@ -427,6 +455,7 @@ def handle_result_test(course_id, unit_id):
 def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
+    print(article.description)
     course = logic.get_course(course_id, user.user_id)
     unit_name = None
     article_name = None
@@ -447,7 +476,15 @@ def handle_article_update(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
-    article = Article(article_id=article_id, course_id=course_id, content=article_text)
+    unit_id = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == article_id and test.unit_type == 'article':
+                unit_id = unit['unit_id']
+    avatar = logic.article_get_by_id(article_id).avatar
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
     unit_id = None
     for unit in course.content['body']:
         for test in unit['tests']:
@@ -480,8 +517,12 @@ def handle_article_constructor(course_id, unit_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_article_save(course_id, unit_id):
+    print(request.form)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
-    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text)
+    avatar = None
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, description=request.form['articleDesc'], avatar=avatar)
     response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'])
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -559,7 +600,6 @@ def handle_load_article(course_id, article_id):
 @check_subscriber_access(current_user)
 def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
-    print(test.content.toJSON())
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = None
@@ -567,7 +607,7 @@ def handle_edit_test(course_id, test_id):
         for test_ in unit['tests']:
             if test_.test_id == test_id and test_.unit_type == 'test':
                 unit_name = unit['name']
-    return render_template('test_editor.html', user=user, test=test.content, course=course, unit_name=unit_name)
+    return render_template('test_editor.html', user=user, test_id=test_id, test_tmp=test, test=test.content, course=course, unit_name=unit_name)
 
 
 @login_required
@@ -582,6 +622,9 @@ def handle_edit_test_save(course_id, test_id):
             if test.test_id == test_id and test.unit_type == 'test':
                 unit_id = unit['unit_id']
     response = logic.edit_test(request.form, test_id, course_id, unit_id)
+    if request.files['file']:
+        print(request.files['file'])
+        logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении теста', 'error')
