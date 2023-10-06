@@ -134,3 +134,12 @@ def msg_db_to_msg(message):
 
 def message_db_to_message(x):
     return None
+
+
+def link_db_to_link(link: Type[LinksModel]):
+    return Link(link_id=link.link_id,
+                   course_id=link.course_id,
+                   avatar=link.avatar,
+                   name=link.name,
+                   unit_id=link.unit_id,
+                   link=link.link)

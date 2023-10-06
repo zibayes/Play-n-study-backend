@@ -8,11 +8,11 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Test, Article
+from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from markdown import markdown
-from access import check_curator_access, check_subscriber_access, check_test_access, check_article_access
+from access import check_curator_access, check_subscriber_access, check_test_access, check_article_access, check_link_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -39,10 +39,15 @@ def handle_tests(course_id):
         for test in unit['tests']:
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
-            else:
+            elif test.unit_type == 'article':
                 article = logic.article_get_by_id(test.test_id)
                 test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None),
                                  description=article.description, avatar=article.avatar)
+            elif test.unit_type == 'link':
+                link = logic.link_get_by_id(test.test_id)
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None), avatar=link.avatar, description=link.link)
+            elif test.unit_type == 'file_attach':
+                pass
             for progress in progresses:
                 if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                     results[str(test.test_id) + test.unit_type] = progress.progress['completed']
@@ -320,9 +325,14 @@ def handle_course_editor(course_id):
         for test in unit['tests']:
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
-            else:
+            elif test.unit_type == 'article':
                 article = logic.article_get_by_id(test.test_id)
                 test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None), description=article.description, avatar=article.avatar)
+            elif test.unit_type == 'link':
+                link = logic.link_get_by_id(test.test_id)
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None), description=link.link, avatar=link.avatar)
+            elif test.unit_type == 'file_attach':
+                pass
     if course is None:
         return render_template('index.html', user=user)
     return render_template('course_editor.html', user=user, course=course)
@@ -455,7 +465,6 @@ def handle_result_test(course_id, unit_id):
 def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
-    print(article.description)
     course = logic.get_course(course_id, user.user_id)
     unit_name = None
     article_name = None
@@ -493,7 +502,7 @@ def handle_article_update(course_id, article_id):
     response = logic.update_article(article, course_id, unit_id, request.form['articleName'])
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
-    flash('Ошибка при сохранении теста', 'error')
+    flash('Ошибка при сохранении статьи', 'error')
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -517,7 +526,6 @@ def handle_article_constructor(course_id, unit_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_article_save(course_id, unit_id):
-    print(request.form)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     avatar = None
     if request.files['file']:
@@ -540,8 +548,85 @@ def handle_create_task(course_id, unit_id):
     task_type = request.form['TaskType']
     if task_type == 'test':
         return redirect(url_for('courses.handle_test_constructor', course_id=course_id, unit_id=unit_id))
-    else:
+    elif task_type == 'article':
         return redirect(url_for('courses.handle_article_constructor', course_id=course_id, unit_id=unit_id))
+    elif task_type == 'link':
+        return redirect(url_for('courses.handle_link_constructor', course_id=course_id, unit_id=unit_id))
+    elif task_type == 'file_attach':
+        return redirect(url_for('courses.handle_article_constructor', course_id=course_id, unit_id=unit_id))
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/link_constructor/<int:unit_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_link_constructor(course_id, unit_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    for unit in course.content['body']:
+        if unit_id == unit['unit_id']:
+            unit_name = unit['name']
+    return render_template('link_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/link_editor/<int:link_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_link_editor(course_id, link_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = None
+    unit_id = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == link_id and test.unit_type == 'link':
+                unit_name = unit['name']
+                unit_id = unit['unit_id']
+    link = logic.link_get_by_id(link_id)
+    return render_template('link_editor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name, link=link)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/link_editor/<int:link_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_link_update(course_id, link_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    unit_id = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.test_id == link_id and test.unit_type == 'link':
+                unit_id = unit['unit_id']
+    avatar = logic.link_get_by_id(link_id).avatar
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    link = Link(link_id=link_id, course_id=course_id, unit_id=unit_id, name=request.form['linkName'], link=request.form['link'], avatar=avatar)
+    response = logic.update_link(link)
+    if response == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении ссылки', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/link_constructor/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_link_save(course_id, unit_id):
+    avatar = None
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    link = Link(link_id=None, course_id=course_id, unit_id=unit_id, name=request.form['linkName'], link=request.form['link'], avatar=avatar)
+    response = logic.link_add_link(link, course_id, unit_id)
+    if response[1] == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении ссылки', 'error')
+    return redirect(f'/course_editor/{course_id}')
 
 
 @login_required
@@ -718,6 +803,25 @@ def handle_check_article(course_id, article_id):
                             content=None, test_id=article_id, result=None)
         logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='article', task_id=article_id, progress=Progress.to_json(progress))
     return redirect(f'/course/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/link/<int:link_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_link_access(current_user)
+def handle_use_link(course_id, link_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
+    need_to_add = True
+    for progress in progresses:
+        if progress.progress['type'] == 'link' and int(progress.progress['test_id']) == link_id:
+            need_to_add = False
+    if need_to_add is True:
+        progress = Progress(progress_id=None, completed=True, type='link',
+                            content=None, test_id=link_id, result=None)
+        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='link', task_id=link_id, progress=Progress.to_json(progress))
+    link = logic.link_get_by_id(link_id)
+    return redirect(link.link)
 
 
 @login_required

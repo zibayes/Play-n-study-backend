@@ -50,6 +50,17 @@ def unauthorized():
     return render_template('index.html')
 
 
+@app.route('/linkava/<int:link_id>')
+@login_required
+def handle_link_ava(link_id):
+    img = logic.link_get_avatar(app, link_id)
+    if not img:
+        return ""
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
+
 @app.route('/articleava/<int:article_id>')
 @login_required
 def handle_article_ava(article_id):

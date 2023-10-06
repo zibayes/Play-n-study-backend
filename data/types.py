@@ -488,3 +488,23 @@ class ChatPreview:
             "chat_id": self.chat_id
         }
 
+
+class Link:
+    def __init__(self, link_id, course_id, unit_id, name, link, avatar=None):
+        self.link_id = link_id
+        self.course_id = course_id
+        self.unit_id = unit_id
+        self.avatar = avatar
+        self.name = name
+        self.link = link
+
+
+class FileAttach:
+    def __init__(self, attach_id, course_id, unit_id, name, description=None, avatar=None, content=None):
+        self.attach_id = attach_id
+        self.course_id = course_id
+        self.unit_id = unit_id
+        self.avatar = avatar
+        self.name = name
+        self.description = description
+        self.content = content

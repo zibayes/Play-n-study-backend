@@ -894,6 +894,79 @@ class ChatMessageRepository:
             print("Error " + str(e))
             return False
 
+    def remove_message(self, msg_id) -> bool:
+        try:
+            self.session.query(ChatMessagesModel) \
+                .filter_by(msg_id=msg_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления сообщения :" + str(e))
+            return False
 
 
+class LinksRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_link(self, link: Link):
+        try:
+            new_link = LinksModel(
+                course_id=link.course_id,
+                unit_id=link.unit_id,
+                avatar=link.avatar,
+                name=link.name,
+                link=link.link
+            )
+            self.session.add(new_link)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления раздела в БД " + str(e))
+
+    def get_link_by_id(self, link_id):
+        link_db = self.session.query(LinksModel) \
+            .filter_by(link_id=link_id) \
+            .first()
+        return convert.link_db_to_link(link_db)
+
+    def get_all_course_links(self, course_id):
+        links_db = self.session.query(LinksModel) \
+            .filter_by(course_id=course_id)
+        return convert.link_db_to_link(links_db)
+
+    def get_last_link_by_course(self, course_id):
+        link_db = self.session.query(LinksModel) \
+            .filter_by(course_id=course_id) \
+            .order_by(LinksModel.link_id.desc()) \
+            .first()
+        return convert.link_db_to_link(link_db)
+
+    def update_link(self, link: Link) -> bool:
+        try:
+            link_to_update = self.session.query(LinksModel) \
+                .filter_by(link_id=link.link_id) \
+                .first()
+            link_to_update.course_id = link.course_id
+            link_to_update.unit_id = link.unit_id
+            link_to_update.avatar = link.avatar
+            link_to_update.name = link.name
+            link_to_update.link = link.link
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления ссылки в БД " + str(e))
+            return False
+
+    def remove_link(self, link_id) -> bool:
+        try:
+            self.session.query(LinksModel) \
+                .filter_by(link_id=link_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления ссылки :" + str(e))
+            return False
 

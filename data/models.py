@@ -336,3 +336,20 @@ class ChatMessagesModel(Base):
 @event.listens_for(ChatMessagesModel, "after_insert")
 def get_message(mapped_class, base_connection, chat_message):
     return mapped_class, base_connection, chat_message
+
+
+class LinksModel(Base):
+    __tablename__ = 'links'
+    link_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    unit_id = Column(Integer)
+    avatar = Column(LargeBinary)
+    name = Column(Text)
+    link = Column(Text)
+
+    def __init__(self, course_id, unit_id, name, link, avatar=None):
+        self.course_id = course_id
+        self.unit_id = unit_id
+        self.avatar = avatar
+        self.name = name
+        self.link = link

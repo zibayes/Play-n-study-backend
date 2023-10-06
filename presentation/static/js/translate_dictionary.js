@@ -477,6 +477,13 @@ export let arrLang = {
 
     "test_desc": "Описание теста",
     "article_desc": "Описание статьи",
+
+    "link": "Ссылка",
+    "file_attach": "Файл",
+
+    "link_name": "Название ссылки",
+    "link_constructor": "Конструктор ссылок",
+    "save_link": "Сохранить ссылку",
   },
   'de': {
     'mainpage': 'Startseite',

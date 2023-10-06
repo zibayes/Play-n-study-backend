@@ -222,6 +222,9 @@ class LogicFacade:
         else:
             return False
 
+    def link_get_avatar(self, app, link_id):
+        return self.data.link_get_avatar(app, link_id)
+
     def article_get_avatar(self, app, article_id):
         return self.data.article_get_avatar(app, article_id)
 
@@ -295,6 +298,33 @@ class LogicFacade:
     def remove_article(self, article_id):
         return self.data.remove_article(article_id)
 
+    def link_add_link(self, link, course_id, unit_id):
+        if self.data.link_add_link(link):
+            link = self.data.get_last_link_by_course(course_id)
+            course = self.data.course_get_by_id(course_id)
+            for unit in course.content['body']:
+                if int(unit['unit_id']) == unit_id:
+                    unit['tests'].append(CourseUnit(unit_type='link', test_id=link.link_id))
+            self.data.update_course(course)
+            return tuple(['Ссылка успешно сохранена', 'success'])
+        else:
+            return tuple(['Ошибка при сохранении ссылки', 'error'])
+
+    def link_get_by_id(self, link_id):
+        return self.data.link_get_by_id(link_id)
+
+    def link_get_all_by_course_id(self, course_id):
+        return self.data.link_get_all_by_course_id(course_id)
+
+    def get_last_link_by_course(self, link_id):
+        return self.data.get_last_link_by_course(link_id)
+
+    def update_link(self, link):
+        return self.data.update_link(link)
+
+    def remove_link(self, link_id):
+        return self.data.remove_link(link_id)
+
     def course_get_for_preview(self, course_id, user_id):
         course = self.course_get_by_id(course_id)
         rel = self.data.course_rel_repository.get_one_by_user_and_course_ids(user_id, course_id)
@@ -365,6 +395,9 @@ class LogicFacade:
 
     def chats_get_dialog(self, user_id, chat_id):
         return self.data.chat_get_dialog(user_id, chat_id)
+
+    def remove_message(self, msg_id):
+        return self.data.remove_message(msg_id)
 
     def chats_send_message(self, req_json, user_id):
         # if chat exists -> send message, else create_chat -> send_message

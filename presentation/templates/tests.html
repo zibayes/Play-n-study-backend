@@ -38,6 +38,10 @@
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/testava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                             {% elif unit_test.unit_type == "article" %}
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/articleava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                            {% elif unit_test.unit_type == "link" %}
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/linkava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                            {% elif unit_test.unit_type == "file_attach" %}
+                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/fileava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                             {% endif %}
                                 <div class="card-body text-white">
                                     <h5 class="card-title" style="text-shadow: 2px 2px 2px black;">{{unit_test.test.content.name}}</h5>
@@ -55,7 +59,7 @@
                                                     {%  if notAllowed.value > 0 %}
                                                         <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="test-button" disabled>Тест</button>
                                                     {% else %}
-                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="lection-button">Тест</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
                                                     {% endif %}
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
@@ -63,7 +67,7 @@
                                                 {% endif %}
 
                                             </form>
-                                        {% else %}
+                                        {% elif unit_test.unit_type == "article" %}
                                             <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
@@ -74,6 +78,32 @@
                                                     {% set notAllowed.value = notAllowed.value + 1 %}
                                                 {% else %}
                                                     <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="article" id="lection-button">Статья</button>
+                                                {% endif %}
+                                            </form>
+                                        {% elif unit_test.unit_type == "link" %}
+                                            <form action="/course/{{course.course_id}}/link/{{unit_test.test.test_id}}">
+                                                {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
+                                                    {%  if notAllowed.value > 0 %}
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="link" id="lection-button" disabled>Ссылка</button>
+                                                    {% else %}
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="link" id="lection-button">Ссылка</button>
+                                                    {% endif %}
+                                                    {% set notAllowed.value = notAllowed.value + 1 %}
+                                                {% else %}
+                                                    <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="link" id="lection-button">Ссылка</button>
+                                                {% endif %}
+                                            </form>
+                                        {% elif unit_test.unit_type == "file_attach" %}
+                                            <form action="/course/{{course.course_id}}/file_attach/{{unit_test.test.test_id}}">
+                                                {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
+                                                    {%  if notAllowed.value > 0 %}
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="file_attach" id="lection-button" disabled>Файл</button>
+                                                    {% else %}
+                                                        <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="file_attach" id="lection-button">Файл</button>
+                                                    {% endif %}
+                                                    {% set notAllowed.value = notAllowed.value + 1 %}
+                                                {% else %}
+                                                    <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="file_attach" id="lection-button">Файл</button>
                                                 {% endif %}
                                             </form>
                                         {% endif %}

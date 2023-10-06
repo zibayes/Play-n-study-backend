@@ -17,6 +17,7 @@ class DataFacade:
         self.sub_rel_repository = SubRelRepository(session)
         self.test_repository = TestRepository(session)
         self.articles_repository = ArticlesRepository(session)
+        self.links_repository = LinksRepository(session)
         self.user_progress_repository = UserProgressRepository(session)
         self.role_repository = RoleRepository(session)
         self.chat_repository = ChatRepository(session)
@@ -171,6 +172,34 @@ class DataFacade:
             return user
         return user
 
+    '''
+    def file_attach_get_avatar(self, app, attach_id):
+        img = None
+        file_attach = self.file_attach_repository.get_file_attach_by_id(attach_id)
+        if not file_attach.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = file_attach.avatar
+        return img
+    '''
+
+    def link_get_avatar(self, app, link_id):
+        img = None
+        link = self.links_repository.get_link_by_id(link_id)
+        if not link.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = link.avatar
+        return img
+
     def article_get_avatar(self, app, article_id):
         img = None
         article = self.articles_repository.get_article_by_id(article_id)
@@ -252,6 +281,24 @@ class DataFacade:
     def remove_article(self, article_id):
         return self.articles_repository.remove_article(article_id)
 
+    def link_get_by_id(self, link_id):
+        return self.links_repository.get_link_by_id(link_id)
+
+    def link_get_all_by_course_id(self, course_id):
+        return self.links_repository.get_all_course_links(course_id)
+
+    def link_add_link(self, link):
+        return self.links_repository.add_link(link)
+
+    def get_last_link_by_course(self, link_id):
+        return self.links_repository.get_last_link_by_course(link_id)
+
+    def update_link(self, link):
+        return self.links_repository.update_link(link)
+
+    def remove_link(self, link_id):
+        return self.links_repository.remove_link(link_id)
+
     def add_progress(self, user_progress):
         return self.user_progress_repository.add_progress(user_progress)
 
@@ -306,6 +353,9 @@ class DataFacade:
     def chats_start_dialog(self, current_user_id, user_id):
         return self.chat_repository.create(current_user_id, user_id)
 
+    def remove_message(self, msg_id):
+        return self.chat_messages_repository.remove_message(msg_id)
+
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)
         previews = []
@@ -348,9 +398,11 @@ class DataFacade:
         for message in messages:
             msg = message.to_dict()
             if msg['msg_from'] == user_id:
-                msg['msg_from'] = "Я: "
+                msg['msg_from'] = "Я"
+                msg['msg_from_id'] = user_id
             else:
-                msg['msg_from'] = user_with.username + ": "
+                msg['msg_from'] = user_with.username
+                msg['msg_from_id'] = user_with.user_id
             msg.pop('msg_to')
             msgs.append(msg)
 
