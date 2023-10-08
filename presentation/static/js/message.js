@@ -49,7 +49,6 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
           contentType: 'application/json',
           data: JSON.stringify({"chat_id": chat_id}),
           success: function (data) {
-              console.log(data)
                 ul_chat_item.innerHTML = ''
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)

@@ -359,10 +359,16 @@ class DataFacade:
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)
         previews = []
-        if chats == None:
+        current_user = self.get_user_by_id(user_id)
+        if chats is None:
             return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
         for chat in chats:
             last_msg = self.chat_messages_repository.get_last_chat_message_by_id(chat.chat_id)
+            messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat.chat_id)
+            msg_new_count = 0
+            for msg in messages:
+                if msg.user_to_read and msg.msg_to == current_user.username:
+                    msg_new_count += 1
 
             user_with = self.user_repository.get_user_by_id(chat.user_with)
             user_with_username = user_with.username
@@ -375,7 +381,7 @@ class DataFacade:
                 last_message = last_msg.msg_text
                 time = last_msg.msg_date
 
-            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id).to_dict())
+            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id, msg_new_count).to_dict())
         return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
 
     def chat_get_dialog(self, user_id, chat_id):

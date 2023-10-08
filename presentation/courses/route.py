@@ -1,4 +1,3 @@
-import copy
 import random
 import time
 import json
@@ -11,6 +10,8 @@ from sqlalchemy.orm import sessionmaker
 from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach
 from logic.test import TestResult
 from logic.facade import LogicFacade
+from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
+    delete_unit_task, get_test, get_test_result, course_update, get_course_summary, get_test_preview, check_test_over
 from markdown import markdown
 from access import check_curator_access, check_subscriber_access, check_test_access, check_article_access, check_link_access
 
@@ -30,29 +31,10 @@ courses_bp = Blueprint('courses', __name__)
 @courses_bp.route('/course/<int:course_id>')
 @check_subscriber_access(current_user)
 def handle_tests(course_id):
-    course = logic.get_course(course_id, current_user.get_id())
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-    results = {}
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.unit_type == 'test':
-                test.test = logic.get_test_by_id(test.test_id)
-            elif test.unit_type == 'article':
-                article = logic.article_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None),
-                                 description=article.description, avatar=article.avatar)
-            elif test.unit_type == 'link':
-                link = logic.link_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None), avatar=link.avatar, description=link.link)
-            elif test.unit_type == 'file_attach':
-                pass
-            for progress in progresses:
-                if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                    results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-    if course is None:
-        return render_template('index.html', user=user)
+    data = get_tests_data(course_id)
+    if not isinstance(data, tuple):
+        render_template('index.html', user=data)
+    user, course, results, _ = data
     return render_template('tests.html', user=user, course=course, results=results)
 
 
@@ -60,55 +42,11 @@ def handle_tests(course_id):
 @courses_bp.route('/course/<int:course_id>/summary')
 @check_subscriber_access(current_user)
 def handle_course_summary(course_id):
-    course = logic.get_course(course_id, current_user.get_id())
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    if course is None:
-        return render_template('index.html', user=user)
-    progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-    results = {}
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.unit_type == 'test':
-                test.test = logic.get_test_by_id(test.test_id)
-            else:
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
-            for progress in progresses:
-                if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                    results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-
-    marks = {}
-    max_marks = {}
-    units_max = {}
-    units_cur = {}
-    for progress in progresses:
-        if progress.progress['result']:
-            progress.progress['result'] = TestResult.from_json(json.loads(progress.progress['result']))
-            if (str(progress.progress['test_id'])+progress.progress['type']) not in marks.keys():
-                marks[str(progress.progress['test_id']) + progress.progress['type']] = []
-                max_marks[str(progress.progress['test_id']) + progress.progress['type']] = progress.progress['result'].total_score
-            marks[str(progress.progress['test_id'])+progress.progress['type']].append(progress.progress['result'].total_current_score)
-    for key in marks.keys():
-        marks[key] = max(marks[key])
-    total = sum(marks.values())
-    total_max = sum(max_marks.values())
-
-    for unit in course.content['body']:
-        first_time = True
-        for test in unit['tests']:
-            for progress in progresses:
-                if progress.progress['result']:
-                    if (str(test.test_id) + test.unit_type) == (str(progress.progress['test_id']) + progress.progress['type']):
-                        if first_time:
-                            units_max[unit['unit_id']] = 0
-                            first_time = False
-                        if unit['unit_id'] not in units_cur.keys():
-                            units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
-                            units_max[unit['unit_id']] += progress.progress['result'].total_score
-                        else:
-                            if units_cur[unit['unit_id']] < progress.progress['result'].total_current_score:
-                                units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
-
+    data = get_tests_data(course_id)
+    if not isinstance(data, tuple):
+        render_template('index.html', user=data)
+    user, course, results, progresses = data
+    units_cur, units_max, marks, max_marks, total, total_max = get_course_summary(course, progresses)
     return render_template('course_summary.html', user=user, course=course, results=results, units_cur=units_cur,
                            units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max)
 
@@ -139,61 +77,9 @@ def handle_test_preview(course_id, test_id):
     user_id = current_user.get_id()
     course = logic.get_course(test.course_id, user_id)
     user = logic.get_user_by_id(user_id)
-
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
-
+    unit_name = get_unit_name(course, test_id, 'test')
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-    to_delete = []
-    max_score = 0
-    max_score_total = 0
-    for i in range(len(progress)):
-        if int(progress[i].progress['test_id']) != test_id or not progress[i].progress['result']:
-            to_delete.append(i)
-        else:
-            progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
-            if progress[i].progress['result'].total_current_score > max_score:
-                max_score = progress[i].progress['result'].total_current_score
-                max_score_total = progress[i].progress['result'].total_score
-    for i in reversed(to_delete):
-        progress.pop(i)
-
-    leaders = logic.get_progress_by_course_id_all(course_id)
-    leaders_to_show = {}
-    leaders_total_score = {}
-    leaders_hrefs = {}
-    graphic_data = {}
-    friends = {}
-    subs = logic.get_user_for_subscriptions(user_id).sub_to
-    if subs:
-        subs = [user.username for user in subs]
-    for i in range(len(leaders)):
-        if int(leaders[i].progress['test_id']) == test_id and leaders[i].progress['result']:
-            leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
-            user_for_table = logic.get_user_by_id(leaders[i].user_id).username
-            if user_for_table not in leaders_to_show.keys():
-                leaders_to_show[user_for_table] = []
-                leaders_hrefs[user_for_table] = leaders[i].user_id
-                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
-                if subs and user_for_table in subs or user_for_table == user.username:
-                    friends[user_for_table] = []
-            leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
-            if leaders_to_show[user_for_table][-1] == max(leaders_to_show[user_for_table]):
-                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
-
-            if subs and user_for_table in subs or user_for_table == user.username:
-                friends[user_for_table].append(leaders[i].progress['result'].total_current_score)
-    for key in leaders_to_show.keys():
-        leaders_to_show[key] = max(leaders_to_show[key])
-        if key in friends.keys():
-            friends[key] = max(friends[key])
-        if leaders_to_show[key] not in graphic_data.keys():
-            graphic_data[leaders_to_show[key]] = 0
-        graphic_data[leaders_to_show[key]] += 1
-
+    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_test_preview(progress, course_id, test_id, user)
     return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
                            progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
                            leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
@@ -204,27 +90,7 @@ def handle_test_preview(course_id, test_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_delete_test(course_id, test_id):
-    user_id = current_user.get_id()
-    course = logic.get_course(course_id, user_id)
-    index_to_delete = 0
-    inner_index_to_delete = 0
-    is_break = False
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if int(test.test_id) == test_id:
-                is_break = True
-                break
-            inner_index_to_delete += 1
-        if is_break:
-            break
-        inner_index_to_delete = 0
-        index_to_delete += 1
-    course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
-    logic.update_course(course)
-    progresses = logic.get_progress_by_course_id_all(course.course_id)
-    for progress in progresses:
-        if int(progress.progress['test_id']) == test_id:
-            logic.remove_progress(progress.up_id)
+    delete_unit_task(course_id, test_id)
     logic.remove_test(test_id)
     return redirect(f'/course_editor/{course_id}')
 
@@ -234,27 +100,7 @@ def handle_delete_test(course_id, test_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_delete_article(course_id, article_id):
-    user_id = current_user.get_id()
-    course = logic.get_course(course_id, user_id)
-    index_to_delete = 0
-    inner_index_to_delete = 0
-    is_break = False
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if int(test.test_id) == article_id:
-                is_break = True
-                break
-            inner_index_to_delete += 1
-        if is_break:
-            break
-        inner_index_to_delete = 0
-        index_to_delete += 1
-    course.content['body'][index_to_delete]['tests'].pop(inner_index_to_delete)
-    logic.update_course(course)
-    progresses = logic.get_progress_by_course_id_all(course.course_id)
-    for progress in progresses:
-        if int(progress.progress['test_id']) == article_id:
-            logic.remove_progress(progress.up_id)
+    delete_unit_task(course_id, article_id)
     logic.remove_article(article_id)
     return redirect(f'/course_editor/{course_id}')
 
@@ -301,8 +147,10 @@ def handle_delete_course(course_id):
                     logic.remove_progress(progress.up_id)
             if test.unit_type == 'test':
                 logic.remove_test(test.test_id)
-            else:
+            elif test.unit_type == 'article':
                 logic.remove_article(test.test_id)
+            elif test.unit_type == 'link':
+                logic.remove_link(test.test_id)
     rels = logic.get_course_rels_all(course.course_id)
     for rel in rels:
         logic.course_leave(rel.course_id, rel.user_id)
@@ -318,23 +166,10 @@ def handle_delete_course(course_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_course_editor(course_id):
-    course = logic.get_course(course_id, current_user.get_id())
-    user_id = current_user.get_id()
-    user = logic.get_user_by_id(user_id)
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.unit_type == 'test':
-                test.test = logic.get_test_by_id(test.test_id)
-            elif test.unit_type == 'article':
-                article = logic.article_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None), description=article.description, avatar=article.avatar)
-            elif test.unit_type == 'link':
-                link = logic.link_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None), description=link.link, avatar=link.avatar)
-            elif test.unit_type == 'file_attach':
-                pass
-    if course is None:
-        return render_template('index.html', user=user)
+    data = get_tests_data(course_id)
+    if not isinstance(data, tuple):
+        render_template('index.html', user=data)
+    user, course, _, _ = data
     return render_template('course_editor.html', user=user, course=course)
 
 
@@ -353,64 +188,10 @@ def handle_course_editor_save_unit(course_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_update_course(course_id):
-    structure = request.form.to_dict()
     course = logic.get_course(course_id, current_user.get_id())
-    course.name = structure.pop('courseName')
-    course.description = structure.pop('courseDesc')
-    course.category = structure.pop('courseCat')
-    if request.files['file']:
-        course.avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    new_units_order = []
-    for unit_name, task in structure.items():
-        if 'unitName' in unit_name:
-            for unit in course.content['body']:
-                if unit_name == 'unitName-' + str(unit['unit_id']):
-                    new_units_order.append(unit)
-    course.content['body'] = new_units_order
-    for unit in course.content['body']:
-        unit['name'] = structure.pop('unitName-' + str(unit['unit_id'])).replace("'", '"').replace("`", '"').replace('"', '\"')
-        new_tests_order = []
-        for unit_name, task in structure.items():
-            if 'unitName' in unit_name:
-                break
-            task_type = task[:task.index('-')]
-            task_id = task[task.index('-') + 1:]
-            for test in unit['tests']:
-                if test.unit_type == task_type and test.test_id == int(task_id):
-                    new_tests_order.append(test)
-        unit['tests'] = new_tests_order
+    course_update(course, request)
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
-
-
-@login_required
-@courses_bp.route('/upload_test_ava/<int:course_id>/<int:test_id>', methods=["POST", "GET"])
-@check_curator_access(current_user)
-@check_subscriber_access(current_user)
-def handle_upload_test_ava(course_id, test_id):
-    if request.method == 'POST':
-        logic.upload_test_avatar(request.files['file'], current_user, test_id)
-    return redirect(f'/course_editor/{course_id}/tests_edit/{test_id}')
-
-
-@login_required
-@courses_bp.route('/upload_article_ava/<int:course_id>/<int:article_id>', methods=["POST", "GET"])
-@check_curator_access(current_user)
-@check_subscriber_access(current_user)
-def handle_upload_article_ava(course_id, article_id):
-    if request.method == 'POST':
-        logic.upload_article_avatar(request.files['file'], current_user, article_id)
-    return redirect(f'/course_editor/{course_id}/article_editor/{article_id}')
-
-
-@login_required
-@courses_bp.route('/upload_course_ava/<int:course_id>', methods=["POST", "GET"])
-@check_curator_access(current_user)
-@check_subscriber_access(current_user)
-def handle_upload(course_id):
-    if request.method == 'POST':
-        logic.upload_course_avatar(request.files['file'], current_user, course_id)
-    return redirect(f'/course_preview/{course_id}')
 
 
 @login_required
@@ -435,10 +216,7 @@ def handle_course_create(user_id):
 def handle_test_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        if unit_id == unit['unit_id']:
-            unit_name = unit['name']
+    unit_name = get_unit_name_by_id(course, unit_id)
     return render_template('test_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
                            course=course, unit_name=unit_name)
 
@@ -466,13 +244,7 @@ def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
-    unit_name = None
-    article_name = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == article_id and test.unit_type == 'article':
-                article_name = test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
-                unit_name = unit['name']
+    unit_name, article_name = get_unit_name(course, article_id, 'article')
     return render_template('article_editor.html', user=user, course_id=course_id, course=course,
                            article=article, article_name=article_name, unit_name=unit_name)
 
@@ -485,20 +257,11 @@ def handle_article_update(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
-    unit_id = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == article_id and test.unit_type == 'article':
-                unit_id = unit['unit_id']
+    unit_id = get_unit_id(course, article_id, 'article')
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
-    unit_id = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == article_id and test.unit_type == 'article':
-                unit_id = unit['unit_id']
     response = logic.update_article(article, course_id, unit_id, request.form['articleName'])
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -513,10 +276,7 @@ def handle_article_update(course_id, article_id):
 def handle_article_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        if unit_id == unit['unit_id']:
-            unit_name = unit['name']
+    unit_name = get_unit_name_by_id(course, unit_id)
     return render_template('article_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
                            course=course, unit_name=unit_name)
 
@@ -563,10 +323,7 @@ def handle_create_task(course_id, unit_id):
 def handle_link_constructor(course_id, unit_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        if unit_id == unit['unit_id']:
-            unit_name = unit['name']
+    unit_name = get_unit_name_by_id(course, unit_id)
     return render_template('link_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
                            course=course, unit_name=unit_name)
 
@@ -578,13 +335,8 @@ def handle_link_constructor(course_id, unit_id):
 def handle_link_editor(course_id, link_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    unit_id = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == link_id and test.unit_type == 'link':
-                unit_name = unit['name']
-                unit_id = unit['unit_id']
+    unit_id = get_unit_id(course, link_id, 'link')
+    unit_name = get_unit_name_by_id(course, unit_id)
     link = logic.link_get_by_id(link_id)
     return render_template('link_editor.html', user=user, course_id=course_id, unit_id=unit_id,
                            course=course, unit_name=unit_name, link=link)
@@ -597,11 +349,7 @@ def handle_link_editor(course_id, link_id):
 def handle_link_update(course_id, link_id):
     user_id = current_user.get_id()
     course = logic.get_course(course_id, user_id)
-    unit_id = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == link_id and test.unit_type == 'link':
-                unit_id = unit['unit_id']
+    unit_id = get_unit_id(course, link_id, 'link')
     avatar = logic.link_get_by_id(link_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
@@ -636,25 +384,9 @@ def handle_link_save(course_id, unit_id):
 def handle_load_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
-    total_score = 0
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
-    for question in test.content.questions:
-        if question.score:
-            total_score += question.score
-        if question.shuffle == 'on':
-            random.shuffle(question.answers)
-        question.ask = markdown(question.ask)
-        if question.answers:
-            for i in range(len(question.answers)):
-                if question.type not in ('filling_gaps', 'drag_to_text'):
-                    question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
-                        list(question.answers[i].keys())[0]]
-                    del question.answers[i][list(question.answers[i].keys())[0]]
+    unit_name = get_unit_name(course, test_id, 'test')
+    total_score, _ = get_test(test)
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
                            course=course, unit_name=unit_name, test_id=test_id)
 
@@ -668,13 +400,7 @@ def handle_load_article(course_id, article_id):
     article.content = markdown(article.content)
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
-    article_name = None
-    unit_name = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == article_id and test.unit_type == 'article':
-                article_name = test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
-                unit_name = unit['name']
+    unit_name, article_name = get_unit_name(course, article_id, 'article')
     return render_template('preview_article.html', user=user, course=course, article=article,
                            article_name=article_name, unit_name=unit_name)
 
@@ -687,11 +413,7 @@ def handle_edit_test(course_id, test_id):
     test = logic.get_test_by_id(test_id=test_id)
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
+    unit_name = get_unit_name(course, test_id, 'test')
     return render_template('test_editor.html', user=user, test_id=test_id, test_tmp=test, test=test.content, course=course, unit_name=unit_name)
 
 
@@ -701,11 +423,7 @@ def handle_edit_test(course_id, test_id):
 @check_subscriber_access(current_user)
 def handle_edit_test_save(course_id, test_id):
     course = logic.get_course(course_id, current_user.get_id())
-    unit_id = None
-    for unit in course.content['body']:
-        for test in unit['tests']:
-            if test.test_id == test_id and test.unit_type == 'test':
-                unit_id = unit['unit_id']
+    unit_id = get_unit_id(course, test_id, 'test')
     response = logic.edit_test(request.form, test_id, course_id, unit_id)
     if request.files['file']:
         print(request.files['file'])
@@ -725,62 +443,13 @@ def handle_check_test(course_id, test_id):
     user = logic.get_user_by_id(current_user.get_id())
     result = logic.get_test_result(test, request.form)
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
-    completed = True
-    for question in test.content.questions:
-        question.ask = markdown(question.ask)
-        if question.answers:
-            for i in range(len(question.answers)):
-                question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
-                    list(question.answers[i].keys())[0]]
-                del question.answers[i][list(question.answers[i].keys())[0]]
-        if question.current_score is None:
-            completed = False
+    unit_name = get_unit_name(course, test_id, 'test')
+    _, completed = get_test(test)
     progress = Progress(progress_id=None, completed=completed, type='test',
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
     logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='test', task_id=test_id, progress=Progress.to_json(progress))
 
-    users_progress = logic.get_progress_by_course_id_all(course_id)
-    users_progress_max = {}
-    for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id and users_progress[i].progress['result']:
-            users_progress[i].progress['result'] = TestResult.from_json(
-                json.loads(users_progress[i].progress['result']))
-            if users_progress[i].user_id not in users_progress_max.keys():
-                users_progress_max[users_progress[i].user_id] = []
-            users_progress_max[users_progress[i].user_id].append(
-                users_progress[i].progress['result'].total_current_score)
-    for key in users_progress_max.keys():
-        users_progress_max[key] = max(users_progress_max[key])
-    for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id and users_progress[i].progress['result']:
-            if users_progress_max[users_progress[i].user_id] == users_progress[i].progress['result'].total_current_score:
-                users_progress_max[users_progress[i].user_id] = users_progress[i]
-                users_progress_max[users_progress[i].user_id].progress['content'] = \
-                    TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
-
-    user_progress = TestContent.from_json(progress.content)
-    percents_for_tasks = {}
-    for value in users_progress_max.values():
-        for i in range(len(value.progress['content'].questions)):
-            is_identical = True
-            for j in range(len(value.progress['content'].questions[i].answers)):
-                if value.progress['content'].questions[i].answers[j] != user_progress.questions[i].answers[j]:
-                    is_identical = False
-            if value.progress['content'].questions[i].ask not in percents_for_tasks.keys():
-                percents_for_tasks[value.progress['content'].questions[i].ask] = 0
-            if is_identical:
-                percents_for_tasks[value.progress['content'].questions[i].ask] += 1
-
-    for key in percents_for_tasks.keys():
-        percents_for_tasks[key] -= 1
-        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1 if len(users_progress_max.keys()) > 1 else 1
-        percents_for_tasks[key] *= 100
-        percents_for_tasks[key] = round(percents_for_tasks[key], 2)
+    percents_for_tasks, _ = get_test_result(course_id, test_id, progress)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=test.content, score=result.total_score, test_id=test_id,
                            total_score=result.total_current_score, result=result.result, total_time=result.total_time,
@@ -831,52 +500,11 @@ def handle_use_link(course_id, link_id):
 def handle_show_test_result(course_id, test_id, progress_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
+    unit_name = get_unit_name(course, test_id, 'test')
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
-
-    users_progress = logic.get_progress_by_course_id_all(course_id)
-    users_progress_max = {}
-    for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id:
-            users_progress[i].progress['result'] = TestResult.from_json(json.loads(users_progress[i].progress['result']))
-            if users_progress[i].user_id not in users_progress_max.keys():
-                users_progress_max[users_progress[i].user_id] = []
-            users_progress_max[users_progress[i].user_id].append(users_progress[i].progress['result'].total_current_score)
-    for key in users_progress_max.keys():
-        users_progress_max[key] = max(users_progress_max[key])
-    for i in range(len(users_progress)):
-        if int(users_progress[i].progress['test_id']) == test_id:
-            if users_progress_max[users_progress[i].user_id] == users_progress[i].progress['result'].total_current_score:
-                users_progress_max[users_progress[i].user_id] = users_progress[i]
-                users_progress_max[users_progress[i].user_id].progress['content'] = \
-                    TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
-
-    user_progress = TestContent.from_json(progress.progress['content'])
-
-    percents_for_tasks = {}
-    for value in users_progress_max.values():
-        for i in range(len(value.progress['content'].questions)):
-            is_identical = True
-            for j in range(len(value.progress['content'].questions[i].answers)):
-                if value.progress['content'].questions[i].answers[j] != user_progress.questions[i].answers[j]:
-                    is_identical = False
-            if value.progress['content'].questions[i].ask not in percents_for_tasks.keys():
-                percents_for_tasks[value.progress['content'].questions[i].ask] = 0
-            if is_identical:
-                percents_for_tasks[value.progress['content'].questions[i].ask] += 1
-
-    for key in percents_for_tasks.keys():
-        percents_for_tasks[key] -= 1
-        percents_for_tasks[key] /= len(users_progress_max.keys()) - 1  if len(users_progress_max.keys()) > 1 else 1
-        percents_for_tasks[key] *= 100
-        percents_for_tasks[key] = round(percents_for_tasks[key], 2)
-
+    percents_for_tasks, user_progress = get_test_result(course_id, test_id, progress)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_result.html', user=user, test=user_progress, percents_for_tasks=percents_for_tasks,
                            score=result.total_score, total_score=result.total_current_score, test_id=test_id,
@@ -912,11 +540,7 @@ def handle_test_check_preview(course_id, test_id):
             if username not in users.values():
                 users[progress[i].user_id] = username
 
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
+    unit_name = get_unit_name(course, test_id, 'test')
     return render_template('test_check_preview.html', user=user, test=test, course=course, progresses=progress,
                            users=users, unit_name=unit_name)
 
@@ -932,11 +556,7 @@ def handle_test_check(course_id, test_id, progress_id):
     progress.progress = Progress.from_json(progress.progress)
     result = TestResult.from_json(json.loads(progress.progress['result']))
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name = None
-    for unit in course.content['body']:
-        for test_ in unit['tests']:
-            if test_.test_id == test_id and test_.unit_type == 'test':
-                unit_name = unit['name']
+    unit_name = get_unit_name(course, test_id, 'test')
     test = TestContent.from_json(progress.progress['content'])
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
     return render_template('test_check.html', user=user, test=test,
@@ -950,39 +570,8 @@ def handle_test_check(course_id, test_id, progress_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_test_check_over(course_id, test_id, progress_id):
-    user = logic.get_user_by_id(current_user.get_id())
     progress = logic.get_progress_by_id(progress_id)
-    progress.progress = Progress.from_json(progress.progress)
-    progress.progress['content'] = TestContent.from_json(progress.progress['content'])
-    test = copy.deepcopy(progress.progress['content'])
-    result = TestResult.from_json(json.loads(progress.progress['result']))
-    comments = request.form.to_dict()
-    for key, value in comments.items():
-        if 'score-' not in key:
-            progress.progress['content'].questions[int(key) - 1].comment = value
-        else:
-            if value.isdigit():
-                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = int(value)
-            elif value:
-                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = float(value)
-            else:
-                progress.progress['content'].questions[int(key[key.index('-')+1:]) - 1].current_score = None
-    new_current_score = 0
-    completed = True
-    for question in progress.progress['content'].questions:
-        if question.current_score is not None:
-            new_current_score += question.current_score
-        else:
-            completed = False
-    progress.progress['completed'] = completed
-    result.total_current_score = new_current_score
-    new_result = round(new_current_score / result.total_score * 100, 2)
-    result.result = new_result
-    progress.progress['result'] = result.to_json()
-    progress.progress['content'] = progress.progress['content'].toJSON()
-    progress.progress = Progress.to_json(Progress(None, progress.progress['test_id'], progress.progress['type'],
-                                                  progress.progress['completed'], progress.progress['result'],
-                                                  progress.progress['content']))
+    check_test_over(progress, request)
     logic.update_progress(progress)
     return redirect(f'/course_editor/{course_id}/tests_check/{test_id}')
     #return render_template('test_check.html', user=user, test=test,
@@ -1041,7 +630,6 @@ def handle_rate_course(course_id):
 @courses_bp.route('/course_preview/<int:course_id>/reviews')
 def handle_reviews(course_id):
     reviews = logic.get_reviews_by_course_id(course_id)
-    user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course_without_rel(course_id)
     users_for_review = {}
     if reviews:

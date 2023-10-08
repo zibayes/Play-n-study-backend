@@ -325,13 +325,15 @@ class ChatMessagesModel(Base):
     msg_date = Column(TIMESTAMP, onupdate=func.now(), server_default=func.now())
     msg_from = Column(Integer, ForeignKey("users.user_id"))
     msg_to = Column(Integer, ForeignKey("users.user_id"))
+    user_to_read = Column(Boolean, default=False)
 
-    def __init__(self, chat_id, msg_text, msg_date, msg_from, msg_to):
+    def __init__(self, chat_id, msg_text, msg_date, msg_from, msg_to, user_to_read):
         self.chat_id = chat_id
         self.msg_text = msg_text
         self.msg_date = msg_date
         self.msg_from = msg_from
         self.msg_to = msg_to
+        self.user_to_read = user_to_read
 
 @event.listens_for(ChatMessagesModel, "after_insert")
 def get_message(mapped_class, base_connection, chat_message):

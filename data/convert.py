@@ -129,7 +129,8 @@ def msg_db_to_msg(message):
                        msg_text=message.msg_text,
                        msg_date=message.msg_date,
                        msg_from=message.msg_from,
-                       msg_to=message.msg_to)
+                       msg_to=message.msg_to,
+                       user_to_read=message.user_to_read)
 
 
 def message_db_to_message(x):

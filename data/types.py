@@ -442,20 +442,22 @@ class Progress:
 
 
 class ChatMessage:
-    def __init__(self, msg_id, chat_id, msg_text, msg_date, msg_from, msg_to):
+    def __init__(self, msg_id, chat_id, msg_text, msg_date, msg_from, msg_to, user_to_read):
         self.msg_id = msg_id
         self.chat_id = chat_id
         self.msg_text = msg_text
         self.msg_date = msg_date
         self.msg_from = msg_from
         self.msg_to = msg_to
+        self.user_to_read = user_to_read
 
     def to_dict(self):
         return {
             "msg_text": self.msg_text,
             "msg_date": self.msg_date,
             "msg_from": self.msg_from,
-            "msg_to": self.msg_to
+            "msg_to": self.msg_to,
+            "user_to_read": self.user_to_read
         }
 
 
@@ -468,7 +470,7 @@ class Chat:
 
 
 class ChatPreview:
-    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id):
+    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id, msg_new_count):
         self.user_with = user_with
         self.last_message = last_message
         self.from_who = from_who
@@ -476,6 +478,7 @@ class ChatPreview:
         self.user_with_id = user_with_id
         self.checked = checked
         self.chat_id = chat_id
+        self.msg_new_count = msg_new_count
 
     def to_dict(self):
         return {
@@ -485,7 +488,8 @@ class ChatPreview:
             "time": self.time,
             "user_with_id": self.user_with_id,
             "checked": self.checked,
-            "chat_id": self.chat_id
+            "chat_id": self.chat_id,
+            "msg_new_count": self.msg_new_count
         }
 
 

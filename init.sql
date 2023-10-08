@@ -129,7 +129,7 @@ CREATE TABLE users_progress(
     up_id serial PRIMARY KEY ,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
-	task_id int NOT NULL, -- NEW! (TASK = ARTICLE/TEST)
+	task_id int NOT NULL, -- NEW! (TASK = ARTICLE/TEST/LINK)
 	task_type text, -- NEW!
 	date_of_completion timestamp DEFAULT now(), -- NEW!
     progress json
@@ -165,6 +165,7 @@ CREATE TABLE chat_messages(
     msg_text text,
     msg_date timestamp DEFAULT now(),
     msg_from int REFERENCES users(user_id),
-    msg_to int REFERENCES users(user_id)
+    msg_to int REFERENCES users(user_id),
+	user_to_read boolean DEFAULT FALSE -- NEW!
 );
 
