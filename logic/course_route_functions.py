@@ -100,7 +100,20 @@ def get_test(test):
         if question.score:
             total_score += question.score
         if question.shuffle == 'on':
-            random.shuffle(question.answers)
+            if question.type == 'compliance':
+                answers = {}
+                for item in question.answers:
+                    answers = dict(list(answers.items()) + list(item.items()))
+                question.answers = answers
+                # question.answers = dict(list(question.answers.items()) + list(question.answers.items()))
+                question.answers = dict(zip(question.answers, random.sample(list(question.answers.values()),
+                                           len(question.answers))))
+                answers = []
+                for item in question.answers.items():
+                    answers.append({item[0]: item[1]})
+                question.answers = answers
+            else:
+                random.shuffle(question.answers)
         question.ask = markdown(question.ask)
         if question.answers:
             for i in range(len(question.answers)):
