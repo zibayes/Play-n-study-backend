@@ -13,7 +13,8 @@ from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
     delete_unit_task, get_test, get_test_result, course_update, get_course_summary, get_test_preview, check_test_over
 from markdown import markdown
-from access import check_curator_access, check_subscriber_access, check_test_access, check_article_access, check_link_access
+from access import check_curator_access, check_subscriber_access, check_test_access, \
+    check_article_access, check_link_access, check_file_attach_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -262,7 +263,7 @@ def handle_article_update(course_id, article_id):
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
-    response = logic.update_article(article, course_id, unit_id, request.form['articleName'])
+    response = logic.update_article(article, course_id, unit_id, request.form['articleName'], 'article')
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении статьи', 'error')
@@ -291,10 +292,10 @@ def handle_article_save(course_id, unit_id):
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, description=request.form['articleDesc'], avatar=avatar)
-    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'])
+    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'], 'article')
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
-    flash('Ошибка при сохранении теста', 'error')
+    flash('Ошибка при сохранении статьи', 'error')
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -313,7 +314,7 @@ def handle_create_task(course_id, unit_id):
     elif task_type == 'link':
         return redirect(url_for('courses.handle_link_constructor', course_id=course_id, unit_id=unit_id))
     elif task_type == 'file_attach':
-        return redirect(url_for('courses.handle_article_constructor', course_id=course_id, unit_id=unit_id))
+        return redirect(url_for('courses.handle_file_attach_constructor', course_id=course_id, unit_id=unit_id))
 
 
 @login_required
@@ -375,6 +376,83 @@ def handle_link_save(course_id, unit_id):
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении ссылки', 'error')
     return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_constructor/<int:unit_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_constructor(course_id, unit_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = get_unit_name_by_id(course, unit_id)
+    return render_template('file_attach_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_constructor/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_save(course_id, unit_id):
+    article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
+    avatar = None
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text,
+                      description=request.form['articleDesc'], avatar=avatar)
+    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'], 'file_attach')
+    if response[1] == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении задания с прикреплением файла', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_editor/<int:article_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_editor(course_id, article_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    article = logic.article_get_by_id(article_id)
+    course = logic.get_course(course_id, user.user_id)
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    return render_template('file_attach_editor.html', user=user, course_id=course_id, course=course,
+                           article=article, article_name=article_name, unit_name=unit_name)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_editor/<int:article_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_update(course_id, article_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
+    unit_id = get_unit_id(course, article_id, 'file_attach')
+    avatar = logic.article_get_by_id(article_id).avatar
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
+    response = logic.update_article(article=article, course_id=course_id, unit_id=unit_id, article_name=request.form['articleName'], task_type='file_attach')
+    if response == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении задания', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/file_attach/<int:article_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_file_attach_access(current_user)
+def handle_load_file_attach(course_id, article_id):
+    article = logic.article_get_by_id(article_id)
+    article.content = markdown(article.content)
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    return render_template('preview_file_attach.html', user=user, course=course, article=article,
+                           article_name=article_name, unit_name=unit_name)
 
 
 @login_required

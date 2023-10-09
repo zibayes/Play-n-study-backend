@@ -91,6 +91,7 @@
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/link_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% elif unit_test.unit_type == "file_attach" %}
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" disabled class="btn btn-outline-light lang" key="file_attach" id="lection-button">Файл</button>
+                                                    <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/tests_check/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/file_attach_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% endif %}
                                                 </div>
@@ -154,7 +155,7 @@
                         <label for="checkbox-article" class="lang" key="article" style="margin-left: 5px; font-size: 20px;">Статья</label>
                         <input id="checkbox-link" type="radio" name="TaskType" value="link" style="margin-left: 20px;">
                         <label for="checkbox-link" class="lang" key="link" style="margin-left: 5px; font-size: 20px;">Ссылка</label>
-                        <input id="checkbox-file" type="radio" name="TaskType" value="file" style="margin-left: 20px;">
+                        <input id="checkbox-file" type="radio" name="TaskType" value="file_attach" style="margin-left: 20px;">
                         <label for="checkbox-file" class="lang" key="file_attach" style="margin-left: 5px; font-size: 20px;">Файл</label>
                     </div>
                   <div class="modal-footer">

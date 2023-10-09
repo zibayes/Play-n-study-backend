@@ -36,12 +36,10 @@
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp');" id="{{unit.unit_id}}">
                             {% elif unit_test.unit_type == "test" %}
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/testava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
-                            {% elif unit_test.unit_type == "article" %}
+                            {% elif unit_test.unit_type in ("article", "file_attach") %}
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/articleava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                             {% elif unit_test.unit_type == "link" %}
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/linkava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
-                            {% elif unit_test.unit_type == "file_attach" %}
-                                <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/fileava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                             {% endif %}
                                 <div class="card-body text-white">
                                     <h5 class="card-title" style="text-shadow: 2px 2px 2px black;">{{unit_test.test.content.name}}</h5>
@@ -65,7 +63,6 @@
                                                 {% else %}
                                                     <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="test" id="test-button">Тест</button>
                                                 {% endif %}
-
                                             </form>
                                         {% elif unit_test.unit_type == "article" %}
                                             <form action="/course/{{course.course_id}}/article/{{unit_test.test.test_id}}">

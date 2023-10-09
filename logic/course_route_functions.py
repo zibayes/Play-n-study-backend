@@ -19,27 +19,28 @@ session = Session()
 
 logic = LogicFacade(session)
 
+
 def specify_tests_for_view(course, course_id, progresses=None):
     results = {}
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.unit_type == 'test':
                 test.test = logic.get_test_by_id(test.test_id)
-            elif test.unit_type == 'article':
+            elif test.unit_type in ('article', 'file_attach'):
                 article = logic.article_get_by_id(test.test_id)
                 test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None),
                                  description=article.description, avatar=article.avatar)
             elif test.unit_type == 'link':
                 link = logic.link_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None), avatar=link.avatar, description=link.link)
-            elif test.unit_type == 'file_attach':
-                pass
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None),
+                                 avatar=link.avatar, description=link.link)
             if progresses:
                 for progress in progresses:
                     if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
                         results[str(test.test_id) + test.unit_type] = progress.progress['completed']
     if progresses:
         return results
+
 
 def get_tests_data(course_id):
     course = logic.get_course(course_id, current_user.get_id())
@@ -51,24 +52,28 @@ def get_tests_data(course_id):
     results = specify_tests_for_view(course, course_id, progresses)
     return user, course, results, progresses
 
+
 def get_unit_name(course, task_id, task_type):
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == task_id and test.unit_type == task_type:
-                if task_type == 'article':
+                if task_type in ('article', 'file_attach'):
                     return unit['name'], test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
                 return unit['name']
+
 
 def get_unit_name_by_id(course, unit_id):
     for unit in course.content['body']:
         if unit_id == unit['unit_id']:
             return unit['name']
 
+
 def get_unit_id(course, task_id, task_type):
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == task_id and test.unit_type == task_type:
                 return unit['unit_id']
+
 
 def delete_unit_task(course_id, task_id):
     user_id = current_user.get_id()
@@ -93,6 +98,7 @@ def delete_unit_task(course_id, task_id):
         if int(progress.progress['test_id']) == task_id:
             logic.remove_progress(progress.up_id)
 
+
 def get_test(test):
     total_score = 0
     completed = True
@@ -107,7 +113,7 @@ def get_test(test):
                 question.answers = answers
                 # question.answers = dict(list(question.answers.items()) + list(question.answers.items()))
                 question.answers = dict(zip(question.answers, random.sample(list(question.answers.values()),
-                                           len(question.answers))))
+                                                                            len(question.answers))))
                 answers = []
                 for item in question.answers.items():
                     answers.append({item[0]: item[1]})
@@ -124,6 +130,7 @@ def get_test(test):
         if question.current_score is None:
             completed = False
     return total_score, completed
+
 
 def get_test_result(course_id, test_id, progress):
     users_progress = logic.get_progress_by_course_id_all(course_id)
@@ -166,6 +173,7 @@ def get_test_result(course_id, test_id, progress):
         percents_for_tasks[key] = round(percents_for_tasks[key], 2)
     return percents_for_tasks, user_progress
 
+
 def course_update(course, request):
     structure = request.form.to_dict()
     course.name = structure.pop('courseName')
@@ -193,6 +201,7 @@ def course_update(course, request):
                 if test.unit_type == task_type and test.test_id == int(task_id):
                     new_tests_order.append(test)
         unit['tests'] = new_tests_order
+
 
 def get_course_summary(course, progresses):
     marks = {}
@@ -231,6 +240,7 @@ def get_course_summary(course, progresses):
                                 'result'].total_current_score:  # TODO: Проверить корректность данного алгоритма
                                 units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
     return units_cur, units_max, marks, max_marks, total, total_max
+
 
 def get_test_preview(progress, course_id, test_id, user):
     to_delete = []
@@ -280,6 +290,7 @@ def get_test_preview(progress, course_id, test_id, user):
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
     return max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends
+
 
 def check_test_over(progress, request):
     progress.progress = Progress.from_json(progress.progress)
