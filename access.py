@@ -114,43 +114,15 @@ def check_test_access(current_user):
     def decorator(func):
         def wrapper(course_id, test_id, *args, **kwargs):
             user_id = current_user.get_id()
-
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            results = {}
-            first_task = None
-            test_name = None
-            for unit in course.content['body']:
-                for test in unit['tests']:
-                    if test.unit_type == 'test':
-                        test.test = logic.get_test_by_id(test.test_id)
-                        if test_id == test.test_id:
-                            test_name = test.test.content.name
-                    elif test.unit_type == 'article':
-                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
-                    if first_task is None:
-                        first_task = str(test.test_id) + test.unit_type
-                    for progress in progresses:
-                        if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                            results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-                        elif str(test.test_id) + test.unit_type not in results.keys():
-                            results[str(test.test_id) + test.unit_type] = False
-            if str(test_id) + 'test' in results.keys() and results[str(test_id) + 'test']:
+            access, task_name = get_progress(course, progresses, test_id, 'test')
+            if access:
                 return func(course_id, test_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
-                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к тесту «" + test_name + "»"
-            if not results and not (first_task[-4:] == 'test' and int(first_task[:-4]) == test_id):
-                return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                       need_subscription=False, not_enough=True)
-            not_allowed = False
-            for key, value in results.items():
-                if key[-4:] == 'test' and int(key[:-4]) == test_id and not_allowed:
-                    return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                           need_subscription=False, not_enough=True)
-                if not value:
-                    not_allowed = True
-
-            return func(course_id, test_id, *args, **kwargs)
+                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к тесту «" + task_name + "»"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False, not_enough=True)
 
         wrapper.__name__ = func.__name__
         return wrapper
@@ -162,45 +134,15 @@ def check_article_access(current_user):
     def decorator(func):
         def wrapper(course_id, article_id, *args, **kwargs):
             user_id = current_user.get_id()
-
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            results = {}
-            first_task = None
-            article_name = None
-            for unit in course.content['body']:
-                for test in unit['tests']:
-                    if test.unit_type == 'test':
-                        test.test = logic.get_test_by_id(test.test_id)
-                    elif test.unit_type == 'article':
-                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
-                        if article_id == test.test_id:
-                            article_name = test.article_name
-                    if first_task is None:
-                        first_task = str(test.test_id) + test.unit_type
-                    for progress in progresses:
-                        if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                            results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-                        elif str(test.test_id) + test.unit_type not in results.keys():
-                            results[str(test.test_id) + test.unit_type] = False
-            if str(article_id) + 'article' in results.keys() and results[str(article_id) + 'article']:
+            access, task_name = get_progress(course, progresses, article_id, 'article')
+            if access:
                 return func(course_id, article_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
-                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к статье «" + article_name + "»"
-            if not results and not (first_task[-7:] == 'article' and int(first_task[:-7]) == article_id):
-                return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                       need_subscription=False, not_enough=True)
-            not_allowed = False
-            for key, value in results.items():
-                print(key, value)
-                if key[-7:] == 'article' and int(key[:-7]) == article_id and not_allowed:
-                    return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                           need_subscription=False, not_enough=True)
-                if not value:
-                    not_allowed = True
-
-            return func(course_id, article_id, *args, **kwargs)
-
+                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к статье «" + task_name + "»"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False, not_enough=True)
         wrapper.__name__ = func.__name__
         return wrapper
 
@@ -211,45 +153,15 @@ def check_link_access(current_user):
     def decorator(func):
         def wrapper(course_id, link_id, *args, **kwargs):
             user_id = current_user.get_id()
-
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            results = {}
-            first_task = None
-            link_name = None
-            for unit in course.content['body']:
-                for test in unit['tests']:
-                    if test.unit_type == 'test':
-                        test.test = logic.get_test_by_id(test.test_id)
-                    elif test.unit_type == 'link':
-                        link = logic.link_get_by_id(test.test_id)
-                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None))
-                        if link_id == test.test_id:
-                            link_name = link.name
-                    if first_task is None:
-                        first_task = str(test.test_id) + test.unit_type
-                    for progress in progresses:
-                        if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                            results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-                        elif str(test.test_id) + test.unit_type not in results.keys():
-                            results[str(test.test_id) + test.unit_type] = False
-            if str(link_id) + 'link' in results.keys() and results[str(link_id) + 'link']:
+            access, task_name = get_progress(course, progresses, link_id, 'link')
+            if access:
                 return func(course_id, link_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
-                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к ссылке «" + link_name + "»"
-            if not results and not (first_task[-7:] == 'link' and int(first_task[:-7]) == link_id):
-                return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                       need_subscription=False, not_enough=True)
-            not_allowed = False
-            for key, value in results.items():
-                print(key, value)
-                if key[-4:] == 'link' and int(key[:-4]) == link_id and not_allowed:
-                    return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                           need_subscription=False, not_enough=True)
-                if not value:
-                    not_allowed = True
-
-            return func(course_id, link_id, *args, **kwargs)
+                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к ссылке «" + task_name + "»"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False, not_enough=True)
 
         wrapper.__name__ = func.__name__
         return wrapper
@@ -260,45 +172,46 @@ def check_file_attach_access(current_user):
     def decorator(func):
         def wrapper(course_id, article_id, *args, **kwargs):
             user_id = current_user.get_id()
-
-            course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            results = {}
-            first_task = None
-            article_name = None
-            for unit in course.content['body']:
-                for test in unit['tests']:
-                    if test.unit_type == 'test':
-                        test.test = logic.get_test_by_id(test.test_id)
-                    elif test.unit_type == 'file_attach':
-                        test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None))
-                        if article_id == test.test_id:
-                            article_name = test.article_name
-                    if first_task is None:
-                        first_task = str(test.test_id) + test.unit_type
-                    for progress in progresses:
-                        if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
-                            results[str(test.test_id) + test.unit_type] = progress.progress['completed']
-                        elif str(test.test_id) + test.unit_type not in results.keys():
-                            results[str(test.test_id) + test.unit_type] = False
-            if str(article_id) + 'file_attach' in results.keys() and results[str(article_id) + 'file_attach']:
+            course = logic.get_course_without_rel(course_id)
+            access, task_name = get_progress(course, progresses, article_id, 'file_attach')
+            if access:
                 return func(course_id, article_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
-                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к заданию «" + article_name + "»"
-            if not results and not (first_task[-11:] == 'file_attach' and int(first_task[:-11]) == article_id):
-                return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                       need_subscription=False, not_enough=True)
-            not_allowed = False
-            for key, value in results.items():
-                if key[-7:] == 'file_attach' and int(key[:-7]) == article_id and not_allowed:
-                    return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                           need_subscription=False, not_enough=True)
-                if not value:
-                    not_allowed = True
-
-            return func(course_id, article_id, *args, **kwargs)
+                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к заданию «" + task_name + "»"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False, not_enough=True)
 
         wrapper.__name__ = func.__name__
         return wrapper
 
     return decorator
+
+
+def get_progress(course, progresses, task_id, task_type):
+    results = {}
+    first_task = None
+    task_name = None
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            if test.unit_type in ('article', 'file_attach') and task_id == test.test_id:
+                task_name = test.article_name
+            if first_task is None:
+                first_task = str(test.test_id) + test.unit_type
+            for progress in progresses:
+                if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:
+                    results[str(test.test_id) + test.unit_type] = progress.progress['completed']
+                elif str(test.test_id) + test.unit_type not in results.keys():
+                    results[str(test.test_id) + test.unit_type] = False
+    if str(task_id) + task_type in results.keys() and results[str(task_id) + task_type]:
+        return True, task_name
+    if not results and not (first_task[-len(task_type):] == task_type and int(first_task[:-len(task_type)]) == task_id):
+        return False, task_name
+    not_allowed = False
+    for key, value in results.items():
+        print(key, value)
+        if key[-len(task_type):] == task_type and int(key[:-len(task_type)]) == task_id and not_allowed:
+            return False, task_name
+        if not value:
+            not_allowed = True
+    return True, task_name
