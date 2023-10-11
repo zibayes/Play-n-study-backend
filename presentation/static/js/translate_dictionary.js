@@ -484,6 +484,17 @@ export let arrLang = {
     "link_name": "Название ссылки",
     "link_constructor": "Конструктор ссылок",
     "save_link": "Сохранить ссылку",
+
+    "file_attach_constructor": "Конструктор заданий с ответом в виде файла",
+    "task_name": "Название задания",
+    "task_desc": "Описание задания",
+    "enter_task": "Ввод задания (в Markdown)",
+    "task_text": "Текст задания",
+    "task_preview": "Превью вашего задания",
+    "save_task": "Сохранить задание",
+
+    "file_attach_editor": "Редактор заданий с ответом в виде файла",
+    "send_file": "Отправить файл",
   },
   'de': {
     'mainpage': 'Startseite',
