@@ -827,6 +827,11 @@ class ChatRepository:
             .filter_by(chat_id=chat_id) \
             .first()
 
+        msgs = self.session.query(ChatMessagesModel) \
+            .filter_by(chat_id=chat_id) \
+            .order_by(text("msg_date desc")) \
+            .all()
+
         status = True
 
         if chat is None:
@@ -834,6 +839,9 @@ class ChatRepository:
 
         if not read:
             status = False
+
+        for msg in msgs:
+            msg.user_to_read = status
 
         if chat.user1 == user_id:
             chat.user1_read = status

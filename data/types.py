@@ -453,6 +453,8 @@ class ChatMessage:
 
     def to_dict(self):
         return {
+            "msg_id": self.msg_id,
+            "chat_id": self.chat_id,
             "msg_text": self.msg_text,
             "msg_date": self.msg_date,
             "msg_from": self.msg_from,

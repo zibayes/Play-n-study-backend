@@ -423,7 +423,7 @@ class LogicFacade:
         return False
 
     def __chat_send_message(self, chat_id, msg_text, msg_from, msg_to):
-        message = ChatMessage(None, chat_id, msg_text, None, msg_from, msg_to)
+        message = ChatMessage(None, chat_id, msg_text, None, msg_from, msg_to, False)
 
         # sending message
         response = self.data.chat_messages_repository.send_message(message)

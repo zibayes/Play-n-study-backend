@@ -37,103 +37,102 @@ $.ajax({
 
 
 function add_element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id) {
-// 1 +
-let div_add = document.createElement("div")
-div_add.setAttribute("class", "collapse mt-3")
-div_add.id = "collapse" + chat_id
-// 2 +
-let div_card = document.createElement("div")
-div_card.setAttribute("class", "card")
-// 3 +
-let button_exit = document.createElement("button")
-button_exit.setAttribute("class", "btn-close")
-button_exit.setAttribute("type", "button")
-button_exit.setAttribute("data-mdb-toggle", "collapse")
-let href = "#collapse" + chat_id
-button_exit.setAttribute("href", href)
-button_exit.style = "padding: 10px"
-// 4
-let div_card_body = document.createElement("div")
-div_card_body.setAttribute("class", "card-body")
-div_card_body.setAttribute("data-mdb-perfect-scrollbar", "true")
-div_card_body.style = "position: relative; height: 400px; overflow: auto;"
-div_card_body.id = "div" + chat_id
-// 5
-// Элементы чата тут будут
-let date_message
-$.ajax({
-          url: '/get_dialog',
-          method: 'post',
-          dataType: 'json',
-          contentType: 'application/json',
-          data: JSON.stringify({"chat_id": chat_id}),
-          success: function (data) {
-            date_message = data.messages[data.messages.length - 1].msg_date
-            for (let i = 0; i < data.messages.length; i++) {
-              if (data.messages[i].msg_from === "Я: ") {
-                let div_element_d_flex = document.createElement("div")
-                div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-end mb-4 pt-1")
-                let div_element = document.createElement("div")
-                let flag = 0
-                for (let j = i; j < data.messages.length; j++) {
-                  flag++
-                  if (data.messages[j].msg_from === "Я: ") {
-                    let p1 = document.createElement("p")
-                    p1.setAttribute("class", "small p-2 me-3 mb-1 text-white rounded-3 bg-info")
-                    p1.textContent = data.messages[j].msg_text
-                    div_element.appendChild(p1)
-                  } else {
-                    i = i + flag - 2
-                    break
-                  }
-                  if (j === data.messages.length - 1) {
-                    i = data.messages.length
-                    break
-                  }
+  // 1 +
+  let div_add = document.createElement("div")
+  div_add.setAttribute("class", "collapse mt-3")
+  div_add.id = "collapse" + chat_id
+  // 2 +
+  let div_card = document.createElement("div")
+  div_card.setAttribute("class", "card")
+  // 3 +
+  let button_exit = document.createElement("button")
+  button_exit.setAttribute("class", "btn-close")
+  button_exit.setAttribute("type", "button")
+  button_exit.setAttribute("data-mdb-toggle", "collapse")
+  let href = "#collapse" + chat_id
+  button_exit.setAttribute("href", href)
+  button_exit.style = "padding: 10px"
+  // 4
+  let div_card_body = document.createElement("div")
+  div_card_body.setAttribute("class", "card-body")
+  div_card_body.setAttribute("data-mdb-perfect-scrollbar", "true")
+  div_card_body.style = "position: relative; height: 400px; overflow: auto;"
+  div_card_body.id = "div" + chat_id
+  // 5
+  // Элементы чата тут будут
+    let date_message
+    $.ajax({
+        url: '/get_dialog',
+        method: 'post',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({"chat_id": chat_id}),
+        success: function (data) {
+          date_message = data.messages[data.messages.length - 1].msg_date
+          for (let i = 0; i < data.messages.length; i++) {
+            if (data.messages[i].msg_from === "Я: ") {
+              let div_element_d_flex = document.createElement("div")
+              div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-end mb-4 pt-1")
+              let div_element = document.createElement("div")
+              let flag = 0
+              for (let j = i; j < data.messages.length; j++) {
+                flag++
+                if (data.messages[j].msg_from === "Я: ") {
+                  let p1 = document.createElement("p")
+                  p1.setAttribute("class", "small p-2 me-3 mb-1 text-white rounded-3 bg-info")
+                  p1.textContent = data.messages[j].msg_text
+                  div_element.appendChild(p1)
+                } else {
+                  i = i + flag - 2
+                  break
                 }
-                let image = document.createElement("img")
-                image.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
-                image.alt = ""
-                image.style = "width: 45px; height: 100%;"
-                div_element_d_flex.appendChild(div_element)
-                div_element_d_flex.appendChild(image)
-                div_card_body.appendChild(div_element_d_flex)
-              } else {
-                let div_element_d_flex = document.createElement("div")
-                div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-start")
-                let image = document.createElement("img")
-                image.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
-                image.alt = ""
-                image.style = "width: 45px; height: 100%;"
-                let div_element = document.createElement("div")
-                let flag = 0
-                for (let j = i; j < data.messages.length; j++) {
-                  flag++
-                  if (data.messages[j].msg_from !== "Я: ") {
-                    let p1 = document.createElement("p")
-                    p1.setAttribute("class", "small p-2 ms-3 mb-1 rounded-3")
-                    p1.style = "background-color: #f5f6f7;"
-                    p1.textContent = data.messages[j].msg_text
-                    div_element.appendChild(p1)
-                  } else {
-                    i = i + flag - 2
-                    break
-                  }
-                  if (j === data.messages.length - 1) {
-                    i = data.messages.length
-                    break
-                  }
+                if (j === data.messages.length - 1) {
+                  i = data.messages.length
+                  break
                 }
-                div_element_d_flex.appendChild(image)
-                div_element_d_flex.appendChild(div_element)
-                div_card_body.appendChild(div_element_d_flex)
-
               }
+              let image = document.createElement("img")
+              image.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp"
+              image.alt = ""
+              image.style = "width: 45px; height: 100%;"
+              div_element_d_flex.appendChild(div_element)
+              div_element_d_flex.appendChild(image)
+              div_card_body.appendChild(div_element_d_flex)
+            } else {
+              let div_element_d_flex = document.createElement("div")
+              div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-start")
+              let image = document.createElement("img")
+              image.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
+              image.alt = ""
+              image.style = "width: 45px; height: 100%;"
+              let div_element = document.createElement("div")
+              let flag = 0
+              for (let j = i; j < data.messages.length; j++) {
+                flag++
+                if (data.messages[j].msg_from !== "Я: ") {
+                  let p1 = document.createElement("p")
+                  p1.setAttribute("class", "small p-2 ms-3 mb-1 rounded-3")
+                  p1.style = "background-color: #f5f6f7;"
+                  p1.textContent = data.messages[j].msg_text
+                  div_element.appendChild(p1)
+                } else {
+                  i = i + flag - 2
+                  break
+                }
+                if (j === data.messages.length - 1) {
+                  i = data.messages.length
+                  break
+                }
+              }
+              div_element_d_flex.appendChild(image)
+              div_element_d_flex.appendChild(div_element)
+              div_card_body.appendChild(div_element_d_flex)
+
             }
           }
         }
-);
-
+      }
+    );
 
   // 6
   let div_container = document.createElement("div")
@@ -185,7 +184,7 @@ $.ajax({
         }
       });
     }
-  })
+  });
 
   // 15
   let i2 = document.createElement("i")
@@ -300,6 +299,7 @@ $.ajax({
   div_main.appendChild(a)
   return div_main
 }
+
 
   $('.shoutbox-name').emojioneArea({
     emojiPlaceholder: ":smile_cat:",

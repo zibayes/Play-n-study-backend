@@ -94,7 +94,7 @@ CREATE TABLE tests(
 	description text, -- NEW!
     content json
 );
-
+-- Articles + File attach
 CREATE TABLE articles(
     article_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
@@ -112,17 +112,6 @@ CREATE TABLE links(
 	avatar bytea NULL,
 	name text,
     link text
-);
-
--- NEW!
-CREATE TABLE file_attach( 
-    attach_id serial PRIMARY KEY,
-    course_id int REFERENCES courses(course_id),
-	unit_id int NOT NULL, 
-	avatar bytea NULL,
-	name text,
-	description text,
-    content text
 );
 
 CREATE TABLE users_progress(
