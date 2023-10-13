@@ -1,0 +1,103 @@
+{% extends 'base_aut.html' %}
+<link rel="stylesheet" href="/static/css/main.css">
+
+{% block title %}
+<title>Тесты</title>
+{% endblock %}
+
+{% block content %}
+<style>
+    table,
+    td {
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        alignment: center;
+    }
+</style>
+<script>
+    let result_time = 0;
+</script>
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="fs-5 row m-3 justify-content-start lang">
+            {{ course.name }}
+        </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach_checking">Проверка файла</text> «{{ article_name }}»</li>
+          </ol>
+        </nav>
+        <div class="row border"></div>
+
+        <div class="card">
+            <div class="card-body">
+                <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                    {{ article_name }}
+                </span>
+                <div class="row border"></div>
+                <br>
+                {% if progresses %}
+                    <div id="test-results">
+                        {% set progressNum = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="tires_results">
+                            Результаты попыток
+                        </span>
+                        <table class="table">
+                            <thead>
+                                <tr><th class="lang" key="try_number">Номер попытки</th><th class="lang" key="user">Пользователь</th><th class="lang" key="condition">Состояние</th><th class="lang" key="mark">Оценка</th><th class="lang" key="viewing">Просмотр</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for progress in progresses %}
+                                    {% set progressNum.value = progressNum.value + 1 %}
+                                    <tr style="
+                                    {% if progress.progress.completed %}
+                                        background: #98fa9855
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {{ progressNum.value }}
+                                        </td>
+                                        <td>
+                                            <a href="/profiles/{{ progress.user_id }}">{{ users[progress.user_id] }}</a>
+                                        </td>
+                                        <td>
+                                            {% if progress.progress.completed %}
+                                                <text class="lang" key="done">Завершено</text>
+                                            {% else %}
+                                                <text class="lang" key="checking">На проверке</text>
+                                            {% endif %}
+                                            <br>
+                                            <text class="lang" key="time_spent">Потрачено времени на прохождение</text>
+                                            <text id="time-{{progress.up_id}}">{{progress.date_of_completion}}</text>
+                                        </td>
+                                        <td>
+                                            {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
+                                        </td>
+                                        <td>
+                                            <form action="/course_editor/{{course.course_id}}/file_attach_check/{{article.article_id}}/{{progress.up_id}}">
+                                                <button class="btn btn-primary lang" key="check_try">Проверить попытку</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                <br>
+                <span class="fw-bolder fs-5 row m-3 justify-content-center lang" key="marking_method">Метод оценивания: Преподаватель</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="/static/js/dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+{% endblock %}

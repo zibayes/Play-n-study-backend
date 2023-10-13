@@ -495,6 +495,10 @@ export let arrLang = {
 
     "file_attach_editor": "Редактор заданий с ответом в виде файла",
     "send_file": "Отправить файл",
+    "start_file_attach": "Начать задание",
+    "attached_files": "Прикреплённые файлы:",
+    "file_attach_checking": "Проверка файла",
+    "file_attach_checking_user": "Проверка попытки пользователя",
   },
   'de': {
     'mainpage': 'Startseite',

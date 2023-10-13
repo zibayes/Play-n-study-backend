@@ -1,0 +1,292 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Тесты</title>
+{% endblock %}
+
+{% block content %}
+<style>
+    table,
+    td {
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        alignment: center;
+    }
+</style>
+<script>
+    let result_time = 0;
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="d-flex justify-content-center">
+    <div class="container border border-1 rounded m-5" style="background-color: white;">
+        <span class="fs-5 row m-3 justify-content-start lang">
+            {{ course.name }}
+        </span>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+          <ol class="breadcrumb" style="margin-left: 15px;">
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+            <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach">Файл</text> «{{ article_name }}»</li>
+          </ol>
+        </nav>
+        <div class="row border"></div>
+
+        <div class="card">
+            <div class="card-body">
+                <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                    {{ article_name }}
+                </span>
+                <span class="fs-5 row m-3 justify-content-start lang">
+                    {{ article.description }}
+                </span>
+                <div class="row border"></div>
+                <br>
+                {% if progresses %}
+                    <div align="center">
+                        <button disabled class="btn btn-primary lang" key="show_tries" id="show_results">Просмотр попыток</button>
+                        <button class="btn btn-primary lang" key="leaders_table" id="show_leaders">Таблица лидеров</button>
+                        <button class="btn btn-primary lang" key="progress_graphic" id="show_graphics">График прогресса</button>
+                        <button class="btn btn-primary lang" key="friends_progress" id="show_friends">Прогресс друзей</button>
+                    </div>
+                    <div id="test-results">
+                        {% set progressNum = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="last_tries">
+                            Результаты ваших предыдущих попыток
+                        </span>
+                        <table class="table">
+                            <thead>
+                                <tr><th class="lang" key="try_number">Номер попытки</th><th class="lang" key="condition">Состояние</th><th class="lang" key="mark">Оценка</th><th class="lang" key="viewing">Просмотр</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for progress in progresses %}
+                                    {% set progressNum.value = progressNum.value + 1 %}
+                                    <tr style="
+                                    {% if progress.progress.result.total_current_score == max_score %}
+                                        background: #75c1ff55
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {{ progressNum.value }}
+                                        </td>
+                                        <td>
+                                            {% if progress.progress.completed %}
+                                                <text class="lang" key="done">Завершено</text>
+                                            {% else %}
+                                                <text class="lang" key="checking">На проверке</text>
+                                            {% endif %}
+                                            <br>
+                                            <text class="lang" key="time_spent">Потрачено времени на прохождение</text>
+                                            <text id="time-{{progress.up_id}}">{{progress.date_of_completion}}</text>
+                                        </td>
+                                        <td>
+                                            {{ progress.progress.result.total_current_score }} / {{ progress.progress.result.total_score }}
+                                        </td>
+                                        <td>
+                                            <form action="/course/{{course.course_id}}/file_attach_result/{{article.article_id}}/{{progress.up_id}}" method="GET">
+                                                <button class="btn btn-primary lang" key="show_try">Посмотреть попытку</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            <div>
+                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score }} / {{ max_score_total }}
+                            </div>
+                        </span>
+                    </div>
+
+                    <div id="leaders-table" hidden="hidden">
+                        {% set userNum = namespace(value=3) %}
+                        {% set firstPlace = namespace(value=0) %}
+                        {% set secondPlace = namespace(value=0) %}
+                        {% set thirdPlace = namespace(value=0) %}
+                        {% set otherPlace = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
+                            <div>
+                                <text class="lang" key="leaders_table">Таблица лидеров</text> ♕
+                            </div>
+                        </span>
+                        <table class="table">
+                            <thead>
+                                <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for leader, result in leaders.items() %}
+
+                                    {% if firstPlace.value <= result %}
+                                        {% set firstPlace.value = result %}
+                                    {% elif secondPlace.value <= result %}
+                                        {% set secondPlace.value = result %}
+                                    {% elif thirdPlace.value <= result %}
+                                        {% set thirdPlace.value = result %}
+                                        {% set otherPlace.value = result %}
+                                    {% elif otherPlace.value > result %}
+                                        {% set otherPlace.value = result %}
+                                        {% set userNum.value = userNum.value + 1 %}
+                                    {% endif %}
+                                    <tr style="
+                                    {% if leader == user.username %}
+                                        background: #80008040
+                                    {% elif result == firstPlace.value %}
+                                        background: #ffd70066
+                                    {% elif result == secondPlace.value %}
+                                        background: #C0C0C066
+                                    {% elif result == thirdPlace.value %}
+                                        background: #cd7f3266
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {% if result == firstPlace.value %}
+                                                <p style="font-size: 28px;">🥇</p>
+                                            {% elif result == secondPlace.value %}
+                                                <p style="font-size: 28px;">🥈</p>
+                                            {% elif result == thirdPlace.value %}
+                                                <p style="font-size: 28px;">🥉</p>
+                                            {% else %}
+                                                {{ userNum.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
+                                        </td>
+                                        <td>
+                                            {{ result }} / {{ leaders_total_score[leader] }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="progress-graphics" hidden="hidden">
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="graphic_desc">
+                            График распределения пользователей по высшей оценке
+                        </span>
+                        <div>
+                          <canvas id="myChart"></canvas>
+                        </div>
+                        <script>
+                            let labels = []
+                            let data = []
+                            {% for key, value in graphic_data.items() %}
+                                labels.push({{key}})
+                                data.push({{value}})
+                            {% endfor %}
+                          const ctx = document.getElementById('myChart');
+                          new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                              labels: labels,
+                              datasets: [{
+                                label: 'Количество пользователей',
+                                data: data,
+                                borderWidth: 2
+                              }]
+                            },
+                            options: {
+                              scales: {
+                                y: {
+                                  beginAtZero: true,
+                                    title: {
+                                      display: true,
+                                      text: 'Количесвто пользователей'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                      display: true,
+                                      text: 'Количесвто набранных баллов'
+                                    }
+                                }
+                              }
+                            }
+                          });
+                        </script>
+                    </div>
+
+                    <div id="subscribers-table" hidden="hidden">
+                        {% set userNum = namespace(value=3) %}
+                        {% set firstPlace = namespace(value=0) %}
+                        {% set secondPlace = namespace(value=0) %}
+                        {% set thirdPlace = namespace(value=0) %}
+                        {% set otherPlace = namespace(value=0) %}
+                        <span class="fw-bolder fs-5 row m-3 justify-content-start lang" key="friends_table_desc">
+                            Таблица лидеров среди друзей, на кого вы подписаны
+                        </span>
+                        <table class="table">
+                            <thead>
+                                <tr><th class="lang" key="place">Место</th><th class="lang" key="user">Пользователь</th><th class="lang" key="best_mark_">Высшая оценка</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for leader, result in friends.items() %}
+
+                                    {% if firstPlace.value <= result %}
+                                        {% set firstPlace.value = result %}
+                                    {% elif secondPlace.value <= result %}
+                                        {% set secondPlace.value = result %}
+                                    {% elif thirdPlace.value <= result %}
+                                        {% set thirdPlace.value = result %}
+                                        {% set otherPlace.value = result %}
+                                    {% elif otherPlace.value > result %}
+                                        {% set otherPlace.value = result %}
+                                        {% set userNum.value = userNum.value + 1 %}
+                                    {% endif %}
+                                    <tr style="
+                                    {% if leader == user.username %}
+                                        background: #80008040
+                                    {% elif result == firstPlace.value %}
+                                        background: #ffd70066
+                                    {% elif result == secondPlace.value %}
+                                        background: #C0C0C066
+                                    {% elif result == thirdPlace.value %}
+                                        background: #cd7f3266
+                                    {% endif %}
+                                    ">
+                                        <td>
+                                            {% if result == firstPlace.value %}
+                                                <p style="font-size: 28px;">🥇</p>
+                                            {% elif result == secondPlace.value %}
+                                                <p style="font-size: 28px;">🥈</p>
+                                            {% elif result == thirdPlace.value %}
+                                                <p style="font-size: 28px;">🥉</p>
+                                            {% else %}
+                                                {{ userNum.value }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
+                                        </td>
+                                        <td>
+                                            {{ result }} / {{ leaders_total_score[leader] }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                <br>
+                <span class="fw-bolder fs-5 row m-3 justify-content-center lang" key="marking_method">Метод оценивания: Преподаватель</span>
+                <div class="d-flex justify-content-center m-5">
+                    <form action="/course/{{course.course_id}}/file_attach/{{article.article_id}}">
+                        <button class="btn btn-primary lang" key="start_file_attach">Начать задание</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script type="module" src="/static/js/test_preview.js"></script>
+<script type="module" src="/static/js/dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+{% endblock %}

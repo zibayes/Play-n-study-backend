@@ -681,6 +681,12 @@ class UserProgressRepository:
             print("Ошибка обновления прогресса в БД " + str(e))
             return False
 
+    def get_last_progress_by_task(self, user_id, course_id, task_id, task_type):
+        progress_db = self.session.query(UsersProgressModel) \
+            .filter_by(user_id=user_id, course_id=course_id, task_id=task_id, task_type=task_type) \
+            .first()
+        return convert.progress_db_to_progress(progress_db)
+
 
 class RoleRepository:
     def __init__(self, session):

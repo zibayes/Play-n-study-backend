@@ -1,6 +1,8 @@
+import os
 import random
 import time
 import json
+from pathlib import Path
 
 from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash, url_for
@@ -11,7 +13,8 @@ from data.types import User, Progress, TestContent, Test, Article, Link, FileAtt
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
-    delete_unit_task, get_test, get_test_result, course_update, get_course_summary, get_test_preview, check_test_over
+    delete_unit_task, get_test, get_test_result, course_update, get_course_summary, get_test_preview, \
+    check_test_over, get_file_attach_preview
 from markdown import markdown
 from access import check_curator_access, check_subscriber_access, check_test_access, \
     check_article_access, check_link_access, check_file_attach_access
@@ -396,6 +399,7 @@ def handle_file_attach_constructor(course_id, unit_id):
 @check_subscriber_access(current_user)
 def handle_file_attach_save(course_id, unit_id):
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
+    score = request.form['score']
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
@@ -416,9 +420,10 @@ def handle_file_attach_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
+    score = 0
     unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
     return render_template('file_attach_editor.html', user=user, course_id=course_id, course=course,
-                           article=article, article_name=article_name, unit_name=unit_name)
+                           article=article, article_name=article_name, unit_name=unit_name, score=score)
 
 
 @login_required
@@ -430,6 +435,7 @@ def handle_file_attach_update(course_id, article_id):
     course = logic.get_course(course_id, user_id)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     unit_id = get_unit_id(course, article_id, 'file_attach')
+    score = request.form['score']
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
@@ -442,6 +448,106 @@ def handle_file_attach_update(course_id, article_id):
 
 
 @login_required
+@courses_bp.route('/course/<int:course_id>/file_attach_preview/<int:article_id>')
+@check_subscriber_access(current_user)
+@check_file_attach_access(current_user)
+def handle_file_attach_preview(course_id, article_id):
+    article = logic.article_get_by_id(article_id)
+    user_id = current_user.get_id()
+    course = logic.get_course(article.course_id, user_id)
+    user = logic.get_user_by_id(user_id)
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_file_attach_preview(progress, course_id, article_id, user)
+    return render_template("file_attach_preview.html", user=user, article=article, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
+                           progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends, article_name=article_name)
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/file_attach_result/<int:article_id>/<int:progress_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_file_attach_access(current_user)
+def handle_show_file_attach_result(course_id, article_id, progress_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    article = logic.article_get_by_id(article_id)
+    article.content = markdown(article.content)
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    progress = logic.get_progress_by_id(progress_id)
+    progress.progress = Progress.from_json(progress.progress)
+    result = json.loads(progress.progress['content'])
+    for file in result:
+        file['name'] = file['file_path'][file['file_path'].rfind('/')+1:]
+        file[0] = file['file_path'][file['file_path'].rfind('static'):]
+    # result = TestResult.from_json(json.loads(progress.progress['result']))
+    # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
+    return render_template('file_attach_result.html', user=user, article=article, article_name=article_name,
+                           course=course, unit_name=unit_name, result=result)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_check_preview(course_id, article_id):
+    progress = logic.get_progress_by_course_id_all(course_id)
+    article = logic.article_get_by_id(article_id)
+    user_id = current_user.get_id()
+    course = logic.get_course(article.course_id, user_id)
+    user = logic.get_user_by_id(user_id)
+    to_delete = []
+    max_score = 0
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) != article_id or progress[i].task_type != 'file_attach':
+            to_delete.append(i)
+        else:
+            pass
+            '''progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
+            if progress[i].progress['result'].total_current_score > max_score:
+                max_score = progress[i].progress['result'].total_current_score'''
+    for i in reversed(to_delete):
+        progress.pop(i)
+
+    users = {}
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) == article_id:
+            username = logic.get_user_by_id(progress[i].user_id).username
+            if username not in users.values():
+                users[progress[i].user_id] = username
+
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    return render_template('file_attach_check_preview.html', user=user, article=article, course=course, progresses=progress,
+                           users=users, unit_name=unit_name, article_name=article_name)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_check(course_id, article_id, progress_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    progress = logic.get_progress_by_id(progress_id)
+    username = logic.get_user_by_id(progress.user_id).username
+    progress.progress = Progress.from_json(progress.progress)
+    # result = TestResult.from_json(json.loads(progress.progress['result']))
+    result = json.loads(progress.progress['content'])
+    for file in result:
+        file['name'] = file['file_path'][file['file_path'].rfind('/') + 1:]
+        file[0] = file['file_path'][file['file_path'].rfind('static'):]
+    score = 0
+    current_score = 0
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    article = logic.article_get_by_id(article_id)
+    article.content = markdown(article.content)
+    # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
+    return render_template('file_attach_check.html', user=user, article=article, score=score,
+                           unit_name=unit_name, article_name=article_name, current_score=current_score,
+                           course=course, username=username, article_id=article_id, result=result)
+
+
+@login_required
 @courses_bp.route('/course/<int:course_id>/file_attach/<int:article_id>', methods=["GET"])
 @check_subscriber_access(current_user)
 @check_file_attach_access(current_user)
@@ -451,8 +557,37 @@ def handle_load_file_attach(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
     unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
-    return render_template('preview_file_attach.html', user=user, course=course, article=article,
+    return render_template('file_attach.html', user=user, course=course, article=article,
                            article_name=article_name, unit_name=unit_name)
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/file_attach/<int:article_id>', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_file_attach_access(current_user)
+def handle_upload_file_attach(course_id, article_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    files = []
+    # result = TestResult(total_score=None, total_current_score=None, total_time=None, result=None)
+    progress = Progress(progress_id=None, completed=True, type='file_attach',
+                        content=json.dumps(files), test_id=article_id, result=None)
+    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='file_attach', task_id=article_id,
+                       progress=Progress.to_json(progress))
+    if request.files['file']:
+        progress = logic.get_last_progress_by_task(user.user_id, course_id, article_id, 'file_attach')
+        for file in request.files.getlist('file'):
+            abs_path = str(Path(__file__).absolute())
+            abs_path = abs_path[:abs_path.find('\\presentation\\') + len('/presentation/')]
+            path = abs_path + 'static/users_files/' + str(article_id) + 'file_attach/' + str(progress.up_id) + '/'
+            Path(path).mkdir(parents=True, exist_ok=True)
+            file.save(os.path.join(path, file.filename))
+            files.append({'file_path': path + '/' + file.filename, 'type': 'file'})
+        progress.progress['content'] = json.dumps(files)
+        progress.progress = Progress.to_json(Progress(None, progress.progress['test_id'], progress.progress['type'],
+                                                      progress.progress['completed'], progress.progress['result'],
+                                                      progress.progress['content']))
+        logic.update_progress(progress)
+    return redirect(f'/course/{course_id}')
 
 
 @login_required
@@ -504,7 +639,6 @@ def handle_edit_test_save(course_id, test_id):
     unit_id = get_unit_id(course, test_id, 'test')
     response = logic.edit_test(request.form, test_id, course_id, unit_id)
     if request.files['file']:
-        print(request.files['file'])
         logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')

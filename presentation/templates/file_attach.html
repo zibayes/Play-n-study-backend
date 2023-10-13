@@ -7,7 +7,7 @@
 {% block content %}
 <div class="d-flex justify-content-center">
     <div id="content" class="container m-5" style="background-color: white; border-radius: 10px">
-        <form action="/course_editor/{{course_id}}/file_attach_editor/{{article.article_id}}" method="POST" enctype="multipart/form-data" id="sendingForm">
+        <form action="/course/{{course.course_id}}/file_attach/{{article.article_id}}" method="POST" enctype="multipart/form-data" id="sendingForm">
             <span class="fs-5 row m-3 justify-content-start lang">
                 {{ article_name }}
             </span>

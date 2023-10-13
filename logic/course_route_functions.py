@@ -153,7 +153,7 @@ def get_test_result(course_id, test_id, progress):
                 users_progress_max[users_progress[i].user_id].progress['content'] = \
                     TestContent.from_json(users_progress_max[users_progress[i].user_id].progress['content'])
 
-    user_progress = TestContent.from_json(progress.content)
+    user_progress = TestContent.from_json(progress.progress['content'])
     percents_for_tasks = {}
     for value in users_progress_max.values():
         for i in range(len(value.progress['content'].questions)):
@@ -247,7 +247,7 @@ def get_test_preview(progress, course_id, test_id, user):
     max_score = 0
     max_score_total = 0
     for i in range(len(progress)):
-        if int(progress[i].progress['test_id']) != test_id or not progress[i].progress['result']:
+        if int(progress[i].progress['test_id']) != test_id or progress[i].task_type != 'test' or not progress[i].progress['result']:
             to_delete.append(i)
         else:
             progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
@@ -323,3 +323,50 @@ def check_test_over(progress, request):
     progress.progress = Progress.to_json(Progress(None, progress.progress['test_id'], progress.progress['type'],
                                                   progress.progress['completed'], progress.progress['result'],
                                                   progress.progress['content']))
+
+
+def get_file_attach_preview(progress, course_id, article_id, user):
+    to_delete = []
+    max_score = 0
+    max_score_total = 0
+    for i in range(len(progress)):
+        if int(progress[i].progress['test_id']) != article_id or progress[i].task_type != 'file_attach':
+            to_delete.append(i)
+        else:
+            pass
+    for i in reversed(to_delete):
+        progress.pop(i)
+
+    leaders = logic.get_progress_by_course_id_all(course_id)
+    leaders_to_show = {}
+    leaders_total_score = {}
+    leaders_hrefs = {}
+    graphic_data = {}
+    friends = {}
+    subs = logic.get_user_for_subscriptions(user.user_id).sub_to
+    if subs:
+        subs = [user.username for user in subs]
+    for i in range(len(leaders)):
+        if int(leaders[i].progress['test_id']) == article_id and leaders[i].progress['result']:
+            leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
+            user_for_table = logic.get_user_by_id(leaders[i].user_id).username
+            if user_for_table not in leaders_to_show.keys():
+                leaders_to_show[user_for_table] = []
+                leaders_hrefs[user_for_table] = leaders[i].user_id
+                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
+                if subs and user_for_table in subs or user_for_table == user.username:
+                    friends[user_for_table] = []
+            leaders_to_show[user_for_table].append(leaders[i].progress['result'].total_current_score)
+            if leaders_to_show[user_for_table][-1] == max(leaders_to_show[user_for_table]):
+                leaders_total_score[user_for_table] = leaders[i].progress['result'].total_score
+
+            if subs and user_for_table in subs or user_for_table == user.username:
+                friends[user_for_table].append(leaders[i].progress['result'].total_current_score)
+    for key in leaders_to_show.keys():
+        leaders_to_show[key] = max(leaders_to_show[key])
+        if key in friends.keys():
+            friends[key] = max(friends[key])
+        if leaders_to_show[key] not in graphic_data.keys():
+            graphic_data[leaders_to_show[key]] = 0
+        graphic_data[leaders_to_show[key]] += 1
+    return max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends

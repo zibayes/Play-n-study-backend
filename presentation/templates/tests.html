@@ -91,7 +91,7 @@
                                                 {% endif %}
                                             </form>
                                         {% elif unit_test.unit_type == "file_attach" %}
-                                            <form action="/course/{{course.course_id}}/file_attach/{{unit_test.test.test_id}}">
+                                            <form action="/course/{{course.course_id}}/file_attach_preview/{{unit_test.test.test_id}}">
                                                 {% if not results[unit_test.test.test_id|string + unit_test.unit_type] %}
                                                     {%  if notAllowed.value > 0 %}
                                                         <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light lang" key="file_attach" id="lection-button" disabled>Файл</button>

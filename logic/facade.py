@@ -172,6 +172,9 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении прогресса', 'error'])
 
+    def get_last_progress_by_task(self, user_id, course_id, task_id, task_type):
+        return self.data.get_last_progress_by_task(user_id, course_id, task_id, task_type)
+
     def add_review(self, user_id, course_id, rate):
         review = Review(None, user_id, course_id, rate, None)
         return self.data.add_review(review)

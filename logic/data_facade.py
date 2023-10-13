@@ -320,6 +320,9 @@ class DataFacade:
     def update_progress(self, progress):
         return self.user_progress_repository.update_progress(progress)
 
+    def get_last_progress_by_task(self, user_id, course_id, task_id, task_type):
+        return self.user_progress_repository.get_last_progress_by_task(user_id, course_id, task_id, task_type)
+
     def add_review(self, review):
         return self.review_repository.add_review(review)
 
@@ -367,7 +370,7 @@ class DataFacade:
             messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat.chat_id)
             msg_new_count = 0
             for msg in messages:
-                if not msg.user_to_read: #  and msg.msg_to == current_user.username
+                if not msg.user_to_read and msg.msg_to == current_user.user_id:
                     msg_new_count += 1
 
             user_with = self.user_repository.get_user_by_id(chat.user_with)

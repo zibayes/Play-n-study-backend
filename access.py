@@ -209,7 +209,6 @@ def get_progress(course, progresses, task_id, task_type):
         return False, task_name
     not_allowed = False
     for key, value in results.items():
-        print(key, value)
         if key[-len(task_type):] == task_type and int(key[:-len(task_type)]) == task_id and not_allowed:
             return False, task_name
         if not value:
