@@ -32,16 +32,24 @@
                                 {% else %}
                                     {% if unit_test.unit_type == "test" %}
                                         <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
-                                    {% else %}
+                                    {% elif unit_test.unit_type == "article" %}
                                         <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                    {% elif unit_test.unit_type == "link" %}
+                                        <tr onclick="location.href='/course/{{course.course_id}}/link/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                    {% elif unit_test.unit_type == "file_attach" %}
+                                        <tr onclick="location.href='/course/{{course.course_id}}/file_attach_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                     {% endif %}
                                 {% endif %}
                                 {% set notAllowed.value = notAllowed.value + 1 %}
                             {% else %}
                                 {% if unit_test.unit_type == "test" %}
                                     <tr onclick="location.href='/course/{{course.course_id}}/test_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
-                                {% else %}
+                                {% elif unit_test.unit_type == "article" %}
                                     <tr onclick="location.href='/course/{{course.course_id}}/article/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% elif unit_test.unit_type == "link" %}
+                                    <tr onclick="location.href='/course/{{course.course_id}}/link/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% elif unit_test.unit_type == "file_attach" %}
+                                    <tr onclick="location.href='/course/{{course.course_id}}/file_attach_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                 {% endif %}
                             {% endif %}
 
@@ -50,9 +58,13 @@
                                 </td>
                                 <td>
                                     {% if unit_test.unit_type == "test" %}
-                                    <text class="lang" key="test">Тест</text>
-                                    {% else %}
-                                    <text class="lang" key="article">Статья</text>
+                                        <text class="lang" key="test">Тест</text>
+                                    {% elif unit_test.unit_type == "article" %}
+                                        <text class="lang" key="article">Статья</text>
+                                    {% elif unit_test.unit_type == "link" %}
+                                        <text class="lang" key="link">Ссылка</text>
+                                    {% elif unit_test.unit_type == "file_attach" %}
+                                        <text class="lang" key="file_attach">Файл</text>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -65,10 +77,10 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if unit_test.unit_type == "test" and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
-                                    {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
+                                    {% if unit_test.unit_type in ("test", "file_attach") and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
+                                        {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
                                     {% else %}
-                                    -
+                                        -
                                     {% endif %}
                                 </td>
                             </tr>

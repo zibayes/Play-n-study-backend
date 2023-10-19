@@ -248,9 +248,9 @@ def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
-    unit_name, article_name = get_unit_name(course, article_id, 'article')
+    unit_name= get_unit_name(course, article_id, 'article')
     return render_template('article_editor.html', user=user, course_id=course_id, course=course,
-                           article=article, article_name=article_name, unit_name=unit_name)
+                           article=article, unit_name=unit_name)
 
 
 @login_required
@@ -265,8 +265,9 @@ def handle_article_update(course_id, article_id):
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
-    response = logic.update_article(article, course_id, unit_id, request.form['articleName'], 'article')
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, name=request.form['articleName'],
+                      description=request.form['articleDesc'], avatar=avatar, score=None)
+    response = logic.update_article(article, course_id, unit_id, 'article')
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении статьи', 'error')
@@ -294,8 +295,9 @@ def handle_article_save(course_id, unit_id):
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, description=request.form['articleDesc'], avatar=avatar)
-    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'], 'article')
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, name=request.form['articleName'],
+                      description=request.form['articleDesc'], avatar=avatar, score=None)
+    response = logic.article_add_article(article, course_id, unit_id, 'article')
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении статьи', 'error')
@@ -399,13 +401,12 @@ def handle_file_attach_constructor(course_id, unit_id):
 @check_subscriber_access(current_user)
 def handle_file_attach_save(course_id, unit_id):
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
-    score = request.form['score']
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text,
-                      description=request.form['articleDesc'], avatar=avatar)
-    response = logic.article_add_article(article, course_id, unit_id, request.form['articleName'], 'file_attach')
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, name=request.form['articleName'],
+                      description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
+    response = logic.article_add_article(article, course_id, unit_id, 'file_attach')
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении задания с прикреплением файла', 'error')
@@ -421,9 +422,9 @@ def handle_file_attach_editor(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
     score = 0
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    unit_name = get_unit_name(course, article_id, 'file_attach')
     return render_template('file_attach_editor.html', user=user, course_id=course_id, course=course,
-                           article=article, article_name=article_name, unit_name=unit_name, score=score)
+                           article=article, unit_name=unit_name, score=score)
 
 
 @login_required
@@ -435,12 +436,12 @@ def handle_file_attach_update(course_id, article_id):
     course = logic.get_course(course_id, user_id)
     article_text = request.form['Article'].replace("'", '"').replace("`", '"').replace('"', '\"')
     unit_id = get_unit_id(course, article_id, 'file_attach')
-    score = request.form['score']
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, description=request.form['articleDesc'], avatar=avatar)
-    response = logic.update_article(article=article, course_id=course_id, unit_id=unit_id, article_name=request.form['articleName'], task_type='file_attach')
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, name=request.form['articleName'],
+                      description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
+    response = logic.update_article(article=article, course_id=course_id, unit_id=unit_id, task_type='file_attach')
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении задания', 'error')
@@ -456,12 +457,12 @@ def handle_file_attach_preview(course_id, article_id):
     user_id = current_user.get_id()
     course = logic.get_course(article.course_id, user_id)
     user = logic.get_user_by_id(user_id)
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    unit_name = get_unit_name(course, article_id, 'file_attach')
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
     max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_file_attach_preview(progress, course_id, article_id, user)
     return render_template("file_attach_preview.html", user=user, article=article, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
                            progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
-                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends, article_name=article_name)
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
 
 
 @login_required
@@ -473,7 +474,7 @@ def handle_show_file_attach_result(course_id, article_id, progress_id):
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    unit_name = get_unit_name(course, article_id, 'file_attach')
     progress = logic.get_progress_by_id(progress_id)
     progress.progress = Progress.from_json(progress.progress)
     result = json.loads(progress.progress['content'])
@@ -482,7 +483,7 @@ def handle_show_file_attach_result(course_id, article_id, progress_id):
         file[0] = file['file_path'][file['file_path'].rfind('static'):]
     # result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('file_attach_result.html', user=user, article=article, article_name=article_name,
+    return render_template('file_attach_result.html', user=user, article=article,
                            course=course, unit_name=unit_name, result=result)
 
 
@@ -516,9 +517,9 @@ def handle_file_attach_check_preview(course_id, article_id):
             if username not in users.values():
                 users[progress[i].user_id] = username
 
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    unit_name = get_unit_name(course, article_id, 'file_attach')
     return render_template('file_attach_check_preview.html', user=user, article=article, course=course, progresses=progress,
-                           users=users, unit_name=unit_name, article_name=article_name)
+                           users=users, unit_name=unit_name)
 
 
 @login_required
@@ -535,16 +536,31 @@ def handle_file_attach_check(course_id, article_id, progress_id):
     for file in result:
         file['name'] = file['file_path'][file['file_path'].rfind('/') + 1:]
         file[0] = file['file_path'][file['file_path'].rfind('static'):]
-    score = 0
-    current_score = 0
+    res = json.loads(progress.progress['result'])
+    current_score = res['total_current_score']
     course = logic.get_course(course_id, current_user.get_id())
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
+    unit_name = get_unit_name(course, article_id, 'file_attach')
     article = logic.article_get_by_id(article_id)
     article.content = markdown(article.content)
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('file_attach_check.html', user=user, article=article, score=score,
-                           unit_name=unit_name, article_name=article_name, current_score=current_score,
+    return render_template('file_attach_check.html', user=user, article=article,
+                           unit_name=unit_name, current_score=current_score,
                            course=course, username=username, article_id=article_id, result=result)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_file_attach_check_over(course_id, article_id, progress_id):
+    progress = logic.get_progress_by_id(progress_id)
+    progress.progress['result'] = TestResult(logic.article_get_by_id(article_id).score,
+                                             float(request.form['current_score']), None, None).to_json()
+    progress.progress = Progress.to_json(Progress(None, progress.progress['test_id'], progress.progress['type'],
+                                                  progress.progress['completed'], progress.progress['result'],
+                                                  progress.progress['content']))
+    logic.update_progress(progress)
+    return redirect(f'/course_editor/{course_id}/file_attach_check/{article_id}')
 
 
 @login_required
@@ -556,9 +572,8 @@ def handle_load_file_attach(course_id, article_id):
     article.content = markdown(article.content)
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
-    unit_name, article_name = get_unit_name(course, article_id, 'file_attach')
-    return render_template('file_attach.html', user=user, course=course, article=article,
-                           article_name=article_name, unit_name=unit_name)
+    unit_name = get_unit_name(course, article_id, 'file_attach')
+    return render_template('file_attach.html', user=user, course=course, article=article, unit_name=unit_name)
 
 
 @login_required
@@ -613,9 +628,8 @@ def handle_load_article(course_id, article_id):
     article.content = markdown(article.content)
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, user.user_id)
-    unit_name, article_name = get_unit_name(course, article_id, 'article')
-    return render_template('preview_article.html', user=user, course=course, article=article,
-                           article_name=article_name, unit_name=unit_name)
+    unit_name = get_unit_name(course, article_id, 'article')
+    return render_template('preview_article.html', user=user, course=course, article=article, unit_name=unit_name)
 
 
 @login_required

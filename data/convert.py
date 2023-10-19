@@ -109,9 +109,11 @@ def article_db_to_article(article: Type[ArticlesModel]):
     return Article(article_id=article.article_id,
                    course_id=article.course_id,
                    avatar=article.avatar,
+                   name=article.name,
                    description=article.description,
                    unit_id=article.unit_id,
-                   content=article.content)
+                   content=article.content,
+                   score=article.score)
 
 
 def progress_db_to_progress(progress: Type[UsersProgressModel]):

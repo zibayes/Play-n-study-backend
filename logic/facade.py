@@ -273,28 +273,26 @@ class LogicFacade:
     def article_get_all_by_course_id(self, course_id):
         return self.data.article_get_all_by_course_id(course_id)
 
-    def article_add_article(self, article, course_id, unit_id, article_name, task_type):
+    def article_add_article(self, article, course_id, unit_id, task_type):
         if self.data.article_add_article(article):
             article = self.data.get_last_article_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
             for unit in course.content['body']:
                 if int(unit['unit_id']) == unit_id:
-                    unit['tests'].append(CourseUnit(unit_type=task_type, test_id=article.article_id,
-                                                    article_name=article_name))
+                    unit['tests'].append(CourseUnit(unit_type=task_type, test_id=article.article_id))
             self.data.update_course(course)
             return tuple(['Статья успешно сохранена', 'success'])
         else:
             return tuple(['Ошибка при сохранении статьи', 'error'])
 
-    def update_article(self, article, course_id, unit_id, article_name, task_type):
+    def update_article(self, article, course_id, unit_id, task_type):
         course = self.data.course_get_by_id(course_id)
         for unit in course.content['body']:
             if int(unit['unit_id']) == unit_id:
                 for test in unit['tests']:
                     if test.test_id == article.article_id and test.unit_type == task_type:
                         unit['tests'][unit['tests'].index(test)] = CourseUnit(unit_type=task_type,
-                                                                              test_id=article.article_id,
-                                                                              article_name=article_name)
+                                                                              test_id=article.article_id)
         self.data.update_course(course)
         return self.data.update_article(article)
 

@@ -1,4 +1,4 @@
-from sqlalchemy.types import Integer, ARRAY, String, Text, Date, Boolean, JSON, TIMESTAMP
+from sqlalchemy.types import Integer, ARRAY, String, Text, Float, Date, Boolean, JSON, TIMESTAMP
 from sqlalchemy.sql import func
 from sqlalchemy import Column, ForeignKey, CheckConstraint, LargeBinary, event
 from sqlalchemy.orm import relationship, declarative_base
@@ -249,15 +249,19 @@ class ArticlesModel(Base):
     course_id = Column(Integer, ForeignKey("courses.course_id"))
     unit_id = Column(Integer)
     avatar = Column(LargeBinary)
+    name = Column(Text)
     description = Column(Text)
     content = Column(Text)
+    score = Column(Float)
 
-    def __init__(self, course_id, unit_id, content, avatar=None, description=None):
+    def __init__(self, course_id, unit_id, content, name, score, avatar=None, description=None):
         self.course_id = course_id
         self.unit_id = unit_id
         self.avatar = avatar
+        self.name = name
         self.description = description
         self.content = content
+        self.score = score
 
 
 class UsersProgressModel(Base):

@@ -9,7 +9,7 @@
     <div id="content" class="container m-5" style="background-color: white; border-radius: 10px">
         <form action="/course/{{course.course_id}}/file_attach/{{article.article_id}}" method="POST" enctype="multipart/form-data" id="sendingForm">
             <span class="fs-5 row m-3 justify-content-start lang">
-                {{ article_name }}
+                {{ article.name }}
             </span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
@@ -17,12 +17,19 @@
                 <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
                 <li class="breadcrumb-item lang"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
                 <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach">Файл</text> «{{ article_name }}»</li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach">Файл</text> «{{ article.name }}»</li>
               </ol>
             </nav>
             <div class="row border"></div>
             <br>
             <p id="text-view" style="margin: 20px;"></p>
+
+            <div style="margin-left: 15px;">
+                <br>
+                <label class="lang" key="score_for_task">Баллы за задание: </label>
+                {{article.score}}
+                <br>
+            </div>
 
             <div style="max-width: 500px; margin: 0 auto;">
                 <input type="file" multiple name="file" class="form-control" id="customFile" />

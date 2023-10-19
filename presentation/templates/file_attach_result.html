@@ -8,7 +8,7 @@
 <div class="d-flex justify-content-center">
     <div id="content" class="container m-5" style="background-color: white; border-radius: 10px">
         <span class="fs-5 row m-3 justify-content-start lang">
-            {{ article_name }}
+            {{ article.name }}
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item lang"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
             <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-              <li class="breadcrumb-item active" aria-current="page"><a href="/course/{{ course.course_id }}/file_attach_preview/{{ article.article_id }}"><text class="lang" key="file_attach">Файл</text> «{{ article_name }}»</a></li>
+              <li class="breadcrumb-item active" aria-current="page"><a href="/course/{{ course.course_id }}/file_attach_preview/{{ article.article_id }}"><text class="lang" key="file_attach">Файл</text> «{{ article.name }}»</a></li>
             <li class="breadcrumb-item active lang" aria-current="page" key="try_showing">Просмотр попытки</li>
           </ol>
         </nav>

@@ -22,13 +22,14 @@
             </nav>
             <div class="row border"></div>
             <span class="fs-5 row m-3 justify-content-start lang">
-                <textarea required class="form-control langp" key="article_name" maxlength="1000" placeholder="Название статьи" name="articleName" rows="1" style="margin: 8px;"></textarea>
+                <textarea required class="form-control langp" key="article.name" maxlength="1000" placeholder="Название статьи" name="articleName" rows="1" style="margin: 8px;"></textarea>
                 <textarea class="form-control langp" key="article_desc" maxlength="1000" placeholder="Описание статьи" name="articleDesc" rows="1" style="margin: 8px;"></textarea>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
                     <img class="border border-2 rounded w-100" src="/static/img/nophoto.png" style="max-width: 290px; margin: 0 auto;">
                     <div style="max-width: 290px; margin: 0 auto;">
-                        <input type="file" name="file" class="form-control" id="customFile" />
+                        <input type="file" name="file" class="form-control" id="customFile" accept=".png,.jpg,.jpeg"/>
                     </div>
+                    <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
                 </div>
             </span>
             <div class="container">

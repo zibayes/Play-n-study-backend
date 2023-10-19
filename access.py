@@ -116,7 +116,8 @@ def check_test_access(current_user):
             user_id = current_user.get_id()
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            access, task_name = get_progress(course, progresses, test_id, 'test')
+            access= get_progress(course, progresses, test_id, 'test')
+            task_name = logic.get_test_by_id(test_id).content.name
             if access:
                 return func(course_id, test_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
@@ -136,7 +137,8 @@ def check_article_access(current_user):
             user_id = current_user.get_id()
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            access, task_name = get_progress(course, progresses, article_id, 'article')
+            access = get_progress(course, progresses, article_id, 'article')
+            task_name = logic.article_get_by_id(article_id).name
             if access:
                 return func(course_id, article_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
@@ -155,7 +157,8 @@ def check_link_access(current_user):
             user_id = current_user.get_id()
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-            access, task_name = get_progress(course, progresses, link_id, 'link')
+            access = get_progress(course, progresses, link_id, 'link')
+            task_name = logic.link_get_by_id(link_id).name
             if access:
                 return func(course_id, link_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
@@ -174,7 +177,8 @@ def check_file_attach_access(current_user):
             user_id = current_user.get_id()
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
             course = logic.get_course_without_rel(course_id)
-            access, task_name = get_progress(course, progresses, article_id, 'file_attach')
+            access = get_progress(course, progresses, article_id, 'file_attach')
+            task_name = logic.article_get_by_id(article_id).name
             if access:
                 return func(course_id, article_id, *args, **kwargs)
             access_denied = "Ваш прогресс на " \
@@ -191,11 +195,8 @@ def check_file_attach_access(current_user):
 def get_progress(course, progresses, task_id, task_type):
     results = {}
     first_task = None
-    task_name = None
     for unit in course.content['body']:
         for test in unit['tests']:
-            if test.unit_type in ('article', 'file_attach') and task_id == test.test_id:
-                task_name = test.article_name
             if first_task is None:
                 first_task = str(test.test_id) + test.unit_type
             for progress in progresses:
@@ -204,13 +205,13 @@ def get_progress(course, progresses, task_id, task_type):
                 elif str(test.test_id) + test.unit_type not in results.keys():
                     results[str(test.test_id) + test.unit_type] = False
     if str(task_id) + task_type in results.keys() and results[str(task_id) + task_type]:
-        return True, task_name
+        return True
     if not results and not (first_task[-len(task_type):] == task_type and int(first_task[:-len(task_type)]) == task_id):
-        return False, task_name
+        return False
     not_allowed = False
     for key, value in results.items():
         if key[-len(task_type):] == task_type and int(key[:-len(task_type)]) == task_id and not_allowed:
-            return False, task_name
+            return False
         if not value:
             not_allowed = True
-    return True, task_name
+    return True

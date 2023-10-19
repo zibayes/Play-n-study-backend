@@ -8,7 +8,7 @@
 <div class="d-flex justify-content-center">
     <div id="content" class="container m-5" style="background-color: white; border-radius: 10px">
         <span class="fs-5 row m-3 justify-content-start lang">
-            {{ article_name }}
+            {{ article.name }}
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
@@ -16,7 +16,7 @@
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page"><a href="/course_editor/{{ course.course_id }}/file_attach_check/{{ article.article_id }}"><text class="lang" key="file_attach_checking">Проверка файла</text> «{{ article_name }}»</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="/course_editor/{{ course.course_id }}/file_attach_check/{{ article.article_id }}"><text class="lang" key="file_attach_checking">Проверка файла</text> «{{ article.name }}»</a></li>
             <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach_checking_user">Проверка попытки пользователя</text> {{ username }}</li>
           </ol>
         </nav>
@@ -33,15 +33,18 @@
         </form>
         {% endfor %}
 
-        <div style="margin-left: 15px;">
-            <br>
-            <p>
-                <label for="score" class="lang" key="score">Баллы: </label>
-                <input type="number" id="score" name="score" value="{{current_score}}" style="width:60px;">
-                 / {{ score }}
-            </p>
-            <br>
-        </div>
+        <form action="" method="POST">
+            <div style="margin-left: 15px;">
+                <br>
+                <p>
+                    <label for="score" class="lang" key="score">Баллы: </label>
+                    <input type="number" id="score" name="current_score" value="{{current_score}}" style="width:60px;">
+                     / {{ article.score }}
+                </p>
+            </div>
+
+            <button class="btn btn-primary lang" key="complete_checking" style="margin: 8px 8px 15px;">Завершить проверку</button>
+        </form>
     </div>
 </div>
 

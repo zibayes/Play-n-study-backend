@@ -29,7 +29,7 @@
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
             <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach_checking">Проверка файла</text> «{{ article_name }}»</li>
+            <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="file_attach_checking">Проверка файла</text> «{{ article.name }}»</li>
           </ol>
         </nav>
         <div class="row border"></div>
@@ -37,7 +37,7 @@
         <div class="card">
             <div class="card-body">
                 <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
-                    {{ article_name }}
+                    {{ article.name }}
                 </span>
                 <div class="row border"></div>
                 <br>

@@ -556,8 +556,10 @@ class ArticlesRepository:
                 course_id=article.course_id,
                 unit_id=article.unit_id,
                 avatar=article.avatar,
+                name=article.name,
                 description=article.description,
-                content=article.content
+                content=article.content,
+                score=article.score
             )
             self.session.add(new_article)
             self.session.commit()
@@ -591,8 +593,10 @@ class ArticlesRepository:
             article_to_update.course_id = article.course_id
             article_to_update.unit_id = article.unit_id
             article_to_update.avatar = article.avatar
+            article_to_update.name = article.name
             article_to_update.description = article.description
             article_to_update.content = article.content
+            article_to_update.score = article.score
             self.session.commit()
             return True
         except sqlalchemy.exc.DatabaseError as e:

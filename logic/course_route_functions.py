@@ -28,7 +28,7 @@ def specify_tests_for_view(course, course_id, progresses=None):
                 test.test = logic.get_test_by_id(test.test_id)
             elif test.unit_type in ('article', 'file_attach'):
                 article = logic.article_get_by_id(test.test_id)
-                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(test.article_name, None),
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(article.name, None),
                                  description=article.description, avatar=article.avatar)
             elif test.unit_type == 'link':
                 link = logic.link_get_by_id(test.test_id)
@@ -57,8 +57,6 @@ def get_unit_name(course, task_id, task_type):
     for unit in course.content['body']:
         for test in unit['tests']:
             if test.test_id == task_id and test.unit_type == task_type:
-                if task_type in ('article', 'file_attach'):
-                    return unit['name'], test.article_name.replace("'", '"').replace("`", '"').replace('"', '\"')
                 return unit['name']
 
 
@@ -333,7 +331,10 @@ def get_file_attach_preview(progress, course_id, article_id, user):
         if int(progress[i].progress['test_id']) != article_id or progress[i].task_type != 'file_attach':
             to_delete.append(i)
         else:
-            pass
+            progress[i].progress['result'] = TestResult.from_json(json.loads(progress[i].progress['result']))
+            if progress[i].progress['result'].total_current_score > max_score:
+                max_score = progress[i].progress['result'].total_current_score
+                max_score_total = progress[i].progress['result'].total_score
     for i in reversed(to_delete):
         progress.pop(i)
 

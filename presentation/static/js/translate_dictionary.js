@@ -499,6 +499,8 @@ export let arrLang = {
     "attached_files": "Прикреплённые файлы:",
     "file_attach_checking": "Проверка файла",
     "file_attach_checking_user": "Проверка попытки пользователя",
+    "file_note": "*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб",
+    "score_for_task": "Баллы за задание:",
   },
   'de': {
     'mainpage': 'Startseite',

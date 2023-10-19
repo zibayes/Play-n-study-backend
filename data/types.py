@@ -341,11 +341,10 @@ class QSolo(Question):
 # контент курсов
 
 class CourseUnit:
-    def __init__(self, unit_type=None, unit_id=None, test_id=None, article_name=None, test=None):
+    def __init__(self, unit_type=None, unit_id=None, test_id=None, test=None):
         self.unit_type = unit_type
         self.unit_id = unit_id
         self.test_id = test_id
-        self.article_name = article_name
         self.test = test
 
     @staticmethod
@@ -356,9 +355,7 @@ class CourseUnit:
                  'name': unit['name'],
                  'unit_id': unit['unit_id'],
                  'tests': [
-                    CourseUnit(unit_type=i['unit_type'], test_id=i['test_id'],
-                                article_name=i['article_name']
-                               ) for i in unit['tests']
+                    CourseUnit(unit_type=i['unit_type'], test_id=i['test_id']) for i in unit['tests']
                  ]
                 } for unit in unit_json['body']
             ],
@@ -375,8 +372,7 @@ class CourseUnit:
                  'tests': [
                      {
                       'unit_type': i['unit_type'] if isinstance(i, dict) else i.unit_type,
-                      'test_id': i['test_id'] if isinstance(i, dict) else i.test_id,
-                      'article_name': i['article_name'] if isinstance(i, dict) else i.article_name
+                      'test_id': i['test_id'] if isinstance(i, dict) else i.test_id
                      } for i in unit['tests']
                  ]
                 } for unit in units['body']
@@ -386,13 +382,15 @@ class CourseUnit:
 
 
 class Article:
-    def __init__(self, article_id, course_id, unit_id, content, description=None, avatar=None):
+    def __init__(self, article_id, course_id, unit_id, content, name, score, description=None, avatar=None):
         self.article_id = article_id
         self.course_id = course_id
         self.unit_id = unit_id
         self.avatar = avatar
+        self.name = name
         self.description = description
         self.content = content
+        self.score = score
 
 
 class UserProgress:

@@ -1,5 +1,6 @@
 -- DROP TABLE  users_progress CASCADE;
 -- DROP TABLE  articles CASCADE ;
+-- DROP TABLE  links CASCADE;
 -- DROP TABLE  tests CASCADE;
 -- DROP TABLE  sub_rel CASCADE;
 -- DROP TABLE  reviews CASCADE;
@@ -76,7 +77,7 @@ CREATE TABLE reviews(
     rev_id serial PRIMARY KEY,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
-    rate int NOT NULL CHECK ( rate BETWEEN 0 AND 5), -- NEW! ( rate BETWEEN 0 AND 10) -> ( rate BETWEEN 0 AND 5)
+    rate int NOT NULL CHECK ( rate BETWEEN 0 AND 5),
     text text
 );
 
@@ -89,8 +90,8 @@ CREATE TABLE sub_rel(
 CREATE TABLE tests(
     test_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
-	unit_id int NOT NULL, -- NEW!
-	avatar bytea NULL, -- NEW!
+	unit_id int NOT NULL,
+	avatar bytea NULL,
 	description text, -- NEW!
     content json
 );
@@ -98,13 +99,14 @@ CREATE TABLE tests(
 CREATE TABLE articles(
     article_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
-	unit_id int NOT NULL, -- NEW!
-	avatar bytea NULL, -- NEW!
-	description text, -- NEW!
-    content text
+	unit_id int NOT NULL,
+	avatar bytea NULL,
+	name text,
+	description text,
+    content text,
+    score float
 );
 
--- NEW!
 CREATE TABLE links( 
     link_id serial PRIMARY KEY,
     course_id int REFERENCES courses(course_id),
@@ -118,9 +120,9 @@ CREATE TABLE users_progress(
     up_id serial PRIMARY KEY ,
     user_id int REFERENCES users(user_id),
     course_id int REFERENCES courses(course_id),
-	task_id int NOT NULL, -- NEW! (TASK = ARTICLE/TEST/LINK)
-	task_type text, -- NEW!
-	date_of_completion timestamp DEFAULT now(), -- NEW!
+	task_id int NOT NULL, -- (TASK = ARTICLE/TEST/LINK/FILE_ATTACH)
+	task_type text,
+	date_of_completion timestamp DEFAULT now(),
     progress json
 );
 

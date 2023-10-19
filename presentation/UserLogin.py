@@ -29,6 +29,6 @@ class UserLogin:
 
     def verify_ext(self, filename):
         ext = filename.rsplit('.', 1)[1]
-        if ext == "png" or ext == "PNG":
+        if ext.lower() in ('png', 'jpg', 'jpeg'):
             return True
         return False

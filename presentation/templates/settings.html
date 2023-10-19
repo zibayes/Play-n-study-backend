@@ -15,8 +15,9 @@
             <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px;">
                 <img class="border border-2 rounded w-100" src="/userava/{{user.user_id}}" style="max-width: 400px;">
                 <form action="/uploadava" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="file" class="form-control" id="customFile" />
+                    <input type="file" name="file" class="form-control" id="customFile" accept=".png,.jpg,.jpeg"/>
                     <a><button class="btn border border-2 w-100 lang" key="changeava" type="submit">Сменить аватар</button></a>
+                    <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
                 </form>
 
 <!--                <span class="lang" key="anachievements" style="margin-top: 20px; margin-left: auto; margin-right: auto;">-->
