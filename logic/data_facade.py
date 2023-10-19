@@ -360,7 +360,7 @@ class DataFacade:
         return self.chat_messages_repository.remove_message(msg_id)
 
     def get_last_chat_message_by_id(self, chat_id):
-        return json.dumps({"msg": self.chat_messages_repository.get_last_chat_message_by_id(chat_id).to_dict()}, default=str, ensure_ascii=False)
+        return json.dumps(self.chat_messages_repository.get_last_chat_message_by_id(chat_id).to_dict(), default=str, ensure_ascii=False)
 
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)

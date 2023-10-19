@@ -1,3 +1,5 @@
+import json
+
 from flask_login import login_required, logout_user, login_user, current_user
 from flask import Blueprint, redirect, render_template, request, flash
 from sqlalchemy import create_engine
@@ -43,7 +45,7 @@ def handle_send_message():
         msg_to = int(request.json['msg_to'])
         chat_id = logic.get_chat_by_users(msg_from, msg_to)
         msg = logic.get_last_chat_message_by_id(chat_id)
-        return msg
+        return json.loads(msg)
     return 'fail'
 
 
