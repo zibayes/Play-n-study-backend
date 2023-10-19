@@ -93,7 +93,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                         $.ajax({
                             url: '/send_message',
                             method: "post",
-                            dataType: 'html',
+                            dataType: 'json',
                             contentType: 'application/json',
                             data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
                             success: function (data){

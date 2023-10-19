@@ -45,7 +45,7 @@ def handle_send_message():
         msg_to = int(request.json['msg_to'])
         chat_id = logic.get_chat_by_users(msg_from, msg_to)
         msg = logic.get_last_chat_message_by_id(chat_id)
-        return json.loads(msg)
+        return msg
     return 'fail'
 
 
