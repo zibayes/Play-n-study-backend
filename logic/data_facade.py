@@ -369,9 +369,10 @@ class DataFacade:
             last_msg = self.chat_messages_repository.get_last_chat_message_by_id(chat.chat_id)
             messages = self.chat_messages_repository.get_chat_messages_by_chat_id(chat.chat_id)
             msg_new_count = 0
-            for msg in messages:
-                if not msg.user_to_read and msg.msg_to == current_user.user_id:
-                    msg_new_count += 1
+            if messages:
+                for msg in messages:
+                    if not msg.user_to_read and msg.msg_to == current_user.user_id:
+                        msg_new_count += 1
 
             user_with = self.user_repository.get_user_by_id(chat.user_with)
             user_with_username = user_with.username
