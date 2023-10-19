@@ -895,7 +895,7 @@ class ChatMessageRepository:
             .order_by(text("msg_date desc")) \
             .first()
         if message is not None:
-            return message
+            return convert.msg_db_to_msg(message)
         return None
 
     def get_chat_messages_by_chat_id(self, chat_id):
