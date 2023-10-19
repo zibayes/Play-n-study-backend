@@ -39,7 +39,7 @@ def handle_get_chat_content():
 def handle_send_message():
     response = logic.chats_send_message(request.json, current_user.get_id())
     if response:
-        msg_from = current_user.user_id
+        msg_from = current_user.get_id()
         msg_to = int(request.json['msg_to'])
         chat = logic.get_chat_by_users(msg_from, msg_to)
         return logic.get_last_chat_message_by_id(chat.chat_id).to_dict()
