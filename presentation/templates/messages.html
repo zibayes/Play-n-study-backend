@@ -13,7 +13,18 @@
     .li:active{
         background-color: #eee;
     }
-    
+    .delete_item{
+        opacity: 0;
+        transition: all 0.2s ease;
+    }
+    .message:hover .delete_item{
+        opacity: 1;
+        transition: all 0.2s ease;
+    }
+    .li_chat:hover .delete_item{
+        opacity: 1;
+        transition: all 0.2s ease;
+    }
 </style>
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
@@ -35,14 +46,8 @@
                 </div>
                 <div id="div_area" style="padding: 20px;" class="col-md-6 col-lg-7 col-xl-8 card">
                   <ul id="ul_chat_item" class="list-unstyled" style="overflow: scroll; height: 580px"></ul>
-                    <div class="bg-white mb-3">
-                      <div class="form-outline">
-                        <textarea class="form-control" id="textAreaExample2" rows="4"></textarea>
-                        <label class="form-label" for="textAreaExample2">Message</label>
-                      </div>
-                        <button type="button" class="btn btn-info btn-rounded float-end" style="margin-top: 10px">Send</button>
+                    <div id="send_message_form" class="bg-white mb-3">
                     </div>
-
                 </div>
               </div>
           

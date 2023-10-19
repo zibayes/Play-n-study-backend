@@ -1,6 +1,5 @@
-
-function element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id) {
-
+function element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id, msg_new_count) {
+    let btn_del_chat = document.createElement("button")
     let li_chat = document.createElement("li")
     let a_element_chat = document.createElement("a")
     let div_element_chat = document.createElement("div")
@@ -12,7 +11,22 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     let p_element_time = document.createElement("p")
     let span_element_counter = document.createElement("span")
 
-    li_chat.setAttribute("class", "p-2 border-bottom li")
+    btn_del_chat.setAttribute("class", 'delete_item delete_item_btn btn btn-secondary')
+    btn_del_chat.style = "position: relative;height: 30px;width: 20px;text-align: center;display: flex;\n" +
+        "    align-items: center;\n" +
+        "    justify-content: center; top: 35px;left:100px"
+    btn_del_chat.textContent = "✖"
+    btn_del_chat.addEventListener("click", function () {
+         $.ajax({
+          url: '/remove_chat/' + chat_id,
+          method: 'post',
+          dataType: 'json'
+        })
+         li_chat.remove()
+         ul_chat_item.innerHTML = ''
+
+     })
+    li_chat.setAttribute("class", "li_chat p-2 border-bottom li")
     li_chat.style = "border-radius: 15px;"
     a_element_chat.setAttribute("class", "d-flex justify-content-between")
     a_element_chat.setAttribute("href", "#!")
@@ -39,9 +53,18 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     }
 
     span_element_counter.setAttribute("class", "badge bg-danger float-end")
-    span_element_counter.textContent = checked? null : 1
+    span_element_counter.textContent = msg_new_count ===  0 ? null : msg_new_count
 
-    a_element_chat.addEventListener("click" , function () {
+    a_element_chat.addEventListener("click" , function (event) {
+
+        if (document.querySelector(".delete_item_btn") === null){
+            return;
+        }
+        if (document.querySelector(".delete_item_btn").contains(event.target)){
+            return
+        }
+
+        span_element_counter.textContent = null
         $.ajax({
           url: '/get_dialog',
           method: 'post',
@@ -50,10 +73,42 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
           data: JSON.stringify({"chat_id": chat_id}),
           success: function (data) {
                 ul_chat_item.innerHTML = ''
+                div_sent.innerHTML = ''
+                console.log(data);
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)
                     ul_chat_item.appendChild(li_item)
                 })
+                let textarea = document.createElement("textarea")
+                let btn_message = document.createElement("button")
+                textarea.placeholder = "Message"
+                textarea.setAttribute("class", "form-control")
+                textarea.rows = '4'
+                btn_message.type = "button"
+                btn_message.setAttribute("class", "btn btn-info btn-rounded float-end")
+                btn_message.style = "margin-top: 10px;"
+                btn_message.textContent = "Send"
+                btn_message.addEventListener("click", function () {
+                    if (textarea.value !== ''){
+                        $.ajax({
+                            url: '/send_message',
+                            method: "post",
+                            dataType: 'html',
+                            contentType: 'application/json',
+                            data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
+                            success: function (data){
+                                textarea.value = ""
+                                console.log(data);
+                                ul_chat_item.appendChild(getLiItem(data))
+
+                            }, error:function(data){
+                                console.log(data);
+                            }
+                        })
+                    }
+                })
+                div_sent.appendChild(textarea)
+                div_sent.appendChild(btn_message)
 
           }
         })
@@ -69,6 +124,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     div_element_chat.appendChild(div_element_chat_pt_message)
 
     a_element_chat.appendChild(div_element_chat)
+    a_element_chat.appendChild(btn_del_chat)
     a_element_chat.appendChild(div_element_chat_pt_time)
 
     li_chat.appendChild(a_element_chat)
@@ -77,8 +133,13 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
 }
 
 function getLiItem(message){
-    let div_w_100 = document.createElement("div")
 
+    let div_w_100 = document.createElement("div")
+    let delete_item = document.createElement('button');
+    delete_item.textContent = "✖"
+    delete_item.style ="position: relative;height: 30px;width: 20px;text-align: center;display: flex;\n" +
+        "    align-items: center;\n" +
+        "    justify-content: center;"
     let li_item = document.createElement("li")
     let img_item = document.createElement("img")
     let div_card_item = document.createElement("div")
@@ -89,24 +150,40 @@ function getLiItem(message){
     let div_item_card_body = document.createElement("div")
     let p_item_text = document.createElement("p")
 
-    div_w_100.setAttribute("class", "card w-100")
+    delete_item.setAttribute('class', 'delete_item btn btn-secondary')
+    div_w_100.setAttribute("class", "card w-100 message")
 
     li_item.setAttribute("class", "d-flex mb-4")
     img_item.setAttribute("class", "")
     img_item.style = "width: 60px"
 
-    div_card_item.setAttribute("class", "card")
+    div_card_item.setAttribute("class", "card  message")
     div_card_header_item.setAttribute("class", "card-header d-flex justify-content-between p-3")
     p_item_name.setAttribute("class", "fw-bold mb-0")
     p_item_name.textContent = message.msg_from
     p_item_time.setAttribute("class", "text-muted small mb-0")
+
     let time = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(message.msg_date))
 
-    p_item_time.textContent = time + " " + new Date(message.msg_date).getHours() + ":" + new Date(message.msg_date).getSeconds() + " "
+
+    if (new Date(message.msg_date).getSeconds() < 10){
+        p_item_time.textContent = time + " " + new Date(message.msg_date).getHours() + ":0" + new Date(message.msg_date).getSeconds() + ' '
+    }else{
+        p_item_time.textContent = time + " " + new Date(message.msg_date).getHours() + ":" + new Date(message.msg_date).getSeconds() + " "
+    }
     i_item_time.setAttribute("class", "far fa-clock")
     div_item_card_body.setAttribute("class", "card-body")
     p_item_text.setAttribute("class", "mb-0")
     p_item_text.textContent = message.msg_text
+
+    delete_item.addEventListener("click", function () {
+        $.ajax({
+          url: '/remove_message/' + message.msg_id,
+          method: 'post',
+          dataType: 'json'
+        })
+        li_item.remove()
+    })
 
     if (message.msg_from === "Я"){
         img_item.setAttribute("class", "rounded-circle d-flex align-self-start shadow-1-strong me-3")
@@ -115,6 +192,7 @@ function getLiItem(message){
         div_item_card_body.appendChild(p_item_text)
         p_item_time.appendChild(i_item_time)
         div_card_header_item.appendChild(p_item_name)
+        div_card_header_item.appendChild(delete_item)
         div_card_header_item.appendChild(p_item_time)
         div_card_item.appendChild(div_card_header_item)
         div_card_item.appendChild(div_item_card_body)
@@ -127,6 +205,7 @@ function getLiItem(message){
         div_item_card_body.appendChild(p_item_text)
         p_item_time.appendChild(i_item_time)
         div_card_header_item.appendChild(p_item_name)
+        div_card_header_item.appendChild(delete_item)
         div_card_header_item.appendChild(p_item_time)
         div_w_100.appendChild(div_card_header_item)
         div_w_100.appendChild(div_item_card_body)
@@ -137,6 +216,7 @@ function getLiItem(message){
 
 }
 let ul_chat_item = document.getElementById("ul_chat_item")
+let div_sent = document.getElementById("send_message_form")
 let ul_chat = document.getElementById("ul_chat")
 
 $.ajax({
@@ -150,7 +230,7 @@ $.ajax({
             }
     )
     for (let i = 0; i < json_data.chats.length; i++){
-      let li = element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id)
+      let li = element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id, json_data.chats[i].msg_new_count)
       ul_chat.appendChild(li)
     }
   }
