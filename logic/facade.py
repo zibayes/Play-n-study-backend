@@ -400,6 +400,12 @@ class LogicFacade:
     def remove_message(self, msg_id):
         return self.data.remove_message(msg_id)
 
+    def get_last_chat_message_by_id(self, chat_id):
+        return self.data.get_last_chat_message_by_id(chat_id)
+
+    def get_chat_by_users(self, msg_from, msg_to):
+        return self.data.chat_repository.get_chat_id(msg_from, msg_to)
+
     def chats_send_message(self, req_json, user_id):
         # if chat exists -> send message, else create_chat -> send_message
         msg_text = req_json['msg_text']

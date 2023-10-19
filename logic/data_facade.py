@@ -359,6 +359,9 @@ class DataFacade:
     def remove_message(self, msg_id):
         return self.chat_messages_repository.remove_message(msg_id)
 
+    def get_last_chat_message_by_id(self, chat_id):
+        return self.chat_messages_repository.get_last_chat_message_by_id(chat_id)
+
     def chat_get_user_chats_preview(self, user_id):
         chats = self.chat_repository.get_user_chats(user_id)
         previews = []
