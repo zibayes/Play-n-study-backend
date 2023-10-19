@@ -41,8 +41,8 @@ def handle_send_message():
     if response:
         msg_from = current_user.get_id()
         msg_to = int(request.json['msg_to'])
-        chat = logic.get_chat_by_users(msg_from, msg_to)
-        return logic.get_last_chat_message_by_id(chat.chat_id).to_dict()
+        chat_id = logic.get_chat_by_users(msg_from, msg_to)
+        return logic.get_last_chat_message_by_id(chat_id).to_dict()
     return 'fail'
 
 
