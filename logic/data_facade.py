@@ -362,6 +362,7 @@ class DataFacade:
     def get_last_chat_message_by_id(self, chat_id):
         msg = self.chat_messages_repository.get_last_chat_message_by_id(chat_id).to_dict()
         msg['msg_from_id'] = self.user_repository.get_user_by_id(int(msg['msg_from'])).user_id
+        msg['msg_from'] = "Я"
         return json.dumps(msg, default=str, ensure_ascii=False)
 
     def chat_get_user_chats_preview(self, user_id):
