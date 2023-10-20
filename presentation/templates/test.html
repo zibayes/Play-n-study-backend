@@ -127,22 +127,86 @@
 
                                     {% if question.type == "drag_to_text" %}
                                         {% set answerNum = namespace(value=0) %}
-                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}">{{ question.ask }}</p>
+                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}" style="display: flex">{{ question.ask }}</p>
                                         <script>
                                             let mark_d;
                                             let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');
                                             {% for answer in question.answers %}
                                                 mark_d = `{{ answer['mark'] }}`;
-                                                filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<input>`)
+                                                filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<div style="margin-left: 5px; margin-right: 5px;"><input id="Drop-{{ questionNum.value }}" class="Drop" style="width: 70px;"></div>`)
                                             {% endfor %}
                                         </script>
                                         <hr>
-                                        <p class="fromMarkdown" id="DragToText-answers-{{ questionNum.value }}"></p>
+                                        <div id="DragToText-answers-{{ questionNum.value }}" class="DragToText-answers" style="display: flex;"></div>
                                         <script>
+                                            function addDragndropDesignVoid(div) {
+                                                div.addEventListener(`mouseover`, (evt) => {
+                                                  document.body.style.cursor = 'move';
+                                                })
+                                                div.addEventListener(`mouseout`, (evt) => {
+                                                  document.body.style.cursor = '';
+                                                })
+                                                div.addEventListener(`dragstart`, (evt) => {
+                                                  evt.dataTransfer.setDragImage(div, div.offsetWidth / 2, div.offsetHeight / 2.4)
+                                                  setTimeout(() => {
+                                                      div.classList.add(`selected`);
+                                                      div.style.visibility = "hidden"
+                                                  }, 0);
+                                                })
+                                                div.addEventListener(`dragend`, (evt) => {
+                                                  setTimeout(() => {
+                                                      div.classList.remove(`selected`);
+                                                      div.style.removeProperty("visibility")
+                                                  }, 0);
+                                                });
+                                            }
+
+                                            function addDragoverEventListener(dragndropArea, type) {
+                                                dragndropArea.addEventListener(`dragover`, (evt) => {
+                                                    evt.preventDefault();
+
+                                                    let activeElement = document.getElementById("questionsList").querySelector(`.selected`);
+                                                    let currentElement = evt.target;
+                                                    let isMoveable = activeElement !== currentElement &&
+                                                        (currentElement.classList.contains("Drop") || currentElement.classList.contains("DragToText-answers") || currentElement.classList.contains("DragAndDrop"));
+                                                    if (!isMoveable)
+                                                        return;
+                                                    if (type === "question")
+                                                        currentElement.replaceWith(activeElement);
+                                                    else {
+                                                        let input = document.createElement("input")
+                                                        input.setAttribute('id', "Drop-{{ questionNum.value }}");
+                                                        input.setAttribute('class', "Drop");
+                                                        input.setAttribute('style', "width: 70px;");
+                                                        addDragoverEventListener(input, "question");
+                                                        let answers = document.getElementById("DragToText-answers-{{ questionNum.value }}")
+                                                        if (!answers.contains(activeElement))
+                                                            activeElement.replaceWith(input)
+                                                        answers.appendChild(activeElement);
+                                                    }
+                                                });
+                                            }
+
                                             let answers_d = document.getElementById('DragToText-answers-{{ questionNum.value }}');
+                                            addDragoverEventListener(answers_d, "answer");
+                                            let dnd;
                                             {% for answer in question.answers %}
-                                                answers_d.textContent += `{{ answer['answer'] }}<br>`
+                                                dnd = document.createElement('div');
+                                                dnd.setAttribute('id', "dnd-{{ questionNum.value }}-{{ answerNum.value }}");
+                                                dnd.setAttribute('style', "background: white; stroke: gray; margin-right: 15px; padding: 5px;");
+                                                dnd.setAttribute('draggable', "true");
+                                                dnd.setAttribute('class', "DragAndDrop");
+                                                dnd.textContent = "{{ answer['answer'] }}";
+                                                answers_d.appendChild(dnd);
+                                                // answers_d.textContent += `<div id="dnd-{{ questionNum.value }}-{{ answerNum.value }}" style="background: white; stroke: gray; margin-right: 15px; padding: 5px;">{{ answer['answer'] }}</div>`
+                                                // elem = document.getElementById("dnd-{{ questionNum.value }}-{{ answerNum.value }}")
+                                                addDragndropDesignVoid(dnd);
+                                                {% set answerNum.value = answerNum.value + 1 %}
                                             {% endfor %}
+                                            document.addEventListener("DOMContentLoaded", function(event) {
+                                            for (const el of document.getElementsByClassName("Drop"))
+                                              addDragoverEventListener(el, "question");
+                                            });
                                         </script>
                                     {% endif %}
 
@@ -180,6 +244,7 @@
 {% endblock %}
 {% block script %}
     <script type="module" src="/static/js/markdown.js"></script>
+    <script type="module" src="/static/js/test_constructor_functions.js"></script>
     <script>
         let select, option;
     </script>
