@@ -667,6 +667,8 @@ def handle_edit_test_save(course_id, test_id):
 def handle_check_test(course_id, test_id):
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
+    print(request.form)
+    return
     result = logic.get_test_result(test, request.form)
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = get_unit_name(course, test_id, 'test')

@@ -88,6 +88,7 @@
                                         <hr>
                                         {% for answer in question.answers %}
                                             {% for question_text in answer.keys() %}
+                                            {% set answerNum.value = answerNum.value + 1 %}
                                                 <div style="display: inline-block;">
                                                     <label for="Select-{{ questionNum.value }}-{{ answerNum.value }}" class="fromMarkdown">{{ question_text }}</label>
                                                     <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="Select-{{ questionNum.value }}-{{ answerNum.value }}">
@@ -111,9 +112,10 @@
                                             let select_elem, group, mark;
                                             let filling = document.getElementById('Filling-{{ questionNum.value }}');
                                             {% for answer_main in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
                                                 group = `{{ answer_main['group'] }}`;
                                                 mark = `{{ answer_main['mark'] }}`;
-                                                select_elem = '<select><option selected></option>';
+                                                select_elem = '<select name="Filling-{{ questionNum.value }}-{{ answerNum.value }}"><option selected></option>';
                                                 {% for answer in question.answers %}
                                                     if (group === `{{ answer['group'] }}`){
                                                         select_elem += `<option>{{ answer['answer'] }}</option>`
@@ -133,7 +135,7 @@
                                             let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');
                                             {% for answer in question.answers %}
                                                 mark_d = `{{ answer['mark'] }}`;
-                                                filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<div style="margin-left: 5px; margin-right: 5px;"><input id="Drop-{{ questionNum.value }}" class="Drop" style="width: 70px;"></div>`)
+                                                filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<div id="DragWord-{{ questionNum.value }}-`+ mark_d +`" style="margin-left: 5px; margin-right: 5px;"><input disabled id="Drop-{{ questionNum.value }}" class="Drop" style="width: 70px; margin: 0 5px 0 5px;"></div>`)
                                             {% endfor %}
                                         </script>
                                         <hr>
@@ -171,13 +173,34 @@
                                                         (currentElement.classList.contains("Drop") || currentElement.classList.contains("DragToText-answers") || currentElement.classList.contains("DragAndDrop"));
                                                     if (!isMoveable)
                                                         return;
-                                                    if (type === "question")
+                                                    let is_question = false;
+                                                    let input_to_del = activeElement.getElementsByTagName('input');
+                                                    if (input_to_del[0] !== undefined){
+                                                        input_to_del[0].remove();
+                                                        is_question = true
+                                                    }
+                                                    let input = document.createElement("input");
+                                                    input.setAttribute('id', "Drop-{{ questionNum.value }}");
+                                                    input.setAttribute('class', "Drop");
+                                                    input.setAttribute('disabled', "disabled");
+                                                    input.setAttribute('style', "width: 70px; margin: 0 5px 0 5px;");
+                                                    addDragoverEventListener(input, "question");
+                                                    if (type === "question") {
+                                                        let hidden_input = document.createElement("input");
+                                                        hidden_input.setAttribute('name', currentElement.parentElement.id);
+                                                        hidden_input.setAttribute('hidden', "true");
+                                                        hidden_input.setAttribute('value', activeElement.textContent);
+                                                        activeElement.appendChild(hidden_input)
+                                                        if (is_question){
+                                                            activeElement.replaceWith(input)
+                                                        }
                                                         currentElement.replaceWith(activeElement);
-                                                    else {
-                                                        let input = document.createElement("input")
+                                                    } else {
+                                                        let input = document.createElement("input");
                                                         input.setAttribute('id', "Drop-{{ questionNum.value }}");
                                                         input.setAttribute('class', "Drop");
-                                                        input.setAttribute('style', "width: 70px;");
+                                                        input.setAttribute('disabled', "disabled");
+                                                        input.setAttribute('style', "width: 70px; margin: 0 5px 0 5px;");
                                                         addDragoverEventListener(input, "question");
                                                         let answers = document.getElementById("DragToText-answers-{{ questionNum.value }}")
                                                         if (!answers.contains(activeElement))
@@ -193,7 +216,7 @@
                                             {% for answer in question.answers %}
                                                 dnd = document.createElement('div');
                                                 dnd.setAttribute('id', "dnd-{{ questionNum.value }}-{{ answerNum.value }}");
-                                                dnd.setAttribute('style', "background: white; stroke: gray; margin-right: 15px; padding: 5px;");
+                                                dnd.setAttribute('style', "background: white; stroke: gray; margin: 0 5px 0 5px; padding: 5px;");
                                                 dnd.setAttribute('draggable', "true");
                                                 dnd.setAttribute('class', "DragAndDrop");
                                                 dnd.textContent = "{{ answer['answer'] }}";
