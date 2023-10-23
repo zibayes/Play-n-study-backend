@@ -193,6 +193,16 @@ def get_test_result(test, form):
                                 if question.type == "multiple":
                                     score_part -= question.score / question.correct  # (question.correct * 2)
                             answers_count += 1
+                elif question.type in ("compliance", "filling_gaps"):
+                    for que_part in question.answers:
+                        if value in que_part.keys():
+                            if que_part[value]:
+                                que_part[value] = "right"
+                                score_part += question.score / question.correct
+                            else:
+                                que_part[value] = "wrong"
+                                score_part -= question.score / question.correct  # (question.correct * 2)
+                            answers_count += 1
                 elif question.type == "free":
                     question.answers.append(value)
                     question.is_correct = False

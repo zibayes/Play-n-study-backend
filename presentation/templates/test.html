@@ -91,7 +91,7 @@
                                             {% set answerNum.value = answerNum.value + 1 %}
                                                 <div style="display: inline-block;">
                                                     <label for="Select-{{ questionNum.value }}-{{ answerNum.value }}" class="fromMarkdown">{{ question_text }}</label>
-                                                    <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="Select-{{ questionNum.value }}-{{ answerNum.value }}">
+                                                    <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="{{ question.ask }}-{{ answerNum.value }}">
                                                         <option selected></option>
                                                         {% for answer_comp in question.answers %}
                                                             {% for answer_text in answer_comp.values() %}
@@ -115,6 +115,8 @@
                                                 {% set answerNum.value = answerNum.value + 1 %}
                                                 group = `{{ answer_main['group'] }}`;
                                                 mark = `{{ answer_main['mark'] }}`;
+                                                <!-- {{ question.ask }}-{{ answerNum.value }} -->
+                                                <!-- Filling-{{ questionNum.value }}-{{ answerNum.value }} -->
                                                 select_elem = '<select name="Filling-{{ questionNum.value }}-{{ answerNum.value }}"><option selected></option>';
                                                 {% for answer in question.answers %}
                                                     if (group === `{{ answer['group'] }}`){
@@ -135,6 +137,7 @@
                                             let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');
                                             {% for answer in question.answers %}
                                                 mark_d = `{{ answer['mark'] }}`;
+                                                    <!-- DragWord-{{ questionNum.value }}-`+ mark_d +` -->
                                                 filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<div id="DragWord-{{ questionNum.value }}-`+ mark_d +`" style="margin-left: 5px; margin-right: 5px;"><input disabled id="Drop-{{ questionNum.value }}" class="Drop" style="width: 70px; margin: 0 5px 0 5px;"></div>`)
                                             {% endfor %}
                                         </script>
@@ -231,6 +234,41 @@
                                               addDragoverEventListener(el, "question");
                                             });
                                         </script>
+                                    {% endif %}
+
+                                    {% if question.type == "markers_drag" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                        <span class="fs-5 row m-3 justify-content-start lang">
+                                            <div class="flex-column">
+                                                <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
+                                                    <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                </div>
+                                                <style>
+                                                    #canvas{
+                                                        border:1px solid red;
+                                                        background-image: url("/courseava/{{ course.course_id }}") ;
+                                                    }
+                                                </style>
+                                            </div>
+                                        </span>
+                                        <hr>
+                                        <div id="MarkersDrag-answers-{{ questionNum.value }}" class="MarkersDrag-answers" style="display: flex;"></div>
+                                    <script>
+                                        let answers_m = document.getElementById("MarkersDrag-answers-{{ questionNum.value }}")
+                                        {% for answer in question.answers %}
+                                            dnd = document.createElement('div');
+                                            dnd.setAttribute('id', "dnd-{{ questionNum.value }}-{{ answerNum.value }}");
+                                            dnd.setAttribute('style', "background: white; stroke: gray; margin: 0 5px 0 5px; padding: 5px;");
+                                            dnd.setAttribute('draggable', "true");
+                                            dnd.setAttribute('class', "DragAndDrop");
+                                            dnd.textContent = "{{ answer['<p>marker</p>'] }}";
+                                            answers_m.appendChild(dnd);
+                                            // answers_d.textContent += `<div id="dnd-{{ questionNum.value }}-{{ answerNum.value }}" style="background: white; stroke: gray; margin-right: 15px; padding: 5px;">{{ answer['answer'] }}</div>`
+                                            // elem = document.getElementById("dnd-{{ questionNum.value }}-{{ answerNum.value }}")
+                                            addDragndropDesignVoid(dnd);
+                                            {% set answerNum.value = answerNum.value + 1 %}
+                                        {% endfor %}
+                                    </script>
                                     {% endif %}
 
                                     {% if question.type == "free" %}

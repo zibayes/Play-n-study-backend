@@ -837,15 +837,15 @@ class ChatRepository:
             .filter_by(chat_id=chat_id) \
             .first()
 
+        if chat is None:
+            return False
+
         msgs = self.session.query(ChatMessagesModel) \
             .filter_by(chat_id=chat_id) \
             .order_by(text("msg_date desc")) \
             .all()
 
         status = True
-
-        if chat is None:
-            return False
 
         if not read:
             status = False

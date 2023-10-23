@@ -326,7 +326,7 @@ class ChatMessagesModel(Base):
     msg_id = Column(Integer, primary_key=True)
     chat_id = Column(Integer, ForeignKey("chats.chat_id"))
     msg_text = Column(Text)
-    msg_date = Column(TIMESTAMP, onupdate=func.now(), server_default=func.now())
+    msg_date = Column(TIMESTAMP, server_default=func.now()) # onupdate=func.now(),
     msg_from = Column(Integer, ForeignKey("users.user_id"))
     msg_to = Column(Integer, ForeignKey("users.user_id"))
     user_to_read = Column(Boolean, default=False)

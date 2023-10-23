@@ -180,6 +180,56 @@
                                             {% endfor %}
                                         {% endif %}
 
+                                        {% if question.type == "markers_drag" %}
+                                            <span class="fs-5 row m-3 justify-content-start lang">
+                                                <div class="flex-column">
+                                                    <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
+                                                        <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                    </div>
+                                                    <style>
+                                                        #canvas{
+                                                            border:1px solid red;
+                                                            background-image: url("/courseava/{{ course.course_id }}") ;
+                                                        }
+                                                    </style>
+                                                    <form action="" method="POST" enctype="multipart/form-data" style="max-width: 290px; margin: 0 auto;">
+                                                        <input type="file" name="file" class="form-control" id="customFile" />
+                                                        <a><button class="btn border border-2 w-100 lang" key="" id="addBackgroundImage" type="button">Добавить фоновое изображение</button></a>
+                                                    </form>
+                                                    <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
+                                                </div>
+                                            </span>
+                                            {% set answerNum = namespace(value=0) %}
+                                            {% for answer in question.answers %}
+                                                {% set answerNum.value = answerNum.value + 1 %}
+                                                <div  class="row container-fluid" class="answer_div">
+                                                    <div style="padding-bottom: 10px; display: flex; align-items: center;" class="answer_div">
+                                                        <div style="width: 75px; margin-right: 4px;" class="lang" key="marker">Маркер</div>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="marker_name" id="marker" rows="1" placeholder="Название маркера">{{answer.marker}}</textarea>
+                                                        <div style="width: 400px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Форма зоны</div>
+                                                        <select class="form-select" id="ZoneFigure" style="width: 180px;" >
+                                                            {% if answer.figure == "Окружность" %}
+                                                                <option selected class="lang" key="circle">Окружность</option>
+                                                                <option class="lang" key="polygon">Многоугольник</option>
+                                                            {% elif answer.figure == "Многоугольник" %}
+                                                                <option class="lang" key="circle">Окружность</option>
+                                                                <option selected class="lang" key="polygon">Многоугольник</option>
+                                                            {% endif %}
+                                                        </select>
+                                                        <div style="width: 160px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Координаты</div>
+                                                        <textarea maxlength="5000" required class="form-control langp" id="coordinates" key="zone_coordinates" rows="1" placeholder="Координаты зоны">{{answer.coordinates}}</textarea>
+                                                        <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;">✖</button>
+                                                        <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
+                                                            <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" class="dnd answer_div">
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                            <div style="color: gray; font-size: 14px;" class="lang to_del" key="markNote">*Примечание: в координатах зоны последовательно указаны координаты x, y каждой вершины многоуголинка, или же координаты центра и радиус для окружности</div>
+                                        {% endif %}
+
                                         {% if question.type == "free" %}
                                             {% set answerNum = namespace(value=0) %}
                                             {% for answer in question.answers %}
@@ -246,6 +296,11 @@
                                                 <option selected class="lang" key="drag_to_text">Перетаскивание в текст</option>
                                             {% else %}
                                                 <option class="lang" key="drag_to_text">Перетаскивание в текст</option>
+                                            {% endif %}
+                                            {% if question.type == "markers_drag" %}
+                                                <option selected class="lang" key="markers_drag">Перетаскивание маркеров</option>
+                                            {% else %}
+                                                <option class="lang" key="markers_drag">Перетаскивание маркеров</option>
                                             {% endif %}
                                             {% if question.type == "free" %}
                                                 <option selected class="lang" key="free">Краткий свободный ответ</option>
