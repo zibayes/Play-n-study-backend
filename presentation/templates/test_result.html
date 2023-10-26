@@ -64,7 +64,9 @@
                         <div class="card" style="background:#bde0ff; flex: 1;">
                             <div class="card-body" id="content">
                                 <div class="form-group" id="scoreCount">
-                                    <p class="fromMarkdown">{{ question.ask }}</p>
+                                    {% if question.type not in ("filling_gaps", "drag_to_text") %}
+                                        <p class="fromMarkdown">{{ question.ask }}</p>
+                                    {% endif %}
                                     {% if question.type == "solo" %}
                                         <hr>
                                         {% for answer in question.answers %}
@@ -124,6 +126,105 @@
                                         {% for answer in question.answers %}
                                             <textarea disabled class="form-control fromMarkdown" name="{{ question.ask }}" rows="8">{{ answer }}</textarea>
                                         {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "compliance" %}
+                                        <hr>
+                                        {% for answer in question.answers %}
+                                            {% for question_text, answer in answer.items() %}
+                                                <div style="display: inline-block;">
+                                                    <label for="Select-{{ questionNum.value }}" class="fromMarkdown">{{ question_text }}</label>
+                                                    {% if answer is iterable and (answer is not string and answer is not mapping) %}
+                                                        {% if answer[1] == "right" %}
+                                                            <div style="color: green; display: inline">✔</div>
+                                                        {% elif answer[1] == "wrong" %}
+                                                            <div style="color: red; display: inline">✘</div>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    <select disabled id="Select-{{ questionNum.value }}" name="{{ question.ask }}-{{ question_text }}">
+                                                        {% if answer is iterable and (answer is not string and answer is not mapping) %}
+                                                            <option selected>{{ answer[0] }}</option>
+                                                        {% else %}
+                                                            <option selected>{{ answer }}</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                                <br>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    {% if question.type == "filling_gaps" %}
+                                        <p class="fromMarkdown" id="Filling-{{ questionNum.value }}">{{ question.ask }}</p>
+                                        <script>
+                                            let select_elem, group, mark;
+                                            let filling = document.getElementById('Filling-{{ questionNum.value }}');
+                                            {% for answer in question.answers %}
+                                                group = `{{ answer['group'] }}`;
+                                                mark = `{{ answer['mark'] }}`;
+                                                select_elem = ``
+                                                {% if answer['answer'] is iterable and (answer['answer'] is not string and answer['answer'] is not mapping) %}
+                                                    select_elem = `<select disabled name="Filling-{{ questionNum.value }}"><option selected>{{answer['answer'][0]}}</option></select>`;
+                                                    {% if answer['answer'][1] == "right" %}
+                                                        select_elem = `<div style="color: green; display: inline;">✔</div>` + select_elem
+                                                    {% elif answer['answer'][1] == "wrong" %}
+                                                        select_elem = `<div style="color: red; display: inline;">✘</div>` + select_elem
+                                                    {% endif %}
+                                                {% else %}
+                                                    select_elem = `<select disabled name="Filling-{{ questionNum.value }}"><option selected>{{answer['answer']}}</option></select>`;
+                                                {% endif %}
+                                                filling.textContent = filling.textContent.replace(`[[` + mark + `]]`, select_elem)
+                                            {% endfor %}
+                                        </script>
+                                    {% endif %}
+
+                                    {% if question.type == "drag_to_text" %}
+                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}" style="display: flex">{{ question.ask }}</p>
+                                        <hr>
+                                        <div id="DragToText-answers-{{ questionNum.value }}" class="DragToText-answers" style="display: flex;"></div>
+                                        <script>
+                                            let mark_d;
+                                            let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');
+                                            let answers_d = document.getElementById('DragToText-answers-{{ questionNum.value }}');
+                                            let dnd;
+                                            {% for answer in question.answers %}
+                                                mark_d = `{{ answer['mark'] }}`;
+
+                                                {% if answer['answer'] is iterable and (answer['answer'] is not string and answer['answer'] is not mapping) %}
+                                                    drag_elem = `<div style="margin-right: 5px;"><div style="background: white; stroke: gray; margin: 0 5px 0 5px; padding: 5px;">{{answer['answer'][0]}}</div></div>`;
+                                                    {% if answer['answer'][1] == "right" %}
+                                                        drag_elem = `<div style="margin-left: 5px; color: green; display: inline;">✔</div>` + drag_elem
+                                                    {% elif answer['answer'][1] == "wrong" %}
+                                                        drag_elem = `<div style="margin-left: 5px; color: red; display: inline;">✘</div>` + drag_elem
+                                                    {% endif %}
+                                                    filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, drag_elem)
+                                                {% else %}
+                                                    dnd = document.createElement('div');
+                                                    dnd.setAttribute('style', "background: white; stroke: gray; margin: 0 5px 0 5px; padding: 5px;");
+                                                    dnd.textContent = "{{ answer['answer'] }}";
+                                                    filling_d.textContent = filling_d.textContent.replace(`[[` + mark_d + `]]`, `<div id="DragWord-{{ questionNum.value }}-`+ mark_d +`" style="margin-left: 5px; margin-right: 5px;"><input disabled style="width: 70px; margin: 0 5px 0 5px;"></div>`)
+                                                    answers_d.appendChild(dnd);
+                                                {% endif %}
+                                            {% endfor %}
+                                        </script>
+                                    {% endif %}
+
+                                    {% if question.type == "markers_drag" %}
+                                        {% set answerNum = namespace(value=0) %}
+                                        <span class="fs-5 row m-3 justify-content-start lang">
+                                            <div class="flex-column">
+                                                <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
+                                                    <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                </div>
+                                                <style>
+                                                    #canvas{
+                                                        border:1px solid red;
+                                                        background-image: url("/courseava/{{ course.course_id }}") ;
+                                                    }
+                                                </style>
+                                            </div>
+                                        </span>
+                                        <hr>
                                     {% endif %}
                                 </div>
                             </div>

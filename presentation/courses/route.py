@@ -614,7 +614,7 @@ def handle_load_test(course_id, test_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = get_unit_name(course, test_id, 'test')
-    total_score, _ = get_test(test)
+    total_score, _ = get_test(test, shuffle=True)
     return render_template('test.html', user=user, test=test.content, score=total_score, time=time.time(),
                            course=course, unit_name=unit_name, test_id=test_id)
 
@@ -665,23 +665,16 @@ def handle_edit_test_save(course_id, test_id):
 @check_subscriber_access(current_user)
 @check_test_access(current_user)
 def handle_check_test(course_id, test_id):
+    task_type = 'test'
     test = logic.get_test_by_id(test_id)
     user = logic.get_user_by_id(current_user.get_id())
-    print(request.form)
-    return
     result = logic.get_test_result(test, request.form)
-    course = logic.get_course(course_id, current_user.get_id())
-    unit_name = get_unit_name(course, test_id, 'test')
-    _, completed = get_test(test)
-    progress = Progress(progress_id=None, completed=completed, type='test',
+    _, completed = get_test(test, shuffle=False)
+    progress = Progress(progress_id=None, completed=completed, type=task_type,
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
-    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='test', task_id=test_id, progress=Progress.to_json(progress))
-
-    percents_for_tasks, _ = get_test_result(course_id, test_id, progress)
-    # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
-    return render_template('test_result.html', user=user, test=test.content, score=result.total_score, test_id=test_id,
-                           total_score=result.total_current_score, result=result.result, total_time=result.total_time,
-                           course=course, unit_name=unit_name, percents_for_tasks=percents_for_tasks)
+    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type=task_type, task_id=test_id, progress=Progress.to_json(progress))
+    progress = logic.get_last_progress_by_task(user.user_id, course_id, test_id, task_type)
+    return redirect(f'/course/{course_id}/test_result/{test_id}/{progress.up_id}')
 
 
 @login_required

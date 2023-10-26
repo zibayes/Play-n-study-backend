@@ -91,7 +91,7 @@
                                             {% set answerNum.value = answerNum.value + 1 %}
                                                 <div style="display: inline-block;">
                                                     <label for="Select-{{ questionNum.value }}-{{ answerNum.value }}" class="fromMarkdown">{{ question_text }}</label>
-                                                    <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="{{ question.ask }}-{{ answerNum.value }}">
+                                                    <select id="Select-{{ questionNum.value }}-{{ answerNum.value }}" name="{{ question.ask }}-{{ question_text }}">
                                                         <option selected></option>
                                                         {% for answer_comp in question.answers %}
                                                             {% for answer_text in answer_comp.values() %}
@@ -117,7 +117,7 @@
                                                 mark = `{{ answer_main['mark'] }}`;
                                                 <!-- {{ question.ask }}-{{ answerNum.value }} -->
                                                 <!-- Filling-{{ questionNum.value }}-{{ answerNum.value }} -->
-                                                select_elem = '<select name="Filling-{{ questionNum.value }}-{{ answerNum.value }}"><option selected></option>';
+                                                select_elem = '<select name="Filling-{{ questionNum.value }}-' + group + '-' + mark + '"><option selected></option>';
                                                 {% for answer in question.answers %}
                                                     if (group === `{{ answer['group'] }}`){
                                                         select_elem += `<option>{{ answer['answer'] }}</option>`
@@ -261,7 +261,7 @@
                                             dnd.setAttribute('style', "background: white; stroke: gray; margin: 0 5px 0 5px; padding: 5px;");
                                             dnd.setAttribute('draggable', "true");
                                             dnd.setAttribute('class', "DragAndDrop");
-                                            dnd.textContent = "{{ answer['<p>marker</p>'] }}";
+                                            dnd.textContent = "{{ answer['marker'] }}";
                                             answers_m.appendChild(dnd);
                                             // answers_d.textContent += `<div id="dnd-{{ questionNum.value }}-{{ answerNum.value }}" style="background: white; stroke: gray; margin-right: 15px; padding: 5px;">{{ answer['answer'] }}</div>`
                                             // elem = document.getElementById("dnd-{{ questionNum.value }}-{{ answerNum.value }}")

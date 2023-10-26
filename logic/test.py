@@ -3,6 +3,7 @@ import time
 import json
 
 from data.types import TestContent, Question, Test
+from markdown import markdown
 
 
 class TestResult:
@@ -85,8 +86,9 @@ def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
         if question.type in ("filling_gaps", "drag_to_text"):
             for key, value in test_form.items():
                 if "Answer-" in key and "Right_Answer-" not in key:
-                    right_answers_count += 1
-                    question.answers.append({"answer": value, "mark": key[key.rfind('-')+1:]})
+                    mark = key[key.rfind('-')+1:]
+                    question.answers.append({"answer": value, "mark": mark})
+                    right_answers_count += question.ask.count('[[' + mark + ']]')
                 if "Group-" in key:
                     question.answers[-1]['group'] = value
                 if "score-" in key:
@@ -181,40 +183,76 @@ def get_test_result(test, form):
         answers_count = 0
         score_part = 0
         for key, value in test_res.items():
-            if key == question.ask or question.ask + '-' in key:
-                if question.type in ("solo", "multiple"):
-                    for que_part in question.answers:
-                        if value in que_part.keys():
-                            if que_part[value]:
-                                que_part[value] = "right"
+            if key == markdown(question.ask) or markdown(question.ask) + '-' in key or \
+                    'Filling-' in key or 'DragWord-' in key:
+                if not ('Filling-' in key or 'DragWord-' in key):
+                    if question.type in ("solo", "multiple"):
+                        for que_part in question.answers:
+                            keys = list(que_part.keys())
+                            for key in keys:
+                                tmp = que_part[key]
+                                del (que_part[key])
+                                que_part[markdown(key)] = tmp
+                            if value in que_part.keys(): # [markdown(x) for x in que_part.keys()]
+                                if que_part[value]:
+                                    que_part[value] = "right"
+                                    score_part += question.score / question.correct
+                                else:
+                                    que_part[value] = "wrong"
+                                    if question.type == "multiple":
+                                        score_part -= question.score / question.correct  # (question.correct * 2)
+                                answers_count += 1
+                    elif question.type == "compliance":
+                        for que_part in question.answers:
+                            que_key = markdown(key[len(markdown(question.ask))+1:])
+                            keys = list(que_part.keys())
+                            for key_ in keys:
+                                tmp = que_part[key_]
+                                del (que_part[key_])
+                                que_part[markdown(key_)] = tmp
+                            for key_cur in que_part.keys():
+                                if que_key == key_cur and value in que_part.values():
+                                    que_part[que_key] = (value, "right")
+                                    score_part += question.score / question.correct
+                                    answers_count += 1
+                                elif que_key == key_cur:
+                                    que_part[que_key] = (value, "wrong")
+                                    # score_part -= question.score / question.correct  # (question.correct * 2)
+                                    answers_count += 1
+                    elif question.type == "free":
+                        question.answers.append(value)
+                        question.is_correct = False
+                        for answer in question.answers[:1]:
+                            if value.lower().strip() == answer.lower().strip():
+                                question.current_score += question.score
+                                question.is_correct = True
+                    elif question.type == "detailed_free":
+                        question.answers.append(value)
+                        question.current_score = None
+                else:
+                    if question.type == "filling_gaps" and 'Filling-' in key:
+                        for que_part in question.answers:
+                            group = key[key.rfind('-', key.rfind('-')-1)-1:key.rfind('-')]
+                            mark = key[key.rfind('-')+1:]
+                            if group == que_part['group'] and mark == que_part['mark'] and que_part['answer'] == value:
+                                que_part['answer'] = (value, "right")
                                 score_part += question.score / question.correct
-                            else:
-                                que_part[value] = "wrong"
-                                if question.type == "multiple":
-                                    score_part -= question.score / question.correct  # (question.correct * 2)
-                            answers_count += 1
-                elif question.type in ("compliance", "filling_gaps"):
-                    for que_part in question.answers:
-                        if value in que_part.keys():
-                            if que_part[value]:
-                                que_part[value] = "right"
+                                answers_count += 1
+                            elif group == que_part['group']:
+                                que_part['answer'] = (value, "wrong")
+                                answers_count += 1
+                    elif question.type == "drag_to_text" and 'DragWord-' in key:
+                        for que_part in question.answers:
+                            mark = key[key.rfind('-')+1:]
+                            if mark == que_part['mark'] and que_part['answer'] == value:
+                                que_part['answer'] = (value, "right")
                                 score_part += question.score / question.correct
-                            else:
-                                que_part[value] = "wrong"
-                                score_part -= question.score / question.correct  # (question.correct * 2)
-                            answers_count += 1
-                elif question.type == "free":
-                    question.answers.append(value)
-                    question.is_correct = False
-                    for answer in question.answers[:1]:
-                        if value.lower().strip() == answer.lower().strip():
-                            question.current_score += question.score
-                            question.is_correct = True
-                elif question.type == "detailed_free":
-                    question.answers.append(value)
-                    question.current_score = None
+                                answers_count += 1
+                            elif mark == que_part['mark']:
+                                que_part['answer'] = (value, "wrong")
+                                answers_count += 1
         if (score_part < 0 or (answers_count == len(question.answers) and question.correct != len(question.answers))) \
-                and question.type == "multiple":
+                and question.type in ("multiple", "compliance"):
             score_part = 0
         if question.current_score is not None:
             question.current_score += score_part

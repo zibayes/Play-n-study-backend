@@ -97,13 +97,13 @@ def delete_unit_task(course_id, task_id):
             logic.remove_progress(progress.up_id)
 
 
-def get_test(test):
+def get_test(test, shuffle):
     total_score = 0
     completed = True
     for question in test.content.questions:
         if question.score:
             total_score += question.score
-        if question.shuffle == 'on':
+        if question.shuffle == 'on' and shuffle:
             if question.type == 'compliance':
                 answers = {}
                 for item in question.answers:
@@ -121,10 +121,12 @@ def get_test(test):
         question.ask = markdown(question.ask)
         if question.answers:
             for i in range(len(question.answers)):
-                if question.type not in ('filling_gaps', 'drag_to_text'):
-                    question.answers[i][markdown(list(question.answers[i].keys())[0])] = question.answers[i][
-                        list(question.answers[i].keys())[0]]
+                if question.type not in ('filling_gaps', 'drag_to_text', 'markers_drag'):
+                    key = list(question.answers[i].keys())[0]
+                    tmp = question.answers[i][list(question.answers[i].keys())[0]]
                     del question.answers[i][list(question.answers[i].keys())[0]]
+                    question.answers[i][markdown(key)] = tmp
+
         if question.current_score is None:
             completed = False
     return total_score, completed

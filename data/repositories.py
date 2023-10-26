@@ -687,7 +687,8 @@ class UserProgressRepository:
 
     def get_last_progress_by_task(self, user_id, course_id, task_id, task_type):
         progress_db = self.session.query(UsersProgressModel) \
-            .filter_by(user_id=user_id, course_id=course_id, task_id=task_id, task_type=task_type) \
+            .filter_by(user_id=user_id, course_id=course_id, task_id=task_id, task_type=task_type)\
+            .order_by(UsersProgressModel.up_id.desc()) \
             .first()
         return convert.progress_db_to_progress(progress_db)
 
