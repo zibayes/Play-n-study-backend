@@ -79,7 +79,16 @@ def handle_subscriptions(user_id):
             return render_template("subscriptions.html", user=User(), found=found, user_id=user_id)
     return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
 
-
+@pages_bp.route('/forum')
+def handle_forum_list():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    return render_template('forum.html', user=user)
+@pages_bp.route('/forum_list')
+def handle_forum():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    return render_template('forum_list.html', user=user)
 @pages_bp.route('/reviews')
 def handle_reviews():
     user = logic.get_user_by_id(current_user.get_id())
