@@ -152,7 +152,6 @@ function getLiItem(message){
 
     delete_item.setAttribute('class', 'delete_item btn btn-secondary')
     div_w_100.setAttribute("class", "card w-100 message")
-
     li_item.setAttribute("class", "d-flex mb-4")
     img_item.setAttribute("class", "")
     img_item.style = "width: 60px"
@@ -185,7 +184,7 @@ function getLiItem(message){
         li_item.remove()
     })
 
-    if (message.msg_from === "Я"){
+    if (message.msg_from !== "Я"){
         img_item.setAttribute("class", "rounded-circle d-flex align-self-start shadow-1-strong me-3")
         img_item.src = '/userava/' + message.msg_from_id
         div_item_card_body.style = "width: 350px"
@@ -201,7 +200,7 @@ function getLiItem(message){
     }else{
         img_item.setAttribute("class", "rounded-circle d-flex align-self-start shadow-1-strong ms-3")
         img_item.src = '/userava/' + message.msg_from_id
-        div_w_100.style = "margin-left: 20px"
+        div_w_100.style = "margin-left: 150px"
         div_item_card_body.appendChild(p_item_text)
         p_item_time.appendChild(i_item_time)
         div_card_header_item.appendChild(p_item_name)
