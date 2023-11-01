@@ -501,6 +501,11 @@ export let arrLang = {
     "file_attach_checking_user": "Проверка попытки пользователя",
     "file_note": "*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб",
     "score_for_task": "Баллы за задание:",
+
+    "chats": "Чаты",
+    "message": "Сообщение",
+    "send": "Отправить",
+    "just_now": "сейчас",
   },
   'de': {
     'mainpage': 'Startseite',
