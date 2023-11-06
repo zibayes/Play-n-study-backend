@@ -40,13 +40,14 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     p_element_message.setAttribute("class", "small text-muted")
     p_element_message.textContent = last_message
     div_element_chat_pt_time.setAttribute("class", "pt-1")
-    p_element_time.setAttribute("class", "small text-muted mb-1")
+    p_element_time.setAttribute("class", "small text-muted mb-1 lang")
     let time_mes = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(time))
     let time_message_hour_sec = new Date(time)
     let time_message = new Date(time).getTime()
     let time_now = new Date().getTime()
     if (Math.floor(time_message / 1000) + 120 >= Math.floor(time_now / 1000)){
          p_element_time.textContent = 'сейчас'
+         p_element_time.setAttribute("key", "just_now")
     }else{
         let sec = time_message_hour_sec.getSeconds() < 10 ?  '0' + time_message_hour_sec.getSeconds() : time_message_hour_sec.getSeconds()
         p_element_time.textContent = time_mes + " " + time_message_hour_sec.getHours() + ":" + sec + " "
@@ -82,10 +83,12 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                 let textarea = document.createElement("textarea")
                 let btn_message = document.createElement("button")
                 textarea.placeholder = "Message"
-                textarea.setAttribute("class", "form-control")
+                textarea.setAttribute("class", "form-control langp")
+                textarea.setAttribute("key", "message")
                 textarea.rows = '4'
                 btn_message.type = "button"
-                btn_message.setAttribute("class", "btn btn-info btn-rounded float-end")
+                btn_message.setAttribute("class", "btn btn-info btn-rounded float-end lang")
+                btn_message.setAttribute("key", "send")
                 btn_message.style = "margin-top: 10px;"
                 btn_message.textContent = "Send"
                 btn_message.addEventListener("click", function () {

@@ -1,14 +1,14 @@
-// import {
-//     change_language,
-//     translate
-// } from './test_constructor_functions.js';
-//
-// let bg = document.querySelector('.mouse-parallax-bg');
-// window.addEventListener('mousemove', function(e) {
-//     let x = e.clientX / window.innerWidth;
-//     let y = e.clientY / window.innerHeight;
-//     bg.style.transform = 'translate(-' + x * 150 + 'px, -' + y * 150 + 'px)';
-// });
+import {
+    change_language,
+    translate
+} from './test_constructor_functions.js';
+
+let bg = document.querySelector('.mouse-parallax-bg');
+window.addEventListener('mousemove', function(e) {
+    let x = e.clientX / window.innerWidth;
+    let y = e.clientY / window.innerHeight;
+    bg.style.transform = 'translate(-' + x * 150 + 'px, -' + y * 150 + 'px)';
+});
 //
 // let div_main = document.getElementsByClassName('chats')[0]
 //
@@ -309,12 +309,12 @@
 //     pickerPosition: "top"
 //   });
 //
-// $(function() {
-//   $('.translate').click(function() {
-//     let lang = $(this).attr('id');
-//       change_language(lang);
-//   });
-// });
-//
-// let lang = localStorage.getItem('language');
-// change_language(lang);
+$(function() {
+  $('.translate').click(function() {
+    let lang = $(this).attr('id');
+      change_language(lang);
+  });
+});
+
+let lang = localStorage.getItem('language');
+change_language(lang);

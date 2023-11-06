@@ -3,58 +3,66 @@ var dragok = false;
 var startX;
 var startY;
 
-export function rect(figure) {
+export function rect(figure, ctx) {
     let vertXsum = 0;
     let vertYsum = 0;
     for(var i=1;i<figure.vertexes.length + 1;i++){
-        window.ctx.beginPath();
+        ctx.beginPath();
         if(i === figure.vertexes.length){
-            window.ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
-            window.ctx.lineTo(figure.vertexes[0].x,figure.vertexes[0].y);
+            ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
+            ctx.lineTo(figure.vertexes[0].x,figure.vertexes[0].y);
         }else{
-           window.ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
-           window.ctx.lineTo(figure.vertexes[i].x,figure.vertexes[i].y);
+           ctx.moveTo(figure.vertexes[i-1].x,figure.vertexes[i-1].y);
+           ctx.lineTo(figure.vertexes[i].x,figure.vertexes[i].y);
            vertXsum += figure.vertexes[i].x;
            vertYsum += figure.vertexes[i].y;
         }
-        window.ctx.stroke();
+        ctx.stroke();
         if(i === 1){
             vertXsum += figure.vertexes[i-1].x;
             vertYsum += figure.vertexes[i-1].y;
         }
     }
-    window.ctx.beginPath();
+    ctx.beginPath();
     let xm = vertXsum / figure.vertexes.length;
     let ym = vertYsum / figure.vertexes.length;
-    window.ctx.fillStyle = "#FFF";
-    window.ctx.textBaseline = "center";
-    window.ctx.textAlign = "center";
-    window.ctx.font = 'bold 26px sans-serif';
-    window.ctx.fillText(figure.marker_name, xm, ym);
-    window.ctx.fill();
-    window.ctx.lineWidth=1;
-    window.ctx.strokeStyle = "#000";
-    window.ctx.strokeText(figure.marker_name, xm, ym);
-    window.ctx.stroke();
-    window.ctx.strokeStyle = "#000";
+    ctx.fillStyle = "#FFF";
+    ctx.textBaseline = "center";
+    ctx.textAlign = "center";
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText(figure.marker_name, xm, ym);
+    ctx.fill();
+    ctx.lineWidth=1;
+    ctx.strokeStyle = "#000";
+    ctx.strokeText(figure.marker_name, xm, ym);
+    ctx.stroke();
+    ctx.strokeStyle = "#000";
 }
 
 // clear the canvas
-export function clear() {
-    window.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+export function clear(ctx) {
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
 }
 
 // redraw the scene
-export function draw_figures(change_val=true) {
-    clear();
+export function draw_figures(canvas, change_val=true, drop_selection=false) {
     // перерисовка всех фигур
-    for (var [key, value] of window.zones) {
+    if (typeof canvas === "string") {
+        canvas = window.canvases.get(canvas.substring(0, canvas.indexOf("-")))
+    }
+    let ctx=canvas.canvas.getContext("2d");
+    clear(ctx);
+    let zones = canvas.zones
+    for (var [key, value] of zones) {
         if (value.x === undefined) {
-            window.ctx.strokeStyle = value.fill;
-            window.ctx.lineWidth = 3;
-            rect(value);
-            if (value.selected && value.x === undefined) {
-                draw_selection(value)
+            ctx.strokeStyle = value.fill;
+            ctx.lineWidth = 3;
+            rect(value, ctx);
+            if (value.selected && !drop_selection) {
+                draw_selection(value, ctx)
+            } else {
+                value.selected = false
+                value.isDragging = false
             }
             if (change_val) {
                 let str_to_show = ""
@@ -63,10 +71,10 @@ export function draw_figures(change_val=true) {
                 }
                 value.textareaCoords.value = str_to_show;
             }
-        } else{
-            window.ctx.strokeStyle = "#ffffff";
-            window.ctx.lineWidth = 3;
-            circle(value);
+        } else {
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 3;
+            circle(value, ctx);
             if (value.selected) {
                 // draw_selection()
             }
@@ -78,35 +86,35 @@ export function draw_figures(change_val=true) {
 }
 
 // отображение выделения
-export function draw_selection(figure) {
+export function draw_selection(figure, ctx) {
     for(var i=0;i<figure.vertexes.length;i++){
-        window.ctx.fillStyle="#ff0000";
-        window.ctx.strokeStyle="#ffffff";
-        window.ctx.lineWidth=3;
-        window.ctx.beginPath();
-        window.ctx.arc(figure.vertexes[i].x,figure.vertexes[i].y,window.vertexRadius,2*Math.PI,false);
-        window.ctx.stroke();
-        window.ctx.closePath();
-        window.ctx.fill();
+        ctx.fillStyle="#ff0000";
+        ctx.strokeStyle="#ffffff";
+        ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.arc(figure.vertexes[i].x,figure.vertexes[i].y,window.vertexRadius,2*Math.PI,false);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.fill();
     }
 }
 
-export function circle(figure) {
-    window.ctx.beginPath();
-    window.ctx.arc(figure.x, figure.y, figure.radius, 0, 2 * Math.PI, false);
-    window.ctx.stroke();
-    window.ctx.beginPath();
-    window.ctx.fillStyle = "#FFF";
-    window.ctx.textBaseline = "center";
-    window.ctx.textAlign = "center";
-    window.ctx.font = 'bold 26px sans-serif';
-    window.ctx.fillText(figure.marker_name, figure.x, figure.y);
-    window.ctx.fill();
-    window.ctx.lineWidth=1;
-    window.ctx.strokeStyle = "#000";
-    window.ctx.strokeText(figure.marker_name, figure.x, figure.y);
-    window.ctx.stroke();
-    window.ctx.strokeStyle = "#000";
+export function circle(figure, ctx) {
+    ctx.beginPath();
+    ctx.arc(figure.x, figure.y, figure.radius, 0, 2 * Math.PI, false);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.fillStyle = "#FFF";
+    ctx.textBaseline = "center";
+    ctx.textAlign = "center";
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText(figure.marker_name, figure.x, figure.y);
+    ctx.fill();
+    ctx.lineWidth=1;
+    ctx.strokeStyle = "#000";
+    ctx.strokeText(figure.marker_name, figure.x, figure.y);
+    ctx.stroke();
+    ctx.strokeStyle = "#000";
 }
 
 // handle mousedown events
@@ -123,14 +131,15 @@ export function myDown(e){
         if (canvasOffset > 0)
             canvasOffset -=  200;
      */
-    let canvasOffset = 0;
+    let canvasOffset = 280 + window.scrolloffsetY + this.getBoundingClientRect().top - 891.125; // standard: window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top = 891.125
     var mx=parseInt(e.clientX-window.offsetX);
     var my=parseInt(e.clientY-offsetY+window.scrolloffsetY);
     //if (my < 0)
     //    my += 210;
 
+    let zones = window.canvases.get(this.id.substring(this.id.indexOf("-")+1)).zones
     dragok = false;
-    for (var [key, value] of window.zones) {
+    for (var [key, value] of zones) {
         if (value.x === undefined){
             let vertexSelected = false;
             let vertXsum = 0;
@@ -148,12 +157,15 @@ export function myDown(e){
                 vertYsum += value.vertexes[j].y;
             }
 
-            let xm = vertXsum / value.vertexes.length;
             let ym = vertYsum / value.vertexes.length // + canvasOffset;
-            console.log(window.scrolloffsetY)
+            let ym = vertYsum / value.vertexes.length + canvasOffset;
+
+            /*
+            console.log(window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top)
             console.log(mx, my)
-            console.log(canvasOffset)
             console.log(xm, ym)
+             */
+			 
             if (mx > xm - 32 && mx < xm + 32 && my > ym - 15 && my < ym + 15 || vertexSelected === true) {
                 // if yes, set that rects isDragging=true
                 dragok = true;
@@ -164,9 +176,8 @@ export function myDown(e){
             } else {
                 value.selected = false;
             }
-            draw_figures();
         } else{
-            if (mx > value.x - 32 && mx < value.x + 32 && my > value.y - 15 && my < value.y + 15) {
+            if (mx > value.x - 32 && mx < value.x + 32 && my > value.y + canvasOffset - 15 && my < value.y + canvasOffset + 15) {
             dragok = true;
             value.isDragging = true;
             value.selected = true;
@@ -175,8 +186,8 @@ export function myDown(e){
             } else {
                 value.selected = false;
             }
-            draw_figures();
         }
+        draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)));
     }
     // save the current mouse position
     startX = mx;
@@ -190,18 +201,19 @@ export function myUp(e){
     e.preventDefault();
     e.stopPropagation();
 
-    for (var [key, value] of window.zones) {
+    let zones = window.canvases.get(this.id.substring(this.id.indexOf("-")+1)).zones
+    for (var [key, value] of zones) {
         if (value.x === undefined){
             value.isDragging=false;
             value.fill="#444444";
             for (var j = 0; j < value.vertexes.length; j++) {
                 value.vertexes[j].v = false
             }
-            draw_figures();
+            draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)));
         } else {
             value.isDragging=false;
             value.fill="#444444";
-            draw_figures();
+            draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)));
         }
     }
 }
@@ -226,7 +238,8 @@ export function myMove(e){
       var dx=mx-startX;
       var dy=my-startY;
 
-      for (var [key, value] of window.zones) {
+      let zones = window.canvases.get(this.id.substring(this.id.indexOf("-")+1)).zones
+      for (var [key, value] of zones) {
           if (value.x === undefined){
             for (var j = 0; j < value.vertexes.length; j++) {
                 if (value.vertexes[j].v) {
@@ -239,17 +252,17 @@ export function myMove(e){
                     value.vertexes[j].x+=dx;
                     value.vertexes[j].y+=dy;
                 }
-                draw_figures();
+                draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)));
             } else {
-                draw_figures(false);
+                draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)), false);
             }
           } else {
             if(value.isDragging){
                 value.x+=dx;
                 value.y+=dy;
-                draw_figures();
+                draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)));
             } else {
-                draw_figures(false);
+                draw_figures(window.canvases.get(this.id.substring(this.id.indexOf("-")+1)), false);
             }
           }
       }
