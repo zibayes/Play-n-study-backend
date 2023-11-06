@@ -167,7 +167,7 @@ def get_test_result(course_id, test_id, progress):
                 percents_for_tasks[value.progress['content'].questions[i].ask] += 1
 
     for key in percents_for_tasks.keys():
-        percents_for_tasks[key] -= 1
+        percents_for_tasks[key] -= 1 if percents_for_tasks[key] > 0 else 0
         percents_for_tasks[key] /= len(users_progress_max.keys()) - 1 if len(users_progress_max.keys()) > 1 else 1
         percents_for_tasks[key] *= 100
         percents_for_tasks[key] = round(percents_for_tasks[key], 2)
