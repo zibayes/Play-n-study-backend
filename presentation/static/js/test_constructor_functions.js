@@ -991,6 +991,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             markNote.setAttribute('style', "color: gray; font-size: 14px;");
             markNote.setAttribute('class', "to_del lang");
             markNote.setAttribute('key', "markNote");
+            markNote.setAttribute('key', "markNote");
             markNote.textContent = "*Примечание: в координатах зоны последовательно указаны координаты x, y каждой вершины многоуголинка, или же координаты центра и радиус для окружности";
 
             span.appendChild(divFlex)
