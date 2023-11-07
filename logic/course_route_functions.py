@@ -34,6 +34,10 @@ def specify_tests_for_view(course, course_id, progresses=None):
                 link = logic.link_get_by_id(test.test_id)
                 test.test = Test(test.test_id, course_id, test.unit_id, TestContent(link.name, None),
                                  avatar=link.avatar, description=link.link)
+            elif test.unit_type == 'forum':
+                forum = logic.forum_get_by_id(test.test_id)
+                test.test = Test(test.test_id, course_id, test.unit_id, TestContent(forum.name, None),
+                                 avatar=forum.avatar, description=forum.description)
             if progresses:
                 for progress in progresses:
                     if progress.progress['test_id'] == test.test_id and progress.progress['type'] == test.unit_type:

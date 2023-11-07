@@ -157,14 +157,12 @@ export function myDown(e){
                 vertYsum += value.vertexes[j].y;
             }
 
+            let xm = vertXsum / value.vertexes.length;
             let ym = vertYsum / value.vertexes.length // + canvasOffset;
-            let ym = vertYsum / value.vertexes.length + canvasOffset;
 
-            /*
-            console.log(window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top)
+            // console.log(window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top)
             console.log(mx, my)
             console.log(xm, ym)
-             */
 			 
             if (mx > xm - 32 && mx < xm + 32 && my > ym - 15 && my < ym + 15 || vertexSelected === true) {
                 // if yes, set that rects isDragging=true

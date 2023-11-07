@@ -359,3 +359,47 @@ class LinksModel(Base):
         self.avatar = avatar
         self.name = name
         self.link = link
+
+
+class ForumsModel(Base):
+    __tablename__ = 'forums'
+    forum_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    unit_id = Column(Integer)
+    avatar = Column(LargeBinary)
+    name = Column(Text)
+    description = Column(Text)
+
+    def __init__(self, course_id, unit_id, name, description, avatar=None):
+        self.course_id = course_id
+        self.unit_id = unit_id
+        self.avatar = avatar
+        self.name = name
+        self.description = description
+
+class ForumTopicsModel(Base):
+    __tablename__ = 'forum_topics'
+    ft_id = Column(Integer, primary_key=True)
+    forum_id = Column(Integer, ForeignKey("forums.forum_id"))
+    name = Column(Text)
+
+    def __init__(self, forum_id, name):
+        self.forum_id = forum_id
+        self.name = name
+
+
+class TopicMessagesModel(Base):
+    __tablename__ = 'topic_messages'
+    tm_id = Column(Integer, primary_key=True)
+    ft_id = Column(Integer, ForeignKey("forum_topics.ft_id"))
+    parent_tm_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    tm_date = Column(TIMESTAMP, server_default=func.now())
+    content = Column(Text)
+
+    def __init__(self, ft_id, user_id, tm_date, content, parent_tm_id=None):
+        self.ft_id = ft_id
+        self.parent_tm_id = parent_tm_id
+        self.user_id = user_id
+        self.tm_date = tm_date
+        self.content = content

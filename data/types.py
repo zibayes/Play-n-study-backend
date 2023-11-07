@@ -512,3 +512,30 @@ class FileAttach:
         self.name = name
         self.description = description
         self.content = content
+
+
+class Forum:
+    def __init__(self, forum_id, course_id, unit_id, name, description=None, avatar=None):
+        self.forum_id = forum_id
+        self.course_id = course_id
+        self.unit_id = unit_id
+        self.avatar = avatar
+        self.name = name
+        self.description = description
+
+
+class ForumTopic:
+    def __init__(self, ft_id, forum_id, name):
+        self.ft_id = ft_id
+        self.forum_id = forum_id
+        self.name = name
+
+
+class TopicMessage:
+    def __init__(self, tm_id, ft_id, parent_tm_id, user_id, tm_date, content):
+        self.tm_id = tm_id
+        self.ft_id = ft_id
+        self.parent_tm_id = parent_tm_id
+        self.user_id = user_id
+        self.tm_date = tm_date
+        self.content = content

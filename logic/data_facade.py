@@ -18,6 +18,9 @@ class DataFacade:
         self.test_repository = TestRepository(session)
         self.articles_repository = ArticlesRepository(session)
         self.links_repository = LinksRepository(session)
+        self.forums_repository = ForumsRepository(session)
+        self.forum_topics_repository = ForumTopicsRepository(session)
+        self.topic_messages_repository = TopicMessagesRepository(session)
         self.user_progress_repository = UserProgressRepository(session)
         self.role_repository = RoleRepository(session)
         self.chat_repository = ChatRepository(session)
@@ -187,6 +190,19 @@ class DataFacade:
         return img
     '''
 
+    def forum_get_avatar(self, app, forum_id):
+        img = None
+        forum = self.links_repository.get_link_by_id(forum_id)
+        if not forum.avatar:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = forum.avatar
+        return img
+
     def link_get_avatar(self, app, link_id):
         img = None
         link = self.links_repository.get_link_by_id(link_id)
@@ -298,6 +314,60 @@ class DataFacade:
 
     def remove_link(self, link_id):
         return self.links_repository.remove_link(link_id)
+
+    def get_forum_by_id(self, forum_id):
+        return self.forums_repository.get_forum_by_id(forum_id)
+
+    def forum_get_all_by_course_id(self, course_id):
+        return self.forums_repository.get_all_course_forums(course_id)
+
+    def forum_add_forum(self, forum):
+        return self.forums_repository.add_forum(forum)
+
+    def get_last_forum_by_course(self, forum_id):
+        return self.forums_repository.get_last_forum_by_course(forum_id)
+
+    def update_forum(self, forum):
+        return self.forums_repository.update_forum(forum)
+
+    def remove_forum(self, forum_id):
+        return self.forums_repository.remove_forum(forum_id)
+
+    def forum_topic_get_by_id(self, ft_id):
+        return self.forum_topics_repository.get_forum_topic_by_id(ft_id)
+
+    def topic_get_all_by_forum_id(self, forum_id):
+        return self.forum_topics_repository.get_all_forum_topics(forum_id)
+
+    def forum_topic_add_forum_topic(self, forum_topic):
+        return self.forum_topics_repository.add_forum_topic(forum_topic)
+
+    def get_last_topic_by_forum(self, forum_id):
+        return self.forum_topics_repository.get_last_topic_by_forum(forum_id)
+
+    def update_forum_topic(self, forum_topic):
+        return self.forum_topics_repository.update_forum_topic(forum_topic)
+
+    def remove_forum_topic(self, ft_id):
+        return self.forum_topics_repository.remove_forum_topic(ft_id)
+
+    def topic_message_get_by_id(self, tm_id):
+        return self.topic_messages_repository.get_message_by_id(tm_id)
+
+    def messages_get_all_by_topic_id(self, ft_id):
+        return self.topic_messages_repository.get_all_topic_messages(ft_id)
+
+    def add_topic_message(self, topic_message):
+        return self.topic_messages_repository.add_topic_message(topic_message)
+
+    def get_last_message_by_topic(self, ft_id):
+        return self.topic_messages_repository.get_last_message_by_topic(ft_id)
+
+    def update_topic_message(self, topic_message):
+        return self.topic_messages_repository.update_topic_message(topic_message)
+
+    def remove_topic_message(self, tm_id):
+        return self.topic_messages_repository.remove_topic_message(tm_id)
 
     def add_progress(self, user_progress):
         return self.user_progress_repository.add_progress(user_progress)

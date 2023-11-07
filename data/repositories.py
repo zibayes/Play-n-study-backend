@@ -1001,3 +1001,192 @@ class LinksRepository:
             print("Ошибка удаления ссылки :" + str(e))
             return False
 
+
+
+class ForumsRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_forum(self, forum: Forum):
+        try:
+            new_forum = ForumsModel(
+                course_id=forum.course_id,
+                unit_id=forum.unit_id,
+                avatar=forum.avatar,
+                name=forum.name,
+                description=forum.description
+            )
+            self.session.add(new_forum)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления форума в БД " + str(e))
+
+    def get_forum_by_id(self, forum_id):
+        forum_db = self.session.query(ForumsModel) \
+            .filter_by(forum_id=forum_id) \
+            .first()
+        return convert.forum_db_to_forum(forum_db)
+
+    def get_all_course_forums(self, course_id):
+        forums_db = self.session.query(ForumsModel) \
+            .filter_by(course_id=course_id)
+        return convert.forum_db_to_forum(forum_db)
+
+    def get_last_forum_by_course(self, course_id):
+        forum_db = self.session.query(ForumsModel) \
+            .filter_by(course_id=course_id) \
+            .order_by(ForumsModel.forum_id.desc()) \
+            .first()
+        return convert.forum_db_to_forum(forum_db)
+
+    def update_forum(self, forum: Forum) -> bool:
+        try:
+            forum_to_update = self.session.query(ForumsModel) \
+                .filter_by(forum_id=forum.forum_id) \
+                .first()
+            forum_to_update.course_id = forum.course_id
+            forum_to_update.unit_id = forum.unit_id
+            forum_to_update.avatar = forum.avatar
+            forum_to_update.name = forum.name
+            forum_to_update.description = forum.description
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления форума в БД " + str(e))
+            return False
+
+    def remove_forum(self, forum_id) -> bool:
+        try:
+            self.session.query(ForumsModel) \
+                .filter_by(forum_id=forum_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления форума:" + str(e))
+            return False
+
+
+class ForumTopicsRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_forum_topic(self, forum_topic: ForumTopic):
+        try:
+            new_forum_topic = ForumTopicsModel(
+                forum_id=forum_topic.forum_id,
+                name=forum_topic.name,
+            )
+            self.session.add(new_forum_topic)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления темы форума в БД " + str(e))
+
+    def get_forum_topic_by_id(self, ft_id):
+        forum_topic_db = self.session.query(ForumTopicsModel) \
+            .filter_by(ft_id=ft_id) \
+            .first()
+        return convert.forum_topic_db_to_forum_topic(forum_topic_db)
+
+    def get_all_forum_topics(self, forum_id):
+        forum_topic_db = self.session.query(ForumTopicsModel) \
+            .filter_by(forum_id=forum_id)
+        return convert.forum_topic_db_to_forum_topic(forum_topic_db)
+
+    def get_last_topic_by_forum(self, forum_id):
+        forum_topic_db = self.session.query(ForumTopicsModel) \
+            .filter_by(forum_id=forum_id) \
+            .order_by(ForumTopicsModel.ft_id.desc()) \
+            .first()
+        return convert.forum_topic_db_to_forum_topic(forum_topic_db)
+
+    def update_forum_topic(self, forum_topic: ForumTopic) -> bool:
+        try:
+            forum_topic_to_update = self.session.query(ForumTopicsModel) \
+                .filter_by(ft_id=forum_topic.ft_id) \
+                .first()
+            forum_topic_to_update.forum_id = forum_topic.forum_id
+            forum_topic_to_update.name = forum_topic.name
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления темы форума в БД " + str(e))
+            return False
+
+    def remove_forum_topic(self, ft_id) -> bool:
+        try:
+            self.session.query(ForumTopicsModel) \
+                .filter_by(ft_id=ft_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления темы форума:" + str(e))
+            return False
+
+
+class TopicMessagesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_message(self, topic_message: TopicMessage):
+        try:
+            new_topic_message = TopicMessagesModel(
+                ft_id=topic_message.ft_id,
+                parent_tm_id=topic_message.parent_tm_id,
+                user_id=topic_message.user_id,
+                tm_date=topic_message.tm_date,
+                content=topic_message.content,
+            )
+            self.session.add(new_topic_message)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления сообщения форума в БД " + str(e))
+
+    def get_message_by_id(self, tm_id):
+        topic_message_db = self.session.query(TopicMessagesModel) \
+            .filter_by(tm_id=tm_id) \
+            .first()
+        return convert.topic_message_db_to_topic_message(topic_message_db)
+
+    def get_all_topic_messages(self, ft_id):
+        topic_message_db = self.session.query(TopicMessagesModel) \
+            .filter_by(ft_id=ft_id)
+        return convert.topic_message_db_to_topic_message(topic_message_db)
+
+    def get_last_message_by_topic(self, ft_id):
+        topic_message_db = self.session.query(TopicMessagesModel) \
+            .filter_by(ft_id=ft_id) \
+            .order_by(TopicMessagesModel.tm_id.desc()) \
+            .first()
+        return convert.topic_message_db_to_topic_message(topic_message_db)
+
+    def update_message(self, topic_message: TopicMessage) -> bool:
+        try:
+            topic_message_to_update = self.session.query(TopicMessagesModel) \
+                .filter_by(tm_id=topic_message.tm_id) \
+                .first()
+            topic_message_to_update.ft_id = forum_topic.ft_id
+            topic_message_to_update.parent_tm_id = forum_topic.parent_tm_id
+            topic_message_to_update.user_id = forum_topic.user_id
+            topic_message_to_update.tm_date = forum_topic.tm_date
+            topic_message_to_update.content = forum_topic.content
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления сообщения форума в БД " + str(e))
+            return False
+
+    def remove_message(self, tm_id) -> bool:
+        try:
+            self.session.query(TopicMessagesModel) \
+                .filter_by(tm_id=tm_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления сообщения форума:" + str(e))
+            return False

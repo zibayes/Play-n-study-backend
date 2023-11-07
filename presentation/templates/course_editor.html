@@ -156,6 +156,8 @@
                         <label for="checkbox-link" class="lang" key="link" style="margin-left: 5px; font-size: 20px;">Ссылка</label>
                         <input id="checkbox-file" type="radio" name="TaskType" value="file_attach" style="margin-left: 20px;">
                         <label for="checkbox-file" class="lang" key="file_attach" style="margin-left: 5px; font-size: 20px;">Файл</label>
+                        <input id="checkbox-forum" type="radio" name="TaskType" value="forum" style="margin-left: 20px;">
+                        <label for="checkbox-forum" class="lang" key="forum" style="margin-left: 5px; font-size: 20px;">Форум</label>
                     </div>
                   <div class="modal-footer">
                         <button type="submit" class="btn badge-primary lang" key="create" style="border-radius: 25px">Создать</button>
@@ -189,20 +191,20 @@
                   <div class="modal-header">
                       {% if unit_test.unit_type == "test" %}
                         <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_test">Подтверждение удаления теста</h5>
-                      {% else %}
+                      {% elif unit_test.unit_type == "article" %}
                         <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_article">Подтверждение удаления статьи</h5>
                       {% endif %}
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                   </div>
                     {% if unit_test.unit_type == "test" %}
                         <div class="modal-body"><text class="lang" key="are_u_sure_delete_test">Вы точно хотите удалить тест</text> «{{ unit_test.test.content.name }}»?</div>
-                    {% else %}
+                    {% elif unit_test.unit_type == "article" %}
                         <div class="modal-body"><text class="lang" key="are_u_sure_delete_article">Вы точно хотите удалить статью</text> «{{ unit_test.test.content.name }}»?</div>
                     {% endif %}
                   <div class="modal-footer">
                     {% if unit_test.unit_type == "test" %}
                         <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
-                    {% else %}
+                    {% elif unit_test.unit_type == "article" %}
                         <form action="/delete_article/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
                     {% endif %}
                         <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px" href="/logout">Удалить</button>

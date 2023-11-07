@@ -116,6 +116,30 @@ CREATE TABLE links(
     link text
 );
 
+CREATE TABLE forums( 
+    forum_id serial PRIMARY KEY,
+    course_id int REFERENCES courses(course_id),
+	unit_id int NOT NULL, 
+	avatar bytea NULL,
+	description text,
+	name text
+);
+
+CREATE TABLE forum_topics( 
+    ft_id serial PRIMARY KEY,
+    forum_id int REFERENCES forums(forum_id),
+	name text
+);
+
+CREATE TABLE topic_messages( 
+    tm_id serial PRIMARY KEY,
+    ft_id int REFERENCES forum_topics(ft_id),
+    parent_tm_id int NULL,
+	user_id int REFERENCES users(user_id),
+	tm_date timestamp DEFAULT now(),
+    content text
+);
+
 CREATE TABLE users_progress(
     up_id serial PRIMARY KEY ,
     user_id int REFERENCES users(user_id),

@@ -9,7 +9,7 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach
+from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
@@ -320,6 +320,36 @@ def handle_create_task(course_id, unit_id):
         return redirect(url_for('courses.handle_link_constructor', course_id=course_id, unit_id=unit_id))
     elif task_type == 'file_attach':
         return redirect(url_for('courses.handle_file_attach_constructor', course_id=course_id, unit_id=unit_id))
+    elif task_type == 'forum':
+        return redirect(url_for('courses.handle_forum_constructor', course_id=course_id, unit_id=unit_id))
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_constructor/<int:unit_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_forum_constructor(course_id, unit_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_name = get_unit_name_by_id(course, unit_id)
+    return render_template('forum_constructor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_constructor/<int:unit_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_forum_save(course_id, unit_id):
+    avatar = None
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    forum = Forum(forum_id=None, course_id=course_id, unit_id=unit_id, name=request.form['forumName'], description=request.form['forumDesc'], avatar=avatar)
+    response = logic.forum_add_forum(forum)
+    if response[1] == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении форума', 'error')
+    return redirect(f'/course_editor/{course_id}')
 
 
 @login_required

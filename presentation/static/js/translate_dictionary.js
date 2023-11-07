@@ -567,6 +567,11 @@ export let arrLang = {
     "topic_search": "Поиск тем",
     "active": "Активна",
     "closed": "Закрыта",
+    "forum": "Форум",
+    "forum_constructor": "Конструктор форумов",
+    "forum_name": "Название форума",
+    "forum_desc": "Описание форума",
+    "save_forum": "Сохранить форум",
   },
   'de': {
     'mainpage': 'Startseite',

@@ -146,3 +146,27 @@ def link_db_to_link(link: Type[LinksModel]):
                    name=link.name,
                    unit_id=link.unit_id,
                    link=link.link)
+
+
+def forum_db_to_forum(forum: Type[ForumsModel]):
+    return Forum(forum_id=forum.forum_id,
+                   course_id=forum.course_id,
+                   avatar=forum.avatar,
+                   name=forum.name,
+                   unit_id=forum.unit_id,
+                   description=forum.description)
+
+
+def forum_topic_db_to_forum_topic(forum_topic: Type[ForumTopicsModel]):
+    return ForumTopic(ft_id=forum_topic.ft_id,
+                      forum_id=forum_topic.forum_id,
+                      name=forum_topic.name)
+
+
+def topic_message_db_to_topic_message(topic_message: Type[ForumTopicsModel]):
+    return TopicMessage(tm_id=topic_message.tm_id,
+                 ft_id=topic_message.ft_id,
+                 parent_tm_id=topic_message.parent_tm_id,
+                 user_id=topic_message.user_id,
+                 tm_date=topic_message.tm_date,
+                 content=topic_message.content)
