@@ -183,13 +183,37 @@
                                         {% if question.type == "markers_drag" %}
                                             <span class="fs-5 row m-3 justify-content-start lang">
                                                 <div class="flex-column">
-                                                    <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
+                                                    <div id="canvasContainer" style="overflow-y: hidden; overflow-x: visible;">
                                                         <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                        <script>
+                                                            const image = new Image();
+                                                            image.src = '/static/users_files/{{ test_tmp.test_id }}test/{{ question.file }}.png';
+                                                            canvas = document.getElementById('canvas');
+                                                            divCanv = document.getElementById('canvasContainer')
+                                                            let new_width = divCanv.parentElement.offsetWidth - 26;
+                                                            image.onload = function () {
+                                                                let height = this.height;
+                                                                let width = this.width;
+                                                                if (width > new_width) {
+                                                                    let ratio = height / width;
+                                                                    width = new_width;
+                                                                    height = width * ratio;
+                                                                    this.style.height = height;
+                                                                    this.style.width = width;
+                                                                }
+                                                                canvas.height = height;
+                                                                canvas.width = width;
+                                                                divCanv.setAttribute("height", height + "px");
+                                                                divCanv.setAttribute("width", width + "px");
+                                                                let ctx = canvas.getContext("2d");
+                                                                ctx.drawImage(image, 0, 0, width, height);
+                                                            }
+                                                        </script>
                                                     </div>
                                                     <style>
                                                         #canvas{
                                                             border:1px solid red;
-                                                            background-image: url("/courseava/{{ course.course_id }}") ;
+                                                            background-image: url("/static/users_files/{{ test_tmp.test_id }}test/{{ question.file }}.jpg");
                                                         }
                                                     </style>
                                                     <input type="file" name="file" class="form-control" id="customFile" />

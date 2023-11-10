@@ -905,10 +905,15 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             window.canvases.set(String(questionIndex),{canvas: canvas, zones:new Map()});
             window.canvases.get(String(questionIndex)).zones.set(String(answerIndex), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:""});
 
-            let form = document.createElement('form');
-            form.setAttribute('method', "POST");
-            form.setAttribute('enctype', "multipart/form-data");
+            let form = document.createElement('div');
+            //let form = document.createElement('form');
+            //form.setAttribute('method', "POST");
+            //form.setAttribute('enctype', "multipart/form-data");
             form.setAttribute('style', "max-width: 290px; margin: 0 auto;");
+            let showFile = document.createElement('input');
+            showFile.setAttribute('hidden', "hidden");
+            showFile.setAttribute('name', "File-" + questionIndexButtonId);
+            showFile.setAttribute('value', "File-" + questionIndexButtonId);
             let inputFile = document.createElement('input');
             inputFile.setAttribute('type', "file");
             inputFile.setAttribute('name', "File-" + questionIndexButtonId);
@@ -1000,6 +1005,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divFlex.appendChild(divCanv)
             divCanv.appendChild(canvas)
             divFlex.appendChild(form)
+            form.appendChild(showFile)
             form.appendChild(inputFile)
             form.appendChild(aForButton)
             aForButton.appendChild(aButton)
@@ -1061,32 +1067,23 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                 reader.onload = function(event) {
                     const image = new Image();
                     image.src = event.target.result;
+                    let new_width = divCanv.parentElement.offsetWidth - 26;
                     image.onload = function () {
                         let height = this.height;
                         let width = this.width;
-                        if(width > 1036){
+                        if (width > new_width) {
                             let ratio = height / width;
-                            width = 1036;
+                            width = new_width;
                             height = width * ratio;
-                            ImageTools.resize(file, {
-                                width: width,
-                                height: height
-                            }, function(blob, didItResize) {
-                                canvas.height = height;
-                                canvas.width = width;
-                                divCanv.setAttribute("height", height + "px");
-                                divCanv.setAttribute("width", width + "px");
-                                $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + window.URL.createObjectURL(blob) + ')');
-                                draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))));
-                            });
-                        }else{
-                            canvas.height = height;
-                            canvas.width = width;
-                            divCanv.setAttribute("height", height + "px");
-                            divCanv.setAttribute("width", width + "px");
-                            $("#canvas-" + questionIndexButtonId).css('background-image', 'url(' + image.src + ')');
-                            draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))));
+                            this.style.height = height;
+                            this.style.width = width;
                         }
+                        canvas.height = height;
+                        canvas.width = width;
+                        divCanv.setAttribute("height", height + "px");
+                        divCanv.setAttribute("width", width + "px");
+                        let ctx = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).canvas.getContext("2d");
+                        ctx.drawImage(image, 0, 0, width, height);
                     };
                 };
                 reader.readAsDataURL(file);

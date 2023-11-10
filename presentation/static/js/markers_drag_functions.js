@@ -50,9 +50,14 @@ export function draw_figures(canvas, change_val=true, drop_selection=false) {
     if (typeof canvas === "string") {
         canvas = window.canvases.get(canvas.substring(0, canvas.indexOf("-")))
     }
-    console.log(canvas.canvas)
     let ctx=canvas.canvas.getContext("2d");
     clear(ctx);
+    /*
+    const image = new Image();
+    image.src = image_load;
+    ctx.drawImage(image, 0, 0, width, height);
+    TODO: добавть у канваса хранение фонового изображения
+     */
     let zones = canvas.zones
     for (var [key, value] of zones) {
         if (value.x === undefined) {

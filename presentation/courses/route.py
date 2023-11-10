@@ -252,6 +252,15 @@ def handle_test_constructor(course_id, unit_id):
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, course_id, unit_id)
     test_id = logic.data.get_last_test_by_course(course_id).test_id
+    saved_files = []
+    for filename, file in request.files.to_dict().items():
+        if 'File-' in filename:
+            abs_path = str(Path(__file__).absolute())
+            abs_path = abs_path[:abs_path.find('\\presentation\\') + len('/presentation/')]
+            path = abs_path + 'static/users_files/' + str(test_id) + 'test/'
+            Path(path).mkdir(parents=True, exist_ok=True)
+            file.save(os.path.join(path, filename + file.filename[file.filename.rfind('.'):]))
+            saved_files.append(path + '/' + filename + file.filename[file.filename.rfind('.'):])
     if request.files['file']:
         logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':

@@ -138,6 +138,7 @@ def downcast(base, derived):
     derived.current_score = base.current_score
     derived.type = base.type
     derived.comment = base.comment
+    derived.file = base.file
     return derived
 
 
@@ -150,6 +151,7 @@ def upcast(derived, base):
     base.current_score = derived.current_score
     base.type = derived.type
     base.comment = derived.comment
+    base.file = derived.file
     return base
 
 
