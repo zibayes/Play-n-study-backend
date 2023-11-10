@@ -64,7 +64,6 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
         if (document.querySelector(".delete_item_btn").contains(event.target)){
             return
         }
-
         span_element_counter.textContent = null
         $.ajax({
           url: '/get_dialog',
@@ -75,7 +74,6 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
           success: function (data) {
                 ul_chat_item.innerHTML = ''
                 div_sent.innerHTML = ''
-                console.log(data);
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)
                     ul_chat_item.appendChild(li_item)
@@ -101,7 +99,6 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                             data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
                             success: function (data){
                                 textarea.value = ""
-                                console.log(data);
                                 ul_chat_item.appendChild(getLiItem(data))
 
                             }, error:function(data){
