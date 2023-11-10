@@ -1,15 +1,15 @@
 {% extends 'base_aut.html' %}
 
 {% block title %}
-<title>Конструктор форумов</title>
+<title>Редактор форумов</title>
 {% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <form action="/course_editor/{{course_id}}/forum_constructor/{{unit_id}}" method="POST" enctype="multipart/form-data" id="sendingForm">
-            <span class="fs-5 row m-3 justify-content-start lang" key="forum_constructor">
-                Конструктор форумов
+        <form action="/course_editor/{{course_id}}/forum_editor/{{forum.forum_id}}" method="POST" enctype="multipart/form-data" id="sendingForm">
+            <span class="fs-5 row m-3 justify-content-start lang" key="forums_editor">
+                Редактор форумов
             </span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
@@ -17,15 +17,15 @@
                 <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
                 <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
                 <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-                <li class="breadcrumb-item active lang" key="forum_constructor" aria-current="page">Конструктор форумов</li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="forum_editor_">Редактор форума</text> «{{ forum.name }}»</li>
               </ol>
             </nav>
             <div class="row border"></div>
             <span class="fs-5 row m-3 justify-content-start lang">
-                <textarea required class="form-control langp" key="forum_name" maxlength="1000" placeholder="Название форума" name="forumName" rows="1" style="margin: 8px;"></textarea>
-                <textarea class="form-control langp" key="forum_desc" maxlength="1000" placeholder="Описание форума" name="forumDesc" rows="1" style="margin: 8px;"></textarea>
+                <textarea required class="form-control langp" key="forum_name" maxlength="1000" placeholder="Название форума" name="forumName" rows="1" style="margin: 8px;">{{ forum.name }}</textarea>
+                <textarea class="form-control langp" key="forum_desc" maxlength="1000" placeholder="Описание форума" name="forumDesc" rows="1" style="margin: 8px;">{{ forum.description }}</textarea>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
-                    <img class="border border-2 rounded w-100" src="/static/img/nophoto.png" style="max-width: 290px; margin: 0 auto;">
+                    <img class="border border-2 rounded w-100" src="/forumava/{{ forum.forum_id }}" style="max-width: 290px; margin: 0 auto;">
                     <div style="max-width: 290px; margin: 0 auto;">
                         <input type="file" name="file" class="form-control" id="customFile" accept=".png,.jpg,.jpeg"/>
                     </div>
@@ -35,7 +35,7 @@
             <div style="margin-left: 15px;">
                 <br>
                 <label for="score" class="lang" key="score">Баллы: </label>
-                <input type="number" id="score" name="score" style="width:60px;">
+                <input type="number" id="score" name="score" value="{{forum.score}}" style="width:60px;">
                 <br>
             </div>
             <button class="btn btn-primary lang" key="save_forum" type="submit"

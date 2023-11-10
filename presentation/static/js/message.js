@@ -112,7 +112,6 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                 })
                 div_sent.appendChild(textarea)
                 div_sent.appendChild(btn_message)
-
           }
         })
     })

@@ -1,91 +1,101 @@
 {% extends 'base_aut.html' %}
 
 {% block title %}
-<title>Профиль</title>
+<title>Форум по теме «{{ topic.name }}»</title>
 {% endblock %}
 
 {% block content %}
     <div class="d-flex justify-content-center">
         <div class="container m-5" style="background-color: white; border-radius: 10px">
-            <span class="fs-5 row m-3 justify-content-start lang" key="devteam">Форум по теме</span>
+            <span class="fs-5 row m-3 justify-content-start"><div><text class="lang" key="forum_topic">Форум по теме</text> «{{ topic.name }}»</div></span>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb" style="margin-left: 15px;">
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+                <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+                  <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}/forum_list/{{ forum.forum_id }}"><text class="lang" key="forum">Форум</text> «{{ forum.name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="topic_">Тема</text> «{{ topic.name }}»</li>
+              </ol>
+            </nav>
             <div class="row border"></div>
             <br>
-            <div class="col-xl-12 mb-8">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
-                                <div class="ms-3">
-                                    <a class="fw-bold mb-1 lang" key="pavel">Павел</a>
-                                    <p style="font-size: 10px" class="mb-1 lang">Тема: Ноги гусеницы - Пятница, 28 января 2022 12:27</p>
-                                    <p class="text-muted mb-0 lang" key="pavinfo" style="width: 500px">Всем привет! У меня вопрос, сколько ног у гусеницы. Я думаю, что очень много, а вы? Просто иногда такие мысли приходят и уходят и непонятно сколько в итоге?</p>
-                                </div>
-                            </div>
-                            <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+            <div style="margin: 15px;">
+                {%  if user_score %}
+                    <label class="lang" key="score_for_task">Баллы за задание: </label>
+                    {{user_score}} / {{forum.score}}
+                {% else %}
+                    <label class="lang" key="score_for_task">Баллы за задание: </label>
+                    {{forum.score}}
+                {% endif %}
+            </div>
+            <div class="col-xl-12 mb-2">
+                {% if not messages and topic.is_active %}
+                    <form class="card" style="margin-left: 0" action="/course/{{course.course_id}}/forum_list/{{forum.forum_id}}/forum/{{topic.ft_id}}" method="POST">
+                        <div class="card-body">
+                            <textarea class="form-control langp" key="answer_" placeholder="Ответ" maxlength="5000" name="Message-None" rows="2"></textarea>
+                            <button class="btn btn-info btn-rounded float-end lang" key="send" style="margin-top: 10px;">Отправить</button>
                         </div>
-                        <div style="display: flex; margin-left: 1000px; margin-top: 10px">
-                            <a class="lang" key="answer" href="">Ответить</a>
+                    </form>
+                {% endif %}
+                {% for message in messages %}
+                    <div class="card" style="margin-left: {{ nesting_level[message.tm_id] * 50}}px">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="/userava/{{message.user_id}}" alt="userava" style="width: 45px; height: 45px" class="rounded-circle"/>
+                                    <div class="ms-3">
+                                        <a class="fw-bold mb-1">{{ users[message.user_id].username }}</a>
+                                        <p style="font-size: 10px" class="mb-1">{{message.tm_date}}</p>
+                                        <p class="text-muted mb-0" style="width: 500px">{{message.content}}</p>
+                                    </div>
+                                </div>
+                                <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                            </div>
+                            {% if topic.is_active %}
+                                <script>
+                                    function answer(elem) {
+                                        $(elem).fadeOut(400);
+                                        let divCard = document.createElement('form');
+                                        divCard.setAttribute('class', "card");
+                                        divCard.setAttribute("hidden", "hidden");
+                                        divCard.setAttribute("action", "/course/{{course.course_id}}/forum_list/{{forum.forum_id}}/forum/{{topic.ft_id}}");
+                                        divCard.setAttribute("method", "POST");
+                                        console.log()
+                                        divCard.setAttribute("style", "margin-top: 25px; margin-left: " + elem.parentElement.parentElement.style.marginLeft);
+                                        let divCardBody = document.createElement('div');
+                                        divCardBody.setAttribute('class', "card-body");
+                                        let textareaComment = document.createElement('textarea');
+                                        textareaComment.setAttribute('class', "form-control langp");
+                                        textareaComment.setAttribute('placeholder', "Ответ");
+                                        textareaComment.setAttribute('key', "answer_");
+                                        textareaComment.setAttribute('maxlength', '5000');
+                                        textareaComment.setAttribute('name', elem.id);
+                                        textareaComment.setAttribute('rows', "2");
+                                        let btn_message = document.createElement("button")
+                                        btn_message.type = "submit"
+                                        btn_message.setAttribute("class", "btn btn-info btn-rounded float-end lang")
+                                        btn_message.setAttribute("key", "send")
+                                        btn_message.style = "margin-top: 10px;"
+                                        btn_message.textContent = "Отправить"
+                                        divCard.appendChild(divCardBody)
+                                        divCardBody.appendChild(textareaComment)
+                                        divCardBody.appendChild(btn_message)
+                                        elem.parentElement.parentElement.parentElement.insertBefore(divCard, elem.parentElement.parentElement.nextElementSibling);
+                                        setTimeout(() => {
+                                            divCard.removeAttribute("hidden");
+                                            $(divCard).fadeIn(400);
+                                        }, 400)
+                                    }
+                                </script>
+                                <div style="display: flex; margin-left: {{ 1000 - nesting_level[message.tm_id] * 50}}px; margin-top: 10px" onclick="answer(this)" type="submit" id="Message-{{message.tm_id}}">
+                                    <a class="lang" key="answer">Ответить</a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
-                </div>
-                <br>
-                <div class="card" style="margin-left: 50px">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
-                                <div class="ms-3">
-                                    <a class="fw-bold mb-1 lang" key="pavel">Илья</a>
-                                    <p style="font-size: 10px" class="mb-1 lang">Тема: Ноги гусеницы - Пятница, 28 января 2022 12:27</p>
-                                    <p class="text-muted mb-0 lang" key="pavinfo" style="width: 500px">Привет, не знаю</p>
-                                </div>
-                            </div>
-                            <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
-                        </div>
-                        <div style="display: flex; margin-left: 950px; margin-top: 10px">
-                            <a href="">Ответить</a>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="card" style="margin-left: 100px">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
-                                <div class="ms-3">
-                                    <a class="fw-bold mb-1 lang" key="pavel">Максим</a>
-                                    <p style="font-size: 10px" class="mb-1 lang">Тема: Ноги гусеницы - Пятница, 28 января 2022 12:27</p>
-                                    <p class="text-muted mb-0 lang" key="pavinfo" style="width: 500px">А зачем отвечать тогда?</p>
-                                </div>
-                            </div>
-                            <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
-                        </div>
-                        <div style="display: flex; margin-left: 900px; margin-top: 10px">
-                            <a href="">Ответить</a>
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="card" style="margin-left: 50px">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <img src="https://sun9-11.userapi.com/impg/1kd7jzbaJhrVy8CffRXCu_rRE52gxIgLk2HZkA/r7jKk0fEvFc.jpg?size=604x478&quality=96&sign=3fb9983620f2df264e66bc8d3967b707&type=album" alt="" style="width: 45px; height: 45px" class="rounded-circle"/>
-                                <div class="ms-3">
-                                    <a class="fw-bold mb-1 lang" key="pavel">Дмитрий</a>
-                                    <p style="font-size: 10px" class="mb-1 lang">Тема: Ноги гусеницы - Пятница, 28 января 2022 12:27</p>
-                                    <p class="text-muted mb-0 lang" key="pavinfo" style="width: 500px">Привет, я знаю, но не скажу!</p>
-                                </div>
-                            </div>
-                            <span class="badge rounded-pill badge-danger lang" key="offline">Оффлайн</span>
-                        </div>
-                        <div style="display: flex; margin-left: 950px; margin-top: 10px">
-                            <a href="">Ответить</a>
-                        </div>
-                    </div>
-                </div>
+                    <br>
+                {% endfor %}
             </div>
         </div>
     </div>

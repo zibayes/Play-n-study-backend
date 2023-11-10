@@ -1,4 +1,7 @@
 -- DROP TABLE  users_progress CASCADE;
+-- DROP TABLE  topic_messages CASCADE;
+-- DROP TABLE  forum_topics CASCADE;
+-- DROP TABLE  forums CASCADE;
 -- DROP TABLE  articles CASCADE ;
 -- DROP TABLE  links CASCADE;
 -- DROP TABLE  tests CASCADE;
@@ -122,12 +125,14 @@ CREATE TABLE forums(
 	unit_id int NOT NULL, 
 	avatar bytea NULL,
 	description text,
+	score float,
 	name text
 );
 
 CREATE TABLE forum_topics( 
     ft_id serial PRIMARY KEY,
     forum_id int REFERENCES forums(forum_id),
+    is_active boolean DEFAULT TRUE,
 	name text
 );
 

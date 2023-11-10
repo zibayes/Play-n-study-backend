@@ -4,7 +4,8 @@ add_comment_buttons.forEach(elem =>{
         $('#' + elem.id).fadeOut(400);
         //elem.setAttribute("hidden", "hidden");
         let textareaComment = document.createElement('textarea');
-        textareaComment.setAttribute('class', "form-control");
+        textareaComment.setAttribute('class', "form-control langp");
+        textareaComment.setAttribute('key', "comment");
         textareaComment.setAttribute('placeholder', "Комментарий");
         textareaComment.setAttribute('maxlength', '5000');
         textareaComment.setAttribute('name', elem.id);

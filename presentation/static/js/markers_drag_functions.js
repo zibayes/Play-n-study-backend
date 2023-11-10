@@ -50,6 +50,7 @@ export function draw_figures(canvas, change_val=true, drop_selection=false) {
     if (typeof canvas === "string") {
         canvas = window.canvases.get(canvas.substring(0, canvas.indexOf("-")))
     }
+    console.log(canvas.canvas)
     let ctx=canvas.canvas.getContext("2d");
     clear(ctx);
     let zones = canvas.zones
@@ -88,13 +89,12 @@ export function draw_figures(canvas, change_val=true, drop_selection=false) {
 // отображение выделения
 export function draw_selection(figure, ctx) {
     for(var i=0;i<figure.vertexes.length;i++){
-        ctx.fillStyle="#ff0000";
-        ctx.strokeStyle="#ffffff";
+        // ctx.fillStyle="#ff0000";
+        // ctx.strokeStyle="#ffffff";
         ctx.lineWidth=3;
         ctx.beginPath();
         ctx.arc(figure.vertexes[i].x,figure.vertexes[i].y,window.vertexRadius,2*Math.PI,false);
         ctx.stroke();
-        ctx.closePath();
         ctx.fill();
     }
 }
@@ -158,11 +158,12 @@ export function myDown(e){
             }
 
             let xm = vertXsum / value.vertexes.length;
-            let ym = vertYsum / value.vertexes.length // + canvasOffset;
+            let ym = vertYsum / value.vertexes.length + canvasOffset;
 
-            // console.log(window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top)
+            /*
             console.log(mx, my)
             console.log(xm, ym)
+             */
 			 
             if (mx > xm - 32 && mx < xm + 32 && my > ym - 15 && my < ym + 15 || vertexSelected === true) {
                 // if yes, set that rects isDragging=true

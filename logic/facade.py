@@ -56,7 +56,6 @@ class LogicFacade:
 
     def save_test(self, form, course_id, unit_id):
         test = get_test_from_form(form=form, unit_id=unit_id, course_id=course_id)
-        print(test.description)
         if self.data.add_test(test):
             test = self.data.get_last_test_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
@@ -333,7 +332,7 @@ class LogicFacade:
         return self.data.get_forum_by_id(forum_id)
 
     def forum_get_all_by_course_id(self, course_id):
-        return self.data.get_all_course_forums(course_id)
+        return self.data.forum_get_all_by_course_id(course_id)
 
     def forum_add_forum(self, forum):
         if self.data.forum_add_forum(forum):
@@ -357,13 +356,13 @@ class LogicFacade:
         return self.data.remove_forum(forum_id)
 
     def forum_topic_get_by_id(self, ft_id):
-        return self.data.get_forum_topic_by_id(ft_id)
+        return self.data.forum_topic_get_by_id(ft_id)
 
     def topic_get_all_by_forum_id(self, forum_id):
-        return self.data.get_all_forum_topics(forum_id)
+        return self.data.topic_get_all_by_forum_id(forum_id)
 
     def forum_topic_add_forum_topic(self, forum_topic):
-        return self.data.add_forum_topic(forum_topic)
+        return self.data.forum_topic_add_forum_topic(forum_topic)
 
     def get_last_topic_by_forum(self, forum_id):
         return self.data.get_last_topic_by_forum(forum_id)
@@ -374,11 +373,14 @@ class LogicFacade:
     def remove_forum_topic(self, ft_id):
         return self.data.remove_forum_topic(ft_id)
 
+    def get_topics_by_query(self, query, forum_id):
+        return self.data.get_topics_by_query(query, forum_id)
+
     def topic_message_get_by_id(self, tm_id):
-        return self.data.get_message_by_id(tm_id)
+        return self.data.topic_message_get_by_id(tm_id)
 
     def messages_get_all_by_topic_id(self, ft_id):
-        return self.data.get_all_topic_messages(ft_id)
+        return self.data.messages_get_all_by_topic_id(ft_id)
 
     def add_topic_message(self, topic_message):
         return self.data.add_topic_message(topic_message)

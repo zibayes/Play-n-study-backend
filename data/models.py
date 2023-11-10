@@ -367,13 +367,15 @@ class ForumsModel(Base):
     course_id = Column(Integer, ForeignKey("courses.course_id"))
     unit_id = Column(Integer)
     avatar = Column(LargeBinary)
+    score = Column(Float)
     name = Column(Text)
     description = Column(Text)
 
-    def __init__(self, course_id, unit_id, name, description, avatar=None):
+    def __init__(self, course_id, unit_id, score, name, description, avatar=None):
         self.course_id = course_id
         self.unit_id = unit_id
         self.avatar = avatar
+        self.score = score
         self.name = name
         self.description = description
 
@@ -382,10 +384,12 @@ class ForumTopicsModel(Base):
     ft_id = Column(Integer, primary_key=True)
     forum_id = Column(Integer, ForeignKey("forums.forum_id"))
     name = Column(Text)
+    is_active = Column(Boolean, default=True)
 
-    def __init__(self, forum_id, name):
+    def __init__(self, forum_id, name, is_active):
         self.forum_id = forum_id
         self.name = name
+        self.is_active = is_active
 
 
 class TopicMessagesModel(Base):

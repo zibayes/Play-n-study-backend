@@ -576,7 +576,7 @@ class ArticlesRepository:
     def get_all_course_articles(self, course_id):
         articles_db = self.session.query(ArticlesModel) \
             .filter_by(course_id=course_id)
-        return convert.article_db_to_article(articles_db)
+        return [convert.article_db_to_article(i) for i in articles_db]
 
     def get_last_article_by_course(self, course_id):
         article_db = self.session.query(ArticlesModel) \
@@ -964,8 +964,9 @@ class LinksRepository:
 
     def get_all_course_links(self, course_id):
         links_db = self.session.query(LinksModel) \
-            .filter_by(course_id=course_id)
-        return convert.link_db_to_link(links_db)
+            .filter_by(course_id=course_id)\
+            .all()
+        return [convert.link_db_to_link(i) for i in links_db]
 
     def get_last_link_by_course(self, course_id):
         link_db = self.session.query(LinksModel) \
@@ -1013,6 +1014,7 @@ class ForumsRepository:
                 course_id=forum.course_id,
                 unit_id=forum.unit_id,
                 avatar=forum.avatar,
+                score=forum.score,
                 name=forum.name,
                 description=forum.description
             )
@@ -1030,8 +1032,9 @@ class ForumsRepository:
 
     def get_all_course_forums(self, course_id):
         forums_db = self.session.query(ForumsModel) \
-            .filter_by(course_id=course_id)
-        return convert.forum_db_to_forum(forum_db)
+            .filter_by(course_id=course_id)\
+            .all()
+        return [convert.forum_db_to_forum(i) for i in forums_db]
 
     def get_last_forum_by_course(self, course_id):
         forum_db = self.session.query(ForumsModel) \
@@ -1048,6 +1051,7 @@ class ForumsRepository:
             forum_to_update.course_id = forum.course_id
             forum_to_update.unit_id = forum.unit_id
             forum_to_update.avatar = forum.avatar
+            forum_to_update.score = forum.score
             forum_to_update.name = forum.name
             forum_to_update.description = forum.description
             self.session.commit()
@@ -1077,6 +1081,7 @@ class ForumTopicsRepository:
             new_forum_topic = ForumTopicsModel(
                 forum_id=forum_topic.forum_id,
                 name=forum_topic.name,
+                is_active=forum_topic.is_active,
             )
             self.session.add(new_forum_topic)
             self.session.commit()
@@ -1092,8 +1097,9 @@ class ForumTopicsRepository:
 
     def get_all_forum_topics(self, forum_id):
         forum_topic_db = self.session.query(ForumTopicsModel) \
-            .filter_by(forum_id=forum_id)
-        return convert.forum_topic_db_to_forum_topic(forum_topic_db)
+            .filter_by(forum_id=forum_id)\
+            .all()
+        return [convert.forum_topic_db_to_forum_topic(i) for i in forum_topic_db]
 
     def get_last_topic_by_forum(self, forum_id):
         forum_topic_db = self.session.query(ForumTopicsModel) \
@@ -1109,6 +1115,7 @@ class ForumTopicsRepository:
                 .first()
             forum_topic_to_update.forum_id = forum_topic.forum_id
             forum_topic_to_update.name = forum_topic.name
+            forum_topic_to_update.is_active = forum_topic.is_active
             self.session.commit()
             return True
         except sqlalchemy.exc.DatabaseError as e:
@@ -1125,6 +1132,20 @@ class ForumTopicsRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка удаления темы форума:" + str(e))
             return False
+
+    def get_forum_topics_by_substring(self, substring: str, forum_id: int) -> Optional[list]:
+        topics = []
+        topics_db = self.session.query(ForumTopicsModel) \
+            .filter(ForumTopicsModel.name.ilike(substring + "%"))\
+            .filter_by(forum_id=forum_id) \
+            .all()
+
+        if topics_db is not None:
+            for topic in topics_db:
+                topics.append(convert.forum_topic_db_to_forum_topic(topic))
+        if len(topics) > 0:
+            return topics
+        return None
 
 
 class TopicMessagesRepository:
@@ -1154,26 +1175,29 @@ class TopicMessagesRepository:
 
     def get_all_topic_messages(self, ft_id):
         topic_message_db = self.session.query(TopicMessagesModel) \
-            .filter_by(ft_id=ft_id)
-        return convert.topic_message_db_to_topic_message(topic_message_db)
+            .filter_by(ft_id=ft_id)\
+            .all()
+        return [convert.topic_message_db_to_topic_message(i) for i in topic_message_db]
 
     def get_last_message_by_topic(self, ft_id):
         topic_message_db = self.session.query(TopicMessagesModel) \
             .filter_by(ft_id=ft_id) \
             .order_by(TopicMessagesModel.tm_id.desc()) \
             .first()
-        return convert.topic_message_db_to_topic_message(topic_message_db)
+        if topic_message_db:
+            return convert.topic_message_db_to_topic_message(topic_message_db)
+        return None
 
     def update_message(self, topic_message: TopicMessage) -> bool:
         try:
             topic_message_to_update = self.session.query(TopicMessagesModel) \
                 .filter_by(tm_id=topic_message.tm_id) \
                 .first()
-            topic_message_to_update.ft_id = forum_topic.ft_id
-            topic_message_to_update.parent_tm_id = forum_topic.parent_tm_id
-            topic_message_to_update.user_id = forum_topic.user_id
-            topic_message_to_update.tm_date = forum_topic.tm_date
-            topic_message_to_update.content = forum_topic.content
+            topic_message_to_update.ft_id = topic_message.ft_id
+            topic_message_to_update.parent_tm_id = topic_message.parent_tm_id
+            topic_message_to_update.user_id = topic_message.user_id
+            topic_message_to_update.tm_date = topic_message.tm_date
+            topic_message_to_update.content = topic_message.content
             self.session.commit()
             return True
         except sqlalchemy.exc.DatabaseError as e:

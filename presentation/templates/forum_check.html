@@ -1,0 +1,79 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Проверка форума по теме «{{ topic.name }}»</title>
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <div class="container m-5" style="background-color: white; border-radius: 10px">
+            <span class="fs-5 row m-3 justify-content-start"><div><text class="lang" key="forum_topic_check">Проверка форума по теме</text> «{{ topic.name }}»</div></span>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb" style="margin-left: 15px;">
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+                  <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}/forum_check/{{ forum.forum_id }}"><text class="lang" key="forum_list_editor">Редактор форумного листа</text> «{{ forum.name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="topic_">Тема</text> «{{ topic.name }}»</li>
+              </ol>
+            </nav>
+            <div class="row border"></div>
+            <br>
+            {% if users %}
+                <form action="/course_editor/{{course.course_id}}/forum_check/{{forum.forum_id}}/forum/{{topic.ft_id}}" method="POST">
+                    <table class="table">
+                        <thead>
+                            <tr><th class="lang" key="user">Пользователь</th><th class="lang" key="mark">Оценка</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for user_id, user in users.items() %}
+                                <tr>
+                                    <td onclick="location.href='/profiles/{{ user_id }}'" style="cursor: pointer;">
+                                        <div class="d-flex align-items-center">
+                                            <img src="/userava/{{user_id}}" alt="userava" style="width: 45px; height: 45px" class="rounded-circle"/>
+                                            <div class="ms-3">
+                                                <a class="fw-bold mb-1">{{ user.username }}</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="score-{{user_id}}" value="{{users_score[user_id]['total_current_score']}}" style="width:60px;"> / {{forum.score}}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary lang" key="complete_checking" style="margin: 18px;">Завершить проверку</button>
+                </form>
+                <div class="row border"></div>
+                <br>
+            {% endif %}
+            <div class="col-xl-12 mb-2">
+                {% for message in messages %}
+                    <div class="card" style="margin-left: {{ nesting_level[message.tm_id] * 50}}px">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="/userava/{{message.user_id}}" alt="userava" style="width: 45px; height: 45px" class="rounded-circle"/>
+                                    <div class="ms-3">
+                                        <a class="fw-bold mb-1">{{ users[message.user_id].username }}</a>
+                                        <p style="font-size: 10px" class="mb-1">{{message.tm_date}}</p>
+                                        <p class="text-muted mb-0" style="width: 500px">{{message.content}}</p>
+                                    </div>
+                                </div>
+                                <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+<script type="module" src="/static/js/dataTables.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+{% endblock %}

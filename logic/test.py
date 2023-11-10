@@ -29,6 +29,7 @@ class TestResult:
 
 def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
     test_form = form.to_dict()
+    print(test_form)
     test_name = test_form.pop("testName")
     test_desc = test_form.pop("testDesc")
     questions_count = 0

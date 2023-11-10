@@ -120,8 +120,8 @@ window.addAnswerOnButtonClick = function(index){
         textareaMarker.setAttribute('class', "form-control langp");
         textareaMarker.setAttribute('key', "marker_name");
         textareaMarker.setAttribute('placeholder', "Название маркера");
-        textareaMarker.setAttribute('name', "Marker-" + questionIndex + "-" + answerIndex);
-        textareaMarker.setAttribute('id', "Marker-" + questionIndex + "-" + answerIndex);
+        textareaMarker.setAttribute('name', "Marker-" + String(parseInt(index.substring(7))+1) + "-" + answerIndex);
+        textareaMarker.setAttribute('id', "Marker-" + String(parseInt(index.substring(7))+1) + "-" + answerIndex);
         textareaMarker.setAttribute('rows', "1");
         textareaMarker.setAttribute('maxlength', '5000');
         textareaMarker.setAttribute('value', '');

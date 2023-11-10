@@ -208,7 +208,8 @@ class TestContent:
 
 
 class Question:
-    def __init__(self, ask=None, answers=None, shuffle=None, correct=None, score=None, current_score=None, type=None, comment=None):
+    def __init__(self, ask=None, answers=None, shuffle=None, correct=None, score=None,
+                 current_score=None, type=None, comment=None, file=None):
         self.ask = ask if ask != 'null' else None
         self.answers = None if answers == 'null' else answers
         self.shuffle = None if shuffle == 'null' else shuffle
@@ -217,11 +218,13 @@ class Question:
         self.current_score = None if current_score == 'null' else current_score
         self.type = None if type == 'null' else type
         self.comment = None if comment == 'null' else comment
+        self.file = None if file == 'null' else file
 
     @staticmethod
     def from_json(qbase_json):
         return Question(qbase_json['ask'], qbase_json['answers'], qbase_json['shuffle'], qbase_json['correct'],
-                        qbase_json['score'], qbase_json['current_score'], qbase_json['type'], qbase_json['comment'])
+                        qbase_json['score'], qbase_json['current_score'], qbase_json['type'], qbase_json['comment'],
+                        qbase_json['file'])
 
     def toJSON(self):
         return {
@@ -232,7 +235,8 @@ class Question:
             "score": self.score,
             "current_score": self.current_score,
             "type": self.type,
-            "comment": self.comment
+            "comment": self.comment,
+            "file": self.file
         }
 
     @staticmethod
@@ -245,6 +249,7 @@ class Question:
         derived.current_score = base.current_score
         derived.type = base.type
         derived.comment = base.comment
+        derived.file = base.file
         return derived
 
 
@@ -515,20 +520,22 @@ class FileAttach:
 
 
 class Forum:
-    def __init__(self, forum_id, course_id, unit_id, name, description=None, avatar=None):
+    def __init__(self, forum_id, course_id, unit_id, name, score, description=None, avatar=None):
         self.forum_id = forum_id
         self.course_id = course_id
         self.unit_id = unit_id
         self.avatar = avatar
+        self.score = score
         self.name = name
         self.description = description
 
 
 class ForumTopic:
-    def __init__(self, ft_id, forum_id, name):
+    def __init__(self, ft_id, forum_id, name, is_active):
         self.ft_id = ft_id
         self.forum_id = forum_id
         self.name = name
+        self.is_active = is_active
 
 
 class TopicMessage:

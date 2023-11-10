@@ -12,7 +12,7 @@
         </span>
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
           <ol class="breadcrumb" style="margin-left: 15px;">
-            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses"">Курсы</a></li>
+            <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
             <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
             <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
             <li class="breadcrumb-item active lang" key="course_summary" aria-current="page">Сводка о курсе</li>
@@ -38,6 +38,8 @@
                                         <tr onclick="location.href='/course/{{course.course_id}}/link/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                     {% elif unit_test.unit_type == "file_attach" %}
                                         <tr onclick="location.href='/course/{{course.course_id}}/file_attach_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                    {% elif unit_test.unit_type == "forum" %}
+                                        <tr onclick="location.href='/course/{{course.course_id}}/forum_list/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                     {% endif %}
                                 {% endif %}
                                 {% set notAllowed.value = notAllowed.value + 1 %}
@@ -50,6 +52,8 @@
                                     <tr onclick="location.href='/course/{{course.course_id}}/link/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                 {% elif unit_test.unit_type == "file_attach" %}
                                     <tr onclick="location.href='/course/{{course.course_id}}/file_attach_preview/{{unit_test.test.test_id}}'" style="cursor: pointer;">
+                                {% elif unit_test.unit_type == "forum" %}
+                                    <tr onclick="location.href='/course/{{course.course_id}}/forum_list/{{unit_test.test.test_id}}'" style="cursor: pointer;">
                                 {% endif %}
                             {% endif %}
 
@@ -65,6 +69,8 @@
                                         <text class="lang" key="link">Ссылка</text>
                                     {% elif unit_test.unit_type == "file_attach" %}
                                         <text class="lang" key="file_attach">Файл</text>
+                                    {% elif unit_test.unit_type == "forum" %}
+                                        <text class="lang" key="forum">Форум</text>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -77,7 +83,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if unit_test.unit_type in ("test", "file_attach") and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
+                                    {% if unit_test.unit_type in ("test", "file_attach", "forum") and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
                                         {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
                                     {% else %}
                                         -

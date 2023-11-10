@@ -1,25 +1,25 @@
 {% extends 'base_aut.html' %}
 
 {% block title %}
-<title>Форумный лист {{forum.name}}</title>
+<title>Редактор форумного листа {{forum.name}}</title>
 {% endblock %}
 
 {% block content %}
     <div class="d-flex justify-content-center">
         <div class="container m-5" style="background-color: white; border-radius: 10px">
-            <span class="fs-5 row m-3 justify-content-start"><div><text class="lang" key="forum_list_">Список тем форума</text> «{{forum.name}}»</div></span>
+            <span class="fs-5 row m-3 justify-content-start"><div><text class="lang" key="forum_list_editor">Редактор форумного листа</text> «{{forum.name}}»</div></span>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
               <ol class="breadcrumb" style="margin-left: 15px;">
                 <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
                 <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
-                <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
-                <li class="breadcrumb-item"><a href="/course/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="forum">Форум</text> «{{ forum.name }}»</li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}" class="lang" key="course_content">Содержание курса</a></li>
+                <li class="breadcrumb-item"><a href="/course_editor/{{ course.course_id }}#{{ unit_name }}"><text class="lang" key="unit">Раздел</text> «{{ unit_name }}»</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><text class="lang" key="forum_list_editor">Редактор форумного листа</text> «{{ forum.name }}»</li>
               </ol>
             </nav>
             <div class="row border"></div>
             <br>
-            <form action="/course/{{course.course_id}}/forum_list/{{forum.forum_id}}/search" method="POST">
+            <form action="/course_editor/{{course.course_id}}/forum_list_check/{{forum.forum_id}}/search" method="POST">
                 <div class="input-group mb-4">
                     <input id="text"
                             type="text"
@@ -32,21 +32,12 @@
                     </button>
                 </div>
             </form>
-            <div style="margin: 15px;">
-                {%  if user_score %}
-                    <label class="lang" key="score_for_task">Баллы за задание: </label>
-                    {{user_score}} / {{forum.score}}
-                {% else %}
-                    <label class="lang" key="score_for_task">Баллы за задание: </label>
-                    {{forum.score}}
-                {% endif %}
-            </div>
             <div class="col-xl-12 mb-2">
                 {% for topic in topics %}
-                    <div class="card" onclick="location.href='/course/{{course.course_id}}/forum_list/{{forum.forum_id}}/forum/{{topic.ft_id}}'" type="submit">
+                    <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center" onclick="location.href='/course_editor/{{course.course_id}}/forum_check/{{forum.forum_id}}/forum/{{topic.ft_id}}'" type="submit">
                                     {%  if last_messages[topic.ft_id] %}
                                         <img src="/userava/{{last_messages[topic.ft_id]['user'].user_id}}" alt="userava" style="width: 45px; height: 45px" class="rounded-circle"/>
                                     {% else %}
@@ -62,18 +53,19 @@
                                     </div>
                                 </div>
                                 {%  if topic.is_active %}
-                                    <span class="badge rounded-pill badge-success lang" key="active">Активна</span>
+                                    <div id="div_element_close_button" style="margin-right: 8px;">
+                                        <button onclick="location.href='/course_editor/{{course.course_id}}/forum_check/{{forum.forum_id}}/forum/{{topic.ft_id}}/close'" class="btn btn-outline-dark btn-rounded lang" id="close-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#closeTopic" data-mdb-toggle="modal" key="close_topic">Закрыть тему</button>
+                                    </div>
                                 {% else %}
-                                    <span class="badge rounded-pill badge-danger lang" key="closed">Закрыта</span>
+                                    <div id="div_element_open_button" style="margin-right: 8px;">
+                                        <button onclick="location.href='/course_editor/{{course.course_id}}/forum_check/{{forum.forum_id}}/forum/{{topic.ft_id}}/open'" class="btn btn-outline-dark btn-rounded lang" id="open-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#closeTopic" data-mdb-toggle="modal" key="open_topic">Открыть тему</button>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     <br>
                 {% endfor %}
-                <div id="div_element_button" style="margin-right: 8px;">
-                    <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" style="display: inline-block; margin-bottom: 8px;" data-mdb-target="#addTopic" data-mdb-toggle="modal" key="add_topic">Добавить тему</button>
-                </div>
             </div>
         </div>
     </div>

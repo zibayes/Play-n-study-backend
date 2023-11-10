@@ -57,6 +57,8 @@
                                             <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/articleava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                                         {% elif unit_test.unit_type == "link" %}
                                             <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/linkava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
+                                        {% elif unit_test.unit_type == "forum" %}
+                                            <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/forumava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                                         {% endif %}
                                             <div class="card-body text-white">
                                                 <div style="position:absolute; top:-2px; left:185px; height: 30px; justify-content: center; display: flex;" id="dnd-{{ unit_test.test.test_id }}" class="{{ unit_test.test.test_id }}" draggable="true" >
@@ -90,8 +92,12 @@
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/link_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% elif unit_test.unit_type == "file_attach" %}
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" disabled class="btn btn-outline-light lang" key="file_attach" id="lection-button">Файл</button>
-                                                    <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/file_attach_check/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/file_attach_check/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
                                                         <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/file_attach_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
+                                                    {% elif unit_test.unit_type == "forum" %}
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" disabled class="btn btn-outline-light lang" key="forum" id="lection-button">Форум</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/forum_check/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="check" id="check-button">Проверка</button>
+                                                        <button style="text-shadow: 2px 2px 2px black;" type="button" onclick="location.href='/course_editor/{{course.course_id}}/forum_editor/{{unit_test.test.test_id}}'"  class="btn btn-outline-light lang" key="edit" id="edit-button">Редактировать</button>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -193,6 +199,12 @@
                         <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_test">Подтверждение удаления теста</h5>
                       {% elif unit_test.unit_type == "article" %}
                         <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_article">Подтверждение удаления статьи</h5>
+                      {% elif unit_test.unit_type == "link" %}
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_link">Подтверждение удаления ссылки</h5>
+                      {% elif unit_test.unit_type == "file_attach" %}
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_file_attach">Подтверждение удаления файла</h5>
+                      {% elif unit_test.unit_type == "forum" %}
+                        <h5 class="modal-title lang" id="exampleModalLabel" key="confirm_delete_forum">Подтверждение удаления форума</h5>
                       {% endif %}
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                   </div>
@@ -200,14 +212,24 @@
                         <div class="modal-body"><text class="lang" key="are_u_sure_delete_test">Вы точно хотите удалить тест</text> «{{ unit_test.test.content.name }}»?</div>
                     {% elif unit_test.unit_type == "article" %}
                         <div class="modal-body"><text class="lang" key="are_u_sure_delete_article">Вы точно хотите удалить статью</text> «{{ unit_test.test.content.name }}»?</div>
+                    {% elif unit_test.unit_type == "link" %}
+                        <div class="modal-body"><text class="lang" key="are_u_sure_delete_link">Вы точно хотите удалить ссылку</text> «{{ unit_test.test.content.name }}»?</div>
+                    {% elif unit_test.unit_type == "file_attach" %}
+                        <div class="modal-body"><text class="lang" key="are_u_sure_delete_file_attach">Вы точно хотите удалить файл</text> «{{ unit_test.test.content.name }}»?</div>
+                    {% elif unit_test.unit_type == "forum" %}
+                        <div class="modal-body"><text class="lang" key="are_u_sure_delete_forum">Вы точно хотите удалить форум</text> «{{ unit_test.test.content.name }}»?</div>
                     {% endif %}
                   <div class="modal-footer">
                     {% if unit_test.unit_type == "test" %}
                         <form action="/delete_test/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
-                    {% elif unit_test.unit_type == "article" %}
+                    {% elif unit_test.unit_type in ("article", "file_attach") %}
                         <form action="/delete_article/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
+                    {% elif unit_test.unit_type == "link" %}
+                        <form action="/delete_link/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
+                    {% elif unit_test.unit_type == "forum" %}
+                        <form action="/delete_forum/{{course.course_id}}/{{unit_test.test.test_id}}" method="POST">
                     {% endif %}
-                        <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px" href="/logout">Удалить</button>
+                        <button type="submit" class="btn badge-danger lang" key="delete" style="border-radius: 25px">Удалить</button>
                     </form>
                   </div>
                 </div>

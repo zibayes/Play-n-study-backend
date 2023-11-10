@@ -192,7 +192,7 @@ class DataFacade:
 
     def forum_get_avatar(self, app, forum_id):
         img = None
-        forum = self.links_repository.get_link_by_id(forum_id)
+        forum = self.forums_repository.get_forum_by_id(forum_id)
         if not forum.avatar:
             try:
                 with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
@@ -351,6 +351,12 @@ class DataFacade:
     def remove_forum_topic(self, ft_id):
         return self.forum_topics_repository.remove_forum_topic(ft_id)
 
+    def get_topics_by_query(self, query: str, forum_id: int) -> Optional[list]:
+        topics_list = self.forum_topics_repository.get_forum_topics_by_substring(query, forum_id)
+        if topics_list is not None:
+            return topics_list
+        return None
+
     def topic_message_get_by_id(self, tm_id):
         return self.topic_messages_repository.get_message_by_id(tm_id)
 
@@ -358,16 +364,16 @@ class DataFacade:
         return self.topic_messages_repository.get_all_topic_messages(ft_id)
 
     def add_topic_message(self, topic_message):
-        return self.topic_messages_repository.add_topic_message(topic_message)
+        return self.topic_messages_repository.add_message(topic_message)
 
     def get_last_message_by_topic(self, ft_id):
         return self.topic_messages_repository.get_last_message_by_topic(ft_id)
 
     def update_topic_message(self, topic_message):
-        return self.topic_messages_repository.update_topic_message(topic_message)
+        return self.topic_messages_repository.update_message(topic_message)
 
     def remove_topic_message(self, tm_id):
-        return self.topic_messages_repository.remove_topic_message(tm_id)
+        return self.topic_messages_repository.remove_message(tm_id)
 
     def add_progress(self, user_progress):
         return self.user_progress_repository.add_progress(user_progress)

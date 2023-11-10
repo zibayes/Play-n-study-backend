@@ -117,9 +117,9 @@ def check_test_access(current_user):
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
             access= get_progress(course, progresses, test_id, 'test')
-            task_name = logic.get_test_by_id(test_id).content.name
             if access:
                 return func(course_id, test_id, *args, **kwargs)
+            task_name = logic.get_test_by_id(test_id).content.name
             access_denied = "Ваш прогресс на " \
                             "курсе «" + course.name + "» ещё не достаточен для получения доступа к тесту «" + task_name + "»"
             return render_template('access_denied.html', course=course, access_denied=access_denied,
@@ -138,9 +138,9 @@ def check_article_access(current_user):
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
             access = get_progress(course, progresses, article_id, 'article')
-            task_name = logic.article_get_by_id(article_id).name
             if access:
                 return func(course_id, article_id, *args, **kwargs)
+            task_name = logic.article_get_by_id(article_id).name
             access_denied = "Ваш прогресс на " \
                             "курсе «" + course.name + "» ещё не достаточен для получения доступа к статье «" + task_name + "»"
             return render_template('access_denied.html', course=course, access_denied=access_denied,
@@ -158,9 +158,9 @@ def check_link_access(current_user):
             course = logic.get_course_without_rel(course_id)
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
             access = get_progress(course, progresses, link_id, 'link')
-            task_name = logic.link_get_by_id(link_id).name
             if access:
                 return func(course_id, link_id, *args, **kwargs)
+            task_name = logic.link_get_by_id(link_id).name
             access_denied = "Ваш прогресс на " \
                             "курсе «" + course.name + "» ещё не достаточен для получения доступа к ссылке «" + task_name + "»"
             return render_template('access_denied.html', course=course, access_denied=access_denied,
@@ -178,9 +178,9 @@ def check_file_attach_access(current_user):
             progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
             course = logic.get_course_without_rel(course_id)
             access = get_progress(course, progresses, article_id, 'file_attach')
-            task_name = logic.article_get_by_id(article_id).name
             if access:
                 return func(course_id, article_id, *args, **kwargs)
+            task_name = logic.article_get_by_id(article_id).name
             access_denied = "Ваш прогресс на " \
                             "курсе «" + course.name + "» ещё не достаточен для получения доступа к заданию «" + task_name + "»"
             return render_template('access_denied.html', course=course, access_denied=access_denied,
@@ -191,6 +191,25 @@ def check_file_attach_access(current_user):
 
     return decorator
 
+def check_forum_access(current_user):
+    def decorator(func):
+        def wrapper(course_id, forum_id, *args, **kwargs):
+            user_id = current_user.get_id()
+            progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+            course = logic.get_course_without_rel(course_id)
+            access = get_progress(course, progresses, forum_id, 'forum')
+            if access:
+                return func(course_id, forum_id, *args, **kwargs)
+            task_name = logic.forum_get_by_id(forum_id).name
+            access_denied = "Ваш прогресс на " \
+                            "курсе «" + course.name + "» ещё не достаточен для получения доступа к форуму «" + task_name + "»"
+            return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                   need_subscription=False, not_enough=True)
+
+        wrapper.__name__ = func.__name__
+        return wrapper
+
+    return decorator
 
 def get_progress(course, progresses, task_id, task_type):
     results = {}

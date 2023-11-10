@@ -9,15 +9,15 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum
+from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum, ForumTopic, TopicMessage
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
     delete_unit_task, get_test, get_test_result, course_update, get_course_summary, get_test_preview, \
-    check_test_over, get_file_attach_preview
+    check_test_over, get_file_attach_preview, get_forum_structure
 from markdown import markdown
 from access import check_curator_access, check_subscriber_access, check_test_access, \
-    check_article_access, check_link_access, check_file_attach_access
+    check_article_access, check_link_access, check_file_attach_access, check_forum_access
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -106,6 +106,26 @@ def handle_delete_test(course_id, test_id):
 def handle_delete_article(course_id, article_id):
     delete_unit_task(course_id, article_id)
     logic.remove_article(article_id)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/delete_link/<int:course_id>/<int:link_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_delete_link(course_id, link_id):
+    delete_unit_task(course_id, link_id)
+    logic.remove_link(link_id)
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/delete_forum/<int:course_id>/<int:forum_id>', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_delete_forum(course_id, forum_id):
+    delete_unit_task(course_id, forum_id)
+    logic.remove_forum(forum_id)
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -344,12 +364,269 @@ def handle_forum_save(course_id, unit_id):
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    forum = Forum(forum_id=None, course_id=course_id, unit_id=unit_id, name=request.form['forumName'], description=request.form['forumDesc'], avatar=avatar)
+    forum = Forum(forum_id=None, course_id=course_id, unit_id=unit_id, name=request.form['forumName'],
+                  description=request.form['forumDesc'], avatar=avatar, score=request.form['score'])
     response = logic.forum_add_forum(forum)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении форума', 'error')
     return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_editor/<int:forum_id>', methods=["GET"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_forum_editor(course_id, forum_id):
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, current_user.get_id())
+    unit_id = get_unit_id(course, forum_id, 'forum')
+    unit_name = get_unit_name_by_id(course, unit_id)
+    forum = logic.forum_get_by_id(forum_id)
+    return render_template('forum_editor.html', user=user, course_id=course_id, unit_id=unit_id,
+                           course=course, unit_name=unit_name, forum=forum)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_editor/<int:forum_id>', methods=["POST"])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_forum_update(course_id, forum_id):
+    user_id = current_user.get_id()
+    course = logic.get_course(course_id, user_id)
+    unit_id = get_unit_id(course, forum_id, 'forum')
+    avatar = logic.forum_get_by_id(forum_id).avatar
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    forum = Forum(forum_id=forum_id, course_id=course_id, unit_id=unit_id, name=request.form['forumName'],
+                  description=request.form['forumDesc'], avatar=avatar, score=request.form['score'])
+    response = logic.update_forum(forum)
+    if response == 'success':
+        return redirect(f'/course_editor/{course_id}')
+    flash('Ошибка при сохранении форума', 'error')
+    return redirect(f'/course_editor/{course_id}')
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/forum_list/<int:forum_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_load_forum_topics(course_id, forum_id):
+    forum = logic.forum_get_by_id(forum_id)
+    topics = logic.topic_get_all_by_forum_id(forum_id)
+    last_messages = {}
+    for topic in topics:
+        message = logic.get_last_message_by_topic(topic.ft_id)
+        if message:
+            user = logic.get_user_by_id(message.user_id)
+            last_messages[topic.ft_id] = {'message': message, 'user': user}
+        else:
+            last_messages[topic.ft_id] = None
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    unit_name = get_unit_name(course, forum_id, 'forum')
+    all_progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
+    user_score = None
+    for progress in all_progresses:
+        if progress.task_type == 'forum' and progress.task_id == forum_id:
+            user_score = json.loads(progress.progress['result'])['total_current_score']
+    return render_template('forum_list.html', user=user, course=course, forum=forum, user_score=user_score,
+                           topics=topics, unit_name=unit_name, last_messages=last_messages)
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/forum_list/<int:forum_id>', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_add_forum_topic(course_id, forum_id):
+    topic = ForumTopic(ft_id=None, forum_id=forum_id, name=request.form['newTopicName'], is_active=True)
+    logic.forum_topic_add_forum_topic(topic)
+    return redirect(f'/course/{course_id}/forum_list/{forum_id}')
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/forum_list/<int:forum_id>/search', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_find_forum_topic(course_id, forum_id):
+    query = request.form['query']
+    if len(query) > 0:
+        forum = logic.forum_get_by_id(forum_id)
+        topics = logic.get_topics_by_query(query, forum_id)
+        last_messages = {}
+        if not topics:
+            topics = []
+        for topic in topics:
+            message = logic.get_last_message_by_topic(topic.ft_id)
+            if message:
+                user = logic.get_user_by_id(message.user_id)
+                last_messages[topic.ft_id] = {'message': message, 'user': user}
+            else:
+                last_messages[topic.ft_id] = None
+
+        user = logic.get_user_by_id(current_user.get_id())
+        course = logic.get_course(course_id, user.user_id)
+        unit_name = get_unit_name(course, forum_id, 'forum')
+        return render_template('forum_list.html', user=user, course=course, forum=forum,
+                               topics=topics, unit_name=unit_name, last_messages=last_messages)
+    return redirect(f'/course/{course_id}/forum_list/{forum_id}')
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/forum_list/<int:forum_id>/forum/<int:ft_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_load_forum_topic(course_id, forum_id, ft_id):
+    forum = logic.forum_get_by_id(forum_id)
+    topic = logic.forum_topic_get_by_id(ft_id)
+    users, users_score, nesting_level, messages_ordered = get_forum_structure(ft_id, forum_id, course_id)
+    user = logic.get_user_by_id(current_user.get_id())
+    users_score = users_score[user.user_id]['total_current_score']
+    course = logic.get_course(course_id, user.user_id)
+    unit_name = get_unit_name(course, forum_id, 'forum')
+    return render_template('forum.html', user=user, course=course, forum=forum, nesting_level=nesting_level,
+                           topic=topic, unit_name=unit_name, messages=messages_ordered,
+                           users=users, user_score=users_score)
+
+
+@login_required
+@courses_bp.route('/course/<int:course_id>/forum_list/<int:forum_id>/forum/<int:ft_id>', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_topic_send_message(course_id, forum_id, ft_id):
+    msg = request.form.to_dict()
+    message = None
+    for key, value in msg.items():
+        if key[8:] == 'None':
+            key = None
+        else:
+            key = key[8:]
+        message = TopicMessage(tm_id=None, ft_id=ft_id, parent_tm_id=key, user_id=current_user.get_id(), tm_date=None, content=value)
+    logic.add_topic_message(message)
+
+    task_type = 'forum'
+    user_id = current_user.get_id()
+    all_progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+    is_done = False
+    for progress in all_progresses:
+        if progress.task_type == task_type and progress.task_id == forum_id:
+            is_done = True
+    if not is_done:
+        progress = Progress(progress_id=None, completed=True, type=task_type,
+                            content=None, test_id=forum_id, result=None)
+        logic.add_progress(course_id=course_id, user_id=user_id, task_type=task_type, task_id=forum_id,
+                           progress=Progress.to_json(progress))
+    return redirect(f'/course/{course_id}/forum_list/{forum_id}/forum/{ft_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_check/<int:forum_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_load_forum_topics_editor(course_id, forum_id):
+    forum = logic.forum_get_by_id(forum_id)
+    topics = logic.topic_get_all_by_forum_id(forum_id)
+    last_messages = {}
+    if not topics:
+        topics = []
+    for topic in topics:
+        message = logic.get_last_message_by_topic(topic.ft_id)
+        if message:
+            user = logic.get_user_by_id(message.user_id)
+            last_messages[topic.ft_id] = {'message': message, 'user': user}
+        else:
+            last_messages[topic.ft_id] = None
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    unit_name = get_unit_name(course, forum_id, 'forum')
+    return render_template('forum_list_check.html', user=user, course=course, forum=forum,
+                           topics=topics, unit_name=unit_name, last_messages=last_messages)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_list_check/<int:forum_id>/search', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_find_forum_topic_check(course_id, forum_id):
+    query = request.form['query']
+    if len(query) > 0:
+        forum = logic.forum_get_by_id(forum_id)
+        topics = logic.get_topics_by_query(query, forum_id)
+        last_messages = {}
+        for topic in topics:
+            message = logic.get_last_message_by_topic(topic.ft_id)
+            if message:
+                user = logic.get_user_by_id(message.user_id)
+                last_messages[topic.ft_id] = {'message': message, 'user': user}
+            else:
+                last_messages[topic.ft_id] = None
+        user = logic.get_user_by_id(current_user.get_id())
+        course = logic.get_course(course_id, user.user_id)
+        unit_name = get_unit_name(course, forum_id, 'forum')
+        return render_template('forum_list_check.html', user=user, course=course, forum=forum,
+                               topics=topics, unit_name=unit_name, last_messages=last_messages)
+    return redirect(f'/course_editor/{course_id}/forum_check/{forum_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_check/<int:forum_id>/forum/<int:ft_id>', methods=["POST"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_send_forum_topic_check(course_id, forum_id, ft_id):
+    marks = request.form.to_dict()
+    users_score = {}
+    for id, mark in marks.items():
+        if 'score-' in id:
+            users_score[id[6:]] = mark
+    for user_id, mark in users_score.items():
+        all_progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+        for progress in all_progresses:
+            if progress.task_type == 'forum' and progress.task_id == forum_id:
+                progress.progress['result'] = TestResult(logic.forum_get_by_id(forum_id).score,
+                                                         float(mark), None, None).to_json()
+                progress.progress = Progress.to_json(
+                    Progress(None, progress.progress['test_id'], progress.progress['type'], #progress.progress['progress_id']
+                             progress.progress['completed'], progress.progress['result'],
+                             progress.progress['content']))
+                logic.update_progress(progress)
+    return redirect(f'/course_editor/{course_id}/forum_check/{forum_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_check/<int:forum_id>/forum/<int:ft_id>', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_load_forum_topic_check(course_id, forum_id, ft_id):
+    forum = logic.forum_get_by_id(forum_id)
+    topic = logic.forum_topic_get_by_id(ft_id)
+    users, users_score, nesting_level, messages_ordered = get_forum_structure(ft_id, forum_id, course_id)
+    user = logic.get_user_by_id(current_user.get_id())
+    course = logic.get_course(course_id, user.user_id)
+    unit_name = get_unit_name(course, forum_id, 'forum')
+    return render_template('forum_check.html', user=user, course=course, forum=forum, nesting_level=nesting_level,
+                           topic=topic, unit_name=unit_name, messages=messages_ordered, users=users, users_score=users_score)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_check/<int:forum_id>/forum/<int:ft_id>/open', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_open_forum_topic(course_id, forum_id, ft_id):
+    topic = logic.forum_topic_get_by_id(ft_id)
+    topic.is_active = True
+    logic.update_forum_topic(topic)
+    return redirect(f'/course_editor/{course_id}/forum_check/{forum_id}')
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/forum_check/<int:forum_id>/forum/<int:ft_id>/close', methods=["GET"])
+@check_subscriber_access(current_user)
+@check_forum_access(current_user)
+def handle_close_forum_topic(course_id, forum_id, ft_id):
+    topic = logic.forum_topic_get_by_id(ft_id)
+    topic.is_active = False
+    logic.update_forum_topic(topic)
+    return redirect(f'/course_editor/{course_id}/forum_check/{forum_id}')
 
 
 @login_required

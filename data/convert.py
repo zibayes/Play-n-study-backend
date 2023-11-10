@@ -152,6 +152,7 @@ def forum_db_to_forum(forum: Type[ForumsModel]):
     return Forum(forum_id=forum.forum_id,
                    course_id=forum.course_id,
                    avatar=forum.avatar,
+                   score=forum.score,
                    name=forum.name,
                    unit_id=forum.unit_id,
                    description=forum.description)
@@ -160,6 +161,7 @@ def forum_db_to_forum(forum: Type[ForumsModel]):
 def forum_topic_db_to_forum_topic(forum_topic: Type[ForumTopicsModel]):
     return ForumTopic(ft_id=forum_topic.ft_id,
                       forum_id=forum_topic.forum_id,
+                      is_active=forum_topic.is_active,
                       name=forum_topic.name)
 
 

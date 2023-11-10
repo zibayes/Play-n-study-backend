@@ -377,3 +377,83 @@ def get_file_attach_preview(progress, course_id, article_id, user):
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
     return max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends
+
+
+def get_forum_structure(ft_id, forum_id, course_id):
+    messages = logic.messages_get_all_by_topic_id(ft_id)
+    messages_ordered = []
+    nesting_level = {None: 0}
+    users = {}
+    for message in messages:
+        if message.user_id not in users.keys():
+            users[message.user_id] = logic.get_user_by_id(message.user_id)
+        if message.parent_tm_id in nesting_level.keys():
+            nesting_level[message.tm_id] = nesting_level[message.parent_tm_id] + 1
+    '''
+    messages_ordered_ids = []
+    while len(messages_ordered) != len(messages):
+        for i in range(len(messages)):
+            if messages[i].parent_tm_id is None and messages[i] not in messages_ordered:
+                messages_ordered.append(messages[i])
+                messages_ordered_ids.append(messages[i].tm_id)
+            if messages[i].parent_tm_id in messages_ordered_ids:
+                changed = False
+                for j in range(len(messages_ordered)):
+                    if messages[i].parent_tm_id == messages_ordered[j].parent_tm_id and messages[
+                        i] not in messages_ordered:
+                        if messages[i].tm_id < messages_ordered[j].tm_id:
+                            messages_ordered = messages_ordered[:j] + [messages[i]] + messages_ordered[j:]
+                            messages_ordered_ids.append(messages[i].tm_id)
+                            print(f'|{messages[i].tm_id}[{messages[i].parent_tm_id}]')
+                    if messages[i].parent_tm_id != messages_ordered[j].parent_tm_id and messages[
+                        i] not in messages_ordered:
+                        messages_ordered.append(messages[i])
+                        messages_ordered_ids.append(messages[i].tm_id)
+                        changed = True
+                        print(f'?{messages[i].tm_id}[{messages[i].parent_tm_id}]')
+                    if messages_ordered[j].tm_id == messages[i].parent_tm_id:
+                        if j == len(messages_ordered) - 1:
+                            messages_ordered.append(messages[i])
+                            messages_ordered_ids.append(messages[i].tm_id)
+                            changed = True
+                            print(f'!{messages[i].tm_id}[{messages[i].parent_tm_id}]')
+                if not changed:
+                    messages_ordered.append(messages[i])
+                    messages_ordered_ids.append(messages[i].tm_id)
+                    print(f'%{messages[i].tm_id}[{messages[i].parent_tm_id}]')
+        for i in messages_ordered:
+            print(f'{i.tm_id}[{i.parent_tm_id}]', end=', ')
+        print()
+    '''
+    msgs = {}
+    for message in messages:
+        if message.parent_tm_id not in msgs.keys():
+            msgs[message.parent_tm_id] = [message.tm_id]
+        elif message.tm_id not in msgs[message.parent_tm_id]:
+            msgs[message.parent_tm_id].append(message.tm_id)
+    ordered_msgs = []
+    if msgs:
+        ordered_msgs = msgs.pop(None)
+    while msgs:
+        new_list = ordered_msgs
+        to_del = None
+        for i in range(len(ordered_msgs)):
+            if ordered_msgs[i] in msgs.keys():
+                j = new_list.index(ordered_msgs[i])+1
+                new_list = ordered_msgs[:j] + msgs[ordered_msgs[i]] + ordered_msgs[j:]
+                to_del = ordered_msgs[i]
+                break
+        ordered_msgs = new_list
+        msgs.pop(to_del)
+    for msg in ordered_msgs:
+        for message in messages:
+            if msg == message.tm_id:
+                messages_ordered.append(message)
+
+    users_score = {}
+    for user_id in users.keys():
+        all_progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
+        for progress in all_progresses:
+            if progress.task_type == 'forum' and progress.task_id == forum_id:
+                users_score[user_id] = json.loads(progress.progress['result'])
+    return users, users_score, nesting_level, messages_ordered
