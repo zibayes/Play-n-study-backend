@@ -437,7 +437,7 @@ def handle_load_forum_topics(course_id, forum_id):
     all_progresses = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
     user_score = None
     for progress in all_progresses:
-        if progress.task_type == 'forum' and progress.task_id == forum_id:
+        if progress.task_type == 'forum' and progress.task_id == forum_id and progress.progress['result']:
             user_score = json.loads(progress.progress['result'])['total_current_score']
     return render_template('forum_list.html', user=user, course=course, forum=forum, user_score=user_score,
                            topics=topics, unit_name=unit_name, last_messages=last_messages)
@@ -490,7 +490,9 @@ def handle_load_forum_topic(course_id, forum_id, ft_id):
     topic = logic.forum_topic_get_by_id(ft_id)
     users, users_score, nesting_level, messages_ordered = get_forum_structure(ft_id, forum_id, course_id)
     user = logic.get_user_by_id(current_user.get_id())
-    users_score = users_score[user.user_id]['total_current_score']
+    users_score = None
+    if users_score and user.user_id in users_score.keys():
+        users_score = users_score[user.user_id]['total_current_score']
     course = logic.get_course(course_id, user.user_id)
     unit_name = get_unit_name(course, forum_id, 'forum')
     return render_template('forum.html', user=user, course=course, forum=forum, nesting_level=nesting_level,

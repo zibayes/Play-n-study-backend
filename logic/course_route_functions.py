@@ -455,5 +455,8 @@ def get_forum_structure(ft_id, forum_id, course_id):
         all_progresses = logic.get_progress_by_user_course_ids_all(user_id, course_id)
         for progress in all_progresses:
             if progress.task_type == 'forum' and progress.task_id == forum_id:
-                users_score[user_id] = json.loads(progress.progress['result'])
+                if progress.progress['result']:
+                    users_score[user_id] = json.loads(progress.progress['result'])
+                else:
+                    users_score[user_id] = {'total_current_score': 0}
     return users, users_score, nesting_level, messages_ordered
