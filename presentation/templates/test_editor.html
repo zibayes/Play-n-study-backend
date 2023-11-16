@@ -261,10 +261,11 @@
                                                 <script>
                                                     textareaMarker = document.getElementById(`Marker-{{ questionNum.value }}-{{ answerNum.value }}`);
                                                     zone_type = document.getElementById(`ZoneFigure-{{ questionNum.value }}-{{ answerNum.value }}`);
+                                                    textareaCoords = document.getElementById(`Coordinates-{{ questionNum.value }}-{{ answerNum.value }}`)
                                                     if(`{{answer.figure}}` === "Многоугольник") {
-                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords: textareaCoords});
                                                     } else if(`{{answer.figure}}` === "Окружность") {
-                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords: textareaCoords});
                                                     }
 
                                                     textareaMarker.addEventListener('input', function (evt) {
@@ -346,7 +347,7 @@
                                                         }
                                                         draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))), false);
                                                     });
-                                                    if({{answer.figure}} === "Многоугольник") {
+                                                    if(`{{answer.figure}}` === "Многоугольник") {
                                                         let coordsAmount = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords.value.match(/;/g).length;
                                                         let delimiter, coords, comma;
                                                         window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes = []
@@ -365,7 +366,7 @@
                                                             let new_y = parseInt(coords.slice(comma+1));
                                                             window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes.push({x:new_x, y: new_y, v:false})
                                                         }
-                                                    } else if({{answer.figure}} === "Окружность") {
+                                                    } else if(`{{answer.figure}}` === "Окружность") {
                                                         let circle = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1));
                                                         let delimiter = string.indexOf(",");
                                                         circle.x = parseInt(string.slice(0, delimiter));

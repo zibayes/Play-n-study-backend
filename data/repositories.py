@@ -939,7 +939,7 @@ class ChatMessageRepository:
     def update_message(self, message: str, msg_id: int) -> bool:
         try:
             message_to_update = self.session.query(ChatMessagesModel) \
-                .filter_by(forum_id=msg_id) \
+                .filter_by(msg_id=msg_id) \
                 .first()
             message_to_update.msg_text = message
             self.session.commit()
