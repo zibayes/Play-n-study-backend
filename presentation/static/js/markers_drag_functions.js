@@ -58,6 +58,8 @@ export function draw_figures(canvas, change_val=true, drop_selection=false) {
     ctx.drawImage(image, 0, 0, width, height);
     TODO: добавть у канваса хранение фонового изображения
      */
+    if (canvas.background !== undefined)
+        ctx.drawImage(canvas.background, 0, 0, canvas.canvas.width, canvas.canvas.height);
     let zones = canvas.zones
     for (var [key, value] of zones) {
         if (value.x === undefined) {
@@ -124,6 +126,7 @@ export function circle(figure, ctx) {
 
 // handle mousedown events
 export function myDown(e){
+    console.log("HUI")
 
     // tell the browser we're handling this mouse event
     e.preventDefault();

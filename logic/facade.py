@@ -468,6 +468,9 @@ class LogicFacade:
     def remove_message(self, msg_id):
         return self.data.remove_message(msg_id)
 
+    def update_chat_message(self, message, msg_id):
+        return self.data.update_chat_message(message['msg_text'], msg_id)
+
     def get_last_chat_message_by_id(self, chat_id):
         return self.data.get_last_chat_message_by_id(chat_id)
 

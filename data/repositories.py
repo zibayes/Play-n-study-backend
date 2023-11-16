@@ -936,6 +936,18 @@ class ChatMessageRepository:
             print("Ошибка удаления сообщения :" + str(e))
             return False
 
+    def update_message(self, message: str, msg_id: int) -> bool:
+        try:
+            message_to_update = self.session.query(ChatMessagesModel) \
+                .filter_by(forum_id=msg_id) \
+                .first()
+            message_to_update.msg_text = message
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления чат-сообщения в БД " + str(e))
+            return False
+
 
 class LinksRepository:
     def __init__(self, session):

@@ -435,6 +435,9 @@ class DataFacade:
     def remove_message(self, msg_id):
         return self.chat_messages_repository.remove_message(msg_id)
 
+    def update_chat_message(self, message, msg_id):
+        return self.chat_messages_repository.update_message(message, msg_id)
+
     def get_last_chat_message_by_id(self, chat_id):
         msg = self.chat_messages_repository.get_last_chat_message_by_id(chat_id).to_dict()
         msg['msg_from_id'] = self.user_repository.get_user_by_id(int(msg['msg_from'])).user_id

@@ -10,6 +10,9 @@ import {
 } from './markers_drag_functions.js';
 
 window.draw_figures = draw_figures;
+window.myDown = myDown;
+window.myUp = myUp;
+window.myMove = myMove;
 
 // Функция добавления слушателя события перетаскивания
 export function addDragoverEventListener(dragndropArea, tagContains, i=undefined, questions_list=undefined) {
@@ -894,15 +897,15 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             let divFlex = document.createElement('div');
             divFlex.setAttribute('class', "flex-column");
             let divCanv = document.createElement('div');
-            divCanv.setAttribute('style', "height: 586px; overflow-y: hidden; overflow-x: visible");
+            //divCanv.setAttribute('style', "height: 586px; overflow-y: hidden; overflow-x: visible");
             divCanv.setAttribute('id', "canvasContainer" + questionIndexButtonId);
             let canvas = document.createElement('canvas');
             canvas.setAttribute('id', "canvas-" + questionIndex);
             canvas.setAttribute('width', "1036px");
-            canvas.setAttribute('height', "9999px");
+            canvas.setAttribute('height', "584px");
             canvas.setAttribute('style', "border:1px solid red; background-repeat: repeat; background-position: 0 0; background-image: url(\"/static/img/nophoto.png\"");
 
-            window.canvases.set(String(questionIndex),{canvas: canvas, zones:new Map()});
+            window.canvases.set(String(questionIndex),{canvas: canvas, zones:new Map(), background: undefined});
             window.canvases.get(String(questionIndex)).zones.set(String(answerIndex), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:""});
 
             let form = document.createElement('div');
@@ -1083,7 +1086,8 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                         divCanv.setAttribute("height", height + "px");
                         divCanv.setAttribute("width", width + "px");
                         let ctx = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).canvas.getContext("2d");
-                        ctx.drawImage(image, 0, 0, width, height);
+                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).background = image;
+                        draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))), false)
                     };
                 };
                 reader.readAsDataURL(file);

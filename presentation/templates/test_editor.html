@@ -6,6 +6,10 @@
 
 {% block content %}
 
+<script>
+    window.canvases = new Map();
+</script>
+
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
         <span class="fs-5 row m-3 justify-content-start lang" key="test_editor">
@@ -184,11 +188,15 @@
                                             <span class="fs-5 row m-3 justify-content-start lang">
                                                 <div class="flex-column">
                                                     <div id="canvasContainer" style="overflow-y: hidden; overflow-x: visible;">
-                                                        <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                        <canvas id="canvas-{{ questionNum.value }}" width="1036px" height="548px"></canvas>
                                                         <script>
+                                                            canvas = document.getElementById('canvas-{{ questionNum.value }}');
+                                                            canvas.onmousedown = window.myDown;
+                                                            canvas.onmouseup = window.myUp;
+                                                            canvas.onmousemove = window.myMove;
+                                                            window.canvases.set(String('{{ questionNum.value }}'),{canvas: canvas, zones:new Map(), background: undefined});
                                                             const image = new Image();
                                                             image.src = '/static/users_files/{{ test_tmp.test_id }}test/{{ question.file }}.png';
-                                                            canvas = document.getElementById('canvas');
                                                             divCanv = document.getElementById('canvasContainer')
                                                             let new_width = divCanv.parentElement.offsetWidth - 26;
                                                             image.onload = function () {
@@ -206,18 +214,19 @@
                                                                 divCanv.setAttribute("height", height + "px");
                                                                 divCanv.setAttribute("width", width + "px");
                                                                 let ctx = canvas.getContext("2d");
+                                                                window.canvases.get(`{{ questionNum.value }}`).background = image;
                                                                 ctx.drawImage(image, 0, 0, width, height);
                                                             }
                                                         </script>
                                                     </div>
                                                     <style>
-                                                        #canvas{
+                                                        #canvas-{{ questionNum.value }}{
                                                             border:1px solid red;
-                                                            background-image: url("/static/users_files/{{ test_tmp.test_id }}test/{{ question.file }}.jpg");
+                                                            background-image: url("/static/img/nophoto.png");
                                                         }
                                                     </style>
                                                     <input type="file" name="file" class="form-control" id="customFile" />
-                                                    <a><button class="btn border border-2 w-100 lang" key="" id="addBackgroundImage" type="button">Добавить фоновое изображение</button></a>
+                                                    <a><button class="btn border border-2 w-100 lang" key="" id="addBackgroundImage-{{ questionNum.value }}" type="button">Добавить фоновое изображение</button></a>
                                                     <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
                                                 </div>
                                             </span>
@@ -227,9 +236,9 @@
                                                 <div  class="row container-fluid" class="answer_div">
                                                     <div style="padding-bottom: 10px; display: flex; align-items: center;" class="answer_div">
                                                         <div style="width: 75px; margin-right: 4px;" class="lang" key="marker">Маркер</div>
-                                                        <textarea maxlength="5000" required class="form-control langp" key="marker_name" id="marker" rows="1" placeholder="Название маркера">{{answer.marker}}</textarea>
+                                                        <textarea maxlength="5000" required class="form-control langp" key="marker" name="Marker-{{ questionNum.value }}-{{ answerNum.value }}" id="Marker-{{ questionNum.value }}-{{ answerNum.value }}" rows="1" placeholder="Название маркера">{{answer.marker}}</textarea>
                                                         <div style="width: 400px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Форма зоны</div>
-                                                        <select class="form-select" id="ZoneFigure" style="width: 180px;" >
+                                                        <select class="form-select" id="ZoneFigure-{{ questionNum.value }}-{{ answerNum.value }}" style="width: 180px;" >
                                                             {% if answer.figure == "Окружность" %}
                                                                 <option selected class="lang" key="circle">Окружность</option>
                                                                 <option class="lang" key="polygon">Многоугольник</option>
@@ -239,7 +248,7 @@
                                                             {% endif %}
                                                         </select>
                                                         <div style="width: 160px; margin-left: 8px; margin-right: 4px;" class="lang" key="marker">Координаты</div>
-                                                        <textarea maxlength="5000" required class="form-control langp" id="coordinates" key="zone_coordinates" rows="1" placeholder="Координаты зоны">{{answer.coordinates}}</textarea>
+                                                        <textarea maxlength="5000" required class="form-control langp" id="Coordinates-{{ questionNum.value }}-{{ answerNum.value }}" key="zone_coordinates" name="Coordinates-{{ questionNum.value }}-{{ answerNum.value }}" rows="1" placeholder="Координаты зоны">{{answer.coordinates}}</textarea>
                                                         <button class="btn" type="button" style="background-color:red; color:white; padding: 4px; width: 25px; margin-left: 5px;">✖</button>
                                                         <div style="height: 30px; justify-content: center; display: flex;" class="answer_div">
                                                             <img src="/static/img/drag_n_drop.png" style="height: 30px; transform: rotate(90deg);" draggable="true" class="dnd answer_div">
@@ -248,6 +257,127 @@
                                                     </div>
                                                 </div>
                                                 <br>
+
+                                                <script>
+                                                    textareaMarker = document.getElementById(`Marker-{{ questionNum.value }}-{{ answerNum.value }}`);
+                                                    zone_type = document.getElementById(`ZoneFigure-{{ questionNum.value }}-{{ answerNum.value }}`);
+                                                    if(`{{answer.figure}}` === "Многоугольник") {
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                    } else if(`{{answer.figure}}` === "Окружность") {
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:zone_type, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                    }
+
+                                                    textareaMarker.addEventListener('input', function (evt) {
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).marker_name = textareaMarker.value;
+                                                        draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))));
+                                                    });
+                                                    window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType = document.getElementById(`ZoneFigure-{{ questionNum.value }}-{{ answerNum.value }}`);
+                                                    window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.addEventListener('change', function (evt) {
+                                                        selectedOption = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.options[window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.selectedIndex];
+                                                        if(selectedOption.getAttribute('key') === "polygon") {
+                                                            window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,zoneType:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                        }else if(selectedOption.getAttribute('key') === "circle") {
+                                                            window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1), {x:60,y:60,radius:40,isDragging:false,selected:false,zoneType:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType, marker_name:textareaMarker.value, textareaCoords:window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords});
+                                                        }
+                                                        draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))));
+                                                    });
+                                                    aButton = document.getElementById(`addBackgroundImage-{{ questionNum.value }}`)
+                                                    aButton.addEventListener('click', function (evt) {
+                                                        let file = inputFile.files[0];
+                                                        let reader = new FileReader();
+                                                        reader.onload = function(event) {
+                                                            const image = new Image();
+                                                            image.src = event.target.result;
+                                                            let new_width = divCanv.parentElement.offsetWidth - 26;
+                                                            image.onload = function () {
+                                                                let height = this.height;
+                                                                let width = this.width;
+                                                                if (width > new_width) {
+                                                                    let ratio = height / width;
+                                                                    width = new_width;
+                                                                    height = width * ratio;
+                                                                    this.style.height = height;
+                                                                    this.style.width = width;
+                                                                }
+                                                                canvas.height = height;
+                                                                canvas.width = width;
+                                                                divCanv.setAttribute("height", height + "px");
+                                                                divCanv.setAttribute("width", width + "px");
+                                                                let ctx = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).canvas.getContext("2d");
+                                                                window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).background = image;
+                                                                draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))), false)
+                                                            };
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    });
+                                                    window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords = document.getElementById(`Coordinates-{{ questionNum.value }}-{{ answerNum.value }}`);
+                                                    window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords.addEventListener('input', function (evt) {
+                                                        let string = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords.value;
+
+                                                        selectedOption = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.options[window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.selectedIndex];
+                                                        if(selectedOption.getAttribute('key') === "polygon") {
+                                                            let coordsAmount = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords.value.match(/;/g).length;
+                                                            let delimiter, coords, comma;
+                                                            window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes = []
+                                                            for(let i = 0; i < coordsAmount; i++){
+                                                                if(i > 0){
+                                                                    delimiter = string.indexOf(";");
+                                                                    string = string.slice(delimiter+1);
+                                                                }
+                                                                delimiter = string.indexOf(";");
+                                                                if(delimiter > 0)
+                                                                    coords = string.slice(0, delimiter);
+                                                                else
+                                                                    coords = string
+                                                                comma = coords.indexOf(",");
+                                                                let new_x = parseInt(coords.slice(0, comma));
+                                                                let new_y = parseInt(coords.slice(comma+1));
+                                                                window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes.push({x:new_x, y: new_y, v:false})
+                                                            }
+                                                        } else if(selectedOption.getAttribute('key') === "circle") {
+                                                            let circle = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1));
+                                                            let delimiter = string.indexOf(",");
+                                                            circle.x = parseInt(string.slice(0, delimiter));
+                                                            string = string.slice(delimiter+1);
+                                                            delimiter = string.indexOf(",");
+                                                            circle.y = parseInt(string.slice(0, delimiter));
+                                                            string = string.slice(delimiter+1);
+                                                            circle.radius = parseInt(string);
+                                                        }
+                                                        draw_figures(window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))), false);
+                                                    });
+                                                    if({{answer.figure}} === "Многоугольник") {
+                                                        let coordsAmount = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).textareaCoords.value.match(/;/g).length;
+                                                        let delimiter, coords, comma;
+                                                        window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes = []
+                                                        for(let i = 0; i < coordsAmount; i++){
+                                                            if(i > 0){
+                                                                delimiter = string.indexOf(";");
+                                                                string = string.slice(delimiter+1);
+                                                            }
+                                                            delimiter = string.indexOf(";");
+                                                            if(delimiter > 0)
+                                                                coords = string.slice(0, delimiter);
+                                                            else
+                                                                coords = string
+                                                            comma = coords.indexOf(",");
+                                                            let new_x = parseInt(coords.slice(0, comma));
+                                                            let new_y = parseInt(coords.slice(comma+1));
+                                                            window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).vertexes.push({x:new_x, y: new_y, v:false})
+                                                        }
+                                                    } else if({{answer.figure}} === "Окружность") {
+                                                        let circle = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1));
+                                                        let delimiter = string.indexOf(",");
+                                                        circle.x = parseInt(string.slice(0, delimiter));
+                                                        string = string.slice(delimiter+1);
+                                                        delimiter = string.indexOf(",");
+                                                        circle.y = parseInt(string.slice(0, delimiter));
+                                                        string = string.slice(delimiter+1);
+                                                        circle.radius = parseInt(string);
+                                                    }
+                                                    window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.set(String(answerIndex), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:textareaMarker.value});
+                                                </script>
+
                                             {% endfor %}
                                             <div style="color: gray; font-size: 14px;" class="lang to_del" key="markNote">*Примечание: в координатах зоны последовательно указаны координаты x, y каждой вершины многоуголинка, или же координаты центра и радиус для окружности</div>
                                         {% endif %}
