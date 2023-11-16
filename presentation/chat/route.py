@@ -46,28 +46,28 @@ def handle_send_message():
         chat_id = logic.get_chat_by_users(msg_from, msg_to)
         msg = logic.get_last_chat_message_by_id(chat_id)
         return msg
-    return 'fail'
+    return 'send message failed'
 
 
 @chat_bp.route('/remove_message/<int:msg_id>', methods=['POST'])
 def handle_remove_message(msg_id):
     response = logic.remove_message(msg_id)
     if response:
-        return 'removed'
-    return 'fail'
+        return 'message removed'
+    return 'message remove failed'
 
 
 @chat_bp.route('/update_message/<int:msg_id>', methods=['POST'])
-def handle_send_message(msg_id):
+def handle_update_message(msg_id):
     response = logic.update_chat_message(request.json, msg_id)
     if response:
-        return 'updated'
-    return 'fail'
+        return 'message updated'
+    return 'message update failed'
 
 
 @chat_bp.route('/remove_chat/<int:chat_id>', methods=['POST'])
 def handle_remove_chat(chat_id):
     response = logic.remove_chat(chat_id)
     if response:
-        return 'removed'
-    return 'fail'
+        return 'chat removed'
+    return 'chat remove failed'
