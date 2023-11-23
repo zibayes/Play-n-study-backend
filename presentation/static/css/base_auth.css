@@ -34,3 +34,48 @@
   overflow-y: scroll;
   margin:0 auto 0;
 }
+.menu_board{
+    position: relative;
+}
+.menu_board_detail{
+    position: absolute;
+    bottom: 0;
+    margin-bottom: -90px;
+    margin-right: 55px;
+    right: 0;
+}
+.menu_board_detail2{
+    position: absolute;
+    bottom: 0;
+    margin-bottom: -90px;
+    margin-right: 55px;
+    right: 0;
+}
+.li_dropitem{
+    margin: 5px;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.link_item{
+    padding: 5px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.4s ease;
+}
+.link_item:hover{
+    background: #d3d3d3;
+}
+.text_dropitem{
+    font-size: 12px;
+    font-weight: 500;
+    color: #707070;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}

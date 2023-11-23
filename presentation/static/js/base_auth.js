@@ -1,8 +1,15 @@
+// Отображение чата, если нет сообщений. Удаление сообщений, редактирование сообщений, удаление диалога.
 import {
     change_language,
     translate
 } from './test_constructor_functions.js';
-
+function selectElementContents(el) {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
 let bg = document.querySelector('.mouse-parallax-bg');
 window.addEventListener('mousemove', function(e) {
     let x = e.clientX / window.innerWidth;
@@ -17,8 +24,6 @@ $.ajax({
   method: 'post',
   dataType: 'json',
   success: function(json_data){
-    console.log(json_data)
-
     json_data.chats.sort(
             function (a, b){
               return new Date(b.time) - new Date(a.time)
@@ -33,19 +38,123 @@ $.ajax({
     console.log(json_data)
   }
 });
-
+function click(e) {
+  const container = document.querySelector(".menu_board_detail")
+  if (!container?.contains(e.target)){
+    document.querySelector(".menu_board_detail")?.remove()
+    document.removeEventListener("click", click)
+  }
+}
+function click2(e) {
+  const container = document.querySelector(".menu_board_detail2")
+  if (!container?.contains(e.target)){
+    document.querySelector(".menu_board_detail2")?.remove()
+    document.removeEventListener("click", click)
+  }
+}
 function chat_message_div(message) {
   let div_element_d_flex = document.createElement("div")
+  let div_menu_board = document.createElement("div")
+
   if (message.msg_from === "Я") {
       div_element_d_flex.setAttribute("class", "d-flex flex-row justify-content-end mb-4 pt-1")
+      let p1 = document.createElement("p")
+      div_element_d_flex.addEventListener("contextmenu", function (e) {
+        p1.contentEditable = "false"
+        event.preventDefault()
+        document.querySelector(".menu_board_detail")?.remove()
+        document.querySelector(".menu_board_detail2")?.remove()
+        document.addEventListener("click", click)
+        let div_menu_board_detail = document.createElement("div")
+        let ul_drop_item = document.createElement("ul")
+        let li_drop_item1 = document.createElement("li")
+        let li_drop_item2 = document.createElement("li")
+        let button_link1 = document.createElement("button")
+        let button_link2 = document.createElement("button")
+        let span_text_drop_item1 = document.createElement("span")
+        let span_text_drop_item2 = document.createElement("span")
+        div_menu_board.setAttribute("class", 'menu_board')
+        div_menu_board_detail.setAttribute("class", 'menu_board_detail')
+        ul_drop_item.setAttribute("class", 'ul_dropitem')
+        li_drop_item1.setAttribute("class", "li_dropitem")
+        li_drop_item2.setAttribute("class", "li_dropitem")
+        button_link1.setAttribute("class", "link_item")
+        button_link2.setAttribute("class", "link_item")
+        span_text_drop_item1.setAttribute("class", "text_dropitem")
+        span_text_drop_item1.textContent = "Удалить сообщение"
+        span_text_drop_item2.setAttribute("class", "text_dropitem")
+        span_text_drop_item2.textContent = "Редкатировать сообщение"
+        button_link1.addEventListener("click", function () {
+          $.ajax({
+            url: '/remove_message/' + message.msg_id,
+            method: 'post',
+            dataType: 'json',
+          })
+          div_menu_board_detail.remove()
+          div_element_d_flex.remove()
+        })
+        button_link2.addEventListener("click", function () {
+          p1.contentEditable = 'true'
+          div_menu_board_detail.remove()
+          selectElementContents(p1)
+          let div_menu_board_detail_dop = document.createElement("div")
+          let ul_drop_item = document.createElement("ul")
+          let li_drop_item = document.createElement("li")
+          let button_link = document.createElement("button")
+          button_link.addEventListener("click", function () {
+              p1.contentEditable = "false"
+              div_menu_board_detail_dop.remove()
+              $.ajax({
+                url: '/update_message/' + message.msg_id,
+                method: "post",
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({"msg_text": p1.innerHTML}),
+            })
+          })
+          let span_text_drop_item = document.createElement("span")
+          let li_drop_item2 = document.createElement("li")
+          let button_link2 = document.createElement("button")
+          button_link2.addEventListener("click", function () {
+            p1.contentEditable = "false"
+            div_menu_board_detail_dop.remove()
+          })
+          let span_text_drop_item2 = document.createElement("span")
+
+          div_menu_board_detail_dop.setAttribute("class", "menu_board_detail2")
+          ul_drop_item.setAttribute("class", 'ul_dropitem')
+          li_drop_item.setAttribute("class", "li_dropitem")
+          button_link.setAttribute("class", "link_item")
+          span_text_drop_item.setAttribute("class", "text_dropitem")
+          li_drop_item2.setAttribute("class", "li_dropitem")
+          button_link2.setAttribute("class", "link_item")
+          span_text_drop_item2.setAttribute("class", "text_dropitem")
+          span_text_drop_item.textContent = "Подтвердить"
+          span_text_drop_item2.textContent = "Отмена"
+          button_link.appendChild(span_text_drop_item)
+          button_link2.appendChild(span_text_drop_item2)
+          li_drop_item.appendChild(button_link)
+          li_drop_item2.appendChild(button_link2)
+          ul_drop_item.appendChild(li_drop_item)
+          ul_drop_item.appendChild(li_drop_item2)
+          div_menu_board_detail_dop.appendChild(ul_drop_item)
+          div_menu_board.appendChild(div_menu_board_detail_dop)
+        })
+        button_link1.appendChild(span_text_drop_item1)
+        button_link2.appendChild(span_text_drop_item2)
+        li_drop_item1.appendChild(button_link1)
+        li_drop_item2.appendChild(button_link2)
+        ul_drop_item.appendChild(li_drop_item1)
+        ul_drop_item.appendChild(li_drop_item2)
+        div_menu_board_detail.appendChild(ul_drop_item)
+        div_menu_board.appendChild(div_menu_board_detail)
+      })
       let div_element = document.createElement("div")
-        let p1 = document.createElement("p")
-        p1.setAttribute("class", "small p-2 me-3 mb-1 text-white rounded-3 bg-info")
-        p1.textContent = message.msg_text
-        div_element.appendChild(p1)
+      p1.setAttribute("class", "small p-2 me-3 mb-1 text-white rounded-3 bg-info")
+      p1.textContent = message.msg_text
+      div_element.appendChild(p1)
       let image = document.createElement("img")
       image.src = '/userava/' + message.msg_from_id
-
       image.alt = ""
       image.style = "width: 45px; height: 100%;border-radius: 50%;"
       div_element_d_flex.appendChild(div_element)
@@ -64,7 +173,9 @@ function chat_message_div(message) {
       div_element.appendChild(p1)
       div_element_d_flex.appendChild(image)
       div_element_d_flex.appendChild(div_element)
+
     }
+  div_element_d_flex.appendChild(div_menu_board)
   return div_element_d_flex
 }
 function add_element_chat(chat_id, time, user_with, from_who, last_message, user_with_id) {
