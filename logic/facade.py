@@ -54,8 +54,8 @@ class LogicFacade:
     def get_user_avatar(self, app, user_id):
         return self.data.get_user_avatar(app, user_id)
 
-    def save_test(self, form, course_id, unit_id):
-        test = get_test_from_form(form=form, unit_id=unit_id, course_id=course_id)
+    def save_test(self, form, files, course_id, unit_id):
+        test = get_test_from_form(form=form, files=files, unit_id=unit_id, course_id=course_id)
         if self.data.add_test(test):
             test = self.data.get_last_test_by_course(course_id)
             course = self.data.course_get_by_id(course_id)
@@ -140,8 +140,8 @@ class LogicFacade:
     def get_all_tests(self):
         return self.data.get_all_tests()
 
-    def edit_test(self, form, test_id, course_id, unit_id):
-        test = get_test_from_form(form=form, test_id=test_id, course_id=course_id, unit_id=unit_id)
+    def edit_test(self, form, files, test_id, course_id, unit_id):
+        test = get_test_from_form(form=form, files=files, test_id=test_id, course_id=course_id, unit_id=unit_id)
         test.avatar = self.data.get_test_by_id(test_id).avatar
 
         if self.data.update_test(test):

@@ -229,6 +229,8 @@ def get_course_summary(course, progresses):
     for unit in course.content['body']:
         first_time = True
         for test in unit['tests']:
+            units_cur_score = 0
+            units_max_score = 0
             for progress in progresses:
                 if progress.progress['result']:
                     if (str(test.test_id) + test.unit_type) == (
@@ -237,12 +239,15 @@ def get_course_summary(course, progresses):
                             units_max[unit['unit_id']] = 0
                             first_time = False
                         if unit['unit_id'] not in units_cur.keys():
-                            units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
-                            units_max[unit['unit_id']] += progress.progress['result'].total_score
+                            units_cur[unit['unit_id']] = 0
+                            units_cur_score = progress.progress['result'].total_current_score
                         else:
-                            if units_cur[unit['unit_id']] < progress.progress[
-                                'result'].total_current_score:  # TODO: Проверить корректность данного алгоритма
-                                units_cur[unit['unit_id']] = progress.progress['result'].total_current_score
+                            if units_cur_score < progress.progress[
+                                'result'].total_current_score:  # TODO: Проверить корректность данного алгоритма (один раз уже проверено и исправлено)
+                                units_cur_score = progress.progress['result'].total_current_score
+                        units_max_score = progress.progress['result'].total_score
+            units_cur[unit['unit_id']] += units_cur_score
+            units_max[unit['unit_id']] += units_max_score
     return units_cur, units_max, marks, max_marks, total, total_max
 
 

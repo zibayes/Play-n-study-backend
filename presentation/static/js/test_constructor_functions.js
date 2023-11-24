@@ -123,8 +123,8 @@ window.addAnswerOnButtonClick = function(index){
         textareaMarker.setAttribute('class', "form-control langp");
         textareaMarker.setAttribute('key', "marker_name");
         textareaMarker.setAttribute('placeholder', "Название маркера");
-        textareaMarker.setAttribute('name', "Marker-" + String(parseInt(index.substring(7))+1) + "-" + answerIndex);
-        textareaMarker.setAttribute('id', "Marker-" + String(parseInt(index.substring(7))+1) + "-" + answerIndex);
+        textareaMarker.setAttribute('name', "Marker-" + String(parseInt(index.substring(7))) + "-" + answerIndex); // String(parseInt(index.substring(7))+1)
+        textareaMarker.setAttribute('id', "Marker-" + String(parseInt(index.substring(7))) + "-" + answerIndex); // String(parseInt(index.substring(7))+1)
         textareaMarker.setAttribute('rows', "1");
         textareaMarker.setAttribute('maxlength', '5000');
         textareaMarker.setAttribute('value', '');
@@ -288,10 +288,15 @@ window.addAnswerOnButtonClick = function(index){
     let buttonDel = document.createElement('button');
     buttonDel.setAttribute('class', "btn");
     buttonDel.setAttribute('style', "background-color:red; color:white; padding: 4px; width: 25px;");
-    buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id); window.canvases.get(this.name).zones.delete(this.id); window.draw_figures(" + `"${questionIndex}-${answerIndex}"` + ");");
+    if(selectedOption.getAttribute('key') === "markers_drag") {
+        buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id); window.canvases.get(String(this.name)).zones.delete(this.id); window.draw_figures(`${this.name}-${this.id}`)");
+        buttonDel.setAttribute('name', parseInt(index.substring(7)));
+    } else{
+        buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id);");
+        buttonDel.setAttribute('name', parseInt(index.substring(7)) + 1);
+    }
     buttonDel.textContent = "✖"
     buttonDel.setAttribute('id', answerIndex);
-    buttonDel.setAttribute('name', parseInt(index.substring(7)) + 1);
     let divDel = document.createElement('div');
     divDel.setAttribute('style', "padding-left: 5px;");
 
@@ -665,8 +670,6 @@ export function addQuestionListener(addBtn) {
     });
 }
 
-window.canvases  = new Map();
-
 // Функция настройки смены типа задания при его выборе через выпадающий список
 export function questionTypeSet(questionType, textareaQuestion, questionIndexButtonId) {
     questionType.addEventListener("change", function () {
@@ -686,12 +689,12 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             text_shuffle.setAttribute('key', "shuffle");
             text_shuffle.textContent = "Перемешивать варианты ответов между собой";
             label_for_shuffle = document.createElement('label');
-            label_for_shuffle.setAttribute('for', "Shuffle-" + questionIndex);
+            label_for_shuffle.setAttribute('for', "Shuffle-" + questionIndexButtonId);
             label_for_shuffle.setAttribute('style', "padding-right: 8px;");
             input_shuffle = document.createElement('input');
             input_shuffle.setAttribute('style', "margin-right: 10px; margin-top: 12px;");
             input_shuffle.setAttribute('type', "checkbox");
-            input_shuffle.setAttribute('name', "Shuffle-" + questionIndex);
+            input_shuffle.setAttribute('name', "Shuffle-" + questionIndexButtonId);
             label_for_shuffle.appendChild(text_shuffle)
             div_shuffle.appendChild(input_shuffle)
             div_shuffle.appendChild(label_for_shuffle)
@@ -710,7 +713,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             textareaAnswer.setAttribute('class', "form-control langp");
             textareaAnswer.setAttribute('key', "answer_text");
             textareaAnswer.setAttribute('placeholder', "Текст ответа");
-            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndexButtonId + "-" + answerIndex);
             textareaAnswer.setAttribute('rows', "1");
             textareaAnswer.setAttribute('maxlength', '5000');
             let label = document.createElement('label');
@@ -764,7 +767,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             textareaQuestionCom.setAttribute('class', "form-control langp");
             textareaQuestionCom.setAttribute('key', "question_text");
             textareaQuestionCom.setAttribute('placeholder', "Текст вопроса");
-            textareaQuestionCom.setAttribute('name', "QuestionCom-" + questionIndex + "-" + answerIndex);
+            textareaQuestionCom.setAttribute('name', "QuestionCom-" + questionIndexButtonId + "-" + answerIndex);
             textareaQuestionCom.setAttribute('rows', "1");
             textareaQuestionCom.setAttribute('maxlength', '5000');
             let comDiv = document.createElement('div');
@@ -774,7 +777,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             textareaAnswer.setAttribute('class', "form-control langp");
             textareaAnswer.setAttribute('key', "answer_text");
             textareaAnswer.setAttribute('placeholder', "Текст ответа");
-            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndexButtonId + "-" + answerIndex);
             textareaAnswer.setAttribute('rows', "1");
             textareaAnswer.setAttribute('maxlength', '5000');
 
@@ -826,12 +829,12 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             optionText.setAttribute('key', "option");
             optionText.textContent = "Вариант"
             let optionNumText = document.createElement('text');
-            optionNumText.textContent = " [[1]]"
+            optionNumText.textContent = " [[" + answerIndex + "]]";
             let textareaAnswer = document.createElement('textarea');
             textareaAnswer.setAttribute('class', "form-control langp");
             textareaAnswer.setAttribute('key', "answer_text");
             textareaAnswer.setAttribute('placeholder', "Текст ответа");
-            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndexButtonId + "-" + answerIndex);
             textareaAnswer.setAttribute('rows', "1");
             textareaAnswer.setAttribute('maxlength', '5000');
             let groupDiv;
@@ -845,7 +848,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                 groupSelect = document.createElement('select');
                 groupSelect.setAttribute('class', "form-select");
                 groupSelect.setAttribute('style', "width: 60px;");
-                groupSelect.setAttribute('name', "Group-" + questionIndex + "-" + answerIndex);
+                groupSelect.setAttribute('name', "Group-" + questionIndexButtonId + "-" + answerIndex);
                 let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
                 alphabet.forEach(elem => {
                     let option = document.createElement('option');
@@ -900,13 +903,13 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             //divCanv.setAttribute('style', "height: 586px; overflow-y: hidden; overflow-x: visible");
             divCanv.setAttribute('id', "canvasContainer" + questionIndexButtonId);
             let canvas = document.createElement('canvas');
-            canvas.setAttribute('id', "canvas-" + questionIndex);
+            canvas.setAttribute('id', "canvas-" + questionIndexButtonId);
             canvas.setAttribute('width', "1036px");
             canvas.setAttribute('height', "584px");
             canvas.setAttribute('style', "border:1px solid red; background-repeat: repeat; background-position: 0 0; background-image: url(\"/static/img/nophoto.png\"");
 
-            window.canvases.set(String(questionIndex),{canvas: canvas, zones:new Map(), background: undefined});
-            window.canvases.get(String(questionIndex)).zones.set(String(answerIndex), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:""});
+            window.canvases.set(String(questionIndexButtonId),{canvas: canvas, zones:new Map(), background: undefined});
+            window.canvases.get(String(questionIndexButtonId)).zones.set(String(answerIndex), {vertexes:[{x:10,y:10,v:false},{x:10,y:60,v:false},{x:60,y:60,v:false},{x:60,y:10,v:false}],isDragging:false,selected:false,marker_name:""});
 
             let form = document.createElement('div');
             //let form = document.createElement('form');
@@ -945,8 +948,8 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             textareaMarker.setAttribute('class', "form-control langp");
             textareaMarker.setAttribute('key', "marker_name");
             textareaMarker.setAttribute('placeholder', "Название маркера");
-            textareaMarker.setAttribute('name', "Marker-" + questionIndex + "-" + answerIndex);
-            textareaMarker.setAttribute('id', "Marker-" + questionIndex + "-" + answerIndex);
+            textareaMarker.setAttribute('name', "Marker-" + questionIndexButtonId + "-" + answerIndex);
+            textareaMarker.setAttribute('id', "Marker-" + questionIndexButtonId + "-" + answerIndex);
             textareaMarker.setAttribute('rows', "1");
             textareaMarker.setAttribute('maxlength', '5000');
             let divZone = document.createElement('div');
@@ -955,7 +958,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divZone.setAttribute('class', "lang");
             divZone.textContent = "Форма зоны";
             // let zoneType = document.createElement('select')
-            //window.zones.set(questionIndex + "-" + answerIndex, window.zones.get(textareaMarker.id.substring(7)).zoneType = document.createElement('select'))
+            //window.zones.set(questionIndexButtonId + "-" + answerIndex, window.zones.get(textareaMarker.id.substring(7)).zoneType = document.createElement('select'))
             window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType = document.createElement('select')
             // window.zoneType = document.createElement('select')
             window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).zones.get(textareaMarker.id.substring(textareaMarker.id.lastIndexOf("-")+1)).zoneType.setAttribute('class', "form-select");
@@ -991,7 +994,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             buttonDel.setAttribute('onclick', "deleteElement(\"delAns-\" + this.id); window.canvases.get(this.name).zones.delete(this.id); window.draw_figures(" + `"${textareaMarker.id.substring(7)}"` + ");");
             buttonDel.textContent = "✖"
             buttonDel.setAttribute('id', answerIndex);
-            buttonDel.setAttribute('name', questionIndex);
+            buttonDel.setAttribute('name', questionIndexButtonId);
             let divDel = document.createElement('div');
             divDel.setAttribute('style', "padding-left: 5px;");
 
@@ -1083,6 +1086,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
                         }
                         canvas.height = height;
                         canvas.width = width;
+                        canvas.setAttribute("style", "border:1px solid red; background-image: None;");
                         divCanv.setAttribute("height", height + "px");
                         divCanv.setAttribute("width", width + "px");
                         let ctx = window.canvases.get(textareaMarker.id.substring(7, textareaMarker.id.lastIndexOf("-"))).canvas.getContext("2d");
@@ -1139,7 +1143,7 @@ export function questionTypeSet(questionType, textareaQuestion, questionIndexBut
             divTextLabel.setAttribute('id', "delAns-" + answerIndex);
             let textareaAnswer = document.createElement('textarea');
             textareaAnswer.setAttribute('class', "form-control");
-            textareaAnswer.setAttribute('name', "Answer-" + questionIndex + "-" + answerIndex);
+            textareaAnswer.setAttribute('name', "Answer-" + questionIndexButtonId + "-" + answerIndex);
             if (selectedOption.getAttribute('key') === "free") {
                 textareaAnswer.setAttribute('placeholder', "Краткий ответ");
                 if(textareaAnswer.className.indexOf(" langp") < 0)

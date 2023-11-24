@@ -213,15 +213,79 @@
                                         {% set answerNum = namespace(value=0) %}
                                         <span class="fs-5 row m-3 justify-content-start lang">
                                             <div class="flex-column">
-                                                <div id="canvasContainer" style="height: 586px; overflow-y: hidden; overflow-x: visible">
-                                                    <canvas id="canvas" width="1036px" height="9999px"></canvas>
+                                                <div id="canvasContainer-{{ questionNum.value }}">
+                                                    <canvas id="canvas-{{ questionNum.value }}"></canvas>
                                                 </div>
+                                                <script>
+                                                    image{{ questionNum.value }} = new Image();
+                                                    image{{ questionNum.value }}.src = '/static/users_files/{{ test_id }}test/{{ question.file }}';
+                                                    canvas{{ questionNum.value }} = document.getElementById('canvas-{{ questionNum.value }}');
+                                                    divCanv{{ questionNum.value }} = document.getElementById('canvasContainer-{{ questionNum.value }}')
+                                                    new_width = divCanv{{ questionNum.value }}.parentElement.offsetWidth - 26;
+                                                    image{{ questionNum.value }}.onload = function () {
+                                                        let height = this.height;
+                                                        let width = this.width;
+                                                        if (width > new_width) {
+                                                            let ratio = height / width;
+                                                            width = new_width;
+                                                            height = width * ratio;
+                                                            this.style.height = height;
+                                                            this.style.width = width;
+                                                        }
+                                                        canvas{{ questionNum.value }}.height = height;
+                                                        canvas{{ questionNum.value }}.width = width;
+                                                        divCanv{{ questionNum.value }}.setAttribute("height", height + "px");
+                                                        divCanv{{ questionNum.value }}.setAttribute("width", width + "px");
+                                                        let ctx = canvas{{ questionNum.value }}.getContext("2d");
+                                                        ctx.drawImage(image{{ questionNum.value }}, 0, 0, width, height);
+                                                    }
+                                                </script>
                                                 <style>
-                                                    #canvas{
+                                                    #canvas{{ questionNum.value }}{
                                                         border:1px solid red;
-                                                        background-image: url("/courseava/{{ course.course_id }}") ;
+                                                        background-image: url("/static/img/nophoto.png");
                                                     }
                                                 </style>
+
+                                                {% for answer in question.answers %}
+                                                    <script>
+                                                        input = document.createElement("input");
+                                                        input.setAttribute('id', "MarkerDrop-{{ questionNum.value }}-{{ answer['marker'] }}");
+                                                        input.setAttribute('name', "MarkerDrop-{{ questionNum.value }}-{{ answer['marker'] }}");
+                                                        input.setAttribute('class', "Drop");
+                                                        //input.setAttribute('disabled', "disabled");
+                                                        input.setAttribute('hidden', "hidden");
+                                                        input.setAttribute('style', "width: 70px; margin: 0 5px 0 5px;");
+                                                        dnd = document.createElement('div');
+                                                        dnd.setAttribute('id', "dnd-{{ questionNum.value }}-{{ answerNum.value }}");
+                                                        if(`{{answer['result'][0]}}` === 'right') {
+                                                            dnd.setAttribute('style', "background: #00dd00; outline-color: black; outline-width: 1px; outline: solid; border-radius: 2px; margin: 0 5px 0 5px; padding: 5px;");
+                                                        } else{
+                                                            dnd.setAttribute('style', "background: #ff0000; outline-color: black; outline-width: 1px; outline: solid; border-radius: 2px; margin: 0 5px 0 5px; padding: 5px;");
+                                                        }
+                                                        dnd.setAttribute('draggable', "true");
+                                                        dnd.setAttribute('class', "DragAndDrop");
+                                                        dnd.textContent = "{{ answer['marker'] }}";
+                                                        pointer = document.createElement('div');
+                                                        pointer.setAttribute('style', "background: transparent; outline-color: black; outline-width: 1px; border:2px solid white; outline: solid; border-radius: 60px; position: absolute; font-size:8px; padding-left: 3px; padding-right: 3px; left: -18px; bottom:44px;");
+                                                        pointer.textContent = "ᅠ";
+                                                        dnd.appendChild(pointer);
+                                                        dnd.appendChild(input);
+                                                        with(dnd.style) {
+                                                            canvas = document.getElementById('canvas-{{ questionNum.value }}');
+                                                            pointerOffsetX = 53
+                                                            pointerOffsetY = 75
+                                                            y_top = {{ answer['result'][1]['y'] }}
+                                                            x_left = {{ answer['result'][1]['x'] }}
+                                                            position = 'absolute'
+                                                            top = y_top + pointerOffsetY + 'px';
+                                                            left = x_left + pointerOffsetX + 'px';
+                                                            dnd.lastChild.value = x_left + ";" + y_top
+                                                        }
+                                                        canvCon = document.getElementById('canvasContainer-{{ questionNum.value }}');
+                                                        canvCon.appendChild(dnd);
+                                                    </script>
+                                                {% endfor %}
                                             </div>
                                         </span>
                                         <hr>

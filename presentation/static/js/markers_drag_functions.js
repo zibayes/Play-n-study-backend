@@ -41,7 +41,7 @@ export function rect(figure, ctx) {
 
 // clear the canvas
 export function clear(ctx) {
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.clearRect(0, 0, window.WIDTH, window.HEIGHT);
 }
 
 // redraw the scene
@@ -126,8 +126,6 @@ export function circle(figure, ctx) {
 
 // handle mousedown events
 export function myDown(e){
-    console.log("HUI")
-
     // tell the browser we're handling this mouse event
     e.preventDefault();
     e.stopPropagation();
@@ -139,7 +137,7 @@ export function myDown(e){
         if (canvasOffset > 0)
             canvasOffset -=  200;
      */
-    let canvasOffset = 280 + window.scrolloffsetY + this.getBoundingClientRect().top - 891.125; // standard: window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top = 891.125
+    let canvasOffset = 280 + window.scrolloffsetY + this.getBoundingClientRect().top - 891.125; // TODO: -200 - editor // standard: window.scrolloffsetY + window.ctx.canvas.getBoundingClientRect().top = 891.125
     var mx=parseInt(e.clientX-window.offsetX);
     var my=parseInt(e.clientY-offsetY+window.scrolloffsetY);
     //if (my < 0)

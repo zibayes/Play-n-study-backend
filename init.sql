@@ -48,6 +48,8 @@ CREATE TABLE achievements
     ach_id serial PRIMARY KEY,
     course_id integer REFERENCES courses(course_id),
     name text UNIQUE NOT NULL,
+    description text,
+    condition text,
     image bytea
 );
 -- Задания

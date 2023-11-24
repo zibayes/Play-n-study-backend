@@ -175,21 +175,6 @@ class DataFacade:
             return user
         return user
 
-    '''
-    def file_attach_get_avatar(self, app, attach_id):
-        img = None
-        file_attach = self.file_attach_repository.get_file_attach_by_id(attach_id)
-        if not file_attach.avatar:
-            try:
-                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
-                    img = f.read()
-            except FileNotFoundError as e:
-                print("Не найдено фото по умолчанию: " + str(e))
-        else:
-            img = file_attach.avatar
-        return img
-    '''
-
     def forum_get_avatar(self, app, forum_id):
         img = None
         forum = self.forums_repository.get_forum_by_id(forum_id)

@@ -1,8 +1,11 @@
 import copy
+import math
 import os
 import time
 import json
 from pathlib import Path
+import matplotlib.path as mplPath
+import numpy as np
 
 from data.types import TestContent, Question, Test
 from markdown import markdown
@@ -29,7 +32,8 @@ class TestResult:
                           result_json['total_time'], result_json['result'])
 
 
-def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
+def get_test_from_form(form, files=None, unit_id=None, test_id=None, course_id=1):
+    files = files.to_dict()
     test_form = form.to_dict()
     test_name = test_form.pop("testName")
     test_desc = test_form.pop("testDesc")
@@ -114,7 +118,13 @@ def get_test_from_form(form, unit_id=None, test_id=None, course_id=1):
                 if "Coordinates-" in key:
                     question.answers[-1]['coordinates'] = value
                 if "File-" in key:
-                    question.file = value
+                    file_name = ''
+                    for filename, file in files.items():
+                        if key == filename:
+                            file_name = filename
+                            question.file = filename + file.filename[file.filename.rfind('.'):]
+                            break
+                    files.pop(file_name)
                 if "score-" in key:
                     question.score = int(value)
                     score += int(value)
@@ -186,8 +196,8 @@ def get_test_result(test, form):
         score_part = 0
         for key, value in test_res.items():
             if key == markdown(question.ask) or markdown(question.ask) + '-' in key or \
-                    'Filling-' in key or 'DragWord-' in key:
-                if not ('Filling-' in key or 'DragWord-' in key):
+                    'Filling-' in key or 'DragWord-' in key or 'MarkerDrop-' in key:
+                if not ('Filling-' in key or 'DragWord-' in key or 'MarkerDrop-' in key):
                     if question.type in ("solo", "multiple"):
                         for que_part in question.answers:
                             keys = list(que_part.keys())
@@ -252,6 +262,49 @@ def get_test_result(test, form):
                                 answers_count += 1
                             elif mark == que_part['mark']:
                                 que_part['answer'] = (value, "wrong")
+                                answers_count += 1
+                    if question.type == "markers_drag" and 'MarkerDrop-' in key:
+                        for que_part in question.answers:
+                            if key[key.rfind('-')+1:] in que_part.values():
+                                point = {'x': int(value[:value.find(';')]), 'y': int(value[value.find(';') + 1:])}
+                                string = que_part['coordinates']
+                                delimiter = None
+                                if que_part['figure'] == 'Многоугольник':
+                                    coords_amount = string.count(';')
+                                    coodrs = []
+                                    for i in range(coords_amount):
+                                        if i > 0:
+                                            delimiter = string.index(";")
+                                            string = string[delimiter+1:]
+                                        delimiter = string.index(";")
+                                        if delimiter > 0:
+                                            coords = string[:delimiter]
+                                        else:
+                                            coords = string
+                                        comma = coords.index(",")
+                                        new_x = int(coords[:comma])
+                                        new_y = int(coords[comma+1:])
+                                        coodrs.append([new_x, new_y])
+                                    print(coodrs)
+                                    bbPath = mplPath.Path(np.array(coodrs))
+                                    if bbPath.contains_point((point['x'], point['y'])):
+                                        que_part['result'] = ("right", point)
+                                        score_part += question.score / question.correct
+                                    else:
+                                        que_part['result'] = ("wrong", point)
+                                elif que_part['figure'] == 'Окружность':
+                                    delimiter = string.index(",")
+                                    point_x = int(string[:delimiter])
+                                    string = string[delimiter+1:]
+                                    delimiter = string.index(",")
+                                    point_y = int(string[:delimiter])
+                                    string = string[delimiter+1:]
+                                    radius = int(string)
+                                    if math.sqrt((point_x - point['x']) ** 2 + (point_y - point['y']) ** 2) <= radius:
+                                        que_part['result'] = ("right", point)
+                                        score_part += question.score / question.correct
+                                    else:
+                                        que_part['result'] = ("wrong", point)
                                 answers_count += 1
         if (score_part < 0 or (answers_count == len(question.answers) and question.correct != len(question.answers))) \
                 and question.type in ("multiple", "compliance"):

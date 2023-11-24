@@ -7,3 +7,4 @@ let addBtn = document.getElementById("addQuestion");
 window.questionIndex = 1;
 window.answerIndex = 0;
 addQuestionListener(addBtn);
+window.canvases  = new Map();

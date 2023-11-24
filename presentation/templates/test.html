@@ -182,7 +182,7 @@
                                                         input_to_del[0].remove();
                                                         is_question = true
                                                     }
-                                                    let input = document.createElement("input");
+                                                    input = document.createElement("input");
                                                     input.setAttribute('id', "Drop-{{ questionNum.value }}");
                                                     input.setAttribute('class', "Drop");
                                                     input.setAttribute('disabled', "disabled");
@@ -199,7 +199,7 @@
                                                         }
                                                         currentElement.replaceWith(activeElement);
                                                     } else {
-                                                        let input = document.createElement("input");
+                                                        input = document.createElement("input");
                                                         input.setAttribute('id', "Drop-{{ questionNum.value }}");
                                                         input.setAttribute('class', "Drop");
                                                         input.setAttribute('disabled', "disabled");
@@ -240,16 +240,16 @@
                                         {% set answerNum = namespace(value=0) %}
                                         <span class="fs-5 row m-3 justify-content-start lang">
                                             <div class="flex-column">
-                                                <div id="canvasContainer">
-                                                    <canvas id="canvas" width="1036px" height="584px"></canvas>
+                                                <div id="canvasContainer-{{ questionNum.value }}">
+                                                    <canvas id="canvas-{{ questionNum.value }}" width="1036px" height="584px"></canvas>
                                                 </div>
                                                 <script>
-                                                    const image = new Image();
-                                                    image.src = '/static/users_files/{{ test_id }}test/{{ question.file }}.png';
-                                                    canvas = document.getElementById('canvas');
-                                                    divCanv = document.getElementById('canvasContainer')
-                                                    let new_width = divCanv.parentElement.offsetWidth - 26;
-                                                    image.onload = function () {
+                                                    image{{ questionNum.value }} = new Image();
+                                                    image{{ questionNum.value }}.src = '/static/users_files/{{ test_id }}test/{{ question.file }}';
+                                                    canvas{{ questionNum.value }} = document.getElementById('canvas-{{ questionNum.value }}');
+                                                    divCanv = document.getElementById('canvasContainer-{{ questionNum.value }}')
+                                                    new_width = divCanv.parentElement.offsetWidth - 26;
+                                                    image{{ questionNum.value }}.onload = function () {
                                                         let height = this.height;
                                                         let width = this.width;
                                                         if (width > new_width) {
@@ -259,18 +259,19 @@
                                                             this.style.height = height;
                                                             this.style.width = width;
                                                         }
-                                                        canvas.height = height;
-                                                        canvas.width = width;
+                                                        canvas{{ questionNum.value }}.height = height;
+                                                        canvas{{ questionNum.value }}.width = width;
                                                         divCanv.setAttribute("height", height + "px");
                                                         divCanv.setAttribute("width", width + "px");
-                                                        let ctx = canvas.getContext("2d");
-                                                        ctx.drawImage(image, 0, 0, width, height);
+                                                        let ctx = canvas{{ questionNum.value }}.getContext("2d");
+                                                        ctx.drawImage(image{{ questionNum.value }}, 0, 0, width, height);
+                                                        canvas{{ questionNum.value }}.setAttribute("style", "border:1px solid red; background-image: None;");
                                                     }
                                                 </script>
                                                 <style>
-                                                    #canvas{
+                                                    #canvas-{{ questionNum.value }}{
                                                         border:1px solid red;
-                                                        background-image: url("/courseava/{{ course.course_id }}") ;
+                                                        background-image: url("/static/img/nophoto.png");
                                                     }
                                                 </style>
                                             </div>
@@ -282,18 +283,11 @@
                                         var dragMaster = (function() {
 
                                         var dragObject
-                                        var mouseOffset
-
-                                        // получить сдвиг target относительно курсора мыши
-                                        function getMouseOffset(target, e) {
-                                            var docPos	= getPosition(target)
-                                            return {x:e.pageX - docPos.x, y:e.pageY - docPos.y}
-                                        }
 
                                         function mouseUp(){
                                             dragObject = null
 
-                                            // очистить обработчики, т.к перенос закончен
+                                            // очистить обработчики, т.к. перенос закончен
                                             document.onmousemove = null
                                             document.onmouseup = null
                                             document.ondragstart = null
@@ -301,24 +295,34 @@
                                         }
 
                                         function mouseMove(e){
-                                            e = fixEvent(e)
 
+                                            canvas = document.getElementById('canvas-{{ questionNum.value }}');
+                                            let offsetY = 48
+                                            let offsetX = 25
+                                            let pointerOffsetX = 53
+                                            let pointerOffsetY = 75
+                                            window.offsetX = parseInt(canvas.getBoundingClientRect().left - offsetX)
+                                            window.offsetY = parseInt(canvas.getBoundingClientRect().top - offsetY)
+                                            let y_top = e.pageY - window.offsetY
+                                            let x_left = e.pageX - window.offsetX
                                             with(dragObject.style) {
                                                 position = 'absolute'
-                                                top = e.clientY - 255 - mouseOffset.y + 'px'
-                                                left = e.clientX - 455 - mouseOffset.x + 'px'
+                                                top = y_top + 'px';
+                                                left = x_left + 'px';
+                                                dragObject.lastChild.value = (x_left  - pointerOffsetX) + ";" + (y_top - pointerOffsetY)
+                                                if(dragObject.firstChild.nextElementSibling.attributes['hidden']) {
+                                                    dragObject.firstChild.nextElementSibling.removeAttribute('hidden')
+                                                    dragObject.firstChild.nextElementSibling.style['bottom'] = (parseInt(dragObject.firstChild.nextElementSibling.style['bottom']) - 24) + "px";
+                                                    dragObject.firstChild.nextElementSibling.style['left'] = (parseInt(dragObject.firstChild.nextElementSibling.style['left']) - 29) + "px";
+                                                }
                                             }
                                             return false
                                         }
 
                                         function mouseDown(e) {
-                                            e = fixEvent(e)
                                             if (e.which!=1) return
 
                                             dragObject  = this
-
-                                            // получить сдвиг элемента относительно курсора мыши
-                                            mouseOffset = getMouseOffset(this, e)
 
                                             // эти обработчики отслеживают процесс и окончание переноса
                                             document.onmousemove = mouseMove
@@ -339,102 +343,34 @@
 
                                     }())
 
-                                    function getPosition(e){
-                                        var left = 0
-                                        var top  = 0
-
-                                        while (e.offsetParent){
-                                            left += e.offsetLeft
-                                            top  += e.offsetTop
-                                            e	 = e.offsetParent
-                                        }
-
-                                        left += e.offsetLeft
-                                        top  += e.offsetTop
-
-                                        return {x:left, y:top}
-                                    }
-
                                     function DragObject(element) {
                                         element.dragObject = this
-
                                         dragMaster.makeDraggable(element)
-
-                                        var rememberPosition
-                                        var mouseOffset
-
-                                        this.onDragStart = function(offset) {
-                                            var s = element.style
-                                            rememberPosition = {top: s.top, left: s.left, position: s.position}
-                                            s.position = 'absolute'
-
-                                            mouseOffset = offset
-                                        }
-
-                                        this.hide = function() {
-                                            element.style.display = 'none'
-                                        }
-
-                                        this.show = function() {
-                                            element.style.display = ''
-                                        }
-
-                                        this.onDragMove = function(x, y) {
-                                            element.style.top =  y - mouseOffset.y +'px'
-                                            element.style.left = x - mouseOffset.x +'px'
-                                        }
-
-                                        this.onDragSuccess = function(dropTarget) { }
-
-                                        this.onDragFail = function() {
-                                            var s = element.style
-                                            s.top = rememberPosition.top
-                                            s.left = rememberPosition.left
-                                            s.position = rememberPosition.position
-                                        }
-
-                                        this.toString = function() {
-                                            return element.id
-                                        }
                                     }
-
-                                    function fixEvent(e) {
-                                        // получить объект событие для IE
-                                        e = e || window.event
-
-                                        // добавить pageX/pageY для IE
-                                        if ( e.pageX == null && e.clientX != null ) {
-                                            var html = document.documentElement
-                                            var body = document.body
-                                            e.pageX = e.clientX + (html && html.scrollLeft || body && body.scrollLeft || 0) - (html.clientLeft || 0)
-                                            e.pageY = e.clientY + (html && html.scrollTop || body && body.scrollTop || 0) - (html.clientTop || 0)
-                                        }
-
-                                        // добавить which для IE
-                                        if (!e.which && e.button) {
-                                            e.which = e.button & 1 ? 1 : ( e.button & 2 ? 3 : ( e.button & 4 ? 2 : 0 ) )
-                                        }
-
-                                        return e
-                                    }
-
                                     </script>
 
                                     <script>
-                                        let answers_m = document.getElementById("MarkersDrag-answers-{{ questionNum.value }}")
+                                        answers_m = document.getElementById("MarkersDrag-answers-{{ questionNum.value }}")
                                         {% for answer in question.answers %}
+                                            input = document.createElement("input");
+                                            input.setAttribute('id', "MarkerDrop-{{ questionNum.value }}-{{ answer['marker'] }}");
+                                            input.setAttribute('name', "MarkerDrop-{{ questionNum.value }}-{{ answer['marker'] }}");
+                                            input.setAttribute('class', "Drop");
+                                            //input.setAttribute('disabled', "disabled");
+                                            input.setAttribute('hidden', "hidden");
+                                            input.setAttribute('style', "width: 70px; margin: 0 5px 0 5px;");
                                             dnd = document.createElement('div');
                                             dnd.setAttribute('id', "dnd-{{ questionNum.value }}-{{ answerNum.value }}");
                                             dnd.setAttribute('style', "background: white; outline-color: black; outline-width: 1px; outline: solid; border-radius: 2px; margin: 0 5px 0 5px; padding: 5px;");
                                             dnd.setAttribute('draggable', "true");
                                             dnd.setAttribute('class', "DragAndDrop");
                                             dnd.textContent = "{{ answer['marker'] }}";
-                                            /*
                                             pointer = document.createElement('div');
-                                            pointer.setAttribute('style', "background: white; outline-color: black; outline-width: 1px; outline: solid; border-radius: 60px; position: absolute; font-size:8px; padding-left: 3px; padding-right: 3px; left: 20px;");
+                                            pointer.setAttribute('style', "background: transparent; outline-color: black; border:2px solid white; outline-width: 1px; outline: solid; border-radius: 60px; position: absolute; font-size:8px; padding-left: 3px; padding-right: 3px; left: 15px; bottom:65px;");
+                                            pointer.setAttribute('hidden', "hidden");
                                             pointer.textContent = "ᅠ";
                                             dnd.appendChild(pointer);
-                                             */
+                                            dnd.appendChild(input);
                                             answers_m.appendChild(dnd);
                                             // answers_d.textContent += `<div id="dnd-{{ questionNum.value }}-{{ answerNum.value }}" style="background: white; stroke: gray; margin-right: 15px; padding: 5px;">{{ answer['answer'] }}</div>`
                                             // elem = document.getElementById("dnd-{{ questionNum.value }}-{{ answerNum.value }}")

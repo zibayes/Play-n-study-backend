@@ -1,5 +1,6 @@
 import os
 import random
+import shutil
 import time
 import json
 from pathlib import Path
@@ -56,6 +57,23 @@ def handle_course_summary(course_id):
 
 
 @login_required
+@courses_bp.route('/course_editor/<int:course_id>/edit_achievements')
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_course_edit_achievements(course_id):
+    data = get_tests_data(course_id)
+    if not isinstance(data, tuple):
+        render_template('index.html', user=data)
+    user, course, _, _ = data
+    units = course.content['body']
+    tests = []
+    for unit in units:
+        for test in unit['tests']:
+            tests.append(test.test.content.name)
+    return render_template('achievement_editor.html', user=user, course=course, units=units, tests=tests)
+
+
+@login_required
 @courses_bp.route('/courses/<int:user_id>', methods=['POST', 'GET'])
 def handle_courses(user_id):
     match request.method:
@@ -96,6 +114,10 @@ def handle_test_preview(course_id, test_id):
 def handle_delete_test(course_id, test_id):
     delete_unit_task(course_id, test_id)
     logic.remove_test(test_id)
+    abs_path = str(Path(__file__).absolute())
+    abs_path = abs_path[:abs_path.find('\\presentation\\') + len('/presentation/')]
+    path = abs_path + 'static/users_files/' + str(test_id) + 'test/'
+    shutil.rmtree(path)
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -106,6 +128,10 @@ def handle_delete_test(course_id, test_id):
 def handle_delete_article(course_id, article_id):
     delete_unit_task(course_id, article_id)
     logic.remove_article(article_id)
+    abs_path = str(Path(__file__).absolute())
+    abs_path = abs_path[:abs_path.find('\\presentation\\') + len('/presentation/')]
+    path = abs_path + 'static/users_files/' + str(article_id) + 'file_attach/'
+    shutil.rmtree(path)
     return redirect(f'/course_editor/{course_id}')
 
 
@@ -149,8 +175,18 @@ def handle_delete_unit(course_id, unit_id):
                 logic.remove_progress(progress.up_id)
         if test.unit_type == 'test':
             logic.remove_test(test.test_id)
-        else:
+        elif test.unit_type in ('article', 'file_attach'):
             logic.remove_article(test.test_id)
+        elif test.unit_type == 'link':
+            logic.remove_link(test.test_id)
+        elif test.unit_type == 'forum':
+            topics = logic.topic_get_all_by_forum_id(test.test_id)
+            for topic in topics:
+                messages = logic.messages_get_all_by_topic_id(topic.ft_id)
+                for msg in messages:
+                    logic.remove_topic_message(msg.tm_id)
+                logic.remove_forum_topic(topic.ft_id)
+            logic.remove_forum(test.test_id)
     course.content['body'].pop(index_to_delete)
     logic.update_course(course)
     return redirect(f'/course_editor/{course_id}')
@@ -171,10 +207,18 @@ def handle_delete_course(course_id):
                     logic.remove_progress(progress.up_id)
             if test.unit_type == 'test':
                 logic.remove_test(test.test_id)
-            elif test.unit_type == 'article':
+            elif test.unit_type in ('article', 'file_attach'):
                 logic.remove_article(test.test_id)
             elif test.unit_type == 'link':
                 logic.remove_link(test.test_id)
+            elif test.unit_type == 'forum':
+                topics = logic.topic_get_all_by_forum_id(test.test_id)
+                for topic in topics:
+                    messages = logic.messages_get_all_by_topic_id(topic.ft_id)
+                    for msg in messages:
+                        logic.remove_topic_message(msg.tm_id)
+                    logic.remove_forum_topic(topic.ft_id)
+                logic.remove_forum(test.test_id)
     rels = logic.get_course_rels_all(course.course_id)
     for rel in rels:
         logic.course_leave(rel.course_id, rel.user_id)
@@ -250,9 +294,8 @@ def handle_test_constructor(course_id, unit_id):
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_result_test(course_id, unit_id):
-    response = logic.save_test(request.form, course_id, unit_id)
+    response = logic.save_test(request.form, request.files, course_id, unit_id)
     test_id = logic.data.get_last_test_by_course(course_id).test_id
-    saved_files = []
     for filename, file in request.files.to_dict().items():
         if 'File-' in filename:
             abs_path = str(Path(__file__).absolute())
@@ -260,7 +303,6 @@ def handle_result_test(course_id, unit_id):
             path = abs_path + 'static/users_files/' + str(test_id) + 'test/'
             Path(path).mkdir(parents=True, exist_ok=True)
             file.save(os.path.join(path, filename + file.filename[file.filename.rfind('.'):]))
-            saved_files.append(path + '/' + filename + file.filename[file.filename.rfind('.'):])
     if request.files['file']:
         logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':
@@ -969,7 +1011,14 @@ def handle_edit_test(course_id, test_id):
 def handle_edit_test_save(course_id, test_id):
     course = logic.get_course(course_id, current_user.get_id())
     unit_id = get_unit_id(course, test_id, 'test')
-    response = logic.edit_test(request.form, test_id, course_id, unit_id)
+    response = logic.edit_test(request.form, request.files, test_id, course_id, unit_id)
+    for filename, file in request.files.to_dict().items():
+        if 'File-' in filename:
+            abs_path = str(Path(__file__).absolute())
+            abs_path = abs_path[:abs_path.find('\\presentation\\') + len('/presentation/')]
+            path = abs_path + 'static/users_files/' + str(test_id) + 'test/'
+            Path(path).mkdir(parents=True, exist_ok=True)
+            file.save(os.path.join(path, filename + file.filename[file.filename.rfind('.'):]))
     if request.files['file']:
         logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':

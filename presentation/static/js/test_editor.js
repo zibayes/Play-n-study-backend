@@ -34,5 +34,5 @@ addDragoverEventListener(questions_list, `question_div`)
 // Добавление вопроса
 let addBtn = document.getElementById("addQuestion");
 window.questionIndex = questions_count + 1;
-window.answerIndex = 0;
+//window.answerIndex = 0;
 addQuestionListener(addBtn);

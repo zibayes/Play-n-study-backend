@@ -1,0 +1,141 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Редактор достижений</title>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+    <div class="container m-5" style="background-color: white; border-radius: 10px">
+        <form action="/course_editor/{{course_id}}/edit_achievements" method="POST" enctype="multipart/form-data" id="sendingForm">
+            <span class="fs-5 row m-3 justify-content-start lang" key="achievement_editor">
+                Редактор достижений
+            </span>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+              <ol class="breadcrumb" style="margin-left: 15px;">
+                <li class="breadcrumb-item"><a href="/courses/{{ current_user.get_id() }}" class="lang" key="courses">Курсы</a></li>
+                <li class="breadcrumb-item"><a href="/course_preview/{{ course.course_id }}"><text class="lang" key="course">Курс</text> «{{ course.name }}»</a></li>
+                <li class="breadcrumb-item active lang" key="achievement_editor" aria-current="page">Редактор достижений</li>
+              </ol>
+            </nav>
+            <div class="row border"></div>
+            <span class="fs-5 row m-3 justify-content-start lang">
+                <textarea required class="form-control langp" key="achievement_name" maxlength="1000" placeholder="Название достижения" name="achievementName" rows="1" style="margin: 8px;"></textarea>
+                <textarea class="form-control langp" key="achievement_desc" maxlength="1000" placeholder="Описание достижения" name="achievementDesc" rows="1" style="margin: 8px;"></textarea>
+                <div id="new_conditions">
+                    <hr>
+                    <div id="start_condition">
+                        <select id="condition" class="form-select" aria-label="Default select example" style="margin: 8px;">
+                            <option class="lang" selected key="achievement_condition" disabled>--- Условие получения достижения ---</option>
+                            <option class="lang" key="score_amount">Количество баллов</option>
+                            <option class="lang" key="participation_fact">Факт прохождения</option>
+                            <option class="lang" key="spend_time">Затраченное время на прохождение</option>
+                        </select>
+                        <select id="category" class="form-select" aria-label="Default select example" style="margin: 8px;">
+                            <option class="lang" selected key="condition_category" disabled>--- Категория задания ---</option>
+                            <option class="lang" key="task">Задание</option>
+                            <option class="lang" key="unit">Раздел</option>
+                        </select>
+                        <div id="tasks" hidden>
+                            {% for task in tests %}
+                                <input type="checkbox" id="{{task}}" name="{{task}}">
+                                <label for="{{task}}" style="margin-right: 15px;">{{task}}</label>
+                            {% endfor %}
+                        </div>
+                        <div id="units" hidden>
+                            {% for unit in units %}
+                                <input type="checkbox" id="{{unit.name}}" name="{{unit.name}}">
+                                <label for="{{unit.name}}" style="margin-right: 15px;">{{unit.name}}</label>
+                            {% endfor %}
+                        </div>
+                        <select id="value_type" class="form-select" aria-label="Default select example" style="margin: 8px;" hidden disabled>
+                            <option class="lang" selected key="value_amount" disabled>--- Значение величины ---</option>
+                            <option class="lang" key="more_than">Больше</option>
+                            <option class="lang" key="equal">Равно</option>
+                            <option class="lang" key="less_than">Меньше</option>
+                        </select>
+                        <input id="value" hidden disabled class="form-control langp" key="value_part" maxlength="1000" placeholder="Доля правильных ответов (0-100%)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
+                        <input id="time" hidden disabled class="form-control langp" key="time" maxlength="1000" placeholder="Время на выполнение (лет/дней/часов/минут)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
+                        <button class="btn btn-danger lang" key="delete_condition" type="button" style="margin: 8px;"
+                            id="delCondition">
+                            Удалить условие
+                        </button>
+                        <hr>
+                    </div>
+                </div>
+                <button class="btn btn-primary lang" key="add_condition" type="button"
+                            id="addCondition">
+                            Добавить условие
+                </button>
+
+                <script>
+                    condition = document.getElementById("condition");
+                    category = document.getElementById("category");
+                    tasks = document.getElementById("tasks");
+                    units = document.getElementById("units");
+                    value_type = document.getElementById("value_type");
+                    value = document.getElementById("value");
+                    time = document.getElementById("time");
+                    start_condition = document.getElementById("start_condition").cloneNode(true);
+                    new_conditions = document.getElementById("new_conditions");
+                    add_condition = document.getElementById("addCondition");
+                    del_condition = document.getElementById("delCondition");
+                    add_condition.addEventListener("click", function () {
+                        new_conditions.appendChild(start_condition.cloneNode(true));
+                    })
+                    del_condition.addEventListener("click", function () {
+                        del_condition.parentElement.remove();
+                    })
+                    category.addEventListener("change", function () {
+                        if (category.selectedIndex === 1) {
+                            tasks.removeAttribute('hidden')
+                            units.setAttribute('hidden', 'hidden')
+                        } else if (category.selectedIndex === 2) {
+                            units.removeAttribute('hidden')
+                            tasks.setAttribute('hidden', 'hidden')
+                        }
+                    });
+                    condition.addEventListener("change", function () {
+                        if(condition.selectedIndex === 1){
+                            value_type.removeAttribute('hidden')
+                            value_type.removeAttribute('disabled')
+                            value.removeAttribute('hidden')
+                            value.removeAttribute('disabled')
+                            time.setAttribute('hidden', 'hidden')
+                            time.setAttribute('disabled', 'disabled')
+                        } else if (condition.selectedIndex === 2){
+                            value_type.setAttribute('hidden', 'hidden')
+                            value_type.setAttribute('disabled', 'disabled')
+                            value.setAttribute('hidden', 'hidden')
+                            value.setAttribute('disabled', 'disabled')
+                            time.setAttribute('hidden', 'hidden')
+                            time.setAttribute('disabled', 'disabled')
+                        } else if (condition.selectedIndex === 3){
+                            value_type.setAttribute('hidden', 'hidden')
+                            value_type.setAttribute('disabled', 'disabled')
+                            value.setAttribute('hidden', 'hidden')
+                            value.setAttribute('disabled', 'disabled')
+                            time.removeAttribute('hidden')
+                            time.removeAttribute('disabled')
+                        }
+                    });
+                </script>
+
+                <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
+                    <img class="border border-2 rounded w-100" src="/static/img/nophoto.png" style="max-width: 290px; margin: 0 auto;">
+                    <div style="max-width: 290px; margin: 0 auto;">
+                        <input type="file" name="file" class="form-control" id="customFile" accept=".png,.jpg,.jpeg"/>
+                    </div>
+                    <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
+                </div>
+            </span>
+            <button class="btn btn-primary lang" key="save_achievement" type="submit"
+                            id="saveAchievement" style=
+                            "background-color:yellowgreen; margin: 10px;">
+                            Сохранить достижение
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
