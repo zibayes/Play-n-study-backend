@@ -34,9 +34,7 @@ $.ajax({
       div_main.appendChild(div)
     }
   },
-  fail:function(json_data) {
-    console.log(json_data)
-  }
+
 });
 function click(e) {
   const container = document.querySelector(".menu_board_detail")
@@ -249,9 +247,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
           textarea.value = ""
           div_card_body.appendChild(chat_message_div(data))
         },
-        error: function(data){
-          console.log(data);
-        }
+
       });
     }
   });
@@ -297,9 +293,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
             div_card_body.appendChild(div_element_d_flex)
           })
         },
-        error: function (data){
-          console.log(data)
-        }
+
       }
     );
   })
@@ -317,16 +311,20 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
   // 20
   let div_card_pos_1 = document.createElement("div")
   div_card_pos_1.setAttribute("class", "position-absolute top-0 end-0 text-muted")
-  let time_correct = new Date(time)
-  let today = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(time_correct);
-  let seconds = ""
-  if (time_correct.getSeconds() < 10){
-    seconds = "0" + time_correct.getSeconds()
+  if (time !== ''){
+    let time_correct = new Date(time)
+    let today = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(time_correct);
+    let seconds = ""
+    if (time_correct.getSeconds() < 10){
+      seconds = "0" + time_correct.getSeconds()
+    }
+    else{
+      seconds = time_correct.getSeconds()
+    }
+    div_card_pos_1.textContent = today + " " + time_correct.getHours() + ":" + seconds
   }
-  else{
-    seconds = time_correct.getSeconds()
-  }
-  div_card_pos_1.textContent = today + " " + time_correct.getHours() + ":" + seconds
+
+
   div_card_pos_1.style = "font-size: 75%"
   // 21 Уведомление!
   let div_card_pos_2 = document.createElement("div")

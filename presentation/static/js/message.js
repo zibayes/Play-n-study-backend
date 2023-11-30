@@ -41,23 +41,26 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     p_element_message.textContent = last_message
     div_element_chat_pt_time.setAttribute("class", "pt-1")
     p_element_time.setAttribute("class", "small text-muted mb-1 lang")
-    let time_mes = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(time))
-    let time_message_hour_sec = new Date(time)
-    let time_message = new Date(time).getTime()
-    let time_now = new Date().getTime()
-    if (Math.floor(time_message / 1000) + 120 >= Math.floor(time_now / 1000)){
-         p_element_time.textContent = 'сейчас'
-         p_element_time.setAttribute("key", "just_now")
-    }else{
-        let sec = time_message_hour_sec.getSeconds() < 10 ?  '0' + time_message_hour_sec.getSeconds() : time_message_hour_sec.getSeconds()
-        p_element_time.textContent = time_mes + " " + time_message_hour_sec.getHours() + ":" + sec + " "
+    if (time !== ''){
+        let time_mes = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(time))
+        let time_message_hour_sec = new Date(time)
+        let time_message = new Date(time).getTime()
+        let time_now = new Date().getTime()
+        if (Math.floor(time_message / 1000) + 120 >= Math.floor(time_now / 1000)){
+            p_element_time.textContent = 'сейчас'
+            p_element_time.setAttribute("key", "just_now")
+        }
+        else {
+            let sec = time_message_hour_sec.getSeconds() < 10 ?  '0' + time_message_hour_sec.getSeconds() : time_message_hour_sec.getSeconds()
+            p_element_time.textContent = time_mes + " " + time_message_hour_sec.getHours() + ":" + sec + " "
+        }
     }
+
 
     span_element_counter.setAttribute("class", "badge bg-danger float-end")
     span_element_counter.textContent = msg_new_count ===  0 ? null : msg_new_count
 
     a_element_chat.addEventListener("click" , function (event) {
-
         if (document.querySelector(".delete_item_btn") === null){
             return;
         }
@@ -72,45 +75,42 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
           contentType: 'application/json',
           data: JSON.stringify({"chat_id": chat_id}),
           success: function (data) {
-                ul_chat_item.innerHTML = ''
-                div_sent.innerHTML = ''
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)
                     ul_chat_item.appendChild(li_item)
                 })
-                let textarea = document.createElement("textarea")
-                let btn_message = document.createElement("button")
-                textarea.placeholder = "Message"
-                textarea.setAttribute("class", "form-control langp")
-                textarea.setAttribute("key", "message")
-                textarea.rows = '4'
-                btn_message.type = "button"
-                btn_message.setAttribute("class", "btn btn-info btn-rounded float-end lang")
-                btn_message.setAttribute("key", "send")
-                btn_message.style = "margin-top: 10px;"
-                btn_message.textContent = "Send"
-                btn_message.addEventListener("click", function () {
-                    if (textarea.value !== ''){
-                        $.ajax({
-                            url: '/send_message',
-                            method: "post",
-                            dataType: 'json',
-                            contentType: 'application/json',
-                            data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
-                            success: function (data){
-                                textarea.value = ""
-                                ul_chat_item.appendChild(getLiItem(data))
-
-                            }, error:function(data){
-                                console.log(data);
-                            }
-                        })
-                    }
-                })
-                div_sent.appendChild(textarea)
-                div_sent.appendChild(btn_message)
           }
         })
+        ul_chat_item.innerHTML = ''
+        div_sent.innerHTML = ''
+        let textarea = document.createElement("textarea")
+        let btn_message = document.createElement("button")
+        textarea.placeholder = "Message"
+        textarea.setAttribute("class", "form-control langp")
+        textarea.setAttribute("key", "message")
+        textarea.rows = '4'
+        btn_message.type = "button"
+        btn_message.setAttribute("class", "btn btn-info btn-rounded float-end lang")
+        btn_message.setAttribute("key", "send")
+        btn_message.style = "margin-top: 10px;"
+        btn_message.textContent = "Send"
+        btn_message.addEventListener("click", function () {
+            if (textarea.value !== ''){
+                $.ajax({
+                    url: '/send_message',
+                    method: "post",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
+                    success: function (data){
+                        textarea.value = ""
+                        ul_chat_item.appendChild(getLiItem(data))
+                    }
+                })
+            }
+        })
+        div_sent.appendChild(textarea)
+        div_sent.appendChild(btn_message)
     })
     
     div_element_chat_pt_time.appendChild(p_element_time)
