@@ -287,6 +287,15 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении статьи', 'error'])
 
+    def add_achievement(self, achievement):
+        return self.data.add_achievement(achievement)
+
+    def get_achievements_by_course_id(self, course_id):
+        return self.data.get_achievements_by_course_id(course_id)
+
+    def achievement_get_avatar(self, app, ach_id):
+        return self.data.achievement_get_avatar(app, ach_id)
+
     def update_article(self, article, course_id, unit_id, task_type):
         course = self.data.course_get_by_id(course_id)
         for unit in course.content['body']:

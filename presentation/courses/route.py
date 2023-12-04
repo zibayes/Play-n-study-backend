@@ -1,3 +1,4 @@
+import copy
 import os
 import random
 import shutil
@@ -10,7 +11,8 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum, ForumTopic, TopicMessage
+from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum, ForumTopic, TopicMessage, \
+    Achievement
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
@@ -57,7 +59,66 @@ def handle_course_summary(course_id):
 
 
 @login_required
-@courses_bp.route('/course_editor/<int:course_id>/edit_achievements')
+@courses_bp.route('/course_achievements/<int:course_id>', methods=['GET'])
+@check_subscriber_access(current_user)
+def handle_course_achievements(course_id):
+    achivements = logic.get_achievements_by_course_id(course_id)
+    achs = []
+    data = get_tests_data(course_id)
+    if not isinstance(data, tuple):
+        render_template('index.html', user=data)
+    user, course, _, _ = data
+    units = course.content['body']
+    tests = []
+    for unit in units:
+        for test in unit['tests']:
+            tests.append(test.test.content.name)
+    for ach in achivements:
+        conditions = ach.condition.split(']][[')
+        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': []}
+        for cond in conditions:
+            condition = {}
+            cond = cond.replace('[[', '').replace(']]', '')
+            if 'score' in cond:
+                condition['condition'] = 'score'
+                cond = cond.replace('score', '')
+                if ' > ' in cond:
+                    condition['val_amount'] = '>'
+                    cond = cond.replace(' > ', '')
+                elif ' = ' in cond:
+                    condition['val_amount'] = '='
+                    cond = cond.replace(' = ', '')
+                elif ' < ' in cond:
+                    condition['val_amount'] = '<'
+                    cond = cond.replace(' < ', '')
+                condition['value'] = cond[:cond.find(' for ')]
+                cond = cond[cond.find(' for '):]
+            elif 'completion fact' in cond:
+                condition['condition'] = 'completion fact'
+            elif 'time spent' in cond:
+                condition['condition'] = 'time spent'
+                cond = cond.replace('time spent', '')
+                condition['time'] = cond[:cond.find(' for ')]
+                cond = cond[cond.find(' for '):]
+            cond = cond.replace(condition['condition'], '')
+            if 'tasks' in cond:
+                condition['task_category'] = 'tasks'
+                cond = cond.replace(' for tasks:', '')
+            elif 'units' in cond:
+                condition['task_category'] = 'units'
+                cond = cond.replace(' for units:', '')
+            condition['tasks'] = []
+            for task in cond.split(';'):
+                if task != ' ':
+                    condition['tasks'].append(task)
+            ach_to_add['conditions'].append(condition)
+        achs.append(ach_to_add)
+    return render_template('course_achievements.html', user=user, course=course, units=units,
+                           tests=tests, achievements=achs)
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/edit_achievements', methods=['GET'])
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_course_edit_achievements(course_id):
@@ -71,6 +132,62 @@ def handle_course_edit_achievements(course_id):
         for test in unit['tests']:
             tests.append(test.test.content.name)
     return render_template('achievement_editor.html', user=user, course=course, units=units, tests=tests)
+
+
+
+@login_required
+@courses_bp.route('/course_editor/<int:course_id>/edit_achievements', methods=['POST'])
+@check_curator_access(current_user)
+@check_subscriber_access(current_user)
+def handle_course_save_achievements(course_id):
+    avatar = None
+    if request.files['file']:
+        avatar = logic.upload_course_avatar(request.files['file'], current_user)
+    conditions = request.form.getlist('condition')
+    task_categories = request.form.getlist('task_category')
+    value_amounts = request.form.getlist('value_amount')
+    values = request.form.getlist('value')
+    times = request.form.getlist('time')
+    tasks = copy.deepcopy(request.form.to_dict())
+    str_condition = ''
+    for condition in conditions:
+        if condition == 'Количество баллов':
+            str_condition += '[[score'
+            val_amount = value_amounts.pop(0)
+            if val_amount == 'Больше':
+                str_condition += ' > '
+            elif val_amount == 'Равно':
+                str_condition += ' = '
+            elif val_amount == 'Меньше':
+                str_condition += ' < '
+            str_condition += values.pop(0)
+        elif condition == 'Факт прохождения':
+            str_condition += '[[completion fact'
+        elif condition == 'Затраченное время на прохождение':
+            str_condition += '[[time spent '
+            str_condition += times.pop(0)
+        task_category = task_categories.pop(0)
+        if task_category == 'Задание':
+            str_condition += ' for tasks:'
+        elif task_category == 'Раздел':
+            str_condition += ' for units:'
+        current_part = True
+        tasks_tmp = copy.deepcopy(tasks)
+        for name, value in tasks.items():
+            if value != 'on' and current_part:
+                continue
+            elif value == 'on':
+                str_condition += name + '; '
+                tasks_tmp.pop(name)
+                current_part = False
+            else:
+                break
+        tasks = copy.deepcopy(tasks_tmp)
+        str_condition += ']]'
+    achievement = Achievement(course_id=course_id, name=request.form['achievementName'],
+                              description=request.form['achievementDesc'], condition=str_condition, image=avatar)
+    logic.add_achievement(achievement)
+    return redirect(f'/course_editor/{course_id}/edit_achievements')
 
 
 @login_required

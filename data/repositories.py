@@ -21,6 +21,8 @@ class AchievementRepository:
             new_achievement = AchievementsModel(
                 course_id=achievement.course_id,
                 name=achievement.name,
+                condition=achievement.condition,
+                description=achievement.description,
                 image=achievement.image
             )
             self.session.add(new_achievement)
@@ -38,6 +40,16 @@ class AchievementRepository:
             return convert.achievement_db_to_achievemnt(ach_db)
         return None
 
+    def get_achievements_by_course_id(self, course_id) -> Optional[Achievement]:
+        achs_db = self.session.query(AchievementsModel) \
+            .filter_by(course_id=course_id) \
+            .all()
+        if achs_db is not None:
+            achs = []
+            for ach_db in achs_db:
+                achs.append(convert.achievement_db_to_achievemnt(ach_db))
+            return achs
+        return None
 
 class AchieveRelRepository:
     session: Session = None

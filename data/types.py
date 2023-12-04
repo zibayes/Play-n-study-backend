@@ -23,10 +23,12 @@ class User:
 
 
 class Achievement:
-    def __init__(self, ach_id=0, course_id=0, name=None, image=None):
+    def __init__(self, ach_id=0, course_id=0, description=None, condition=None, name=None, image=None):
         self.ach_id = ach_id
         self.course_id = course_id
         self.name = name
+        self.description = description
+        self.condition = condition
         self.image = image
 
 

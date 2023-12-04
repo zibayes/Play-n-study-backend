@@ -273,6 +273,25 @@ class DataFacade:
     def article_add_article(self, article):
         return self.articles_repository.add_article(article)
 
+    def add_achievement(self, achievement: Achievement):
+        return self.achievement_repository.add_achievement(achievement)
+
+    def get_achievements_by_course_id(self, course_id):
+        return self.achievement_repository.get_achievements_by_course_id(course_id)
+
+    def achievement_get_avatar(self, app, ach_id):
+        img = None
+        achievement = self.achievement_repository.get_achievement_by_id(ach_id)
+        if not achievement.image:
+            try:
+                with app.open_resource(app.root_path + url_for('static', filename="img/nophoto.png"), "rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найдено фото по умолчанию: " + str(e))
+        else:
+            img = achievement.image
+        return img
+
     def get_last_article_by_course(self, course_id):
         return self.articles_repository.get_last_article_by_course(course_id)
 

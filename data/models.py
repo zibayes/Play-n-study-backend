@@ -90,15 +90,19 @@ class AchievementsModel(Base):
     ach_id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.course_id"))
     name = Column(Text, nullable=False, unique=True)
+    description = Column(Text)
+    condition = Column(Text)
     image = Column(Text)
 
     # relationships
     course = relationship("CoursesModel", back_populates="achievements")
     achieve_rel = relationship("AchieveRelModel", back_populates="achievement")
 
-    def __init__(self, course_id, name, image):
+    def __init__(self, course_id, name, description, condition, image):
         self.course_id = course_id
         self.name = name
+        self.description = description
+        self.condition = condition
         self.image = image
 
     def __repr__(self):

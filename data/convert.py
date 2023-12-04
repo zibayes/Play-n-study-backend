@@ -27,6 +27,8 @@ def achievement_db_to_achievemnt(achievement: Type[AchievementsModel]) -> Achiev
     return Achievement(ach_id=achievement.ach_id,
                        course_id=achievement.course_id,
                        name=achievement.name,
+                       description=achievement.description,
+                       condition=achievement.condition,
                        image=achievement.image)
 
 

@@ -612,6 +612,8 @@ export let arrLang = {
     "value_part": "Доля правильных ответов (0-100%)",
     "add_condition": "Добавить условие",
     "time": "Время на выполнение (лет/дней/часов/минут)",
+    "course_achievements": "Достижения курса",
+    "achievement_condition_demand": "Для получения достижения необходимо:",
   },
   'de': {
     'mainpage': 'Startseite',

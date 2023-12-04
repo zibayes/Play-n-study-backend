@@ -7,7 +7,7 @@
 {% block content %}
 <div class="d-flex justify-content-center">
     <div class="container m-5" style="background-color: white; border-radius: 10px">
-        <form action="/course_editor/{{course_id}}/edit_achievements" method="POST" enctype="multipart/form-data" id="sendingForm">
+        <form action="/course_editor/{{course.course_id}}/edit_achievements" method="POST" enctype="multipart/form-data" id="sendingForm">
             <span class="fs-5 row m-3 justify-content-start lang" key="achievement_editor">
                 Редактор достижений
             </span>
@@ -25,13 +25,13 @@
                 <div id="new_conditions">
                     <hr>
                     <div id="start_condition">
-                        <select id="condition" class="form-select" aria-label="Default select example" style="margin: 8px;">
+                        <select id="condition" class="form-select" aria-label="Default select example" name="condition" style="margin: 8px;" onchange="conditionSelect(this)">
                             <option class="lang" selected key="achievement_condition" disabled>--- Условие получения достижения ---</option>
                             <option class="lang" key="score_amount">Количество баллов</option>
                             <option class="lang" key="participation_fact">Факт прохождения</option>
                             <option class="lang" key="spend_time">Затраченное время на прохождение</option>
                         </select>
-                        <select id="category" class="form-select" aria-label="Default select example" style="margin: 8px;">
+                        <select id="category" class="form-select" aria-label="Default select example" name="task_category" style="margin: 8px;" onchange="categorySelect(this)">
                             <option class="lang" selected key="condition_category" disabled>--- Категория задания ---</option>
                             <option class="lang" key="task">Задание</option>
                             <option class="lang" key="unit">Раздел</option>
@@ -48,15 +48,15 @@
                                 <label for="{{unit.name}}" style="margin-right: 15px;">{{unit.name}}</label>
                             {% endfor %}
                         </div>
-                        <select id="value_type" class="form-select" aria-label="Default select example" style="margin: 8px;" hidden disabled>
+                        <select id="value_type" class="form-select" aria-label="Default select example" name="value_amount" style="margin: 8px;" hidden disabled>
                             <option class="lang" selected key="value_amount" disabled>--- Значение величины ---</option>
                             <option class="lang" key="more_than">Больше</option>
                             <option class="lang" key="equal">Равно</option>
                             <option class="lang" key="less_than">Меньше</option>
                         </select>
-                        <input id="value" hidden disabled class="form-control langp" key="value_part" maxlength="1000" placeholder="Доля правильных ответов (0-100%)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
-                        <input id="time" hidden disabled class="form-control langp" key="time" maxlength="1000" placeholder="Время на выполнение (лет/дней/часов/минут)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
-                        <button class="btn btn-danger lang" key="delete_condition" type="button" style="margin: 8px;"
+                        <input id="value" name="value" hidden disabled class="form-control langp" key="value_part" maxlength="1000" placeholder="Доля правильных ответов (0-100%)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
+                        <input id="time" name="time" hidden disabled class="form-control langp" key="time" maxlength="1000" placeholder="Время на выполнение (лет/дней/часов/минут)" min="0" max="100" type="number" name="valueAmount" rows="1" style="margin: 8px;">
+                        <button class="btn btn-danger lang" key="delete_condition" type="button" style="margin: 8px;" onclick="del_condition(this)"
                             id="delCondition">
                             Удалить условие
                         </button>
@@ -69,33 +69,30 @@
                 </button>
 
                 <script>
-                    condition = document.getElementById("condition");
-                    category = document.getElementById("category");
-                    tasks = document.getElementById("tasks");
-                    units = document.getElementById("units");
-                    value_type = document.getElementById("value_type");
-                    value = document.getElementById("value");
-                    time = document.getElementById("time");
                     start_condition = document.getElementById("start_condition").cloneNode(true);
                     new_conditions = document.getElementById("new_conditions");
                     add_condition = document.getElementById("addCondition");
-                    del_condition = document.getElementById("delCondition");
                     add_condition.addEventListener("click", function () {
                         new_conditions.appendChild(start_condition.cloneNode(true));
                     })
-                    del_condition.addEventListener("click", function () {
-                        del_condition.parentElement.remove();
-                    })
-                    category.addEventListener("change", function () {
+                    function del_condition(del_cond) {
+                        del_cond.parentElement.remove();
+                    }
+                    function categorySelect(category) {
+                        tasks = category.parentElement.querySelector('#tasks');
+                        units = category.parentElement.querySelector('#units');
                         if (category.selectedIndex === 1) {
-                            tasks.removeAttribute('hidden')
-                            units.setAttribute('hidden', 'hidden')
+                            tasks.removeAttribute('hidden');
+                            units.setAttribute('hidden', 'hidden');
                         } else if (category.selectedIndex === 2) {
-                            units.removeAttribute('hidden')
-                            tasks.setAttribute('hidden', 'hidden')
+                            units.removeAttribute('hidden');
+                            tasks.setAttribute('hidden', 'hidden');
                         }
-                    });
-                    condition.addEventListener("change", function () {
+                    }
+                    function conditionSelect(condition) {
+                        value_type = condition.parentElement.querySelector('#value_type');
+                        value = condition.parentElement.querySelector('#value');
+                        time = condition.parentElement.querySelector('#time');
                         if(condition.selectedIndex === 1){
                             value_type.removeAttribute('hidden')
                             value_type.removeAttribute('disabled')
@@ -118,7 +115,7 @@
                             time.removeAttribute('hidden')
                             time.removeAttribute('disabled')
                         }
-                    });
+                    }
                 </script>
 
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
