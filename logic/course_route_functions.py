@@ -246,8 +246,9 @@ def get_course_summary(course, progresses):
                                 'result'].total_current_score:  # TODO: Проверить корректность данного алгоритма (один раз уже проверено и исправлено)
                                 units_cur_score = progress.progress['result'].total_current_score
                         units_max_score = progress.progress['result'].total_score
-            units_cur[unit['unit_id']] += units_cur_score
-            units_max[unit['unit_id']] += units_max_score
+            if unit['unit_id'] in units_cur.keys():
+                units_cur[unit['unit_id']] += units_cur_score
+                units_max[unit['unit_id']] += units_max_score
     return units_cur, units_max, marks, max_marks, total, total_max
 
 

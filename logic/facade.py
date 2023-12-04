@@ -287,6 +287,12 @@ class LogicFacade:
         else:
             return tuple(['Ошибка при сохранении статьи', 'error'])
 
+    def add_achieve_rel(self, achieve_rel):
+        self.data.add_achieve_rel(achieve_rel)
+
+    def achive_rel_exist(self, ach_id, user_id):
+        return self.data.achive_rel_exist(ach_id, user_id)
+
     def add_achievement(self, achievement):
         return self.data.add_achievement(achievement)
 

@@ -22,10 +22,20 @@
       {% for achievement in achievements %}
     <div class="row border"></div>
     <div class="d-flex">
-		  <div class="container border border-1 rounded m-5" style="background-color: white;">
+		  <div class="container border border-1 rounded m-5" style="
+		  {% if achievement.reached %}
+		    background-color: #80008040;
+          {% endif %}
+          "
+          >
 			  <img class="border border-2 rounded w-100" src="/achievementava/{{ achievement.ach_id }}" align="left" style="max-width: 330px; ">
-			  <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.name }}</label><br>
-			  <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.description }}</label><br>
+			  <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.name }}</label>
+              {% if achievement.reached %}
+                  <i style="color: royalblue; text-align: right">[Получено]</i>
+              {% endif %}
+              <br>
+			  <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.description }}</label>
+              <br>
               <label class="labels" style="padding-top: 10px; padding-left: 10px;"><strong class="lang" key="achievement_condition_demand">Для получения достижения необходимо:</strong></label>
                 <br>
               {% for condition in achievement.conditions %}

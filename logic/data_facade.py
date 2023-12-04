@@ -273,6 +273,12 @@ class DataFacade:
     def article_add_article(self, article):
         return self.articles_repository.add_article(article)
 
+    def add_achieve_rel(self, achieve_rel):
+        self.achieve_rel_repository.add_achieve_rel(achieve_rel)
+
+    def achive_rel_exist(self, ach_id, user_id):
+        return self.achieve_rel_repository.achive_rel_exist(ach_id, user_id)
+
     def add_achievement(self, achievement: Achievement):
         return self.achievement_repository.add_achievement(achievement)
 

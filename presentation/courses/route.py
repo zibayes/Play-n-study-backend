@@ -20,7 +20,8 @@ from logic.course_route_functions import get_tests_data, get_unit_name, get_unit
     check_test_over, get_file_attach_preview, get_forum_structure
 from markdown import markdown
 from access import check_curator_access, check_subscriber_access, check_test_access, \
-    check_article_access, check_link_access, check_file_attach_access, check_forum_access
+    check_article_access, check_link_access, check_file_attach_access, check_forum_access, \
+    check_achievements_conditions
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -60,6 +61,7 @@ def handle_course_summary(course_id):
 
 @login_required
 @courses_bp.route('/course_achievements/<int:course_id>', methods=['GET'])
+@check_achievements_conditions(current_user)
 @check_subscriber_access(current_user)
 def handle_course_achievements(course_id):
     achivements = logic.get_achievements_by_course_id(course_id)
@@ -75,7 +77,8 @@ def handle_course_achievements(course_id):
             tests.append(test.test.content.name)
     for ach in achivements:
         conditions = ach.condition.split(']][[')
-        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': []}
+        reached = logic.achive_rel_exist(ach.ach_id, user.user_id)
+        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': [], 'reached': reached}
         for cond in conditions:
             condition = {}
             cond = cond.replace('[[', '').replace(']]', '')

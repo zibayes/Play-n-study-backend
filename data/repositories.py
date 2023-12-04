@@ -51,6 +51,7 @@ class AchievementRepository:
             return achs
         return None
 
+
 class AchieveRelRepository:
     session: Session = None
 
@@ -80,6 +81,13 @@ class AchieveRelRepository:
         if len(ach_rel_list) > 0:
             return ach_rel_list
         return None
+
+    def achive_rel_exist(self, ach_id, user_id):
+        ach_db = self.session.query(AchieveRelModel) \
+            .filter_by(ach_id=ach_id)\
+            .filter_by(user_id=user_id) \
+            .first()
+        return ach_db is not None
 
 
 class CourseRelRepository:
