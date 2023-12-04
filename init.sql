@@ -15,7 +15,7 @@
 -- DROP TABLE  courses CASCADE;
 -- DROP TABLE  users CASCADE;
 
--- Пользователи
+-- Пользователи 
 CREATE TABLE users
 (
     user_id serial PRIMARY KEY,
