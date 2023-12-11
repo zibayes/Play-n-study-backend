@@ -44,12 +44,24 @@
     margin-right: 55px;
     right: 0;
 }
+.menu_board_detail_message{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 140px;
+}
 .menu_board_detail2{
     position: absolute;
     bottom: 0;
     margin-bottom: -90px;
     margin-right: 55px;
     right: 0;
+}
+.menu_board_detail_message2{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 140px;
 }
 .li_dropitem{
     margin: 5px;
@@ -72,6 +84,7 @@
 .link_item:hover{
     background: #d3d3d3;
 }
+
 .text_dropitem{
     font-size: 12px;
     font-weight: 500;

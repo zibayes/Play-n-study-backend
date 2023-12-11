@@ -116,6 +116,7 @@ function chat_message_div(message) {
           button_link2.addEventListener("click", function () {
             p1.contentEditable = "false"
             div_menu_board_detail_dop.remove()
+            p1.textContent = message.msg_text
           })
           let span_text_drop_item2 = document.createElement("span")
 
@@ -274,9 +275,6 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
   let a = document.createElement("a")
 
   a.addEventListener("click", function () {
-
-
-
     $.ajax({
         url: '/get_dialog',
         method: 'post',
