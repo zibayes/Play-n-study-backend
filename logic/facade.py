@@ -293,14 +293,29 @@ class LogicFacade:
     def achive_rel_exist(self, ach_id, user_id):
         return self.data.achive_rel_exist(ach_id, user_id)
 
+    def get_achive_rels_by_achievement_id(self, ach_id):
+        return self.data.get_achive_rels_by_achievement_id(ach_id)
+
+    def remove_achive_rel(self, ach_rel_id):
+        return self.data.remove_achive_rel(ach_rel_id)
+
     def add_achievement(self, achievement):
         return self.data.add_achievement(achievement)
+
+    def get_achievement_by_id(self, ach_id):
+        return self.data.get_achievement_by_id(ach_id)
 
     def get_achievements_by_course_id(self, course_id):
         return self.data.get_achievements_by_course_id(course_id)
 
     def achievement_get_avatar(self, app, ach_id):
         return self.data.achievement_get_avatar(app, ach_id)
+
+    def update_achievement(self, achievement):
+        return self.data.update_achievement(achievement)
+
+    def remove_achievement(self, ach_id):
+        return self.data.remove_achievement(ach_id)
 
     def update_article(self, article, course_id, unit_id, task_type):
         course = self.data.course_get_by_id(course_id)

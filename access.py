@@ -252,8 +252,7 @@ def check_achievements_conditions(current_user):
             achs = []
             for unit in units:
                 for test in unit['tests']:
-                    test = logic.get_test_by_id(test.test_id)
-                    tests.append(test.content.name)
+                    tests.append(test.test.content.name)
             for ach in achivements:
                 conditions = ach.condition.split(']][[')
                 ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': []}
@@ -304,41 +303,40 @@ def check_achievements_conditions(current_user):
                             if condition['task_category'] == 'tasks':
                                 for unit in units:
                                     for test in unit['tests']:
-                                        test = logic.get_test_by_id(test.test_id)
-                                        if test.content.name in condition['tasks']:
-                                            if str(test.test_id) + 'test' in marks.keys():
+                                        if test.test.content.name in condition['tasks']:
+                                            if str(test.test_id) + test.unit_type in marks.keys():
                                                 if condition['val_amount'] == '>':
-                                                    if not marks[str(test.test_id) + 'test'] > (
+                                                    if not marks[str(test.test_id) + test.unit_type] > (
                                                             float(condition['value']) / 100 * max_marks[
-                                                        str(test.test_id) + 'test']):
+                                                        str(test.test_id) + test.unit_type]):
                                                         achievement_reached = False
                                                 elif condition['val_amount'] == '=':
-                                                    if not max_marks[str(test.test_id) + 'test'] == (
+                                                    if not max_marks[str(test.test_id) + test.unit_type] == (
                                                             float(condition['value']) / 100 * max_marks[
-                                                        str(test.test_id) + 'test']):
+                                                        str(test.test_id) + test.unit_type]):
                                                         achievement_reached = False
                                                 elif condition['val_amount'] == '<':
-                                                    if not max_marks[str(test.test_id) + 'test'] < (
+                                                    if not max_marks[str(test.test_id) + test.unit_type] < (
                                                             float(condition['value']) / 100 * max_marks[
-                                                        str(test.test_id) + 'test']):
+                                                        str(test.test_id) + test.unit_type]):
                                                         achievement_reached = False
                                             else:
                                                 achievement_reached = False
                             elif condition['task_category'] == 'units':
                                 for unit in units:
-                                    if unit.name in condition['tasks']:
-                                        if unit.unit_id in units_cur.keys():
+                                    if unit['name'] in condition['tasks']:
+                                        if unit['unit_id'] in units_cur.keys():
                                             if condition['val_amount'] == '>':
-                                                if not units_cur[unit.unit_id] > (
-                                                        float(condition['value']) / 100 * units_max[unit.unit_id]):
+                                                if not units_cur[unit['unit_id']] > (
+                                                        float(condition['value']) / 100 * units_max[unit['unit_id']]):
                                                     achievement_reached = False
                                             elif condition['val_amount'] == '=':
-                                                if not units_cur[unit.unit_id] == (
-                                                        float(condition['value']) / 100 * units_max[unit.unit_id]):
+                                                if not units_cur[unit['unit_id']] == (
+                                                        float(condition['value']) / 100 * units_max[unit['unit_id']]):
                                                     achievement_reached = False
                                             elif condition['val_amount'] == '<':
-                                                if not units_cur[unit.unit_id] < (
-                                                        float(condition['value']) / 100 * units_max[unit.unit_id]):
+                                                if not units_cur[unit['unit_id']] < (
+                                                        float(condition['value']) / 100 * units_max[unit['unit_id']]):
                                                     achievement_reached = False
                                         else:
                                             achievement_reached = False
@@ -346,9 +344,8 @@ def check_achievements_conditions(current_user):
                             if condition['task_category'] == 'tasks':
                                 for unit in units:
                                     for test in unit['tests']:
-                                        test = logic.get_test_by_id(test.test_id)
-                                        if test.content.name in condition['tasks']:
-                                            if str(test.test_id) + 'test' not in marks.keys():
+                                        if test.test.content.name in condition['tasks']:
+                                            if str(test.test_id) + test.unit_type not in marks.keys():
                                                 achievement_reached = False
                             elif condition['task_category'] == 'units':
                                 for unit in units:
@@ -362,10 +359,9 @@ def check_achievements_conditions(current_user):
                             all_time = None
                             for unit in units:
                                 for test in unit['tests']:
-                                    test = logic.get_test_by_id(test.test_id)
                                     shortest_time = None
-                                    if test.content.name in condition['tasks']:
-                                        if str(test.test_id) + 'test' in marks.keys():
+                                    if test.test.content.name in condition['tasks']:
+                                        if str(test.test_id) + test.unit_type in marks.keys():
                                             for progress in progresses:
                                                 if progress.progress['test_id'] == test.test_id and \
                                                         progress.progress['type'] == test.unit_type:

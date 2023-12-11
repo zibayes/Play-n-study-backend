@@ -51,6 +51,32 @@ class AchievementRepository:
             return achs
         return None
 
+    def update_achievement(self, achievement: Achievement) -> bool:
+        try:
+            ach_to_update = self.session.query(AchievementsModel) \
+                .filter_by(ach_id=achievement.ach_id) \
+                .first()
+            ach_to_update.course_id = achievement.course_id
+            ach_to_update.name = achievement.name
+            ach_to_update.description = achievement.description
+            ach_to_update.image = achievement.image
+            ach_to_update.condition = achievement.condition
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления достижения в БД " + str(e))
+
+    def remove_achievement(self, ach_id) -> bool:
+        try:
+            self.session.query(AchievementsModel) \
+                .filter_by(ach_id=ach_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления достижения:" + str(e))
+            return False
+
 
 class AchieveRelRepository:
     session: Session = None
@@ -82,12 +108,34 @@ class AchieveRelRepository:
             return ach_rel_list
         return None
 
+    def get_achive_rels_by_achievement_id(self, ach_id) -> Optional[list]:
+        new_ach_rels_db = self.session.query(AchieveRelModel) \
+            .filter_by(ach_id=ach_id) \
+            .all()
+        ach_rel_list = []
+        for ach_rel in new_ach_rels_db:
+            ach_rel_list.append(convert.ach_rel_db_to_ach_rel(ach_rel))
+        if len(ach_rel_list) > 0:
+            return ach_rel_list
+        return None
+
     def achive_rel_exist(self, ach_id, user_id):
         ach_db = self.session.query(AchieveRelModel) \
             .filter_by(ach_id=ach_id)\
             .filter_by(user_id=user_id) \
             .first()
         return ach_db is not None
+
+    def remove_achive_rel(self, ach_rel_id) -> bool:
+        try:
+            self.session.query(AchieveRelModel) \
+                .filter_by(ach_rel_id=ach_rel_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления достижения:" + str(e))
+            return False
 
 
 class CourseRelRepository:

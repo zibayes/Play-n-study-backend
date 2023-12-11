@@ -596,6 +596,7 @@ export let arrLang = {
     "forum_topic_check": "Проверка форума по теме",
 
     "achievement_editor": "Редактор достижений",
+    "achievement_constructor": "Конструктор достижений",
     "edit_achievements": "Редактировать достижения",
     "achievement_name": "Название достижения",
     "achievement_desc": "Описание достижения",

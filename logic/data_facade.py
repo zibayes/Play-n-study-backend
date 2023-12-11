@@ -279,11 +279,26 @@ class DataFacade:
     def achive_rel_exist(self, ach_id, user_id):
         return self.achieve_rel_repository.achive_rel_exist(ach_id, user_id)
 
+    def get_achive_rels_by_achievement_id(self, ach_id):
+        return self.achieve_rel_repository.get_achive_rels_by_achievement_id(ach_id)
+
+    def remove_achive_rel(self, ach_rel_id):
+        return self.achieve_rel_repository.remove_achive_rel(ach_rel_id)
+
     def add_achievement(self, achievement: Achievement):
         return self.achievement_repository.add_achievement(achievement)
 
+    def get_achievement_by_id(self, ach_id):
+        return self.achievement_repository.get_achievement_by_id(ach_id)
+
     def get_achievements_by_course_id(self, course_id):
         return self.achievement_repository.get_achievements_by_course_id(course_id)
+
+    def update_achievement(self, achievement):
+        return self.achievement_repository.update_achievement(achievement)
+
+    def remove_achievement(self, ach_id):
+        return self.achievement_repository.remove_achievement(ach_id)
 
     def achievement_get_avatar(self, app, ach_id):
         img = None

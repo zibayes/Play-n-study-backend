@@ -92,7 +92,7 @@ class AchievementsModel(Base):
     name = Column(Text, nullable=False, unique=True)
     description = Column(Text)
     condition = Column(Text)
-    image = Column(Text)
+    image = Column(LargeBinary)
 
     # relationships
     course = relationship("CoursesModel", back_populates="achievements")

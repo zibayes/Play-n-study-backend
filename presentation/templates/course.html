@@ -70,11 +70,6 @@
                                             <button class="btn btn-outline-dark btn-rounded lang" key="edit_course" id="edit-button" style="display: inline-block;">Редактировать курс</button>
                                         </div>
                                     </form>
-                                    <form action="/course_editor/{{course.course_id}}/edit_achievements">
-                                        <div id="div_element_button" style="margin-right: 8px;">
-                                            <button class="btn btn-outline-dark btn-rounded lang" key="edit_achievements" id="edit-achievement-button" style="display: inline-block;">Редактировать достижения</button>
-                                        </div>
-                                    </form>
                                     <form action="/delete_course/{{course.course_id}}" method="POST">
                                         <div id="div_element_button" style="margin-right: 8px;">
                                             <button class="btn btn-outline-dark btn-rounded lang" key="delete_course" id="delete-button" style="display: inline-block;" type="button" data-mdb-target="#delete_course" data-mdb-toggle="modal">Удалить курс</button>
@@ -91,6 +86,13 @@
                                         <button class="btn btn-outline-dark btn-rounded lang" key="achievements" id="show-button" style="display: inline-block;">Достижения</button>
                                     </div>
                                 </form>
+                                {% if is_curator %}
+                                    <form action="/course_editor/{{course.course_id}}/edit_achievements">
+                                        <div id="div_element_button" style="margin-right: 8px;">
+                                            <button class="btn btn-outline-dark btn-rounded lang" key="edit_achievements" id="edit-achievement-button" style="display: inline-block;">Редактировать достижения</button>
+                                        </div>
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

@@ -93,6 +93,18 @@
                 {% endif %}
                 <br>
               {% endfor %}
+              {% if is_curator %}
+                  <form action="/course_editor/{{course.course_id}}/achievements/{{achievement.ach_id}}" method="GET" style="float: right; padding: 12px;">
+                        <div id="div_element_button" style="margin-right: 8px;">
+                            <button class="btn btn-outline-dark btn-rounded lang" key="edit" id="show-button" style="display: inline-block;">Редактировать</button>
+                        </div>
+                  </form>
+                <form action="/course_editor/{{course.course_id}}/achievements_delete/{{achievement.ach_id}}" method="GET" style="float: right; padding: 12px;">
+                        <div id="div_element_button_1" style="margin-right: 8px;">
+                            <button class="btn btn-outline-dark btn-rounded lang" key="delete" id="show-button_1" style="display: inline-block;">Удалить</button>
+                        </div>
+                  </form>
+              {% endif %}
 		  </div>
       </div>
       {% endfor %}

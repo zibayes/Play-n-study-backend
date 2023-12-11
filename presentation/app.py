@@ -53,7 +53,7 @@ def unauthorized():
 @app.route('/achievementava/<int:ach_id>')
 @login_required
 def handle_achievement_ava(ach_id):
-    img = logic.forum_get_avatar(app, ach_id)
+    img = logic.achievement_get_avatar(app, ach_id)
     if not img:
         return ""
     h = make_response(img)
