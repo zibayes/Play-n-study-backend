@@ -294,7 +294,8 @@ def check_achievements_conditions(current_user):
                     ach_to_add['conditions'].append(condition)
                 achs.append(ach_to_add)
 
-            units_cur, units_max, marks, max_marks, total, total_max = get_course_summary(course, progresses)
+            units_cur, units_max, marks, max_marks, total, total_max,\
+                _, _, _, _, _= get_course_summary(course, progresses, user)
             for achievement in achs:
                 if not logic.achive_rel_exist(achievement['ach_id'], user.user_id):
                     achievement_reached = True

@@ -207,7 +207,7 @@ def course_update(course, request):
         unit['tests'] = new_tests_order
 
 
-def get_course_summary(course, progresses):
+def get_course_summary(course, progresses, user):
     marks = {}
     max_marks = {}
     units_max = {}
@@ -249,7 +249,49 @@ def get_course_summary(course, progresses):
             if unit['unit_id'] in units_cur.keys():
                 units_cur[unit['unit_id']] += units_cur_score
                 units_max[unit['unit_id']] += units_max_score
-    return units_cur, units_max, marks, max_marks, total, total_max
+
+    leaders = logic.get_progress_by_course_id_all(course.course_id)
+    # leaders = progresses
+    leaders_to_show = {}
+    leaders_total_score = {}
+    leaders_hrefs = {}
+    graphic_data = {}
+    friends = {}
+    subs = logic.get_user_for_subscriptions(user.user_id).sub_to
+    if subs:
+        subs = [user.username for user in subs]
+    for unit in course.content['body']:
+        for test in unit['tests']:
+            for i in range(len(leaders)):
+                if (str(test.test_id) + test.unit_type) == (str(leaders[i].progress['test_id']) + leaders[i].progress['type']) \
+                        and leaders[i].progress['result']:
+                    leaders[i].progress['result'] = TestResult.from_json(json.loads(leaders[i].progress['result']))
+                    user_for_table = logic.get_user_by_id(leaders[i].user_id).username
+                    if user_for_table not in leaders_to_show.keys():
+                        leaders_to_show[user_for_table] = {}
+                        leaders_hrefs[user_for_table] = leaders[i].user_id
+                        leaders_total_score[user_for_table] = {}
+                        if subs and user_for_table in subs or user_for_table == user.username:
+                            friends[user_for_table] = []
+                    if (str(test.test_id) + test.unit_type) not in leaders_to_show[user_for_table].keys():
+                        leaders_to_show[user_for_table][str(test.test_id) + test.unit_type] = []
+                    leaders_to_show[user_for_table][str(test.test_id) + test.unit_type].append(leaders[i].progress['result'].total_current_score)
+                    leaders_total_score[user_for_table][str(test.test_id) + test.unit_type] = float(leaders[i].progress['result'].total_score)
+
+    for key in leaders_to_show.keys():
+        sum_all = 0
+        leaders_total_score[key] = sum(leaders_total_score[key].values())
+        for task in leaders_to_show[key].keys():
+            sum_all += max(leaders_to_show[key][task])
+        leaders_to_show[key] = sum_all
+        for friend in friends.keys():
+            friends[friend] = leaders_to_show[friend]
+        if leaders_to_show[key] not in graphic_data.keys():
+            graphic_data[leaders_to_show[key]] = 0
+        graphic_data[leaders_to_show[key]] += 1
+
+    return units_cur, units_max, marks, max_marks, total, total_max, \
+        leaders_total_score, graphic_data, leaders_to_show, leaders_hrefs, friends
 
 
 def get_test_preview(progress, course_id, test_id, user):
@@ -395,42 +437,6 @@ def get_forum_structure(ft_id, forum_id, course_id):
             users[message.user_id] = logic.get_user_by_id(message.user_id)
         if message.parent_tm_id in nesting_level.keys():
             nesting_level[message.tm_id] = nesting_level[message.parent_tm_id] + 1
-    '''
-    messages_ordered_ids = []
-    while len(messages_ordered) != len(messages):
-        for i in range(len(messages)):
-            if messages[i].parent_tm_id is None and messages[i] not in messages_ordered:
-                messages_ordered.append(messages[i])
-                messages_ordered_ids.append(messages[i].tm_id)
-            if messages[i].parent_tm_id in messages_ordered_ids:
-                changed = False
-                for j in range(len(messages_ordered)):
-                    if messages[i].parent_tm_id == messages_ordered[j].parent_tm_id and messages[
-                        i] not in messages_ordered:
-                        if messages[i].tm_id < messages_ordered[j].tm_id:
-                            messages_ordered = messages_ordered[:j] + [messages[i]] + messages_ordered[j:]
-                            messages_ordered_ids.append(messages[i].tm_id)
-                            print(f'|{messages[i].tm_id}[{messages[i].parent_tm_id}]')
-                    if messages[i].parent_tm_id != messages_ordered[j].parent_tm_id and messages[
-                        i] not in messages_ordered:
-                        messages_ordered.append(messages[i])
-                        messages_ordered_ids.append(messages[i].tm_id)
-                        changed = True
-                        print(f'?{messages[i].tm_id}[{messages[i].parent_tm_id}]')
-                    if messages_ordered[j].tm_id == messages[i].parent_tm_id:
-                        if j == len(messages_ordered) - 1:
-                            messages_ordered.append(messages[i])
-                            messages_ordered_ids.append(messages[i].tm_id)
-                            changed = True
-                            print(f'!{messages[i].tm_id}[{messages[i].parent_tm_id}]')
-                if not changed:
-                    messages_ordered.append(messages[i])
-                    messages_ordered_ids.append(messages[i].tm_id)
-                    print(f'%{messages[i].tm_id}[{messages[i].parent_tm_id}]')
-        for i in messages_ordered:
-            print(f'{i.tm_id}[{i.parent_tm_id}]', end=', ')
-        print()
-    '''
     msgs = {}
     for message in messages:
         if message.parent_tm_id not in msgs.keys():

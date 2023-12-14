@@ -615,6 +615,8 @@ export let arrLang = {
     "time": "Время на выполнение (лет/дней/часов/минут)",
     "course_achievements": "Достижения курса",
     "achievement_condition_demand": "Для получения достижения необходимо:",
+
+    "show_tasks": "Задания курса",
   },
   'de': {
     'mainpage': 'Startseite',

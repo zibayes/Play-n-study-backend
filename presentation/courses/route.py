@@ -55,12 +55,10 @@ def handle_course_summary(course_id):
     if not isinstance(data, tuple):
         render_template('index.html', user=data)
     user, course, results, progresses = data
-    progress = logic.get_progress_by_user_course_ids_all(user.user_id, course_id)
-    units_cur, units_max, marks, max_marks, total, total_max = get_course_summary(course, progresses)
-    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_test_preview(progress, course_id, 3, user)
+    units_cur, units_max, marks, max_marks, total, total_max, leaders_total_score, \
+        graphic_data, leaders_to_show, leaders_hrefs, friends = get_course_summary(course, progresses, user)
     return render_template('course_summary.html', user=user, course=course, results=results, units_cur=units_cur,
-                           units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max,
-                           max_score_total=max_score_total, leaders_total_score=leaders_total_score, max_score=max_score,
+                           units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max, leaders_total_score=leaders_total_score,
                            graphic_data=graphic_data, leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
 
 

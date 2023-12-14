@@ -315,7 +315,7 @@
                 {% endfor %}
             </div>
             <div style="padding-bottom: 10px; display: flex;">
-                <div id="result_text"><text class="lang" key="your_result">Ваш результат:</text> {{ total_score }} / {{ score }} ({{ result }}%); <text class="lang" key="your_time_spent">Прошло времени </text><text id="result_time"></text></div>
+                <div id="result_text"><text class="lang" key="your_result">Ваш результат:</text> {{ total_score|round(2, 'common') }} / {{ score }} ({{ result }}%); <text class="lang" key="your_time_spent">Прошло времени </text><text id="result_time"></text></div>
                 <script>
                     let result_color = "";
                     let result = parseFloat({{result}});
