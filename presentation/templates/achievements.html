@@ -10,16 +10,77 @@
         <span class="fs-5 row m-3 justify-content-start lang" key="achievements">
             Мои награды
         </span>
-      {% for achievement in achievements %}
-    <div class="row border"></div>
-    <div class="d-flex">
-		  <div class="container border border-1 rounded m-5" style="background-color: white;">
-			  <img class="border border-2 rounded w-100" src="{{ achievement.image }}" align="left" style="max-width: 150px; ">
-			  <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.name }}</label><br>
-			  <label class="labels" style="padding-top: 10px; padding-left: 10px;">{{ achievement.condition }}</label>
-		  </div>
-      </div>
-      {% endfor %}
+        {% for achievement in achievements %}
+            <div class="row border"></div>
+            <div class="d-flex">
+                  <div class="container border border-1 rounded m-5">
+                      <img class="border border-2 rounded w-100" src="/achievementava/{{ achievement.ach_id }}" align="left" style="max-width: 330px; ">
+                      <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.name }}</label>
+                      <br>
+                      <label class="labels" style="padding-top: 25px; padding-left: 10px;"><text class="lang" key="course">Курс</text>: <a href="/course_achievements/{{achievement.course_id}}">{{ achievement.course_name }}</a></label>
+                      <br>
+                      <label class="labels" style="padding-top: 25px; padding-left: 10px;">{{ achievement.description }}</label>
+                      <br>
+                      <label class="labels" style="padding-top: 10px; padding-left: 10px;"><strong class="lang" key="achievement_condition_demand">Для получения достижения необходимо:</strong></label>
+                        <br>
+                      {% for condition in achievement.conditions %}
+                        {% if condition.condition == 'completion fact' %}
+                            <label class="labels" style="padding-top: 10px; padding-left: 10px;">
+                                <i>
+                                    Выполнить следующие
+                                    {% if condition.task_category == 'tasks' %}
+                                        задания:
+                                    {% elif condition.task_category == 'units' %}
+                                        разделы:
+                                    {% endif %}
+                                    {% for task in condition.tasks %}
+                                        {{task}};
+                                    {% endfor %}
+                                </i>
+                            </label>
+                        {% elif condition.condition == 'score' %}
+                            <label class="labels" style="padding-top: 10px; padding-left: 10px;">
+                                <i>
+                                    Получить оценку
+                                    {% if condition.val_amount == '>' %}
+                                        больше
+                                    {% elif condition.val_amount == '=' %}
+                                        равную
+                                    {% elif condition.val_amount == '<' %}
+                                        меньше
+                                    {% endif %}
+                                    {{condition.value}}% за выполнение следующих
+                                    {% if condition.task_category == 'tasks' %}
+                                        заданий:
+                                    {% elif condition.task_category == 'units' %}
+                                        разделов:
+                                    {% endif %}
+                                    {% for task in condition.tasks %}
+                                        {{task}};
+                                    {% endfor %}
+                                </i>
+                            </label>
+                        {% elif condition.condition == 'time spent' %}
+                            <label class="labels" style="padding-top: 10px; padding-left: 10px;">
+                                <i>
+                                    Выполнить следующие
+                                    {% if condition.task_category == 'tasks' %}
+                                        задания
+                                    {% elif condition.task_category == 'units' %}
+                                        разделы
+                                    {% endif %}
+                                    быстрее, чем за {{condition.time}}:
+                                    {% for task in condition.tasks %}
+                                        {{task}};
+                                    {% endfor %}
+                                </i>
+                            </label>
+                        {% endif %}
+                        <br>
+                      {% endfor %}
+                  </div>
+              </div>
+          {% endfor %}
     </div>
   </div>
 </div>

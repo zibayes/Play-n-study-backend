@@ -33,11 +33,66 @@ def handle_task():
 def about():
     return "About"
 
+
 @pages_bp.route('/messages')
 def messages():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
     return render_template('messages.html', user=user)
+
+
+@pages_bp.route('/achievements/<int:user_id>')
+@login_required
+def handle_achievements(user_id):
+    user = logic.get_user_by_id(user_id)
+    achievements = logic.get_user_achievements(user_id)
+    if achievements is None:
+        achievements = []
+    achs = []
+    for ach in achievements:
+        conditions = ach.condition.split(']][[')
+        course_name = logic.get_course_without_rel(ach.course_id).name
+        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': [],
+                      'course_name': course_name, 'course_id': ach.course_id}
+        for cond in conditions:
+            condition = {}
+            cond = cond.replace('[[', '').replace(']]', '')
+            if 'score' in cond:
+                condition['condition'] = 'score'
+                cond = cond.replace('score', '')
+                if ' > ' in cond:
+                    condition['val_amount'] = '>'
+                    cond = cond.replace(' > ', '')
+                elif ' = ' in cond:
+                    condition['val_amount'] = '='
+                    cond = cond.replace(' = ', '')
+                elif ' < ' in cond:
+                    condition['val_amount'] = '<'
+                    cond = cond.replace(' < ', '')
+                condition['value'] = cond[:cond.find(' for ')]
+                cond = cond[cond.find(' for '):]
+            elif 'completion fact' in cond:
+                condition['condition'] = 'completion fact'
+            elif 'time spent' in cond:
+                condition['condition'] = 'time spent'
+                cond = cond.replace('time spent', '')
+                condition['time'] = cond[:cond.find(' for ')]
+                cond = cond[cond.find(' for '):]
+            cond = cond.replace(condition['condition'], '')
+            if 'tasks' in cond:
+                condition['task_category'] = 'tasks'
+                cond = cond.replace(' for tasks:', '')
+            elif 'units' in cond:
+                condition['task_category'] = 'units'
+                cond = cond.replace(' for units:', '')
+            condition['tasks'] = []
+            for task in cond.split(';'):
+                if task != ' ':
+                    condition['tasks'].append(task)
+            ach_to_add['conditions'].append(condition)
+        achs.append(ach_to_add)
+    return render_template('achievements.html', user=user, achievements=achs)
+
 
 @pages_bp.route('/profiles/<int:user_id>')
 @login_required

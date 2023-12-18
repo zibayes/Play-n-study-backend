@@ -26,7 +26,7 @@ class DataFacade:
         self.chat_repository = ChatRepository(session)
         self.chat_messages_repository = ChatMessageRepository(session)
 
-    def __get_user_achievements(self, user_id: int) -> Optional[list]:
+    def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
         ach_rel_list = self.achieve_rel_repository.get_achive_rels_by_user_id(user_id)
         if ach_rel_list is not None:
@@ -87,7 +87,7 @@ class DataFacade:
 
     def get_user_for_profile(self, user_id, current_user_id):
         user = self.user_repository.get_user_by_id(user_id)
-        user.achievements = self.__get_user_achievements(user_id)
+        user.achievements = self.get_user_achievements(user_id)
         user.courses = self.__get_user_courses(user_id)
         user.subs = self.__get_user_subs(user.user_id)
         user.subs_count = len(user.subs) if user.subs else 0

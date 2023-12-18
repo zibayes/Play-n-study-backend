@@ -106,7 +106,7 @@
                         </table>
                         <span class="fw-bolder fs-5 row m-3 justify-content-start lang">
                             <div>
-                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score }} / {{ max_score_total }}
+                                <text class="lang" key="best_mark">Высшая оценка:</text> {{ max_score|round(2, 'common') }} / {{ max_score_total }}
                             </div>
                         </span>
                     </div>

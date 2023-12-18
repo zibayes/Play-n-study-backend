@@ -1,4 +1,4 @@
-<script src="../static/js/base_auth.js"></script>{% extends 'base_aut.html' %}
+{% extends 'base_aut.html' %}
 
 {% block title %}
 <title>Тесты</title>
@@ -30,8 +30,10 @@
         </div>
         <br>
             <table class="table" id="test-results">
-                <tbody>
+                <thead>
                     <tr><th class="lang" key="course_unit">Элемент курса</th><th class="lang" key="tesk_type">Тип</th><th class="lang" key="status">Статус</th><th class="lang" key="mark">Оценка</th></tr>
+                </thead>
+                <tbody>
                     {% set notAllowed = namespace(value=0) %}
                     {% for unit in course.content.body %}
                         <td colspan="4" align="center"><strong><text class="lang" key="unit">Раздел</text> «{{ unit.name }}»</strong></td>
@@ -94,7 +96,11 @@
                                 </td>
                                 <td>
                                     {% if unit_test.unit_type in ("test", "file_attach", "forum") and results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
-                                        {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
+                                        {% if marks[unit_test.test_id|string+unit_test.unit_type] %}
+                                            {{ marks[unit_test.test_id|string+unit_test.unit_type]|round(2, 'common') }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
+                                        {% else %}
+                                            {{ marks[unit_test.test_id|string+unit_test.unit_type] }} / {{ max_marks[unit_test.test_id|string+unit_test.unit_type] }}
+                                        {% endif %}
                                     {% else %}
                                         -
                                     {% endif %}
@@ -106,7 +112,7 @@
                             <strong><text class="lang" key="unit_result">Итог раздела</text> «{{ unit.name }}»</strong>
                         </td>
                         <td colspan="3">
-                            <strong>{{ units_cur[unit.unit_id] }} / {{ units_max[unit.unit_id] }}</strong>
+                            <strong>{{ units_cur[unit.unit_id]|round(2, 'common') }} / {{ units_max[unit.unit_id] }}</strong>
                         </td>
                     </tr>
                     {% endfor %}
@@ -115,13 +121,13 @@
                             <strong class="lang" key="result">Итог</strong>
                         </td>
                         <td colspan="3">
-                            <strong>{{ total }} / {{ total_max }}</strong>
+                            <strong>{{ total|round(2, 'common') }} / {{ total_max }}</strong>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-        <div id="leaders-table" hidden="hidden">
+        <div class="table" id="leaders-table" hidden="hidden">
             {% set userNum = namespace(value=3) %}
             {% set firstPlace = namespace(value=0) %}
             {% set secondPlace = namespace(value=0) %}
@@ -176,7 +182,7 @@
                                 <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
                             </td>
                             <td>
-                                {{ result }} / {{ leaders_total_score[leader] }}
+                                {{ result|round(2, 'common') }} / {{ leaders_total_score[leader] }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -283,7 +289,7 @@
                                 <a href="/profiles/{{ leaders_hrefs[leader] }}">{{ leader }}</a>
                             </td>
                             <td>
-                                {{ result }} / {{ leaders_total_score[leader] }}
+                                {{ result|round(2, 'common') }} / {{ leaders_total_score[leader] }}
                             </td>
                         </tr>
                     {% endfor %}

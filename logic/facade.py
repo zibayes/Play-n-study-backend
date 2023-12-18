@@ -296,6 +296,9 @@ class LogicFacade:
     def get_achive_rels_by_achievement_id(self, ach_id):
         return self.data.get_achive_rels_by_achievement_id(ach_id)
 
+    def get_user_achievements(self, user_id):
+        return self.data.get_user_achievements(user_id)
+
     def remove_achive_rel(self, ach_rel_id):
         return self.data.remove_achive_rel(ach_rel_id)
 
