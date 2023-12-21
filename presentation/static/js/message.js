@@ -1,4 +1,4 @@
-function element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id, msg_new_count) {
+function element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id, msg_new_count, from_who_id) {
     let btn_del_chat = document.createElement("button")
     let li_chat = document.createElement("li")
     let a_element_chat = document.createElement("a")
@@ -86,10 +86,12 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
         let textarea = document.createElement("textarea")
         let btn_message = document.createElement("button")
         textarea.placeholder = "Message"
+        textarea.id = "message"
         textarea.setAttribute("class", "form-control langp")
         textarea.setAttribute("key", "message")
         textarea.rows = '4'
         btn_message.type = "button"
+        btn_message.id = "button_send"
         btn_message.setAttribute("class", "btn btn-info btn-rounded float-end lang")
         btn_message.setAttribute("key", "send")
         btn_message.style = "margin-top: 10px;"
@@ -111,6 +113,32 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
         })
         div_sent.appendChild(textarea)
         div_sent.appendChild(btn_message)
+
+          var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+          socket.on( 'connect', function() {
+            socket.emit( 'my event', {
+              data: 'User Connected'
+            } )
+            document.getElementById('button_send').addEventListener("click", function( e ) {
+              e.preventDefault()
+              let user_input = $( '#message' ).val()
+              socket.emit( 'my event', {
+                from_who_id : from_who_id,
+                msg_from_id : from_who_id,
+                user_with_id : user_with_id,
+                msg_text : user_input,
+                msg_from: from_who,
+                msg_date: new Date()
+              } )
+            } )
+          } )
+          socket.on( 'my response', function( msg ) {
+            console.log( msg )
+            if( msg.from_who_id === user_with_id && msg.user_with_id === from_who_id ) {
+                ul_chat_item.appendChild(getLiItem(msg))
+            }
+          })
     })
     
     div_element_chat_pt_time.appendChild(p_element_time)
@@ -326,7 +354,7 @@ $.ajax({
             }
     )
     for (let i = 0; i < json_data.chats.length; i++){
-      let li = element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id, json_data.chats[i].msg_new_count)
+      let li = element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id, json_data.chats[i].msg_new_count, json_data.chats[i].from_who_id)
       ul_chat.appendChild(li)
     }
   }

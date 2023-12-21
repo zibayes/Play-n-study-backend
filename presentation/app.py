@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_required
 from logic.facade import LogicFacade
 from presentation.UserLogin import UserLogin
+from flask_socketio import SocketIO
 
 # blueprints
 from presentation.courses.route import courses_bp as courses
@@ -38,6 +39,19 @@ login_manager = LoginManager(app)
 
 # logic layer instance
 logic = LogicFacade(session)
+
+socketio = SocketIO(app)
+socketio.init_app(app, cors_allowed_origins="*")
+
+
+def message_received(methods=['GET', 'POST']):
+    print('message was received!!!')
+
+
+@socketio.on('my event')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('received my event: ' + str(json))
+    socketio.emit('my response', json, callback=message_received)
 
 
 @login_manager.user_loader
@@ -127,5 +141,6 @@ def handle_userava(user_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)
+    # app.run(debug=True)
 

@@ -495,7 +495,7 @@ class DataFacade:
                 last_message = last_msg.msg_text
                 time = last_msg.msg_date
 
-            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id, msg_new_count).to_dict())
+            previews.append(ChatPreview(user_with_username, last_message, from_user, time, user_with_id, chat.checked, chat.chat_id, msg_new_count, current_user.user_id).to_dict())
         return json.dumps({"chats": previews}, default=str, ensure_ascii=False)
 
     def chat_get_dialog(self, user_id, chat_id):

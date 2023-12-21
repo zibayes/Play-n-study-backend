@@ -30,7 +30,7 @@ $.ajax({
             }
     )
     for (let i = 0; i < json_data.chats.length; i++){
-      let div = add_element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].user_with_id)
+      let div = add_element_chat(json_data.chats[i].chat_id, json_data.chats[i].time, json_data.chats[i].user_with, json_data.chats[i].from_who, json_data.chats[i].last_message, json_data.chats[i].checked, json_data.chats[i].user_with_id, json_data.chats[i].msg_new_count, json_data.chats[i].from_who_id)
       div_main.appendChild(div)
     }
   },
@@ -177,7 +177,7 @@ function chat_message_div(message) {
   div_element_d_flex.appendChild(div_menu_board)
   return div_element_d_flex
 }
-function add_element_chat(chat_id, time, user_with, from_who, last_message, user_with_id) {
+function add_element_chat(chat_id, time, user_with, from_who, last_message, checked, user_with_id, msg_new_count, from_who_id) {
   // 1 +
   let div_add = document.createElement("div")
   div_add.setAttribute("class", "collapse mt-3")
@@ -216,6 +216,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
   let textarea = document.createElement("textarea")
   textarea.setAttribute("class", "shoutbox-name form-control form-control-lg")
   textarea.setAttribute("type", "text")
+  textarea.setAttribute("id", "message_right")
   textarea.setAttribute("placeholder", "Введите сообщение")
   // 10
   let div_column2 = document.createElement("div")
@@ -234,6 +235,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
   // 14
   let a2 = document.createElement("a")
   a2.setAttribute("class", "link-info")
+  a2.setAttribute("id", "button_send_right")
   a2.style = "margin-left: -15px;"
   a2.setAttribute("href", "#!")
   a2.addEventListener("click", function () {
@@ -252,6 +254,32 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, user
       });
     }
   });
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  socket.on( 'connect', function() {
+    socket.emit( 'my event', {
+      data: 'User Connected'
+    } )
+    document.getElementById('button_send_right').addEventListener("click", function( e ) {
+      e.preventDefault()
+      let user_input = $( '#message_right' ).val()
+      socket.emit( 'my event', {
+        from_who_id : from_who_id,
+        msg_from_id : from_who_id,
+        user_with_id : user_with_id,
+        msg_text : user_input,
+        msg_from: from_who,
+        msg_date: new Date()
+      } )
+    } )
+  } )
+  socket.on( 'my response', function( msg ) {
+    console.log( msg )
+    if( msg.from_who_id === user_with_id && msg.user_with_id === from_who_id ) {
+        div_card_body.appendChild(chat_message_div(msg))
+    }
+  })
 
   // 15
   let i2 = document.createElement("i")

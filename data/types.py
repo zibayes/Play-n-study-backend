@@ -1,4 +1,5 @@
 import json
+from flask_login import current_user
 
 
 # todo: поправить json'ы или убрать там где не нужно
@@ -479,7 +480,7 @@ class Chat:
 
 
 class ChatPreview:
-    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id, msg_new_count):
+    def __init__(self, user_with, last_message, from_who, time, user_with_id, checked, chat_id, msg_new_count, from_who_id):
         self.user_with = user_with
         self.last_message = last_message
         self.from_who = from_who
@@ -488,6 +489,7 @@ class ChatPreview:
         self.checked = checked
         self.chat_id = chat_id
         self.msg_new_count = msg_new_count
+        self.from_who_id = from_who_id
 
     def to_dict(self):
         return {
@@ -498,7 +500,8 @@ class ChatPreview:
             "user_with_id": self.user_with_id,
             "checked": self.checked,
             "chat_id": self.chat_id,
-            "msg_new_count": self.msg_new_count
+            "msg_new_count": self.msg_new_count,
+            "from_who_id": self.from_who_id
         }
 
 
