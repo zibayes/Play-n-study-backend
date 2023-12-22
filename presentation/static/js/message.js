@@ -36,7 +36,8 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
     img_element_chat.src = '/userava/' + user_with_id
     div_element_chat_pt_message.setAttribute("class", "pt-1")
     p_element_name.setAttribute("class", "fw-bold mb-0")
-    p_element_name.textContent = from_who
+    p_element_name.textContent = user_with
+    p_element_message.id = chat_id
     p_element_message.setAttribute("class", "small text-muted")
     p_element_message.textContent = last_message
     div_element_chat_pt_time.setAttribute("class", "pt-1")
@@ -78,6 +79,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                 data.messages.forEach(function (entry) {
                     let li_item = getLiItem(entry)
                     ul_chat_item.appendChild(li_item)
+
                 })
           }
         })
@@ -107,6 +109,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
                     success: function (data){
                         textarea.value = ""
                         ul_chat_item.appendChild(getLiItem(data))
+                        p_element_message.textContent = data.msg_text
                     }
                 })
             }
@@ -134,9 +137,10 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
             } )
           } )
           socket.on( 'my response', function( msg ) {
-            console.log( msg )
+
             if( msg.from_who_id === user_with_id && msg.user_with_id === from_who_id ) {
                 ul_chat_item.appendChild(getLiItem(msg))
+                p_element_message.textContent = msg.msg_text
             }
           })
     })
@@ -173,7 +177,6 @@ function click(e) {
   }
 }
 function getLiItem(message){
-
     let div_w_100 = document.createElement("div")
     let delete_item = document.createElement('button');
     delete_item.textContent = "✖"
@@ -194,8 +197,8 @@ function getLiItem(message){
     div_w_100.addEventListener("contextmenu", function (e) {
         p_item_text.contentEditable = "false"
         event.preventDefault()
-        document.querySelector(".menu_board_detail")?.remove()
-        document.querySelector(".menu_board_detail2")?.remove()
+        document.querySelector(".menu_board_detail_message")?.remove()
+        document.querySelector(".menu_board_detail_message2")?.remove()
         document.addEventListener("click", click)
         let div_menu_board_detail = document.createElement("div")
         let ul_drop_item = document.createElement("ul")
@@ -238,6 +241,7 @@ function getLiItem(message){
           button_link.addEventListener("click", function () {
               p_item_text.contentEditable = "false"
               div_menu_board_detail_dop.remove()
+
               $.ajax({
                 url: '/update_message/' + message.msg_id,
                 method: "post",
@@ -292,6 +296,7 @@ function getLiItem(message){
     div_card_header_item.setAttribute("class", "card-header d-flex justify-content-between p-3")
     p_item_name.setAttribute("class", "fw-bold mb-0")
     p_item_name.textContent = message.msg_from
+
     p_item_time.setAttribute("class", "text-muted small mb-0")
 
     let time = new Intl.DateTimeFormat('ru', {weekday: 'long'}).format(new Date(message.msg_date))

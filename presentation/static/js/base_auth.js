@@ -247,6 +247,9 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, chec
         contentType:'application/json',
         data: JSON.stringify({"msg_text": textarea.value, "msg_to": user_with_id}),
         success: function(data){
+          p2.textContent = data.msg_text
+          span.textContent = from_who + ":"
+
           textarea.value = ""
           div_card_body.appendChild(chat_message_div(data))
         },
@@ -275,9 +278,11 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, chec
     } )
   } )
   socket.on( 'my response', function( msg ) {
-    console.log( msg )
+
     if( msg.from_who_id === user_with_id && msg.user_with_id === from_who_id ) {
         div_card_body.appendChild(chat_message_div(msg))
+        span.textContent = user_with + ":"
+        p2.textContent = msg.msg_text
     }
   })
 
