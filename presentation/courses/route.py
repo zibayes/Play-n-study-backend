@@ -5,7 +5,8 @@ import shutil
 import time
 import json
 from pathlib import Path
-
+from typing import Optional
+import re
 from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
@@ -22,6 +23,7 @@ from markdown import markdown
 from access import check_curator_access, check_subscriber_access, check_test_access, \
     check_article_access, check_link_access, check_file_attach_access, check_forum_access, \
     check_achievements_conditions
+from settings import MAX_COURSE_NAME_LEN
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -58,8 +60,11 @@ def handle_course_summary(course_id):
     units_cur, units_max, marks, max_marks, total, total_max, leaders_total_score, \
         graphic_data, leaders_to_show, leaders_hrefs, friends = get_course_summary(course, progresses, user)
     return render_template('course_summary.html', user=user, course=course, results=results, units_cur=units_cur,
-                           units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max, leaders_total_score=leaders_total_score,
-                           graphic_data=graphic_data, leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
+                           units_max=units_max, marks=marks, max_marks=max_marks, total=total, total_max=total_max,
+                           leaders_total_score=leaders_total_score,
+                           graphic_data=graphic_data,
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)),
+                           leaders_hrefs=leaders_hrefs, friends=friends)
 
 
 @login_required
@@ -87,7 +92,8 @@ def handle_course_achievements(course_id):
     for ach in achivements:
         conditions = ach.condition.split(']][[')
         reached = logic.achive_rel_exist(ach.ach_id, user.user_id)
-        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': [], 'reached': reached}
+        ach_to_add = {'ach_id': ach.ach_id, 'name': ach.name, 'description': ach.description, 'conditions': [],
+                      'reached': reached}
         for cond in conditions:
             condition = {}
             cond = cond.replace('[[', '').replace(']]', '')
@@ -267,7 +273,7 @@ def handle_course_save_achievement(course_id, ach_id):
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     else:
-        avatar =logic.get_achievement_by_id(ach_id).image
+        avatar = logic.get_achievement_by_id(ach_id).image
     conditions = request.form.getlist('condition')
     task_categories = request.form.getlist('task_category')
     value_amounts = request.form.getlist('value_amount')
@@ -356,10 +362,14 @@ def handle_test_preview(course_id, test_id):
     user = logic.get_user_by_id(user_id)
     unit_name = get_unit_name(course, test_id, 'test')
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_test_preview(progress, course_id, test_id, user)
-    return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
-                           progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
-                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
+    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_test_preview(
+        progress, course_id, test_id, user)
+    return render_template("test_preview.html", user=user, test=test, course=course, unit_name=unit_name,
+                           max_score_total=max_score_total, leaders_total_score=leaders_total_score,
+                           progresses=progress, max_score=max_score,
+                           graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)),
+                           leaders_hrefs=leaders_hrefs, friends=friends)
 
 
 @login_required
@@ -517,12 +527,29 @@ def handle_update_course(course_id):
     return redirect(f'/course_editor/{course_id}')
 
 
+def get_wrong_field_msg(user, fields) -> Optional[str]:
+    course_names = [course.name for course in user.courses if course.name == fields[0]]
+    for field in fields:
+        if len(field) > MAX_COURSE_NAME_LEN:
+            return f'Длина должна быть меньше {MAX_COURSE_NAME_LEN} символов'
+        elif not re.match("^[a-zA-Z0-9_-]*$", field):
+            return f'Слова не могут быть составлены из специальных символов'
+        elif course_names:
+            return f'Курс с названием {fields[0]} уже создан'
+    return None
+
+
 @login_required
 @courses_bp.route('/create_course/<int:user_id>', methods=['POST'])
 def handle_course_create(user_id):
+    user = logic.get_user_for_courses(user_id)
     course_name = request.form['courseName']
     course_desc = request.form['description']
     course_cat = request.form['category']
+    error = get_wrong_field_msg(user, [course_name, course_desc, course_cat])
+    if error is not None:
+        flash(error, 'error')
+        return redirect(f"/courses/{user_id}")
     if request.files:
         course_ava = request.files['file']
     else:
@@ -574,7 +601,7 @@ def handle_article_editor(course_id, article_id):
     user = logic.get_user_by_id(current_user.get_id())
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
-    unit_name= get_unit_name(course, article_id, 'article')
+    unit_name = get_unit_name(course, article_id, 'article')
     return render_template('article_editor.html', user=user, course_id=course_id, course=course,
                            article=article, unit_name=unit_name)
 
@@ -591,7 +618,8 @@ def handle_article_update(course_id, article_id):
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, name=request.form['articleName'],
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id,
+                      name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=None)
     response = logic.update_article(article, course_id, unit_id, 'article')
     if response == 'success':
@@ -621,7 +649,8 @@ def handle_article_save(course_id, unit_id):
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, name=request.form['articleName'],
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text,
+                      name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=None)
     response = logic.article_add_article(article, course_id, unit_id, 'article')
     if response[1] == 'success':
@@ -809,7 +838,8 @@ def handle_topic_send_message(course_id, forum_id, ft_id):
             key = None
         else:
             key = key[8:]
-        message = TopicMessage(tm_id=None, ft_id=ft_id, parent_tm_id=key, user_id=current_user.get_id(), tm_date=None, content=value)
+        message = TopicMessage(tm_id=None, ft_id=ft_id, parent_tm_id=key, user_id=current_user.get_id(), tm_date=None,
+                               content=value)
     logic.add_topic_message(message)
 
     task_type = 'forum'
@@ -893,7 +923,8 @@ def handle_send_forum_topic_check(course_id, forum_id, ft_id):
                 progress.progress['result'] = TestResult(logic.forum_get_by_id(forum_id).score,
                                                          float(mark), None, None).to_json()
                 progress.progress = Progress.to_json(
-                    Progress(None, progress.progress['test_id'], progress.progress['type'], #progress.progress['progress_id']
+                    Progress(None, progress.progress['test_id'], progress.progress['type'],
+                             # progress.progress['progress_id']
                              progress.progress['completed'], progress.progress['result'],
                              progress.progress['content']))
                 logic.update_progress(progress)
@@ -919,7 +950,8 @@ def handle_load_forum_topic_check(course_id, forum_id, ft_id):
     course = logic.get_course(course_id, user.user_id)
     unit_name = get_unit_name(course, forum_id, 'forum')
     return render_template('forum_check.html', user=user, course=course, forum=forum, nesting_level=nesting_level,
-                           topic=topic, unit_name=unit_name, messages=messages_ordered, users=users, users_score=users_score)
+                           topic=topic, unit_name=unit_name, messages=messages_ordered, users=users,
+                           users_score=users_score)
 
 
 @login_required
@@ -981,7 +1013,8 @@ def handle_link_update(course_id, link_id):
     avatar = logic.link_get_by_id(link_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    link = Link(link_id=link_id, course_id=course_id, unit_id=unit_id, name=request.form['linkName'], link=request.form['link'], avatar=avatar)
+    link = Link(link_id=link_id, course_id=course_id, unit_id=unit_id, name=request.form['linkName'],
+                link=request.form['link'], avatar=avatar)
     response = logic.update_link(link)
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -997,7 +1030,8 @@ def handle_link_save(course_id, unit_id):
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    link = Link(link_id=None, course_id=course_id, unit_id=unit_id, name=request.form['linkName'], link=request.form['link'], avatar=avatar)
+    link = Link(link_id=None, course_id=course_id, unit_id=unit_id, name=request.form['linkName'],
+                link=request.form['link'], avatar=avatar)
     response = logic.link_add_link(link, course_id, unit_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -1026,7 +1060,8 @@ def handle_file_attach_save(course_id, unit_id):
     avatar = None
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text, name=request.form['articleName'],
+    article = Article(article_id=None, course_id=course_id, unit_id=unit_id, content=article_text,
+                      name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
     response = logic.article_add_article(article, course_id, unit_id, 'file_attach')
     if response[1] == 'success':
@@ -1061,7 +1096,8 @@ def handle_file_attach_update(course_id, article_id):
     avatar = logic.article_get_by_id(article_id).avatar
     if request.files['file']:
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
-    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id, name=request.form['articleName'],
+    article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id,
+                      name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
     response = logic.update_article(article=article, course_id=course_id, unit_id=unit_id, task_type='file_attach')
     if response == 'success':
@@ -1081,10 +1117,14 @@ def handle_file_attach_preview(course_id, article_id):
     user = logic.get_user_by_id(user_id)
     unit_name = get_unit_name(course, article_id, 'file_attach')
     progress = logic.get_progress_by_user_course_ids_all(user_id, course_id)
-    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_file_attach_preview(progress, course_id, article_id, user)
-    return render_template("file_attach_preview.html", user=user, article=article, course=course, unit_name=unit_name, max_score_total=max_score_total, leaders_total_score=leaders_total_score,
-                           progresses=progress, max_score=max_score, graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
-                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)), leaders_hrefs=leaders_hrefs, friends=friends)
+    max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends = get_file_attach_preview(
+        progress, course_id, article_id, user)
+    return render_template("file_attach_preview.html", user=user, article=article, course=course, unit_name=unit_name,
+                           max_score_total=max_score_total, leaders_total_score=leaders_total_score,
+                           progresses=progress, max_score=max_score,
+                           graphic_data=dict(sorted(graphic_data.items(), key=lambda item: item[0], reverse=False)),
+                           leaders=dict(sorted(leaders_to_show.items(), key=lambda item: item[1], reverse=True)),
+                           leaders_hrefs=leaders_hrefs, friends=friends)
 
 
 @login_required
@@ -1101,7 +1141,7 @@ def handle_show_file_attach_result(course_id, article_id, progress_id):
     progress.progress = Progress.from_json(progress.progress)
     result = json.loads(progress.progress['content'])
     for file in result:
-        file['name'] = file['file_path'][file['file_path'].rfind('/')+1:]
+        file['name'] = file['file_path'][file['file_path'].rfind('/') + 1:]
         file[0] = file['file_path'][file['file_path'].rfind('static'):]
     # result = TestResult.from_json(json.loads(progress.progress['result']))
     # todo: передавать score, result, total_score, total_time - объект result и парсить его шаблонизатором
@@ -1140,12 +1180,14 @@ def handle_file_attach_check_preview(course_id, article_id):
                 users[progress[i].user_id] = username
 
     unit_name = get_unit_name(course, article_id, 'file_attach')
-    return render_template('file_attach_check_preview.html', user=user, article=article, course=course, progresses=progress,
+    return render_template('file_attach_check_preview.html', user=user, article=article, course=course,
+                           progresses=progress,
                            users=users, unit_name=unit_name)
 
 
 @login_required
-@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>', methods=["GET"])
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>',
+                  methods=["GET"])
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_file_attach_check(course_id, article_id, progress_id):
@@ -1171,7 +1213,8 @@ def handle_file_attach_check(course_id, article_id, progress_id):
 
 
 @login_required
-@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>', methods=["POST"])
+@courses_bp.route('/course_editor/<int:course_id>/file_attach_check/<int:article_id>/<int:progress_id>',
+                  methods=["POST"])
 @check_curator_access(current_user)
 @check_subscriber_access(current_user)
 def handle_file_attach_check_over(course_id, article_id, progress_id):
@@ -1269,7 +1312,8 @@ def handle_edit_test(course_id, test_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = get_unit_name(course, test_id, 'test')
-    return render_template('test_editor.html', user=user, test_id=test_id, test_tmp=test, test=test.content, course=course, unit_name=unit_name)
+    return render_template('test_editor.html', user=user, test_id=test_id, test_tmp=test, test=test.content,
+                           course=course, unit_name=unit_name)
 
 
 @login_required
@@ -1307,7 +1351,8 @@ def handle_check_test(course_id, test_id):
     _, completed = get_test(test, shuffle=False)
     progress = Progress(progress_id=None, completed=completed, type=task_type,
                         content=test.content.toJSON(), test_id=test_id, result=result.to_json())
-    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type=task_type, task_id=test_id, progress=Progress.to_json(progress))
+    logic.add_progress(course_id=course_id, user_id=user.user_id, task_type=task_type, task_id=test_id,
+                       progress=Progress.to_json(progress))
     progress = logic.get_last_progress_by_task(user.user_id, course_id, test_id, task_type)
     return redirect(f'/course/{course_id}/test_result/{test_id}/{progress.up_id}')
 
@@ -1326,7 +1371,8 @@ def handle_check_article(course_id, article_id):
     if need_to_add is True:
         progress = Progress(progress_id=None, completed=True, type='article',
                             content=None, test_id=article_id, result=None)
-        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='article', task_id=article_id, progress=Progress.to_json(progress))
+        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='article', task_id=article_id,
+                           progress=Progress.to_json(progress))
     return redirect(f'/course/{course_id}')
 
 
@@ -1344,7 +1390,8 @@ def handle_use_link(course_id, link_id):
     if need_to_add is True:
         progress = Progress(progress_id=None, completed=True, type='link',
                             content=None, test_id=link_id, result=None)
-        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='link', task_id=link_id, progress=Progress.to_json(progress))
+        logic.add_progress(course_id=course_id, user_id=user.user_id, task_type='link', task_id=link_id,
+                           progress=Progress.to_json(progress))
     link = logic.link_get_by_id(link_id)
     return redirect(link.link)
 
@@ -1438,7 +1485,7 @@ def handle_test_check_over(course_id, test_id, progress_id):
                          False)
     logic.add_notification(notif)
     return redirect(f'/course_editor/{course_id}/tests_check/{test_id}')
-    #return render_template('test_check.html', user=user, test=test,
+    # return render_template('test_check.html', user=user, test=test,
     #                       score=result.total_score,
     #                       total_score=result.total_current_score, result=result.result, total_time=result.total_time)
 

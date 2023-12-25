@@ -50,6 +50,9 @@
                 {% endfor %}
             {% endif %}
                     <hr>
+            {% for msg in get_flashed_messages() %}
+                <div class="flash-error" style="color: red">{{msg}}</div>
+            {% endfor %}
             {% if user.courses and not found %}
                 <p class="mt-2 lang" key="users_courses">Пользовательские курсы</p>
                 {% for course in user.courses %}
