@@ -102,9 +102,10 @@ def handle_profile(user_id):
         is_admin = 'admin' in roles
     else:
         is_admin = False
-    user = logic.get_user_for_profile(user_id, current_user.get_id())
-    return render_template("profile.html", user=user,
-                           need_subscribe=user.need_subscribe, is_me=user.is_me, is_admin=is_admin)
+    user_to_show = logic.get_user_for_profile(user_id, current_user.get_id())
+    user = logic.get_user_by_id(current_user.get_id())
+    return render_template("profile.html", user=user, user_to_show=user_to_show,
+                           need_subscribe=user_to_show.need_subscribe, is_me=user_to_show.is_me, is_admin=is_admin)
 
 
 @pages_bp.route('/add_admin/<int:user_id>')
@@ -134,6 +135,21 @@ def handle_subscriptions(user_id):
             return render_template("subscriptions.html", user=User(), found=found, user_id=user_id)
     return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
 
+
+@login_required
+@pages_bp.route('/subscribers/<int:user_id>', methods=["POST", "GET"])
+def handle_subscribers(user_id):
+    if request.method == "GET":
+        user = logic.get_user_for_profile(user_id, current_user.get_id())
+        return render_template('subscribers.html', user=user, user_id=user_id)
+    elif request.method == "POST":
+        query = request.form['query']
+        if len(query) > 0:
+            found = logic.get_users_by_query(query)
+            return render_template("subscribers.html", user=User(), found=found, user_id=user_id)
+    return render_template("subscribers.html", user=User(), found=None, user_id=user_id)
+
+
 @pages_bp.route('/reviews')
 def handle_reviews():
     user = logic.get_user_by_id(current_user.get_id())
@@ -145,3 +161,31 @@ def handle_information():
     user = logic.get_user_by_id(current_user.get_id())
     print(request)
     return render_template('information.html', user=user)
+
+
+@pages_bp.route('/remove_notification/<int:notif_id>', methods=['POST'])
+def handle_remove_notification(notif_id):
+    response = logic.remove_notification(notif_id)
+    if response:
+        return 'notification removed'
+    return 'notification remove failed'
+
+
+@pages_bp.route('/remove_all_notifications/<int:user_id>', methods=['POST'])
+def handle_remove_all_notifications(user_id):
+    response = logic.remove_all_notifications_by_user_id(user_id)
+    if response:
+        return 'notifications removed'
+    return 'notifications remove failed'
+
+
+@pages_bp.route('/read_notifications/<int:user_id>', methods=['POST'])
+def handle_read_notifications(user_id):
+    notifications = logic.get_all_notifications_by_user_id(user_id)
+    if notifications:
+        for notif in notifications:
+            notif.user_to_read = True
+            response = logic.update_notification(notif)
+            if not response:
+                return 'notifications read failed'
+    return 'notifications read'

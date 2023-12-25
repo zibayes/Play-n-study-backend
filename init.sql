@@ -1,3 +1,4 @@
+-- DROP TABLE  notifications CASCADE;
 -- DROP TABLE  users_progress CASCADE;
 -- DROP TABLE  topic_messages CASCADE;
 -- DROP TABLE  forum_topics CASCADE;
@@ -188,6 +189,15 @@ CREATE TABLE chat_messages(
     msg_date timestamp DEFAULT now(),
     msg_from int REFERENCES users(user_id),
     msg_to int REFERENCES users(user_id),
-	user_to_read boolean DEFAULT FALSE -- NEW!
+	user_to_read boolean DEFAULT FALSE
 );
 
+CREATE TABLE notifications(
+    notif_id serial PRIMARY KEY,
+    user_id integer REFERENCES users(user_id),
+    notif_title text,
+    notif_text text,
+    notif_link text,
+    receive_date timestamp DEFAULT now(),
+	user_to_read boolean DEFAULT FALSE
+);

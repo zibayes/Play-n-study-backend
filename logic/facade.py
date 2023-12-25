@@ -552,3 +552,21 @@ class LogicFacade:
 
     def remove_chat(self, chat_id):
         return self.data.remove_chat(chat_id)
+
+    def add_notification(self, notification):
+        return self.data.add_notification(notification)
+
+    def get_notification_by_id(self, notif_id):
+        return self.data.get_notification_by_id(notif_id)
+
+    def get_all_notifications_by_user_id(self, user_id):
+        return self.data.get_all_notifications_by_user_id(user_id)
+
+    def remove_notification(self, notif_id):
+        return self.data.remove_notification(notif_id)
+
+    def remove_all_notifications_by_user_id(self, notif_id):
+        return self.data.remove_all_notifications_by_user_id(notif_id)
+
+    def update_notification(self, notif_id):
+        return self.data.update_notification(notif_id)

@@ -617,6 +617,11 @@ export let arrLang = {
     "achievement_condition_demand": "Для получения достижения необходимо:",
 
     "show_tasks": "Задания курса",
+
+    "no_notifications": "Оповещения отсутствуют",
+
+    "subscribers_": "Подписчики",
+    "my_subscribers": "Мои подписчики",
   },
   'de': {
     'mainpage': 'Startseite',

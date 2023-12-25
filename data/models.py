@@ -411,3 +411,21 @@ class TopicMessagesModel(Base):
         self.user_id = user_id
         self.tm_date = tm_date
         self.content = content
+
+class NotificationsModel(Base):
+    __tablename__ = 'notifications'
+    notif_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    notif_title = Column(Text)
+    notif_text = Column(Text)
+    notif_link = Column(Text)
+    receive_date = Column(TIMESTAMP, server_default=func.now())
+    user_to_read = Column(Boolean, default=False)
+
+    def __init__(self, user_id, notif_title, notif_text, notif_link, receive_date, user_to_read):
+        self.user_id = user_id
+        self.notif_title = notif_title
+        self.notif_text = notif_text
+        self.receive_date = receive_date
+        self.notif_link = notif_link
+        self.user_to_read = user_to_read

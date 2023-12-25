@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum, ForumTopic, TopicMessage, \
-    Achievement
+    Achievement, Notification
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
@@ -65,6 +65,7 @@ def handle_course_summary(course_id):
 @login_required
 @courses_bp.route('/course_achievements/<int:course_id>', methods=['GET'])
 @check_subscriber_access(current_user)
+@check_achievements_conditions(current_user)
 def handle_course_achievements(course_id):
     achivements = logic.get_achievements_by_course_id(course_id)
     achs = []
@@ -896,6 +897,13 @@ def handle_send_forum_topic_check(course_id, forum_id, ft_id):
                              progress.progress['completed'], progress.progress['result'],
                              progress.progress['content']))
                 logic.update_progress(progress)
+                forum = logic.forum_get_by_id(forum_id)
+                course = logic.get_course_without_rel(course_id)
+                notif = Notification(None, progress.user_id, 'Работа проверена!',
+                                     'Куратор проверил ваш ответ на форуме «' + forum.name + '» на курсе ' + course.name,
+                                     '/course/' + str(progress.course_id) + '/forum_list/' + str(
+                                         progress.task_id), None, False)
+                logic.add_notification(notif)
     return redirect(f'/course_editor/{course_id}/forum_check/{forum_id}')
 
 
@@ -1174,6 +1182,12 @@ def handle_file_attach_check_over(course_id, article_id, progress_id):
                                                   progress.progress['completed'], progress.progress['result'],
                                                   progress.progress['content']))
     logic.update_progress(progress)
+    file_attach = logic.article_get_by_id(progress.task_id)
+    course = logic.get_course_without_rel(course_id)
+    notif = Notification(None, progress.user_id, 'Работа проверена!',
+                         'Куратор проверил ваш ответ на задание «' + file_attach.content.name + '» на курсе ' + course.name,
+                         '/course/' + str(progress.course_id) + '/file_attach_preview/' + str(progress.task_id), None, False)
+    logic.add_notification(notif)
     return redirect(f'/course_editor/{course_id}/file_attach_check/{article_id}')
 
 
@@ -1416,6 +1430,13 @@ def handle_test_check_over(course_id, test_id, progress_id):
     progress = logic.get_progress_by_id(progress_id)
     check_test_over(progress, request)
     logic.update_progress(progress)
+    course = logic.get_course_without_rel(course_id)
+    test = logic.get_test_by_id(progress.task_id)
+    notif = Notification(None, progress.user_id, 'Работа проверена!',
+                         'Куратор проверил ваш ответ на тест «' + test.content.name + '» на курсе ' + course.name, '/course/' +
+                         str(progress.course_id) + '/test_preview/' + str(progress.task_id), None,
+                         False)
+    logic.add_notification(notif)
     return redirect(f'/course_editor/{course_id}/tests_check/{test_id}')
     #return render_template('test_check.html', user=user, test=test,
     #                       score=result.total_score,
@@ -1426,6 +1447,7 @@ def handle_test_check_over(course_id, test_id, progress_id):
 @courses_bp.route('/course_preview/<int:course_id>')
 def handle_course(course_id):
     user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
     course = logic.course_get_for_preview(course_id, user_id)
     reviews = logic.get_reviews_by_course_id(course_id)
     average_rate = 0
@@ -1448,7 +1470,7 @@ def handle_course(course_id):
     if reviews:
         for review in reviews:
             users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
-    return render_template('course.html', course=course, reviews=reviews, users_for_review=users_for_review,
+    return render_template('course.html', user=user, course=course, reviews=reviews, users_for_review=users_for_review,
                            user_review=user_review, average_rate=round(average_rate, 1), is_curator=is_curator)
 
 
@@ -1472,13 +1494,14 @@ def handle_rate_course(course_id):
 @login_required
 @courses_bp.route('/course_preview/<int:course_id>/reviews')
 def handle_reviews(course_id):
+    user = logic.get_user_by_id(current_user.get_id())
     reviews = logic.get_reviews_by_course_id(course_id)
     course = logic.get_course_without_rel(course_id)
     users_for_review = {}
     if reviews:
         for review in reviews:
             users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
-    return render_template('reviews.html', course=course, reviews=reviews, users_for_review=users_for_review)
+    return render_template('reviews.html', user=user, course=course, reviews=reviews, users_for_review=users_for_review)
 
 
 @courses_bp.route('/course_participants/<int:course_id>')
@@ -1501,7 +1524,8 @@ def handle_participants(course_id):
             participant.is_curator = True
         else:
             participant.is_curator = False
-    return render_template('participants.html', course=course, participants=participants, is_curator=is_curator)
+    return render_template('participants.html', user=user, course=course,
+                           participants=participants, is_curator=is_curator)
 
 
 @login_required

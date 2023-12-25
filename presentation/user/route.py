@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from logic.facade import LogicFacade
+from data.types import Notification
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -22,6 +23,10 @@ user_bp = Blueprint('user', __name__)
 def handle_subscribe(user_id):
     response = logic.add_sub_relation(user_id, current_user.get_id())
     if response:
+        username = logic.get_user_by_id(current_user.get_id()).username
+        notif = Notification(None, user_id, 'Новый подписчик!',
+                             'На вас подписался пользователь ' + username, '/profiles/' + str(current_user.get_id()), None, False)
+        logic.add_notification(notif)
         return redirect(f"/profiles/{user_id}")
     else:
         flash('Ошибка при подписке', 'error')

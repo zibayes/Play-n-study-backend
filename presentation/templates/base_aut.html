@@ -39,7 +39,6 @@
 <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.1/emojionearea.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
 
 
@@ -131,30 +130,77 @@
       </div>
 
       <!-- Notifications -->
-      <div class="dropdown" style="padding-left: 10px">
+      <div class="dropdown" style="padding-left: 10px" onclick="read_notifs()">
+        <script>
+          function read_notifs(){
+            document.getElementById("notifications_count").textContent = 0;
+            $.ajax({
+              url: '/read_notifications/' + `{{ user.user_id }}`,
+              method: 'post',
+              dataType: 'json',
+            })
+          }
+        </script>
         <a class="text-reset me-3 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-bell"></i>
-          <span class="badge rounded-pill badge-notification bg-danger">1</span>
+          {% set notifications_count = user.notifications_count %}
+          <span class="badge rounded-pill badge-notification bg-danger" id="notifications_count">{{user.notifications_count}}</span>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-          <li>
-            <a class="dropdown-item" href="#">0</a>
+        <ul id="all_notifs" class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink" style="overflow-y:scroll; max-height: 420px;">
+          {% if user.notifications %}
+            {% for notification in user.notifications %}
+              <li  style="position: relative; max-width: 450px;">
+                <div style="position:absolute;top:2px; right:3px">
+                    <button id="remove-notif-{{notification.notif_id}}" style="background: transparent; border: transparent;" type="button" onclick="del_notif(this)">
+                        ✖
+                    </button>
+                    <script>
+                      function del_notif (elem) {
+                        $.ajax({
+                          url: '/remove_notification/' + elem.id.substring(13),
+                          method: 'post',
+                          dataType: 'json',
+                        })
+                        elem.parentElement.parentElement.remove()
+                      }
+                    </script>
+                  </div>
+                <a class="dropdown-item {% if notification.user_to_read %} active {% endif %}" href="{{notification.notif_link}}">
+                  <!--{% if not notification.user_to_read %} style="background: #80008014;" {% endif %}-->
+                  <strong>{{ notification.notif_title }}</strong>
+                  <br>
+                  {{ notification.notif_text }}
+                  <br>
+                  <div align="right">
+                    <i>{{ notification.receive_date.year }}-{{ notification.receive_date.month }}-{{ notification.receive_date.day }} {{ notification.receive_date.hour }}:{{ notification.receive_date.minute }}</i>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          <li  style="position: relative; max-width: 450px; cursor: pointer">
+            <div align="center">
+              <a class="dropdown-item" onclick="del_all_notif()">
+                Удалить все оповещения
+              </a>
+            </div>
           </li>
-          <li>
-            <a class="dropdown-item" href="#">1</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">2</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">3</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">4</a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">5</a>
-          </li>
+          <script>
+            function del_all_notif() {
+              $.ajax({
+                url: '/remove_all_notifications/' + `{{ user.user_id }}`,
+                method: 'post',
+                dataType: 'json',
+              })
+              document.getElementById("all_notifs").innerHTML = `<li>
+              <a class="dropdown-item lang" key="no_notifications" href="#">Оповещения отсутствуют</a>
+            </li>`
+            }
+          </script>
+          {% else %}
+            <li>
+              <a class="dropdown-item lang" key="no_notifications" href="#">Оповещения отсутствуют</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
       <div style="padding: 10px">

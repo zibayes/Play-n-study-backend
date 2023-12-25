@@ -174,3 +174,13 @@ def topic_message_db_to_topic_message(topic_message: Type[ForumTopicsModel]):
                  user_id=topic_message.user_id,
                  tm_date=topic_message.tm_date,
                  content=topic_message.content)
+
+
+def notification_db_to_notification(notification: Type[NotificationsModel]):
+    return Notification(notif_id=notification.notif_id,
+                 user_id=notification.user_id,
+                 notif_title=notification.notif_title,
+                 notif_text=notification.notif_text,
+                 notif_link=notification.notif_link,
+                 receive_date=notification.receive_date,
+                 user_to_read=notification.user_to_read)

@@ -21,6 +21,8 @@ class User:
         self.subs_count = 0
         self.sub_to = None
         self.sub_to_count = 0
+        self.notifications = None
+        self.notifications_count = 0
 
 
 class Achievement:
@@ -553,3 +555,14 @@ class TopicMessage:
         self.user_id = user_id
         self.tm_date = tm_date
         self.content = content
+
+
+class Notification:
+    def __init__(self, notif_id, user_id, notif_title, notif_text, notif_link, receive_date, user_to_read):
+        self.notif_id = notif_id
+        self.user_id = user_id
+        self.notif_title = notif_title
+        self.notif_text = notif_text
+        self.notif_link = notif_link
+        self.receive_date = receive_date
+        self.user_to_read = user_to_read

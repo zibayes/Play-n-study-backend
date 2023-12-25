@@ -21,9 +21,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center" style="padding: 55px 0">
                                 <div class="d-flex align-items-center">
-                                    <img src="/userava/{{user.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+                                    <img src="/userava/{{user_to_show.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
                                     <div class="ms-4">
-                                        <p class="fw-bold mb-1">{{ user.username }}</p>
+                                        <p class="fw-bold mb-1">{{ user_to_show.username }}</p>
                                         {% if is_admin %}
                                             <p class="fw-bold mb-1 lang" key="admin" style="color: red;">АДМИНИСТРАТОР</p>
                                         {% endif %}
@@ -31,33 +31,33 @@
                                     </div>
                                 </div>
                                 {% if not is_me and need_subscribe %}
-                                        <form action="/subscribe/{{user.user_id}}">
+                                        <form action="/subscribe/{{user_to_show.user_id}}">
                                             <div id="div_element_button">
                                                 <button type="submit" class="btn btn-outline-dark btn-rounded lang" key="subscribe" id="subscribe-button">Подписаться</button>
                                             </div>
                                         </form>
                                 {% elif not is_me and not need_subscribe%}
-                                        <form action="/unsubscribe/{{user.user_id}}">
+                                        <form action="/unsubscribe/{{user_to_show.user_id}}">
                                             <div id="div_element_button">
                                                 <button class="btn btn-outline-dark btn-rounded lang" id="subscribe-button" key="unsubscribe" style="display: inline-block;">Отписаться</button>
                                             </div>
                                         </form>
                                 {% endif %}
                                 {% if not is_me %}
-                                    <form method="POST" action="/start_dialog/{{user.user_id}}">
+                                    <form method="POST" action="/start_dialog/{{user_to_show.user_id}}">
                                         <div id="div_element_button">
                                             <button class="btn btn-outline-dark btn-rounded lang" id="write_message" key="write_message" style="display: inline-block;">Написать сообщение</button>
                                         </div>
                                     </form>
                                 {% endif %}
                                 {% if is_me and not is_admin %}
-                                    <form action="/add_admin/{{user.user_id}}">
+                                    <form action="/add_admin/{{user_to_show.user_id}}">
                                         <div id="div_element_button">
                                             <button class="btn btn-outline-dark btn-rounded lang" id="add-admin-button" key="give_admin"  style="display: inline-block;">Выдать полномочия администратора</button>
                                         </div>
                                     </form>
                                 {% elif is_me and is_admin %}
-                                    <form action="/remove_admin/{{user.user_id}}">
+                                    <form action="/remove_admin/{{user_to_show.user_id}}">
                                         <div id="div_element_button">
                                             <button class="btn btn-outline-dark btn-rounded lang" id="remove-admin-button" key="remove_admin"  style="display: inline-block;">Низложить полномочия администратора</button>
                                         </div>
@@ -78,8 +78,8 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-3">
-                                        <a class="row m-1 lang" key="subscriptions" style="color: #676767" href="/subscriptions/{{user.user_id}}">
-                                            Подписки
+                                        <a class="row m-1 lang" key="subscribers_" style="color: #676767" href="/subscribers/{{user_to_show.user_id}}">
+                                            Подписчики
                                         </a>
                                     </div>
                                 </div>
@@ -87,11 +87,11 @@
                                 <div class="row text-center ">
 
 
-                                {% if user.sub_to %}
-                                        {% for sub_to in user.sub_to %}
-                                        <a href="/profiles/{{sub_to.user_id}}" class="col-md-3 scale text-muted"  name="element">
-                                            <img src="/userava/{{sub_to.user_id}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
-                                            <p class="m-2">{{sub_to.username}}</p>
+                                {% if user_to_show.subs %}
+                                        {% for sub in user_to_show.subs %}
+                                        <a href="/profiles/{{sub.user_id}}" class="col-md-3 scale text-muted"  name="element">
+                                            <img src="/userava/{{sub.user_id}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            <p class="m-2">{{sub.username}}</p>
                                         </a>
                                         {% endfor %}
                                 {% endif %}
@@ -106,12 +106,12 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-md-8 mb-8">
+                <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-2">
-                                    <a class="row m-1 lang" key="participant_in" style="color: #676767" href="/courses/{{user.user_id}}">
+                                <div class="col-4">
+                                    <a class="row m-1 lang" key="participant_in" style="color: #676767" href="/courses/{{user_to_show.user_id}}">
                                         Участник в
                                     </a>
                                 </div>
@@ -119,8 +119,8 @@
                             <hr class="hr" />
                             <div class="row">
                                 <div class="col-md-12">
-                                    {% if user.courses %}
-                                        {% for course in user.courses %}
+                                    {% if user_to_show.courses %}
+                                        {% for course in user_to_show.courses %}
                                             <div class="d-flex align-items-center scale2" style="padding: 10px 0">
                                                 {% if course.avatar %}
                                                     <img src="/courseava/{{ course.course_id }}" alt="course avatar" style="width: 60px; height: 60px" class="rounded-circle"/>
@@ -144,7 +144,7 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col-2">
-                                        <a class="row m-1 lang" key="achievements" style="color: #676767" href="/achievements/{{user.user_id}}">
+                                        <a class="row m-1 lang" key="achievements" style="color: #676767" href="/achievements/{{user_to_show.user_id}}">
                                             Достижения
                                         </a>
                                     </div>
@@ -153,14 +153,42 @@
                                 <hr class="hr" />
                                 <div class="row text-center">
 
-                                    {% if user.achievements %}
-                                        {% for achievement in user.achievements %}
+                                    {% if user_to_show.achievements %}
+                                        {% for achievement in user_to_show.achievements %}
                                         <div class="col-md-4 scale">
                                             <img src="/achievementava/{{ achievement.ach_id }}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
                                             <p class="m-2">{{achievement.name}}</p>
                                         </div>
                                         {% endfor %}
                                     {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <a class="row m-1 lang" key="subscriptions" style="color: #676767" href="/subscriptions/{{user_to_show.user_id}}">
+                                            Подписки
+                                        </a>
+                                    </div>
+                                </div>
+                                <hr class="hr" />
+                                <div class="row text-center ">
+
+
+                                {% if user_to_show.sub_to %}
+                                        {% for sub_to in user_to_show.sub_to %}
+                                        <a href="/profiles/{{sub_to.user_id}}" class="col-md-3 scale text-muted"  name="element">
+                                            <img src="/userava/{{sub_to.user_id}}" alt="" style="width: 60px; height: 60px" class="rounded-circle"/>
+                                            <p class="m-2">{{sub_to.username}}</p>
+                                        </a>
+                                        {% endfor %}
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -197,7 +225,7 @@
                                 <i class="fas fa-address-book ms-0"></i>
                             </div>
                             <div class="col-5">
-                                <p>id @{{user.user_id}}</p>
+                                <p>id @{{user_to_show.user_id}}</p>
                             </div>
                         </div>
                         <hr class="hr" />
@@ -234,16 +262,16 @@
                                 Город:
                             </div>
                             <div class="col-5">
-                                {{ user.city }}
+                                {{ user_to_show.city }}
                             </div>
                         </div>
                         <hr class="hr" />
                         <div class="row">
                             <div class="col-6">
-                                {{ user.subs_count }} <a style="color: black" class="lang" key="subscribers">подписчиков</a>
+                                {{ user_to_show.subs_count }} <a style="color: black" class="lang" key="subscribers">подписчиков</a>
                             </div>
                             <div class="col-6">
-                                 {{ user.sub_to_count }} <a style="color: black"  class="lang" key="subscriptions_">подписки</a>
+                                 {{ user_to_show.sub_to_count }} <a style="color: black"  class="lang" key="subscriptions_">подписки</a>
                             </div>
                         </div>
                     </div>

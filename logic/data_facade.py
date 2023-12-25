@@ -25,6 +25,7 @@ class DataFacade:
         self.role_repository = RoleRepository(session)
         self.chat_repository = ChatRepository(session)
         self.chat_messages_repository = ChatMessageRepository(session)
+        self.notifications_repository = NotificationsRepository(session)
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -111,10 +112,22 @@ class DataFacade:
 
         user.is_me = is_me
         user.need_subscribe = need_subscribe
+
+        user.notifications = self.get_all_notifications_by_user_id(user_id)
+        if user.notifications:
+            for notif in user.notifications:
+                if not notif.user_to_read:
+                    user.notifications_count += 1
         return user
 
     def get_user_by_id(self, user_id):
-        return self.user_repository.get_user_by_id(user_id)
+        user = self.user_repository.get_user_by_id(user_id)
+        user.notifications = self.get_all_notifications_by_user_id(user_id)
+        if user.notifications:
+            for notif in user.notifications:
+                if not notif.user_to_read:
+                    user.notifications_count += 1
+        return user
 
     def get_user_by_email(self, email):
         return self.user_repository.get_user_by_email(email)
@@ -166,6 +179,11 @@ class DataFacade:
     def get_user_for_courses(self, user_id):
         user = self.user_repository.get_user_by_id(user_id)
         user_relations = self.course_rel_repository.get_course_rels_by_user_id(user_id)
+        user.notifications = self.get_all_notifications_by_user_id(user_id)
+        if user.notifications:
+            for notif in user.notifications:
+                if not notif.user_to_read:
+                    user.notifications_count += 1
         user_courses = []
         if user_relations is not None:
             for relation in user_relations:
@@ -542,3 +560,21 @@ class DataFacade:
         for message in messages:
             self.remove_message(message.msg_id)
         return self.chat_repository.remove_chat(chat_id)
+
+    def add_notification(self, notification):
+        return self.notifications_repository.add_notification(notification)
+
+    def get_notification_by_id(self, notif_id):
+        return self.notifications_repository.get_notification_by_id(notif_id)
+
+    def get_all_notifications_by_user_id(self, user_id):
+        return self.notifications_repository.get_all_notifications_by_user_id(user_id)
+
+    def remove_notification(self, notif_id):
+        return self.notifications_repository.remove_notification(notif_id)
+
+    def remove_all_notifications_by_user_id(self, user_id):
+        return self.notifications_repository.remove_all_notifications_by_user_id(user_id)
+
+    def update_notification(self, notif_id):
+        return self.notifications_repository.update_notification(notif_id)

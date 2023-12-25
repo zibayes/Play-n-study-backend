@@ -1294,3 +1294,76 @@ class TopicMessagesRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка удаления сообщения форума:" + str(e))
             return False
+
+
+class NotificationsRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_notification(self, notification: Notification):
+        try:
+            new_notification = NotificationsModel(
+                user_id = notification.user_id,
+                notif_title = notification.notif_title,
+                notif_text = notification.notif_text,
+                notif_link = notification.notif_link,
+                receive_date = notification.receive_date,
+                user_to_read = notification.user_to_read,
+            )
+            self.session.add(new_notification)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления уведомления в БД " + str(e))
+
+    def get_notification_by_id(self, notif_id):
+        notification_db = self.session.query(NotificationsModel) \
+            .filter_by(notif_id=notif_id) \
+            .first()
+        return convert.notification_db_to_notification(notification_db)
+
+    def get_all_notifications_by_user_id(self, user_id):
+        notifications_db = self.session.query(NotificationsModel) \
+            .filter_by(user_id=user_id) \
+            .order_by(text("receive_date desc")) \
+            .all()
+        return [convert.notification_db_to_notification(i) for i in notifications_db]
+
+    def remove_notification(self, notif_id) -> bool:
+        try:
+            self.session.query(NotificationsModel) \
+                .filter_by(notif_id=notif_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления уведомления:" + str(e))
+            return False
+
+    def remove_all_notifications_by_user_id(self, user_id) -> bool:
+        try:
+            self.session.query(NotificationsModel) \
+                .filter_by(user_id=user_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления уведомлений:" + str(e))
+            return False
+
+    def update_notification(self, notification: Notification) -> bool:
+        try:
+            notification_to_update = self.session.query(NotificationsModel) \
+                .filter_by(notif_id=notification.notif_id) \
+                .first()
+            notification_to_update.user_id = notification.user_id
+            notification_to_update.notif_title = notification.notif_title
+            notification_to_update.notif_text = notification.notif_text
+            notification_to_update.notif_link = notification.notif_link
+            notification_to_update.receive_date = notification.receive_date
+            notification_to_update.user_to_read = notification.user_to_read
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления уведомления в БД " + str(e))
+            return False

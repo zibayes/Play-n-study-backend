@@ -2,7 +2,7 @@ import flask_login
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from flask import redirect, render_template
-from data.types import TestContent, Test, AchieveRel
+from data.types import TestContent, Test, AchieveRel, Notification
 
 from data.repositories import RoleRepository, CuratorRepository, CourseRepository
 from logic.course_route_functions import get_tests_data, get_course_summary
@@ -383,6 +383,10 @@ def check_achievements_conditions(current_user):
                     if achievement_reached:
                         achieve_rel = AchieveRel(ach_id=achievement['ach_id'], user_id=user.user_id)
                         logic.add_achieve_rel(achieve_rel)
+                        notif = Notification(None, user.user_id, 'Получено достижение!',
+                                             'Поздравляем, вы получили достижение «' + achievement['name'] + '» на курсе ' +
+                                             course.name, '/course_achievements/' + str(course.course_id), None, False)
+                        logic.add_notification(notif)
             return func(course_id, *args, **kwargs)
 
         wrapper.__name__ = func.__name__
