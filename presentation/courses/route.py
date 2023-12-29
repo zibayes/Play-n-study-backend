@@ -546,10 +546,11 @@ def handle_course_create(user_id):
     course_name = request.form['courseName']
     course_desc = request.form['description']
     course_cat = request.form['category']
-    error = get_wrong_field_msg(user, [course_name, course_desc, course_cat])
-    if error is not None:
-        flash(error, 'error')
-        return redirect(f"/courses/{user_id}")
+    if user.courses:
+        error = get_wrong_field_msg(user, [course_name, course_desc, course_cat])
+        if error is not None:
+            flash(error, 'error')
+            return redirect(f"/courses/{user_id}")
     if request.files:
         course_ava = request.files['file']
     else:
@@ -1178,6 +1179,7 @@ def handle_file_attach_check_preview(course_id, article_id):
             username = logic.get_user_by_id(progress[i].user_id).username
             if username not in users.values():
                 users[progress[i].user_id] = username
+            progress[i].progress['result'] = json.loads(progress[i].progress['result'])
 
     unit_name = get_unit_name(course, article_id, 'file_attach')
     return render_template('file_attach_check_preview.html', user=user, article=article, course=course,
@@ -1200,8 +1202,11 @@ def handle_file_attach_check(course_id, article_id, progress_id):
     for file in result:
         file['name'] = file['file_path'][file['file_path'].rfind('/') + 1:]
         file[0] = file['file_path'][file['file_path'].rfind('static'):]
-    res = json.loads(progress.progress['result'])
-    current_score = res['total_current_score']
+    if progress.progress['result']:
+        res = json.loads(progress.progress['result'])
+        current_score = res['total_current_score']
+    else:
+        current_score = 0
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = get_unit_name(course, article_id, 'file_attach')
     article = logic.article_get_by_id(article_id)
@@ -1226,9 +1231,9 @@ def handle_file_attach_check_over(course_id, article_id, progress_id):
                                                   progress.progress['content']))
     logic.update_progress(progress)
     file_attach = logic.article_get_by_id(progress.task_id)
-    course = logic.get_course_without_rel(course_id)
+    course = logic.course_get_by_id(course_id)
     notif = Notification(None, progress.user_id, 'Работа проверена!',
-                         'Куратор проверил ваш ответ на задание «' + file_attach.content.name + '» на курсе ' + course.name,
+                         'Куратор проверил ваш ответ на задание «' + file_attach.name + '» на курсе ' + course.name,
                          '/course/' + str(progress.course_id) + '/file_attach_preview/' + str(progress.task_id), None, False)
     logic.add_notification(notif)
     return redirect(f'/course_editor/{course_id}/file_attach_check/{article_id}')
