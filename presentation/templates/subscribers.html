@@ -42,7 +42,11 @@
                                                         <p class="text-muted mb-0">...</p>
                                                     </div>
                                                 </div>
-                                                <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                                                {% if sub.user_id in online_users %}
+                                                    <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill badge-primary lang" key="offline">Оффлайн</span>
+                                                {% endif %}
                                             </div>
                                             {% endif %}
                                         {% endfor %}
@@ -57,7 +61,11 @@
                                                         <p class="text-muted mb-0">...</p>
                                                     </div>
                                                 </div>
-                                                <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                                                {% if sub.user_id in online_users %}
+                                                    <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                                                {% else %}
+                                                    <span class="badge rounded-pill badge-primary lang" key="offline">Оффлайн</span>
+                                                {% endif %}
                                             </div>
                                         {% endfor %}
                                 {% endif %}

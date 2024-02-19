@@ -27,7 +27,11 @@
                                         {% if is_admin %}
                                             <p class="fw-bold mb-1 lang" key="admin" style="color: red;">АДМИНИСТРАТОР</p>
                                         {% endif %}
-                                        <p class="text-muted mb-0">...</p>
+                                        {% if user_to_show.user_id in online_users %}
+                                            <span class="badge rounded-pill badge-success lang" key="online">На сайте</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill badge-primary lang" key="offline">Оффлайн</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 {% if not is_me and need_subscribe %}

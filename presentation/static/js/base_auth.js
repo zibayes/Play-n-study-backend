@@ -262,7 +262,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, chec
 
   socket.on( 'connect', function() {
     socket.emit( 'my event', {
-      data: 'User Connected'
+      data: from_who_id
     } )
     document.getElementById('button_send_right').addEventListener("click", function( e ) {
       e.preventDefault()

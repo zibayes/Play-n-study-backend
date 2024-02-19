@@ -59,3 +59,13 @@
 <!--            $("#div").show("slow")-->
 <!--        })-->
 <!--    })-->
+
+let policy_agreement = document.getElementById("registerCheck1")
+let registerButton = document.getElementById("registerButton")
+policy_agreement.addEventListener("change", function (e){
+    if (this.checked) {
+        registerButton.removeAttribute("disabled");
+    } else {
+        registerButton.setAttribute("disabled", "disabled");
+    }
+})

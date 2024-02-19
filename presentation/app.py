@@ -15,6 +15,7 @@ from presentation.user.route import user_bp as user
 from presentation.pages.route import pages_bp as pages
 from presentation.api.route import api_bp as api
 from presentation.auth.route import auth_bp as auth
+from presentation.auth.route import online_users
 from presentation.chat.route import chat_bp as chat
 
 engine = create_engine(
@@ -51,6 +52,10 @@ def message_received(methods=['GET', 'POST']):
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
+    user_id = int(json['data'])
+    if user_id not in online_users:
+        online_users.append(user_id)
+    print(online_users)
     socketio.emit('my response', json, callback=message_received)
 
 

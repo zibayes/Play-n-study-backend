@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from data.types import User
 from logic.facade import LogicFacade
+from presentation.auth.route import online_users
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -104,7 +105,7 @@ def handle_profile(user_id):
         is_admin = False
     user_to_show = logic.get_user_for_profile(user_id, current_user.get_id())
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template("profile.html", user=user, user_to_show=user_to_show,
+    return render_template("profile.html", user=user, user_to_show=user_to_show, online_users=online_users,
                            need_subscribe=user_to_show.need_subscribe, is_me=user_to_show.is_me, is_admin=is_admin)
 
 
@@ -127,13 +128,13 @@ def handle_remove_admin(user_id):
 def handle_subscriptions(user_id):
     if request.method == "GET":
         user = logic.get_user_for_profile(user_id, current_user.get_id())
-        return render_template('subscriptions.html', user=user, user_id=user_id)
+        return render_template('subscriptions.html', user=user, online_users=online_users, user_id=user_id)
     elif request.method == "POST":
         query = request.form['query']
         if len(query) > 0:
             found = logic.get_users_by_query(query)
-            return render_template("subscriptions.html", user=User(), found=found, user_id=user_id)
-    return render_template("subscriptions.html", user=User(), found=None, user_id=user_id)
+            return render_template("subscriptions.html", user=User(), found=found, online_users=online_users, user_id=user_id)
+    return render_template("subscriptions.html", user=User(), found=None, online_users=online_users, user_id=user_id)
 
 
 @login_required
@@ -141,13 +142,13 @@ def handle_subscriptions(user_id):
 def handle_subscribers(user_id):
     if request.method == "GET":
         user = logic.get_user_for_profile(user_id, current_user.get_id())
-        return render_template('subscribers.html', user=user, user_id=user_id)
+        return render_template('subscribers.html', user=user, online_users=online_users, user_id=user_id)
     elif request.method == "POST":
         query = request.form['query']
         if len(query) > 0:
             found = logic.get_users_by_query(query)
-            return render_template("subscribers.html", user=User(), found=found, user_id=user_id)
-    return render_template("subscribers.html", user=User(), found=None, user_id=user_id)
+            return render_template("subscribers.html", user=User(), online_users=online_users, found=found, user_id=user_id)
+    return render_template("subscribers.html", user=User(), online_users=online_users, found=None, user_id=user_id)
 
 
 @pages_bp.route('/reviews')

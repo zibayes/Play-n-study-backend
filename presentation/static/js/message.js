@@ -121,7 +121,7 @@ function element_chat(chat_id, time, user_with, from_who, last_message, checked,
 
           socket.on( 'connect', function() {
             socket.emit( 'my event', {
-              data: 'User Connected'
+              data: from_who_id
             } )
             document.getElementById('button_send').addEventListener("click", function( e ) {
               e.preventDefault()

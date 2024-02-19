@@ -1,4 +1,4 @@
-from flask_login import login_required, logout_user, login_user
+from flask_login import login_required, logout_user, login_user, current_user
 from flask import Blueprint, redirect, render_template, request, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -12,6 +12,7 @@ engine = create_engine(
 )
 Session = sessionmaker(bind=engine)
 session = Session()
+online_users = []
 
 logic = LogicFacade(session)
 
@@ -21,6 +22,9 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route("/logout")
 @login_required
 def handle_logout():
+    user_id = current_user.get_id()
+    if user_id in online_users:
+        online_users.remove(user_id)
     logout_user()
     return render_template('index.html')
 

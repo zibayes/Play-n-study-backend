@@ -24,6 +24,7 @@ from access import check_curator_access, check_subscriber_access, check_test_acc
     check_article_access, check_link_access, check_file_attach_access, check_forum_access, \
     check_achievements_conditions
 from settings import MAX_COURSE_NAME_LEN
+from presentation.auth.route import online_users
 
 engine = create_engine(
     'postgresql://postgres:postgres@localhost/postgres',
@@ -823,7 +824,7 @@ def handle_load_forum_topic(course_id, forum_id, ft_id):
     unit_name = get_unit_name(course, forum_id, 'forum')
     return render_template('forum.html', user=user, course=course, forum=forum, nesting_level=nesting_level,
                            topic=topic, unit_name=unit_name, messages=messages_ordered,
-                           users=users, user_score=users_score)
+                           users=users, online_users=online_users, user_score=users_score)
 
 
 @login_required
@@ -950,8 +951,8 @@ def handle_load_forum_topic_check(course_id, forum_id, ft_id):
     course = logic.get_course(course_id, user.user_id)
     unit_name = get_unit_name(course, forum_id, 'forum')
     return render_template('forum_check.html', user=user, course=course, forum=forum, nesting_level=nesting_level,
-                           topic=topic, unit_name=unit_name, messages=messages_ordered, users=users,
-                           users_score=users_score)
+                           topic=topic, unit_name=unit_name, online_users=online_users, messages=messages_ordered,
+                           users=users, users_score=users_score)
 
 
 @login_required
