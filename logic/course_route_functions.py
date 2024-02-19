@@ -125,7 +125,8 @@ def get_test(test, shuffle):
         question.ask = markdown(question.ask)
         if question.answers:
             for i in range(len(question.answers)):
-                if question.type not in ('filling_gaps', 'drag_to_text', 'markers_drag'):
+                if question.type not in ('filling_gaps', 'drag_to_text', 'markers_drag', 'free'):
+                    print(question.answers[i])
                     key = list(question.answers[i].keys())[0]
                     tmp = question.answers[i][list(question.answers[i].keys())[0]]
                     del question.answers[i][list(question.answers[i].keys())[0]]
@@ -341,6 +342,7 @@ def get_test_preview(progress, course_id, test_id, user):
         if leaders_to_show[key] not in graphic_data.keys():
             graphic_data[leaders_to_show[key]] = 0
         graphic_data[leaders_to_show[key]] += 1
+    print(leaders_to_show)
     return max_score_total, leaders_total_score, max_score, graphic_data, leaders_to_show, leaders_hrefs, friends
 
 
