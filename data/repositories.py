@@ -1367,3 +1367,67 @@ class NotificationsRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка обновления уведомления в БД " + str(e))
             return False
+
+
+class NotesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_note(self, note: Note):
+        try:
+            new_note = NotesModel(
+                user_id = note.user_id,
+                note_title = note.note_title,
+                note_text = note.note_text,
+                addition_date = note.addition_date,
+            )
+            self.session.add(new_note)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления заметки в БД " + str(e))
+
+    def get_note_by_id(self, note_id):
+        note_db = self.session.query(NotesModel) \
+            .filter_by(note_id=note_id) \
+            .first()
+        return convert.note_db_to_note(note_db)
+
+    def get_all_notes_by_user_id(self, user_id):
+        notes_db = self.session.query(NotesModel) \
+            .filter_by(user_id=user_id) \
+            .order_by(text("addition_date desc")) \
+            .all()
+        return [convert.note_db_to_note(i) for i in notes_db]
+
+    def remove_note(self, note_id) -> bool:
+        try:
+            self.session.query(NotesModel) \
+                .filter_by(note_id=note_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления заметки:" + str(e))
+            return False
+
+    def update_note(self, note: Note) -> bool:
+        try:
+            note_to_update = self.session.query(NotesModel) \
+                .filter_by(note_id=note.note_id) \
+                .first()
+            note_to_update.user_id = note.user_id
+            note_to_update.note_title = note.note_title
+            note_to_update.note_text = note.note_text
+            note_to_update.addition_date = note.addition_date
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления заметки в БД " + str(e))
+            return False
+
+    def get_last_note(self):
+        note_db = self.session.query(NotesModel) \
+            .order_by(NotesModel.note_id.desc()) \
+            .first()
+        return convert.note_db_to_note(note_db)

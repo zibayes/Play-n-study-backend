@@ -568,5 +568,23 @@ class LogicFacade:
     def remove_all_notifications_by_user_id(self, notif_id):
         return self.data.remove_all_notifications_by_user_id(notif_id)
 
-    def update_notification(self, notif_id):
-        return self.data.update_notification(notif_id)
+    def update_notification(self, notification):
+        return self.data.update_notification(notification)
+
+    def add_note(self, note):
+        return self.data.add_note(note)
+
+    def get_note_by_id(self, note_id):
+        return self.data.get_note_by_id(note_id)
+
+    def get_all_notes_by_user_id(self, user_id):
+        return self.data.get_all_notes_by_user_id(user_id)
+
+    def remove_note(self, note_id):
+        return self.data.remove_note(note_id)
+
+    def update_note(self, note):
+        return self.data.update_note(note)
+
+    def get_last_note(self):
+        return self.data.get_last_note()

@@ -26,6 +26,7 @@ class DataFacade:
         self.chat_repository = ChatRepository(session)
         self.chat_messages_repository = ChatMessageRepository(session)
         self.notifications_repository = NotificationsRepository(session)
+        self.notes_repository = NotesRepository(session)
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -576,5 +577,23 @@ class DataFacade:
     def remove_all_notifications_by_user_id(self, user_id):
         return self.notifications_repository.remove_all_notifications_by_user_id(user_id)
 
-    def update_notification(self, notif_id):
-        return self.notifications_repository.update_notification(notif_id)
+    def update_notification(self, notification):
+        return self.notifications_repository.update_notification(notification)
+
+    def add_note(self, note):
+        return self.notes_repository.add_note(note)
+
+    def get_note_by_id(self, note_id):
+        return self.notes_repository.get_note_by_id(note_id)
+
+    def get_all_notes_by_user_id(self, user_id):
+        return self.notes_repository.get_all_notes_by_user_id(user_id)
+
+    def remove_note(self, note_id):
+        return self.notes_repository.remove_note(note_id)
+
+    def update_note(self, note):
+        return self.notes_repository.update_note(note)
+
+    def get_last_note(self):
+        return self.notes_repository.get_last_note()

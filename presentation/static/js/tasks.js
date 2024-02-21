@@ -31,10 +31,10 @@
     button.setAttribute("class", "btn-close")
     button.setAttribute("data-mdb-dismiss", "toast")
     button.setAttribute("aria-label", "Close")
-    button.setAttribute("onclick", "deleteElement(this.name)")
+    button.setAttribute("onclick", "removeElement(this.name)")
     let div_end = document.createElement("div")
     div_end.setAttribute("class", "toast_body")
-    div_end.style = "padding: 10px"
+    div_end.style = "padding: 10px; margin: 35px;"
     div_end.textContent = message
 
 
@@ -47,8 +47,35 @@
     div_element.appendChild(div_end)
     div.appendChild(div_add)
 
+    $.ajax({
+        url: '/add_note',
+        method: "post",
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({"title": name, "text": message}),
+        success: function (data){
+            console.log(data)
+          div_add.id = data
+          button.name = data
+        },
+        error: function (data){
+            console.log(data['responseText'])
+        }
+    })
   })
 
-  function deleteElement(index) {
+  function removeElement(index) {
     document.getElementById(index).remove()
+    $.ajax({
+        url: '/remove_note/' + index,
+        method: "post",
+        dataType: 'json',
+        success: function (data){
+            console.log(data)
+          div_add.id = data
+        },
+        error: function (data){
+            console.log(data['responseText'])
+        }
+    })
   }

@@ -566,3 +566,12 @@ class Notification:
         self.notif_link = notif_link
         self.receive_date = receive_date
         self.user_to_read = user_to_read
+
+
+class Note:
+    def __init__(self, note_id, user_id, note_title, note_text, addition_date):
+        self.note_id = note_id
+        self.user_id = user_id
+        self.note_title = note_title
+        self.note_text = note_text
+        self.addition_date = addition_date

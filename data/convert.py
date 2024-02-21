@@ -184,3 +184,11 @@ def notification_db_to_notification(notification: Type[NotificationsModel]):
                  notif_link=notification.notif_link,
                  receive_date=notification.receive_date,
                  user_to_read=notification.user_to_read)
+
+
+def note_db_to_note(note: Type[NotesModel]):
+    return Note(note_id=note.note_id,
+                 user_id=note.user_id,
+                 note_title=note.note_title,
+                 note_text=note.note_text,
+                 addition_date=note.addition_date)

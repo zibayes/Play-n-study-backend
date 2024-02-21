@@ -1,3 +1,4 @@
+-- DROP TABLE  notes CASCADE;
 -- DROP TABLE  notifications CASCADE;
 -- DROP TABLE  users_progress CASCADE;
 -- DROP TABLE  topic_messages CASCADE;
@@ -200,4 +201,13 @@ CREATE TABLE notifications(
     notif_link text,
     receive_date timestamp DEFAULT now(),
 	user_to_read boolean DEFAULT FALSE
+);
+
+
+CREATE TABLE notes(
+    note_id serial PRIMARY KEY,
+    user_id integer REFERENCES users(user_id),
+    note_title text,
+    note_text text,
+    addition_date timestamp DEFAULT now()
 );

@@ -429,3 +429,17 @@ class NotificationsModel(Base):
         self.receive_date = receive_date
         self.notif_link = notif_link
         self.user_to_read = user_to_read
+
+class NotesModel(Base):
+    __tablename__ = 'notes'
+    note_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    note_title = Column(Text)
+    note_text = Column(Text)
+    addition_date = Column(TIMESTAMP, server_default=func.now())
+
+    def __init__(self, user_id, note_title, note_text, addition_date):
+        self.user_id = user_id
+        self.note_title = note_title
+        self.note_text = note_text
+        self.addition_date = addition_date

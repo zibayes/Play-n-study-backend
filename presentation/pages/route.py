@@ -2,7 +2,7 @@ from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from data.types import User
+from data.types import User, Note
 from logic.facade import LogicFacade
 from presentation.auth.route import online_users
 
@@ -27,7 +27,8 @@ def handle_index():
 def handle_task():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
-    return render_template('tasks.html', user=user)
+    notes = logic.get_all_notes_by_user_id(user_id)
+    return render_template('tasks.html', user=user, notes=notes)
 
 
 @pages_bp.route('/about')
@@ -190,3 +191,31 @@ def handle_read_notifications(user_id):
             if not response:
                 return 'notifications read failed'
     return 'notifications read'
+
+
+@pages_bp.route('/add_note', methods=['POST'])
+def handle_add_note():
+    note = Note(None, current_user.get_id(), request.json['title'], request.json['text'], None)
+    response = logic.add_note(note)
+    if response:
+        return str(logic.get_last_note().note_id)
+        # return 'note added'
+    return 'add note failed'
+
+
+@pages_bp.route('/remove_note/<int:note_id>', methods=['POST'])
+def handle_remove_note(note_id):
+    response = logic.remove_note(note_id)
+    if response:
+        return 'note removed'
+    return 'note remove failed'
+
+
+@pages_bp.route('/update_note/<int:msg_id>', methods=['POST'])
+def handle_update_note(note_id):
+    note =logic.get_note_by_id(note_id)
+    note.note_text = request.json
+    response = logic.update_note(note)
+    if response:
+        return 'note updated'
+    return 'note update failed'

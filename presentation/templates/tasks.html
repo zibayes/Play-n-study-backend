@@ -63,6 +63,18 @@
               </button>
             </div>
             <div id="notes" class="row"></div>
+            {% for note in notes %}
+              <div id="{{ note.note_id }}" class="container col-md-3 mt-5">
+                <div class="toast show fade mx-auto" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false" id="static-example1">
+                  <div class="toast-header toast-primary">
+                    <strong class="me-auto">{{ note.note_title }}</strong>
+                    <small>{{ note.addition_date }}</small>
+                    <button id="buttons" name="{{ note.note_id }}" type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close" onclick="removeElement(this.name)"></button>
+                  </div>
+                  <div class="toast_body" style="padding: 10px; margin: 35px;">{{ note.note_text }}</div>
+                </div>
+              </div>
+            {% endfor %}
           </div>
           <div class="tab-pane fade" id="ex2-pills-2" role="tabpanel" aria-labelledby="ex2-tab-2">
             <div class="container col-md-12 ">
