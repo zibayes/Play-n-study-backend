@@ -9,6 +9,8 @@ from data.types import *
 from sqlalchemy.orm.session import Session
 from sqlalchemy import desc, text
 
+SITE_ID = 0
+
 
 class AchievementRepository:
     session: Session = None
@@ -160,6 +162,7 @@ class CourseRelRepository:
     def get_course_rels_by_user_id(self, user_id):
         courses_rels_db = self.session.query(CoursesRelModel) \
             .filter_by(user_id=user_id) \
+            .filter(CoursesModel.course_id!=SITE_ID) \
             .all()
         courses_rel_list = []
         for course_rel in courses_rels_db:
@@ -171,6 +174,7 @@ class CourseRelRepository:
     def get_course_rels_all(self, course_id):
         courses_rels_db = self.session.query(CoursesRelModel) \
             .filter_by(course_id=course_id) \
+            .filter(CoursesModel.course_id != SITE_ID) \
             .all()
         courses_rel_list = []
         for course_rel in courses_rels_db:
@@ -182,6 +186,7 @@ class CourseRelRepository:
     def get_one_by_user_and_course_ids(self, user_id, course_id):
         course_rel_id = self.session.query(CoursesRelModel) \
             .filter_by(course_id=course_id) \
+            .filter(CoursesModel.course_id != SITE_ID) \
             .filter_by(user_id=user_id) \
             .first()
         if course_rel_id is not None:
@@ -256,12 +261,14 @@ class CourseRepository:
 
     def get_courses_by_substring(self, substring):
         courses_db = self.session.query(CoursesModel) \
+            .filter(CoursesModel.course_id != SITE_ID) \
             .filter(CoursesModel.name.ilike("%"+ substring + "%")) \
             .all()
         return convert.courses_db_to_courses(courses_db)
 
     def get_last_course(self):
         course_db = self.session.query(CoursesModel) \
+            .filter(CoursesModel.course_id != SITE_ID) \
             .order_by(CoursesModel.course_id.desc()) \
             .first()
         return convert.course_db_to_course(course_db)

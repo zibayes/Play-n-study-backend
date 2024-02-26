@@ -675,6 +675,9 @@ export let arrLang = {
 
     "subscribers_": "Подписчики",
     "my_subscribers": "Мои подписчики",
+
+    "site_reviews": "Отзывы о сервисе",
+    "how_do_you_like_this_site": "Как вам данный сервис?",
   },
   'de': {
     'mainpage': 'Startseite',

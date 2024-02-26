@@ -154,8 +154,20 @@ def handle_subscribers(user_id):
 
 @pages_bp.route('/reviews')
 def handle_reviews():
+    site_id = 0
     user = logic.get_user_by_id(current_user.get_id())
-    return render_template('reviews_1.html', user=user)
+    reviews = logic.get_reviews_by_course_id(site_id)
+    user_review = None
+    users_for_review = {}
+    if reviews:
+        for review in reviews:
+            if review.user_id == user.user_id:
+                user_review = review
+            users_for_review[review.user_id] = logic.get_user_by_id(review.user_id)
+    else:
+        reviews = []
+    return render_template('site_reviews.html', user=user, reviews=reviews, user_review=user_review, site_id=site_id,
+                           users_for_review=users_for_review)
 
 
 @pages_bp.route('/information')

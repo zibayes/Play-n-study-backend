@@ -1531,6 +1531,7 @@ def handle_course(course_id):
 @courses_bp.route('/course_preview/<int:course_id>/rate_course_with_comment', methods=['POST'])
 @check_subscriber_access(current_user)
 def handle_rate_course(course_id):
+    site_id = 0
     user_id = current_user.get_id()
     reviews = logic.get_reviews_by_course_id(course_id)
     user_rate = None
@@ -1540,6 +1541,8 @@ def handle_rate_course(course_id):
                 user_rate = review.rate
     response = logic.update_review(user_id, course_id, user_rate, request.form['rate-comment'])
     if response:
+        if course_id == site_id:
+            return redirect(f'/reviews')
         return redirect(f'/course_preview/{course_id}')
     return flash('Ошибка при отправке отзыва', 'error')
 

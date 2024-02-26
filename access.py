@@ -92,18 +92,21 @@ def check_subscriber_access(current_user):
     def decorator(func):
         def wrapper(course_id, *args, **kwargs):
             user_id = current_user.get_id()
+            site_id = 0
 
-            course = logic.course_get_for_preview(course_id, user_id)
-            is_subscriber = not course.can_subscribe
+            if site_id !=course_id:
+                course = logic.course_get_for_preview(course_id, user_id)
+                is_subscriber = not course.can_subscribe
 
-            if is_subscriber:
-                return func(course_id, *args, **kwargs)
+                if is_subscriber:
+                    return func(course_id, *args, **kwargs)
 
-            course = logic.get_course_without_rel(course_id)
-            access_denied = "Вы не являетесь участником " \
-                            "курса «" + course.name + "», поэтому у вас нет доступа к данной странице"
-            return render_template('access_denied.html', course=course, access_denied=access_denied,
-                                   need_subscription=True)
+                course = logic.get_course_without_rel(course_id)
+                access_denied = "Вы не являетесь участником " \
+                                "курса «" + course.name + "», поэтому у вас нет доступа к данной странице"
+                return render_template('access_denied.html', course=course, access_denied=access_denied,
+                                       need_subscription=True)
+            return func(course_id, *args, **kwargs)
 
         wrapper.__name__ = func.__name__
         return wrapper

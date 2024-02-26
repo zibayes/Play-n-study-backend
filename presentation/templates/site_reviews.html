@@ -1,0 +1,190 @@
+{% extends 'base_aut.html' %}
+
+{% block title %}
+<title>Отзывы</title>
+{% endblock %}
+
+{% block style %}
+<link href="/static/css/reviews.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- CSS -->
+<link rel="stylesheet" href="/static/css/course.css"/>
+<!-- Scripts -->
+<script>
+    let course_id = 0
+</script>
+<script type="text/javascript" src="/static/js/course.js"></script>
+
+<div class="d-flex justify-content-center">
+  <div class="container m-5" style="background-color: white">
+    <span class="fs-5 row m-3 justify-content-start">
+        <div>
+            <text class="lang" key="site_reviews">Отзывы о сервисе</text> «Play'n'Study»
+        </div>
+    </span>
+    <div class="row border" style="margin-bottom: 20px;"></div>
+      <form>
+        <div class="" style="text-align: center; padding-bottom: 25px;">
+            {% if user_review.rate %}
+                <p id="feedback" class="lang" key="thanks_for_your_feedback">Спасибо за отзыв!</p>
+            {% else %}
+                <p id="feedback"><text class="lang" key="how_do_you_like_this_site">Как вам данный сервис?</text> <br> <text class="lang" key="give_us_feedback">Оставьте свой отзыв:</text></p>
+            {% endif %}
+            <div class="stars">
+                <label class="rate" id="star11">
+                    <input type="radio" name="radio1" id="star1" value="star1">
+                    <div class="face"></div>
+                    {% if user_review.rate %}
+                        {% if user_review.rate == 1 %}
+                            <i class="fa-star star one-star fas rate-active"></i>
+                        {% elif user_review.rate > 1 %}
+                            <i class="fa-star star one-star fas"></i>
+                        {% else %}
+                            <i class="far fa-star star one-star"></i>
+                        {% endif %}
+                    {% else %}
+                        <i class="far fa-star star one-star"></i>
+                    {% endif %}
+                </label>
+                <label class="rate" id="star22">
+                    <input type="radio" name="radio1" id="star2" value="star2">
+                    <div class="face"></div>
+                    {% if user_review.rate %}
+                        {% if user_review.rate == 2 %}
+                            <i class="fa-star star two-star fas rate-active"></i>
+                        {% elif user_review.rate > 2 %}
+                            <i class="fa-star star two-star fas"></i>
+                        {% else %}
+                            <i class="far fa-star star two-star"></i>
+                        {% endif %}
+                    {% else %}
+                        <i class="far fa-star star two-star"></i>
+                    {% endif %}
+                </label>
+                <label class="rate" id="star33">
+                    <input type="radio" name="radio1" id="star3" value="star3">
+                    <div class="face"></div>
+                    {% if user_review.rate %}
+                        {% if user_review.rate == 3 %}
+                            <i class="fa-star star three-star fas rate-active"></i>
+                        {% elif user_review.rate > 3 %}
+                            <i class="fa-star star three-star fas"></i>
+                        {% else %}
+                            <i class="far fa-star star three-star"></i>
+                        {% endif %}
+                    {% else %}
+                        <i class="far fa-star star three-star"></i>
+                    {% endif %}
+                </label>
+                <label class="rate" id="star44">
+                    <input type="radio" name="radio1" id="star4" value="star4">
+                    <div class="face"></div>
+                    {% if user_review.rate %}
+                        {% if user_review.rate == 4 %}
+                            <i class="fa-star star four-star fas rate-active"></i>
+                        {% elif user_review.rate > 4 %}
+                            <i class="fa-star star four-star fas"></i>
+                        {% else %}
+                            <i class="far fa-star star four-star"></i>
+                        {% endif %}
+                    {% else %}
+                        <i class="far fa-star star four-star"></i>
+                    {% endif %}
+                </label>
+                <label class="rate" id="star55">
+                    <input type="radio" name="radio1" id="star5" value="star5">
+                    <div class="face"></div>
+                    {% if user_review.rate %}
+                        {% if user_review.rate == 5 %}
+                            <i class="fa-star star five-star fas rate-active"></i>
+                        {% elif user_review.rate > 5 %}
+                            <i class="fa-star star four-star fas"></i>
+                        {% else %}
+                            <i class="far fa-star star five-star"></i>
+                        {% endif %}
+                    {% else %}
+                        <i class="far fa-star star five-star"></i>
+                    {% endif %}
+                </label>
+            </div>
+        </div>
+    </form>
+    <form hidden="hidden" id="feedback-comment" action="/course_preview/{{ site_id }}/rate_course_with_comment" method="POST" style="text-align: center; padding-bottom: 25px;">
+        <p id="feedback" class="lang" key="what_about_comment">А как насчёт комментария?</p>
+        <div class="container" align="center">
+        <div class="row text-muted align-items-center" style="width: 500px;">
+          <div class="col-md-10" style="padding: 0 0 0 0">
+            <textarea id="shoutbox-name" name="rate-comment" type="text" class="form-control form-control-lg langp" key="your_comment_about_course" placeholder="Ваш комментарий о курсе"></textarea>
+          </div>
+          <div class="col-md-1" style="padding: 0 0 0 0;">
+            <button type="submit" class="ms-3 link-info" style="border: transparent; background: transparent;"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% for review in reviews %}
+        <div class="d-flex align-items-center" style="display: inline; position:relative; padding-bottom: 10px;
+        padding-right: 185px; padding-left: 10px; padding-top: 10px; margin-bottom: 20px; border-radius: 10px;
+        {% if review.user_id == current_user.get_id() %}
+            background: #80008014;
+        {% else %}
+            background: white;
+        {% endif %}
+        ">
+            <a href="/profiles/{{ review.user_id }}">
+                <img src="/userava/{{review.user_id}}" alt="" style="width: 120px; height: 120px" class="rounded-circle"/>
+            </a>
+            <div class="ms-4">
+                <a href="/profiles/{{ review.user_id }}" class="fw-bold mb-1 lang">{{ users_for_review[review.user_id].username }}</a>
+                {% if review.text %}
+                    <p class="text-muted mb-0">{{ review.text }}</p>
+                {% else %}
+                    <p class="text-muted mb-0"><i class="lang" key="feedback_without_comment">--- Отзыв без комментария ---</i></p>
+                {% endif %}
+            </div>
+            <div style="float:right; position: absolute; right: 5px; font-size: 24px;">
+                {% if review.rate %}
+                    {% if review.rate == 1 %}
+                        <i class="fa-star star one-star fas rate-active"></i>
+                    {% elif review.rate > 1 %}
+                        <i class="fa-star star one-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star one-star"></i>
+                    {% endif %}
+                    {% if review.rate == 2 %}
+                        <i class="fa-star star two-star fas rate-active"></i>
+                    {% elif review.rate > 2 %}
+                        <i class="fa-star star two-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star two-star"></i>
+                    {% endif %}
+                    {% if review.rate == 3 %}
+                        <i class="fa-star star three-star fas rate-active"></i>
+                    {% elif review.rate > 3 %}
+                        <i class="fa-star star three-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star three-star"></i>
+                    {% endif %}
+                    {% if review.rate == 4 %}
+                        <i class="fa-star star four-star fas rate-active"></i>
+                    {% elif review.rate > 4 %}
+                        <i class="fa-star star four-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star four-star"></i>
+                    {% endif %}
+                    {% if review.rate == 5 %}
+                        <i class="fa-star star five-star fas rate-active"></i>
+                    {% elif review.rate > 5 %}
+                        <i class="fa-star star four-star fas"></i>
+                    {% else %}
+                        <i class="far fa-star star five-star"></i>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
