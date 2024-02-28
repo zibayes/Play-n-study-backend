@@ -26,16 +26,16 @@
                     <form action="/login" method="POST">
                         <div class="text-center mb-3">
                             <p>Войдите через социальную сеть:</p>
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
-                                <i class="fab fa-facebook-f"></i>
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_discord'">
+                                <i class="fab fa-discord"></i>
                             </button>
 
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_google'">
                                 <i class="fab fa-google"></i>
                             </button>
 
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
-                                <i class="fab fa-twitter"></i>
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_github'">
+                                <i class="fab fa-github"></i>
                             </button>
                         </div>
 
@@ -72,20 +72,21 @@
                     <form action="/registration" method="POST">
                         <div class="text-center mb-3">
                             <p>Зарегистрируйтесь через социальную сеть:</p>
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
-                                <i class="fab fa-facebook-f"></i>
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_discord'">
+                                <i class="fab fa-discord"></i>
                             </button>
 
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_google'">
                                 <i class="fab fa-google"></i>
                             </button>
 
-                            <button type="button" class="btn btn-primary btn-floating mx-1">
-                                <i class="fab fa-twitter"></i>
+                            <button type="button" class="btn btn-primary btn-floating mx-1" onclick="location.href='/login_github'">
+                                <i class="fab fa-github"></i>
                             </button>
 
                         </div>
 
+                    <form action="/registration" method="POST">
                         <p class="text-center">или:</p>
 
                         <!-- Username input -->
@@ -116,7 +117,7 @@
                         <div class="form-check d-flex justify-content-center mb-4">
                             <input class="form-check-input me-2" type="checkbox" value="" id="registerCheck1" aria-describedby="registerCheckHelpText">
                             <label class="form-check-label" for="registerCheck1">
-                                Я прочитал и согласен с условиями
+                                Я согласен с условиями пользовательского соглашения
                             </label>
                         </div>
 

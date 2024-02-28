@@ -17,6 +17,12 @@ class Auth:
             return user
         return None
 
+    def user_auth_by_service(self, email_or_username):
+        user = self.data.get_user_by_email(email_or_username)
+        if user is None:
+            user = self.data.get_user_by_username(email_or_username)
+        return user
+
     def user_register(self, form):
         error = get_register_wrong_field_msg(self.data, form)
         if error is None:
@@ -32,3 +38,15 @@ class Auth:
             return tuple(['Ошибка при add_user', 'error'])
         else:
             return tuple([error, 'error'])
+
+    def user_register_by_service(self, email, username, avatar):
+        user = User(user_id=None,
+                    email=email,
+                    username=username,
+                    city='',
+                    avatar=avatar,
+                    password=email)
+
+        if self.data.add_user(user):
+            return tuple(['Вы успешно зарегистрированы', 'success'])
+        return tuple(['Ошибка при add_user', 'error'])

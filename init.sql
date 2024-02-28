@@ -25,7 +25,7 @@ CREATE TABLE users
     username text UNIQUE NOT NULL,
     city text,
     avatar bytea NULL,
-    password text NOT NULL
+    password text -- NOT NULL
 );
 -- Курсы
 CREATE TABLE courses
@@ -37,6 +37,8 @@ CREATE TABLE courses
     category text,
     content json
 );
+-- Сайт
+INSERT INTO courses(course_id, name) VALUES (0, 'Play'n'Study');
 -- Кураторы
 CREATE TABLE curators
 (

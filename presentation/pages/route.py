@@ -23,6 +23,7 @@ def handle_index():
     return render_template('index.html')
 
 
+@login_required
 @pages_bp.route('/tasks')
 def handle_task():
     user_id = current_user.get_id()
@@ -31,11 +32,7 @@ def handle_task():
     return render_template('tasks.html', user=user, notes=notes)
 
 
-@pages_bp.route('/about')
-def about():
-    return "About"
-
-
+@login_required
 @pages_bp.route('/messages')
 def messages():
     user_id = current_user.get_id()
@@ -152,6 +149,7 @@ def handle_subscribers(user_id):
     return render_template("subscribers.html", user=User(), online_users=online_users, found=None, user_id=user_id)
 
 
+@login_required
 @pages_bp.route('/reviews')
 def handle_reviews():
     site_id = 0
@@ -170,6 +168,7 @@ def handle_reviews():
                            users_for_review=users_for_review)
 
 
+@login_required
 @pages_bp.route('/information')
 def handle_information():
     user = logic.get_user_by_id(current_user.get_id())
@@ -177,6 +176,7 @@ def handle_information():
     return render_template('information.html', user=user)
 
 
+@login_required
 @pages_bp.route('/remove_notification/<int:notif_id>', methods=['POST'])
 def handle_remove_notification(notif_id):
     response = logic.remove_notification(notif_id)
@@ -185,6 +185,7 @@ def handle_remove_notification(notif_id):
     return 'notification remove failed'
 
 
+@login_required
 @pages_bp.route('/remove_all_notifications/<int:user_id>', methods=['POST'])
 def handle_remove_all_notifications(user_id):
     response = logic.remove_all_notifications_by_user_id(user_id)
@@ -193,6 +194,7 @@ def handle_remove_all_notifications(user_id):
     return 'notifications remove failed'
 
 
+@login_required
 @pages_bp.route('/read_notifications/<int:user_id>', methods=['POST'])
 def handle_read_notifications(user_id):
     notifications = logic.get_all_notifications_by_user_id(user_id)
@@ -205,16 +207,17 @@ def handle_read_notifications(user_id):
     return 'notifications read'
 
 
+@login_required
 @pages_bp.route('/add_note', methods=['POST'])
 def handle_add_note():
     note = Note(None, current_user.get_id(), request.json['title'], request.json['text'], None)
     response = logic.add_note(note)
     if response:
         return str(logic.get_last_note().note_id)
-        # return 'note added'
     return 'add note failed'
 
 
+@login_required
 @pages_bp.route('/remove_note/<int:note_id>', methods=['POST'])
 def handle_remove_note(note_id):
     response = logic.remove_note(note_id)
@@ -223,6 +226,7 @@ def handle_remove_note(note_id):
     return 'note remove failed'
 
 
+@login_required
 @pages_bp.route('/update_note/<int:msg_id>', methods=['POST'])
 def handle_update_note(note_id):
     note =logic.get_note_by_id(note_id)

@@ -7,7 +7,6 @@ from flask_login import LoginManager, login_required
 from logic.facade import LogicFacade
 from presentation.UserLogin import UserLogin
 from flask_socketio import SocketIO
-
 # blueprints
 from presentation.courses.route import courses_bp as courses
 from presentation.admin.route import admin_bp as admin

@@ -1403,7 +1403,7 @@ class NotesRepository:
     def get_all_notes_by_user_id(self, user_id):
         notes_db = self.session.query(NotesModel) \
             .filter_by(user_id=user_id) \
-            .order_by(text("addition_date desc")) \
+            .order_by(text("addition_date asc")) \
             .all()
         return [convert.note_db_to_note(i) for i in notes_db]
 

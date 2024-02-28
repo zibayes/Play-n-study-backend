@@ -26,8 +26,15 @@ class LogicFacade:
     def user_auth(self, email_or_username, password):
         return self.auth.user_auth(email_or_username, password)
 
+    def user_auth_by_service(self, email_or_username):
+        return self.auth.user_auth_by_service(email_or_username)
+
     def user_register(self, form):
         return self.auth.user_register(form)
+
+
+    def user_register_by_service(self, email, username, avatar):
+        return self.auth.user_register_by_service(email, username, avatar)
 
     def get_user_for_subscriptions(self, user_id):
         return self.data.get_user_for_subscriptions(user_id)
