@@ -96,3 +96,30 @@
         }
     })
   }
+
+  function editNote(index) {
+    let note = document.getElementById(index)
+    let input_text = document.createElement('input')
+    let input_title = document.createElement('input')
+    let title = document.getElementById('title-' + index)
+    title.setAttribute("hidden", "hidden")
+    let text = document.getElementById('text-' + index)
+    text.setAttribute("hidden", "hidden")
+    input_text.setAttribute("value", text.textContent)
+    input_title.setAttribute("value", title.textContent)
+    note.firstElementChild.appendChild(input_text)
+    note.firstElementChild.firstElementChild.firstElementChild.insertBefore(input_title, note.firstElementChild.firstElementChild.firstElementChild.firstElementChild)
+      /*
+    $.ajax({
+        url: '/edit_note/' + index,
+        method: "post",
+        dataType: 'json',
+        success: function (data){
+            console.log(data)
+          div_add.id = data
+        },
+        error: function (data){
+            console.log(data['responseText'])
+        }
+    })*/
+  }

@@ -1,3 +1,4 @@
+import json
 import os.path
 import pathlib
 import cachecontrol
@@ -29,10 +30,16 @@ auth_bp = Blueprint('auth', __name__)
 
 GOOGLE_CLIENT_ID = "823988869838-v3amhjbi83qevngpgs2j500fgc8gpt9u.apps.googleusercontent.com"
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent.parent.parent, "client_secret.json")
+github_secret = os.path.join(pathlib.Path(__file__).parent.parent.parent, "github_secret.json")
+discord_secret = os.path.join(pathlib.Path(__file__).parent.parent.parent, "discord_secret.json")
 
-github_blueprint = make_github_blueprint(client_id='40beae0bb8dc9068fa01', client_secret='02b1fcc230bd3a4208c096669aa1003edeaee8c1')
+with open(github_secret) as json_file:
+    data = json.load(json_file)
+    github_blueprint = make_github_blueprint(client_id=data['client_id'], client_secret=data['client_secret'])
 auth_bp.register_blueprint(github_blueprint, url_prefix='/github_login')
-discord_client = APIClient(token='MTIxMTcxMzY3NDMzMTU1Nzk3OQ.GTZ9M5.1BA9pDnVz3pUibIc_2eefopXWp6LxzLGDyGOXQ', client_secret='VngLCKNaf5FoUi_bxO1GaMLFbMRWHgvx')
+with open(discord_secret) as json_file:
+    data = json.load(json_file)
+    discord_client = APIClient(token=data['token'], client_secret=data['client_secret'])
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = "1"
 

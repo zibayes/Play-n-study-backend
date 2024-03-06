@@ -11,3 +11,6 @@ presentation/__pycache__
 presentation/api/__pycache__
 presentation/models/__pycache__
 venv
+client_secret.json
+discord_secret.json
+github_secret.json

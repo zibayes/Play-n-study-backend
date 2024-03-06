@@ -64,17 +64,20 @@
             </div>
             <div id="notes" class="row">
               {% for note in notes %}
-                <div id="{{ note.note_id }}" class="container col-md-3 mt-5">
-                  <div class="toast show fade mx-auto" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false" id="static-example1">
-                    <div class="toast-header toast-primary">
-                      <strong class="me-auto" style="max-width:150px; word-wrap:break-word;">{{ note.note_title }}</strong>
-                      <small style="text-align: right">{{ note.addition_date.strftime('%d-%m-%Y') }} <br> {{ note.addition_date.strftime('%H:%M:%S') }}</small>
-                      <button id="buttons_edit" name="1" type="button" class="btn btn-transparent shadow-none" style="background-color: transparent; border-color: transparent; max-width: 5px; padding: 10px;" data-mdb-dismiss="toast" aria-label="Edit" onclick="removeElement(this.name)"><i class="fa fa-edit"></i></button>
-                      <button id="buttons" name="{{ note.note_id }}" type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close" onclick="removeElement(this.name)"></button>
+                  <div id="{{ note.note_id }}" class="container col-md-3 mt-5">
+                    <div class="toast show fade mx-auto" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false" id="static-example1">
+                     <form class="edit_form">
+                        <div class="toast-header toast-primary">
+
+                          <strong class="me-auto" id="title-{{ note.note_id }}" style="max-width:150px; word-wrap:break-word;">{{ note.note_title }}</strong>
+                          <small style="text-align: right">{{ note.addition_date.strftime('%d-%m-%Y') }} <br> {{ note.addition_date.strftime('%H:%M:%S') }}</small>
+                          <button id="buttons_edit" name="{{ note.note_id }}" type="button" class="btn btn-transparent shadow-none" style="background-color: transparent; border-color: transparent; max-width: 5px; padding: 10px;" aria-label="Edit" onclick="editNote(this.name)"><i class="fa fa-edit"></i></button>
+                          <button id="buttons" name="{{ note.note_id }}" type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close" onclick="removeElement(this.name)"></button>
+                        </div>
+                     </form>
+                     <div class="toast_body" id="text-{{ note.note_id }}" style="padding: 8px; padding-bottom: 15px; margin: 15px; word-wrap:break-word;">{{ note.note_text }}</div>
                     </div>
-                    <div class="toast_body" style="padding: 8px; padding-bottom: 15px; margin: 15px; word-wrap:break-word;">{{ note.note_text }}</div>
                   </div>
-                </div>
               {% endfor %}
             </div>
           </div>

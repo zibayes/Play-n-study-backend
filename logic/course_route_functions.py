@@ -60,7 +60,13 @@ def get_tests_data(course_id):
 def get_unit_name(course, task_id, task_type):
     for unit in course.content['body']:
         for test in unit['tests']:
-            if test.test_id == task_id and test.unit_type == task_type:
+            if isinstance(test, dict):
+                test_id = test['test_id']
+                unit_type = test['unit_type']
+            else:
+                test_id = test.test_id
+                unit_type = test.unit_type
+            if test_id == task_id and unit_type == task_type:
                 return unit['name']
 
 
@@ -73,7 +79,13 @@ def get_unit_name_by_id(course, unit_id):
 def get_unit_id(course, task_id, task_type):
     for unit in course.content['body']:
         for test in unit['tests']:
-            if test.test_id == task_id and test.unit_type == task_type:
+            if isinstance(test, dict):
+                test_id = test['test_id']
+                unit_type = test['unit_type']
+            else:
+                test_id = test.test_id
+                unit_type = test.unit_type
+            if test_id == task_id and unit_type == task_type:
                 return unit['unit_id']
 
 
