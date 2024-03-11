@@ -2,6 +2,12 @@
 
 {% block title %}
 <title>Главная</title>
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+<link href='/static/fullcalendar/packages/core/main.css' rel='stylesheet' />
+<link href='/static/fullcalendar/packages/daygrid/main.css' rel='stylesheet' />
 {% endblock %}
 
 {% block content %}
@@ -38,27 +44,14 @@
             >Мои задачи</a
             >
           </li>
-          <li class="nav-item" role="presentation">
-            <a
-                    class="nav-link lang"
-                    id="ex2-tab-3"
-                    data-mdb-toggle="pill"
-                    href="#ex2-pills-3"
-                    role="tab"
-                    aria-controls="ex2-pills-3"
-                    aria-selected="false"
-                    key="month"
-            >Месяц</a
-            >
-          </li>
         </ul>
         <!-- Pills navs -->
 
         <!-- Pills content -->
         <div class="tab-content" id="ex2-content">
-          <div class="tab-pane fade show active" id="ex2-pills-1" role="tabpanel" aria-labelledby="ex2-tab-1">
+          <div class="tab-pane fade show" id="ex2-pills-1" role="tabpanel" aria-labelledby="ex2-tab-1">
             <div style="position: fixed; right: 45px; bottom: 45px">
-              <button type="button" style="border-radius: 70%; background-color: #48abe0;color: #ffffff;border: none;font-size: 31px;height: 50px;width: 50px;box-shadow: 0 2px 4px darkslategray;cursor: pointer;transition: all 0.2s ease;" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+              <button type="button" style="border-radius: 70%; background-color: #48abe0;color: #ffffff;border: none;font-size: 31px;height: 50px;width: 50px;box-shadow: 0 2px 4px darkslategray;cursor: pointer;transition: all 0.2s ease;" data-mdb-toggle="modal" data-mdb-target="#addNote">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
@@ -71,190 +64,74 @@
 
                           <strong class="me-auto" id="title-{{ note.note_id }}" style="max-width:150px; word-wrap:break-word;">{{ note.note_title }}</strong>
                           <small style="text-align: right">{{ note.addition_date.strftime('%d-%m-%Y') }} <br> {{ note.addition_date.strftime('%H:%M:%S') }}</small>
-                          <button id="buttons_edit" name="{{ note.note_id }}" type="button" class="btn btn-transparent shadow-none" style="background-color: transparent; border-color: transparent; max-width: 5px; padding: 10px;" aria-label="Edit" onclick="editNote(this.name)"><i class="fa fa-edit"></i></button>
+                          <button id="buttons_edit-{{ note.note_id }}" name="{{ note.note_id }}" type="button" class="btn btn-transparent shadow-none" style="background-color: transparent; border-color: transparent; max-width: 5px; padding: 10px;" aria-label="Edit" onclick="editNote(this.name)">
+                            <i class="fa fa-edit"></i>
+                          </button>
                           <button id="buttons" name="{{ note.note_id }}" type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close" onclick="removeElement(this.name)"></button>
                         </div>
+                      <div class="toast_body" id="text-{{ note.note_id }}" style="padding: 8px; padding-bottom: 15px; margin: 15px; word-wrap:break-word;">{{ note.note_text }}</div>
                      </form>
-                     <div class="toast_body" id="text-{{ note.note_id }}" style="padding: 8px; padding-bottom: 15px; margin: 15px; word-wrap:break-word;">{{ note.note_text }}</div>
                     </div>
                   </div>
               {% endfor %}
             </div>
           </div>
-          <div class="tab-pane fade" id="ex2-pills-2" role="tabpanel" aria-labelledby="ex2-tab-2">
-            <div class="container col-md-12 ">
-              <div class="row">
-                Tab content 2
-              </div>
+          <div class="tab-pane fade show active" id="ex2-pills-2" role="tabpanel" aria-labelledby="ex2-tab-2">
+            <div style="position: fixed; right: 45px; bottom: 45px">
+              <button type="button" style="border-radius: 70%; background-color: #48abe0;color: #ffffff;border: none;font-size: 31px;height: 50px;width: 50px;box-shadow: 0 2px 4px darkslategray;cursor: pointer;transition: all 0.2s ease;" data-mdb-toggle="modal" data-mdb-target="#addDeadline">
+                <i class="fa fa-plus"></i>
+              </button>
             </div>
-          </div>
-          <div class="tab-pane fade" id="ex2-pills-3" role="tabpanel" aria-labelledby="ex2-tab-3">
             <div class="row">
-              <table class="table table-bordered">
-                <thead>
-                <tr>
-                  <th class="lang" key="monday">ПН</th>
-                  <th class="lang" key="tuesday">ВТ</th>
-                  <th class="lang" key="wednesday">СР</th>
-                  <th class="lang" key="thursday">ЧТ</th>
-                  <th class="lang" key="friday">ПТ</th>
-                  <th class="lang" key="saturday">СБ</th>
-                  <th class="lang" key="sunday">ВС</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">1</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">2</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">3</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">4</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">5</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">6</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">7</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">8</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">9</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">10</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">11</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">12</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">13</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">14</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">15</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">16</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">17</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">18</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">19</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">20</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">21</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">22</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">23</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">24</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">25</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">26</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">27</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">28</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">29</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">30</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">31</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">32</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">33</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">34</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                  <td class="td-day">
-                    <div class="day"><span style="font-size: x-small; ">35</span></div>
-                    <div class="info">Ссылка на работу</div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+            <div id='calendar-container'>
+              <div id='calendar'></div>
+            </div>
+
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+              var calendarEl = document.getElementById('calendar');
+
+              var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+                height: 'parent',
+                header: {
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+
+                locale: 'ru',
+                buttonText: {
+                    today: "Сегодня",
+                    month: "Месяц",
+                    week: "Неделя",
+                    day: "День",
+                    list: 'Список'
+                },
+
+                defaultView: 'dayGridMonth',
+                defaultDate: new Date(),
+                navLinks: true, // can click day/week names to navigate views
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: [
+                  {% for deadline in deadlines %}
+                      {
+                        title: `{{ deadline.title }}`,
+                        {% if deadline.start_date|string == 'None' %}
+                          start: `{{ deadline.end_date }}`,
+                        {% else %}
+                          start: `{{ deadline.start_date }}`,
+                          end: `{{ deadline.end_date }}`,
+                        {% endif %}
+                      },
+                  {% endfor %}
+                ]
+              });
+
+              calendar.render();
+            });
+              </script>
             </div>
           </div>
         </div>
@@ -306,14 +183,32 @@
 </div>
 <!-- CSS -->
 <link rel="stylesheet" href="/static/css/tasks.css"/>
+<link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css"/>
 {% endblock %}
 {% block script %}
 <!-- Scripts -->
-<script type="text/javascript" src="/static/js/tasks.js"></script>
+<script type="module" src="/static/js/tasks.js"></script>
+<script src="/static/js/moment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ru.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
+
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src='/static/fullcalendar/packages/core/main.js'></script>
+<script src='/static/fullcalendar/packages/interaction/main.js'></script>
+<script src='/static/fullcalendar/packages/daygrid/main.js'></script>
+<script src='/static/fullcalendar/packages/timegrid/main.js'></script>
+<script src='/static/fullcalendar/packages/list/main.js'></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/bootstrap-datetimepicker.ru.js"></script>
+
+
 {% endblock %}
 
 {% block modal_dialog %}
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="addNote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -333,8 +228,53 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary lang" key="exit" data-mdb-dismiss="modal">Выйти</button>
+          <button type="button" class="btn btn-secondary lang" key="exit_" data-mdb-dismiss="modal">Выйти</button>
           <button type="button" id="save" class="btn btn-primary lang" key="save" data-mdb-dismiss="modal">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal fade" id="addDeadline" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title lang" key="new_deadline" id="exampleModalLabelDeadline">Новое событие</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/add_deadline" method="POST">
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label lang" key="name_">Название:</label>
+              <input required type="text" class="form-control" id="recipient-name-deadline" name="title"/>
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label lang" key="start_date">Дата начала:</label>
+              <div class="form-group">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                  <input required type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" name="start_date"/>
+                  <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker" style="cursor: pointer">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label lang" key="end_date">Дата окончания:</label>
+              <div class="form-group">
+                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" name="end_date"/>
+                  <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker" style="cursor: pointer">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary lang" key="exit_" data-mdb-dismiss="modal">Выйти</button>
+              <button type="submit" id="save-deadline" class="btn btn-primary lang" key="save" data-mdb-dismiss="modal">Сохранить</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

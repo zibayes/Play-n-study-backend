@@ -2,7 +2,7 @@ from flask_login import login_required, current_user
 from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from data.types import User, Note
+from data.types import User, Note, Deadline
 from logic.facade import LogicFacade
 from presentation.auth.route import online_users
 
@@ -29,7 +29,17 @@ def handle_task():
     user_id = current_user.get_id()
     user = logic.get_user_by_id(user_id)
     notes = logic.get_all_notes_by_user_id(user_id)
-    return render_template('tasks.html', user=user, notes=notes)
+    deadlines = logic.get_all_deadlines_by_user_id(user_id)
+    return render_template('tasks.html', user=user, notes=notes, deadlines=deadlines)
+
+
+@login_required
+@pages_bp.route('/add_deadline', methods=['POST'])
+def handle_add_deadline():
+    print(request.form['title'])
+    deadline = Deadline(None, None, None, None, current_user.get_id(), request.form['title'], request.form['start_date'], request.form['end_date'])
+    logic.add_deadline(deadline)
+    return redirect(f'/tasks')
 
 
 @login_required
@@ -227,10 +237,11 @@ def handle_remove_note(note_id):
 
 
 @login_required
-@pages_bp.route('/update_note/<int:msg_id>', methods=['POST'])
+@pages_bp.route('/update_note/<int:note_id>', methods=['POST'])
 def handle_update_note(note_id):
-    note =logic.get_note_by_id(note_id)
-    note.note_text = request.json
+    note = logic.get_note_by_id(note_id)
+    note.note_text = request.json['text']
+    note.note_title = request.json['title']
     response = logic.update_note(note)
     if response:
         return 'note updated'

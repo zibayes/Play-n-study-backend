@@ -1438,3 +1438,78 @@ class NotesRepository:
             .order_by(NotesModel.note_id.desc()) \
             .first()
         return convert.note_db_to_note(note_db)
+
+
+class DeadlinesRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_deadline(self, deadline: Deadline):
+        try:
+            new_deadline = DeadlinesModel(
+                course_id = deadline.course_id,
+                task_type = deadline.task_type,
+                task_id = deadline.task_id,
+                user_id = deadline.user_id,
+                title = deadline.title,
+                start_date = deadline.start_date,
+                end_date = deadline.end_date,
+            )
+            self.session.add(new_deadline)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления крайнего срока в БД " + str(e))
+
+    def get_deadline_by_id(self, deadline_id):
+        deadline_db = self.session.query(DeadlinesModel) \
+            .filter_by(deadline_id=deadline_id) \
+            .first()
+        return convert.deadline_db_to_deadline(deadline_db)
+
+    def get_all_deadlines_by_user_id(self, user_id):
+        deadlines_db = self.session.query(DeadlinesModel) \
+            .filter_by(user_id=user_id) \
+            .all()
+        return [convert.deadline_db_to_deadline(i) for i in deadlines_db]
+
+    def get_all_deadlines_by_course_id(self, course_id):
+        deadlines_db = self.session.query(DeadlinesModel) \
+            .filter_by(course_id=course_id) \
+            .all()
+        return [convert.deadline_db_to_deadline(i) for i in deadlines_db]
+
+    def remove_deadline(self, deadline_id) -> bool:
+        try:
+            self.session.query(DeadlinesModel) \
+                .filter_by(deadline_id=deadline_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления крайнего срока:" + str(e))
+            return False
+
+    def update_deadline(self, deadline: Deadline) -> bool:
+        try:
+            deadline_to_update = self.session.query(DeadlinesModel) \
+                .filter_by(deadline_id=deadline.deadline_id) \
+                .first()
+            deadline_to_update.course_id = deadline.course_id
+            deadline_to_update.task_type = deadline.task_type
+            deadline_to_update.task_id = deadline.task_id
+            deadline_to_update.user_id = deadline.user_id
+            deadline_to_update.title = deadline.title
+            deadline_to_update.start_date = deadline.start_date
+            deadline_to_update.end_date = deadline.end_date
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления крайнего срока в БД " + str(e))
+            return False
+
+    def get_last_deadline(self):
+        deadline_db = self.session.query(DeadlinesModel) \
+            .order_by(DeadlinesModel.deadline_id.desc()) \
+            .first()
+        return convert.deadline_db_to_deadline(deadline_db)

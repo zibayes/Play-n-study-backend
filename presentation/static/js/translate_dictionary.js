@@ -678,6 +678,10 @@ export let arrLang = {
 
     "site_reviews": "Отзывы о сервисе",
     "how_do_you_like_this_site": "Как вам данный сервис?",
+
+    'exit_': 'Выйти',
+    'start_date': 'Дата начала:',
+    'end_date': 'Дата окончания:',
   },
   'de': {
     'mainpage': 'Startseite',

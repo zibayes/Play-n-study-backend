@@ -595,3 +595,22 @@ class LogicFacade:
 
     def get_last_note(self):
         return self.data.get_last_note()
+
+    def add_deadline(self, deadline):
+        return self.data.add_deadline(deadline)
+
+    def get_deadline_by_id(self, deadline_id):
+        return self.data.get_deadline_by_id(deadline_id)
+
+    def get_all_deadlines_by_user_id(self, user_id):
+        courses = self.get_user_for_profile(user_id, user_id).courses
+        return self.data.get_all_deadlines_by_user_id(user_id, courses)
+
+    def remove_deadline(self, deadline_id):
+        return self.data.remove_deadline(deadline_id)
+
+    def update_deadline(self, deadline):
+        return self.data.update_deadline(deadline)
+
+    def get_last_deadline(self):
+        return self.data.get_last_deadline()

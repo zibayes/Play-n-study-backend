@@ -192,3 +192,14 @@ def note_db_to_note(note: Type[NotesModel]):
                  note_title=note.note_title,
                  note_text=note.note_text,
                  addition_date=note.addition_date)
+
+
+def deadline_db_to_deadline(deadline: Type[DeadlinesModel]):
+    return Deadline(deadline_id=deadline.deadline_id,
+                 course_id=deadline.course_id,
+                 task_type=deadline.task_type,
+                 task_id=deadline.task_id,
+                 user_id=deadline.user_id,
+                 title=deadline.title,
+                 start_date=deadline.start_date,
+                 end_date=deadline.end_date)

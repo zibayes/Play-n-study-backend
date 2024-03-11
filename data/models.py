@@ -443,3 +443,23 @@ class NotesModel(Base):
         self.note_title = note_title
         self.note_text = note_text
         self.addition_date = addition_date
+
+class DeadlinesModel(Base):
+    __tablename__ = 'deadlines'
+    deadline_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer)
+    task_type = Column(Text)
+    task_id = Column(Integer)
+    user_id = Column(Integer)
+    title = Column(Text)
+    start_date = Column(TIMESTAMP)
+    end_date = Column(TIMESTAMP)
+
+    def __init__(self, course_id, task_type, task_id, user_id, title, start_date, end_date):
+        self.course_id = course_id
+        self.task_type = task_type
+        self.task_id = task_id
+        self.user_id = user_id
+        self.title = title
+        self.start_date = start_date
+        self.end_date = end_date

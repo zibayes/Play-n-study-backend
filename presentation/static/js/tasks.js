@@ -1,5 +1,4 @@
-<!--Додумать удаление всего div'a и прикрепить к ним id-->
-  var flag_id = 0
+var flag_id = 0
   $("#save").click(function (event){
     flag_id++
     let div = document.getElementById("notes")
@@ -39,7 +38,7 @@
     button.setAttribute("aria-label", "Close")
     button.setAttribute("onclick", "removeElement(this.name)")
     let button_edit = document.createElement("button")
-    button_edit.id = "buttons_edit"
+    button_edit.id = "buttons_edit-" + flag_id
     button_edit.name = flag_id
     button_edit.type = "button"
     button_edit.setAttribute("class", "btn btn-transparent shadow-none")
@@ -98,28 +97,87 @@
   }
 
   function editNote(index) {
+    let wrapper = document.createElement('div')
+    wrapper.setAttribute("style", "display: flex; justify-content: center;")
+
+    let button_accept = document.createElement('button')
+    button_accept.setAttribute("id", "button_accept-" + index)
+    button_accept.setAttribute("type", "button")
+    button_accept.setAttribute("class", "btn btn-success shadow-none")
+    button_accept.setAttribute("style", "border-color: transparent; margin:8px; margin-top:3px;")
+    button_accept.setAttribute("aria-label", "Edit")
+    let icon_accept = document.createElement('i')
+    icon_accept.setAttribute("class", "fa-solid fa-check")
+
+    let button_decline = document.createElement('button')
+    button_decline.setAttribute("id", "button_decline-" + index)
+    button_decline.setAttribute("type", "button")
+    button_decline.setAttribute("class", "btn btn-danger shadow-none")
+    button_decline.setAttribute("style", "border-color: transparent; margin:8px; margin-top:3px;")
+    button_decline.setAttribute("aria-label", "Edit")
+    let icon_decline = document.createElement('i')
+    icon_decline.setAttribute("class", "fa-solid fa-xmark")
+
     let note = document.getElementById(index)
-    let input_text = document.createElement('input')
-    let input_title = document.createElement('input')
+    let input_text = document.createElement('textarea')
+    let input_title = document.createElement('textarea')
     let title = document.getElementById('title-' + index)
-    title.setAttribute("hidden", "hidden")
     let text = document.getElementById('text-' + index)
+    let edit_button = document.getElementById('buttons_edit-' + index)
+    edit_button.setAttribute("hidden", "hidden")
+    title.setAttribute("hidden", "hidden")
     text.setAttribute("hidden", "hidden")
-    input_text.setAttribute("value", text.textContent)
-    input_title.setAttribute("value", title.textContent)
-    note.firstElementChild.appendChild(input_text)
+    input_text.setAttribute("style", "margin: 16px; height: 40px; width: 87%; margin-bottom:6px;")
+    input_text.setAttribute("name", "text")
+    input_title.setAttribute("style", "margin: 6px; height: 40px; width: 60%;")
+    input_title.setAttribute("name", "title")
+    note.firstElementChild.firstElementChild.appendChild(input_text)
+    button_accept.appendChild(icon_accept)
+    button_decline.appendChild(icon_decline)
+    wrapper.appendChild(button_accept)
+    wrapper.appendChild(button_decline)
+    note.firstElementChild.firstElementChild.appendChild(wrapper)
     note.firstElementChild.firstElementChild.firstElementChild.insertBefore(input_title, note.firstElementChild.firstElementChild.firstElementChild.firstElementChild)
-      /*
-    $.ajax({
-        url: '/edit_note/' + index,
-        method: "post",
-        dataType: 'json',
-        success: function (data){
-            console.log(data)
-          div_add.id = data
-        },
-        error: function (data){
-            console.log(data['responseText'])
-        }
-    })*/
+    input_text.textContent = text.textContent
+    input_title.textContent = title.textContent
+
+    button_decline.addEventListener("click", function () {
+        wrapper.remove()
+        input_title.remove()
+        input_text.remove()
+        edit_button.removeAttribute("hidden")
+        text.removeAttribute("hidden")
+        title.removeAttribute("hidden")
+    });
+
+    button_accept.addEventListener("click", function () {
+        text.textContent = input_text.value
+        title.textContent = input_title.value
+        $.ajax({
+          url: '/update_note/' + index,
+          method: "post",
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify({"title": input_title.value, "text": input_text.value}),
+          success: function (data){
+              console.log(data)
+          },
+          error: function (data){
+              console.log(data['responseText'])
+          }
+        })
+        wrapper.remove()
+        input_title.remove()
+        input_text.remove()
+        edit_button.removeAttribute("hidden")
+        text.removeAttribute("hidden")
+        title.removeAttribute("hidden")
+    });
   }
+
+  $('#datetimepicker1').datetimepicker({
+     locale: moment.locale('ru')
+   });
+   $('#datetimepicker2').datetimepicker({
+     locale: moment.locale('ru')
+   });

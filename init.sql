@@ -213,3 +213,14 @@ CREATE TABLE notes(
     note_text text,
     addition_date timestamp DEFAULT now()
 );
+
+CREATE TABLE deadlines(
+    deadline_id serial PRIMARY KEY,
+    course_id int NULL,
+	task_type text NULL,
+	task_id int NULL,
+	user_id integer NULL,
+	title text NULL,
+	start_date timestamp NULL,
+	end_date timestamp NULL
+);

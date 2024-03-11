@@ -27,6 +27,7 @@ class DataFacade:
         self.chat_messages_repository = ChatMessageRepository(session)
         self.notifications_repository = NotificationsRepository(session)
         self.notes_repository = NotesRepository(session)
+        self.deadlines_repository = DeadlinesRepository(session)
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -597,3 +598,24 @@ class DataFacade:
 
     def get_last_note(self):
         return self.notes_repository.get_last_note()
+
+    def add_deadline(self, deadline):
+        return self.deadlines_repository.add_deadline(deadline)
+
+    def get_deadline_by_id(self, deadline_id):
+        return self.deadlines_repository.get_deadline_by_id(deadline_id)
+
+    def get_all_deadlines_by_user_id(self, user_id, courses):
+        deadlines = self.deadlines_repository.get_all_deadlines_by_user_id(user_id)
+        for i in courses:
+            deadlines += self.deadlines_repository.get_all_deadlines_by_course_id(i.course_id)
+        return deadlines
+
+    def remove_deadline(self, deadline_id):
+        return self.deadlines_repository.remove_deadline(deadline_id)
+
+    def update_deadline(self, deadline):
+        return self.deadlines_repository.update_deadline(deadline)
+
+    def get_last_deadline(self):
+        return self.deadlines_repository.get_last_deadline()

@@ -425,7 +425,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, chec
   return div_main
 }
 
-
+/*
   $('.shoutbox-name').emojioneArea({
     emojiPlaceholder: ":smile_cat:",
     searchPlaceholder: "Поиск",
@@ -433,6 +433,7 @@ function add_element_chat(chat_id, time, user_with, from_who, last_message, chec
     searchPosition: "top",
     pickerPosition: "top"
   });
+ */
 
 $(function() {
   $('.translate').click(function() {

@@ -575,3 +575,15 @@ class Note:
         self.note_title = note_title
         self.note_text = note_text
         self.addition_date = addition_date
+
+
+class Deadline:
+    def __init__(self, deadline_id, course_id, task_type, task_id, user_id, title, start_date, end_date):
+        self.deadline_id = deadline_id
+        self.course_id = course_id
+        self.task_type = task_type
+        self.task_id = task_id
+        self.user_id = user_id
+        self.title = title
+        self.start_date = start_date
+        self.end_date = end_date
