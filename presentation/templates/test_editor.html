@@ -35,6 +35,18 @@
             <span class="fs-5 row m-3 justify-content-start lang">
                 <textarea required style="margin-top: 8px;" class="form-control toSend langp" maxlength="1000" key="test_name" placeholder="Название теста" name="testName" rows="1">{{ test.name }}</textarea>
                 <textarea style="margin-top: 8px;" class="form-control toSend langp" maxlength="1000" key="test_desc" placeholder="Описание теста" name="testDesc" rows="1">{{ test_tmp.description }}</textarea>
+                  <div class="form-group" style="margin-top: 8px; padding: 0">
+                    <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
+                      <input placeholder="Крайний срок выполнения задания" key="task_deadline" type="text" class="form-control datetimepicker-input langp" data-target="#datetimepicker1" name="deadline"
+                         {% if deadline.end_date|string != 'None' %}
+                            value="{{ deadline.end_date }}"
+                         {% endif %}
+                      />
+                      <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker" style="cursor: pointer">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px;">
                     <img class="border border-2 rounded w-100" src="/testava/{{ test_id }}" style="max-width: 290px; margin: 0 auto;">
                     <div style="max-width: 290px; margin: 0 auto;">
@@ -538,4 +550,10 @@
     <script>
         let questions_count = {{ test.questions|length }}
     </script>
+    <link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css"/>
+    <script src="/static/js/moment.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ru.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
+    <script src="/static/js/bootstrap-datetimepicker.ru.js"></script>
 {% endblock %}

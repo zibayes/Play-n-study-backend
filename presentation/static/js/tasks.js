@@ -174,10 +174,8 @@ var flag_id = 0
         title.removeAttribute("hidden")
     });
   }
+  window.editNote = editNote
 
-  $('#datetimepicker1').datetimepicker({
-     locale: moment.locale('ru')
-   });
-   $('#datetimepicker2').datetimepicker({
+  $('.datetimepicker').datetimepicker({
      locale: moment.locale('ru')
    });

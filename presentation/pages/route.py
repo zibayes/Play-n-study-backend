@@ -36,9 +36,39 @@ def handle_task():
 @login_required
 @pages_bp.route('/add_deadline', methods=['POST'])
 def handle_add_deadline():
-    print(request.form['title'])
-    deadline = Deadline(None, None, None, None, current_user.get_id(), request.form['title'], request.form['start_date'], request.form['end_date'])
+    start_date = request.form['start_date']
+    end_date = request.form['end_date']
+    if not start_date:
+        start_date = None
+    if not end_date:
+        end_date = None
+    deadline = Deadline(None, None, None, None, current_user.get_id(), request.form['title'], start_date, end_date)
     logic.add_deadline(deadline)
+    return redirect(f'/tasks')
+
+
+@login_required
+@pages_bp.route('/edit_deadline/<int:deadline_id>', methods=['POST'])
+def handle_edit_deadline(deadline_id):
+    deadline = logic.get_deadline_by_id(deadline_id)
+    deadline.title = request.form['title']
+    if not request.form['start_date']:
+        deadline.start_date = request.form['end_date']
+        deadline.end_date = None
+    elif not request.form['end_date']:
+        deadline.start_date = request.form['start_date']
+        deadline.end_date = None
+    else:
+        deadline.start_date = request.form['start_date']
+        deadline.end_date = request.form['end_date']
+    logic.update_deadline(deadline)
+    return redirect(f'/tasks')
+
+
+@login_required
+@pages_bp.route('/remove_deadline/<int:deadline_id>', methods=['GET'])
+def handle_remove_deadline(deadline_id):
+    logic.remove_deadline(deadline_id)
     return redirect(f'/tasks')
 
 

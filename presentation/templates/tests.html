@@ -119,6 +119,14 @@
                                                 {% endif %}
                                             </form>
                                         {% endif %}
+                                        {% if  unit_test.test.test_id|string + unit_test.unit_type in deadlines.keys() %}
+                                            <span class="hover-text">
+                                                <button style="text-shadow: 2px 2px 2px black;" class="btn btn-outline-light tooltip-toggle">
+                                                    <i class="fa-solid fa-stopwatch" style="font-size: 15px; color: white"></i>
+                                                </button>
+                                                <span class="tooltip-text"><text class="lang" key="task_deadline">Крайний срок выполнения задания</text>: {{deadlines[unit_test.test.test_id|string + unit_test.unit_type]}}</span>
+                                            </span>
+                                        {% endif %}
                                         {% if  results[unit_test.test.test_id|string + unit_test.unit_type] == True %}
                                             <span class="badge rounded-pill badge-success lang" key="done" style="padding: 11px">Выполнено</span>
                                         {% elif results[unit_test.test.test_id|string + unit_test.unit_type] == False %}

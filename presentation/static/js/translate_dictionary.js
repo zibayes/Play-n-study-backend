@@ -682,6 +682,11 @@ export let arrLang = {
     'exit_': 'Выйти',
     'start_date': 'Дата начала:',
     'end_date': 'Дата окончания:',
+    'edit_deadline': 'Редактирование события',
+    'task_deadline': 'Крайний срок выполнения задания',
+    'show_task_deadline': 'Просмотр задания',
+    'go_to_task': 'Перейти на страницу задания',
+    'deadline': 'Крайний срок выполнения:',
   },
   'de': {
     'mainpage': 'Startseite',

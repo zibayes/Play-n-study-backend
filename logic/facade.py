@@ -341,6 +341,9 @@ class LogicFacade:
     def remove_article(self, article_id):
         return self.data.remove_article(article_id)
 
+    def get_last_article(self):
+        return self.data.get_last_article()
+
     def link_add_link(self, link, course_id, unit_id):
         if self.data.link_add_link(link):
             link = self.data.get_last_link_by_course(course_id)
@@ -359,8 +362,8 @@ class LogicFacade:
     def link_get_all_by_course_id(self, course_id):
         return self.data.link_get_all_by_course_id(course_id)
 
-    def get_last_link_by_course(self, link_id):
-        return self.data.get_last_link_by_course(link_id)
+    def get_last_link_by_course(self, course_id):
+        return self.data.get_last_link_by_course(course_id)
 
     def update_link(self, link):
         return self.data.update_link(link)
@@ -394,6 +397,9 @@ class LogicFacade:
 
     def remove_forum(self, forum_id):
         return self.data.remove_forum(forum_id)
+
+    def get_last_forum(self):
+        return self.data.get_last_forum()
 
     def forum_topic_get_by_id(self, ft_id):
         return self.data.forum_topic_get_by_id(ft_id)
@@ -605,6 +611,9 @@ class LogicFacade:
     def get_all_deadlines_by_user_id(self, user_id):
         courses = self.get_user_for_profile(user_id, user_id).courses
         return self.data.get_all_deadlines_by_user_id(user_id, courses)
+
+    def get_all_deadlines_by_course_id(self, course_id):
+        return self.data.get_all_deadlines_by_course_id(course_id)
 
     def remove_deadline(self, deadline_id):
         return self.data.remove_deadline(deadline_id)

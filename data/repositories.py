@@ -689,6 +689,12 @@ class ArticlesRepository:
             print("Ошибка удаления статьи :" + str(e))
             return False
 
+    def get_last_article(self):
+        article_db = self.session.query(ArticlesModel) \
+            .order_by(ArticlesModel.article_id.desc()) \
+            .first()
+        return convert.article_db_to_article(article_db)
+
 
 class UserProgressRepository:
     def __init__(self, session):
@@ -1157,6 +1163,12 @@ class ForumsRepository:
         except sqlalchemy.exc.DatabaseError as e:
             print("Ошибка удаления форума:" + str(e))
             return False
+
+    def get_last_forum(self):
+        forum_db = self.session.query(ForumsModel) \
+            .order_by(ForumsModel.forum_id.desc()) \
+            .first()
+        return convert.forum_db_to_forum(forum_db)
 
 
 class ForumTopicsRepository:

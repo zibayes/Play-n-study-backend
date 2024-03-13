@@ -18,6 +18,7 @@
 }
 .mouse-parallax-bg {
   position: absolute;
+  background-image: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1612749063_117-p-fon-dlya-prezentatsii-nezhno-goluboi-s-per-129.jpg);
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -91,4 +92,28 @@
     color: #707070;
     transition: all 0.2s ease;
     white-space: nowrap;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  width: 230px;
+  color: white;
+  font-size: 12px;
+  background-color: #192733;
+  border-radius: 10px;
+  padding: 5px;
+  top: -50px;
+  left: -130%;
+}
+
+.hover-text:hover .tooltip-text {
+  visibility: visible;
+}
+
+.hover-text {
+  position: relative;
+  display: inline-block;
+  text-align: center;
 }

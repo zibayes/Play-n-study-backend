@@ -342,6 +342,9 @@ class DataFacade:
     def remove_article(self, article_id):
         return self.articles_repository.remove_article(article_id)
 
+    def get_last_article(self):
+        return self.articles_repository.get_last_article()
+
     def link_get_by_id(self, link_id):
         return self.links_repository.get_link_by_id(link_id)
 
@@ -351,8 +354,8 @@ class DataFacade:
     def link_add_link(self, link):
         return self.links_repository.add_link(link)
 
-    def get_last_link_by_course(self, link_id):
-        return self.links_repository.get_last_link_by_course(link_id)
+    def get_last_link_by_course(self, course_id):
+        return self.links_repository.get_last_link_by_course(course_id)
 
     def update_link(self, link):
         return self.links_repository.update_link(link)
@@ -377,6 +380,9 @@ class DataFacade:
 
     def remove_forum(self, forum_id):
         return self.forums_repository.remove_forum(forum_id)
+
+    def get_last_forum(self):
+        return self.forums_repository.get_last_forum()
 
     def forum_topic_get_by_id(self, ft_id):
         return self.forum_topics_repository.get_forum_topic_by_id(ft_id)
@@ -610,6 +616,9 @@ class DataFacade:
         for i in courses:
             deadlines += self.deadlines_repository.get_all_deadlines_by_course_id(i.course_id)
         return deadlines
+
+    def get_all_deadlines_by_course_id(self, course_id):
+        return self.deadlines_repository.get_all_deadlines_by_course_id(course_id)
 
     def remove_deadline(self, deadline_id):
         return self.deadlines_repository.remove_deadline(deadline_id)

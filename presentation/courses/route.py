@@ -12,8 +12,7 @@ from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import User, Progress, TestContent, Test, Article, Link, FileAttach, Forum, ForumTopic, TopicMessage, \
-    Achievement, Notification
+from data.types import *
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from logic.course_route_functions import get_tests_data, get_unit_name, get_unit_name_by_id, get_unit_id, \
@@ -47,7 +46,9 @@ def handle_tests(course_id):
     if not isinstance(data, tuple):
         render_template('index.html', user=data)
     user, course, results, _ = data
-    return render_template('tests.html', user=user, course=course, results=results)
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadlines = {str(i.task_id) + i.task_type:i.end_date for i in deadlines}
+    return render_template('tests.html', user=user, course=course, results=results, deadlines=deadlines)
 
 
 @login_required
@@ -580,6 +581,11 @@ def handle_test_constructor(course_id, unit_id):
 def handle_result_test(course_id, unit_id):
     response = logic.save_test(request.form, request.files, course_id, unit_id)
     test_id = logic.data.get_last_test_by_course(course_id).test_id
+
+    if request.form['deadline']:
+        deadline = Deadline(None, course_id, 'test', test_id, None, request.form['testName'], None, request.form['deadline'])
+        logic.add_deadline(deadline)
+
     for filename, file in request.files.to_dict().items():
         if 'File-' in filename:
             abs_path = str(Path(__file__).absolute())
@@ -604,8 +610,14 @@ def handle_article_editor(course_id, article_id):
     article = logic.article_get_by_id(article_id)
     course = logic.get_course(course_id, user.user_id)
     unit_name = get_unit_name(course, article_id, 'article')
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadline_date = Deadline(None, None, None, None, None, None, None, None)
+    for deadline in deadlines:
+        if deadline.task_type == 'article' and deadline.task_id == article_id:
+            deadline_date = deadline
+            break
     return render_template('article_editor.html', user=user, course_id=course_id, course=course,
-                           article=article, unit_name=unit_name)
+                           article=article, unit_name=unit_name, deadline=deadline_date)
 
 
 @login_required
@@ -623,6 +635,24 @@ def handle_article_update(course_id, article_id):
     article = Article(article_id=article_id, course_id=course_id, content=article_text, unit_id=unit_id,
                       name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=None)
+
+    deadline_date = request.form['deadline'] if request.form['deadline'] else None
+    deadline_exists = False
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    for deadline in deadlines:
+        if deadline.task_type == 'article' and deadline.task_id == article_id:
+            if deadline_date:
+                deadline.end_date = deadline_date
+                deadline_exists = True
+                break
+            else:
+                logic.remove_deadline(deadline.deadline_id)
+                deadline_exists = True
+                break
+    if not deadline_exists and deadline_date is not None:
+        deadline = Deadline(None, course_id, 'article', article_id, None, request.form['articleName'], None, deadline_date)
+        logic.add_deadline(deadline)
+
     response = logic.update_article(article, course_id, unit_id, 'article')
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -655,6 +685,12 @@ def handle_article_save(course_id, unit_id):
                       name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=None)
     response = logic.article_add_article(article, course_id, unit_id, 'article')
+
+    article_id = logic.get_last_article().article_id
+    if request.form['deadline']:
+        deadline = Deadline(None, course_id, 'article', article_id, None, request.form['articleName'], None, request.form['deadline'])
+        logic.add_deadline(deadline)
+
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении статьи', 'error')
@@ -704,6 +740,12 @@ def handle_forum_save(course_id, unit_id):
     forum = Forum(forum_id=None, course_id=course_id, unit_id=unit_id, name=request.form['forumName'],
                   description=request.form['forumDesc'], avatar=avatar, score=request.form['score'])
     response = logic.forum_add_forum(forum)
+
+    forum_id = logic.get_last_forum().forum_id
+    if request.form['deadline']:
+        deadline = Deadline(None, course_id, 'forum', forum_id, None, request.form['forumName'], None, request.form['deadline'])
+        logic.add_deadline(deadline)
+
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении форума', 'error')
@@ -720,8 +762,14 @@ def handle_forum_editor(course_id, forum_id):
     unit_id = get_unit_id(course, forum_id, 'forum')
     unit_name = get_unit_name_by_id(course, unit_id)
     forum = logic.forum_get_by_id(forum_id)
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadline_date = Deadline(None, None, None, None, None, None, None, None)
+    for deadline in deadlines:
+        if deadline.task_type == 'forum' and deadline.task_id == forum_id:
+            deadline_date = deadline
+            break
     return render_template('forum_editor.html', user=user, course_id=course_id, unit_id=unit_id,
-                           course=course, unit_name=unit_name, forum=forum)
+                           course=course, unit_name=unit_name, forum=forum, deadline=deadline_date)
 
 
 @login_required
@@ -738,6 +786,25 @@ def handle_forum_update(course_id, forum_id):
     forum = Forum(forum_id=forum_id, course_id=course_id, unit_id=unit_id, name=request.form['forumName'],
                   description=request.form['forumDesc'], avatar=avatar, score=request.form['score'])
     response = logic.update_forum(forum)
+
+    deadline_date = request.form['deadline'] if request.form['deadline'] else None
+    deadline_exists = False
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    for deadline in deadlines:
+        if deadline.task_type == 'forum' and deadline.task_id == forum_id:
+            if deadline_date:
+                deadline.end_date = deadline_date
+                deadline_exists = True
+                break
+            else:
+                logic.remove_deadline(deadline.deadline_id)
+                deadline_exists = True
+                break
+    if not deadline_exists and deadline_date is not None:
+        deadline = Deadline(None, course_id, 'forum', forum_id, None, request.form['forumName'], None,
+                            deadline_date)
+        logic.add_deadline(deadline)
+
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении форума', 'error')
@@ -1000,8 +1067,14 @@ def handle_link_editor(course_id, link_id):
     unit_id = get_unit_id(course, link_id, 'link')
     unit_name = get_unit_name_by_id(course, unit_id)
     link = logic.link_get_by_id(link_id)
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadline_date = Deadline(None, None, None, None, None, None, None, None)
+    for deadline in deadlines:
+        if deadline.task_type == 'link' and deadline.task_id == link_id:
+            deadline_date = deadline
+            break
     return render_template('link_editor.html', user=user, course_id=course_id, unit_id=unit_id,
-                           course=course, unit_name=unit_name, link=link)
+                           course=course, unit_name=unit_name, link=link, deadline=deadline_date)
 
 
 @login_required
@@ -1018,6 +1091,25 @@ def handle_link_update(course_id, link_id):
     link = Link(link_id=link_id, course_id=course_id, unit_id=unit_id, name=request.form['linkName'],
                 link=request.form['link'], avatar=avatar)
     response = logic.update_link(link)
+
+    deadline_date = request.form['deadline'] if request.form['deadline'] else None
+    deadline_exists = False
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    for deadline in deadlines:
+        if deadline.task_type == 'link' and deadline.task_id == link_id:
+            if deadline_date:
+                deadline.end_date = deadline_date
+                deadline_exists = True
+                break
+            else:
+                logic.remove_deadline(deadline.deadline_id)
+                deadline_exists = True
+                break
+    if not deadline_exists and deadline_date is not None:
+        deadline = Deadline(None, course_id, 'link', link_id, None, request.form['linkName'], None,
+                            deadline_date)
+        logic.add_deadline(deadline)
+
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении ссылки', 'error')
@@ -1034,6 +1126,13 @@ def handle_link_save(course_id, unit_id):
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     link = Link(link_id=None, course_id=course_id, unit_id=unit_id, name=request.form['linkName'],
                 link=request.form['link'], avatar=avatar)
+
+    link_id = logic.get_last_link_by_course(course_id).link_id
+    if request.form['deadline']:
+        deadline = Deadline(None, course_id, 'link', link_id, None, request.form['linkName'], None,
+                            request.form['deadline'])
+        logic.add_deadline(deadline)
+
     response = logic.link_add_link(link, course_id, unit_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
@@ -1066,6 +1165,13 @@ def handle_file_attach_save(course_id, unit_id):
                       name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
     response = logic.article_add_article(article, course_id, unit_id, 'file_attach')
+
+    article_id = logic.get_last_article().article_id
+    if request.form['deadline']:
+        deadline = Deadline(None, course_id, 'file_attach', article_id, None, request.form['articleName'], None,
+                            request.form['deadline'])
+        logic.add_deadline(deadline)
+
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении задания с прикреплением файла', 'error')
@@ -1082,8 +1188,14 @@ def handle_file_attach_editor(course_id, article_id):
     course = logic.get_course(course_id, user.user_id)
     score = 0
     unit_name = get_unit_name(course, article_id, 'file_attach')
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadline_date = Deadline(None, None, None, None, None, None, None, None)
+    for deadline in deadlines:
+        if deadline.task_type == 'file_attach' and deadline.task_id == article_id:
+            deadline_date = deadline
+            break
     return render_template('file_attach_editor.html', user=user, course_id=course_id, course=course,
-                           article=article, unit_name=unit_name, score=score)
+                           article=article, unit_name=unit_name, score=score, deadline=deadline_date)
 
 
 @login_required
@@ -1102,6 +1214,25 @@ def handle_file_attach_update(course_id, article_id):
                       name=request.form['articleName'],
                       description=request.form['articleDesc'], avatar=avatar, score=request.form['score'])
     response = logic.update_article(article=article, course_id=course_id, unit_id=unit_id, task_type='file_attach')
+
+    deadline_date = request.form['deadline'] if request.form['deadline'] else None
+    deadline_exists = False
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    for deadline in deadlines:
+        if deadline.task_type == 'file_attach' and deadline.task_id == article_id:
+            if deadline_date:
+                deadline.end_date = deadline_date
+                deadline_exists = True
+                break
+            else:
+                logic.remove_deadline(deadline.deadline_id)
+                deadline_exists = True
+                break
+    if not deadline_exists and deadline_date is not None:
+        deadline = Deadline(None, course_id, 'file_attach', article_id, None, request.form['articleName'], None,
+                            deadline_date)
+        logic.add_deadline(deadline)
+
     if response == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении задания', 'error')
@@ -1318,8 +1449,14 @@ def handle_edit_test(course_id, test_id):
     user = logic.get_user_by_id(current_user.get_id())
     course = logic.get_course(course_id, current_user.get_id())
     unit_name = get_unit_name(course, test_id, 'test')
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    deadline_date = Deadline(None, None, None, None, None, None, None, None)
+    for deadline in deadlines:
+        if deadline.task_type == 'test' and deadline.task_id == test_id:
+            deadline_date = deadline
+            break
     return render_template('test_editor.html', user=user, test_id=test_id, test_tmp=test, test=test.content,
-                           course=course, unit_name=unit_name)
+                           course=course, unit_name=unit_name, deadline=deadline_date)
 
 
 @login_required
@@ -1337,6 +1474,24 @@ def handle_edit_test_save(course_id, test_id):
             path = abs_path + 'static/users_files/' + str(test_id) + 'test/'
             Path(path).mkdir(parents=True, exist_ok=True)
             file.save(os.path.join(path, filename + file.filename[file.filename.rfind('.'):]))
+
+    deadline_date = request.form['deadline'] if request.form['deadline'] else None
+    deadline_exists = False
+    deadlines = logic.get_all_deadlines_by_course_id(course_id)
+    for deadline in deadlines:
+        if deadline.task_type == 'test' and deadline.task_id == test_id:
+            if deadline_date:
+                deadline.end_date = deadline_date
+                deadline_exists = True
+                break
+            else:
+                logic.remove_deadline(deadline.deadline_id)
+                deadline_exists = True
+                break
+    if not deadline_exists and deadline_date is not None:
+        deadline = Deadline(None, course_id, 'test', test_id, None, request.form['testName'], None, deadline_date)
+        logic.add_deadline(deadline)
+
     if request.files['file']:
         logic.upload_test_avatar(request.files['file'], current_user, test_id)
     if response[1] == 'success':

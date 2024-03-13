@@ -24,6 +24,14 @@
             <span class="fs-5 row m-3 justify-content-start lang">
                 <textarea required class="form-control langp" key="forum_name" maxlength="1000" placeholder="Название форума" name="forumName" rows="1" style="margin: 8px;"></textarea>
                 <textarea class="form-control langp" key="forum_desc" maxlength="1000" placeholder="Описание форума" name="forumDesc" rows="1" style="margin: 8px;"></textarea>
+                  <div class="form-group" style="padding: 8px; padding-right: 0;">
+                    <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
+                      <input placeholder="Крайний срок выполнения задания" key="task_deadline" type="text" class="form-control datetimepicker-input langp" data-target="#datetimepicker1" name="deadline"/>
+                      <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker" style="cursor: pointer">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
                 <div class="flex-fill d-flex flex-column" style="width: 30%; padding: 15px; min-width: 210px; ">
                     <img class="border border-2 rounded w-100" src="/static/img/nophoto.png" style="max-width: 290px; margin: 0 auto;">
                     <div style="max-width: 290px; margin: 0 auto;">
@@ -47,4 +55,10 @@
     </div>
 </div>
 
+<link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css"/>
+<script src="/static/js/moment.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ru.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
+<script src="/static/js/bootstrap-datetimepicker.ru.js"></script>
 {% endblock %}

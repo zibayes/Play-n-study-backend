@@ -92,12 +92,18 @@
               var calendarEl = document.getElementById('calendar');
 
               var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-                height: 'parent',
+                plugins: [ 'dayGrid', 'list' ], //  'timeGrid',
+                height: '350',
+                firstDay: 1,
                 header: {
                   left: 'prev,next today',
                   center: 'title',
                   right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                eventClick: function(date, jsEvent, view) {
+                    $('#editDeadline-' + date.event.id).modal('show');
+                    // Prevent browser context menu:
+                    return false;
                 },
 
                 locale: 'ru',
@@ -118,11 +124,19 @@
                   {% for deadline in deadlines %}
                       {
                         title: `{{ deadline.title }}`,
+                        id: `{{ deadline.deadline_id }}`,
                         {% if deadline.start_date|string == 'None' %}
                           start: `{{ deadline.end_date }}`,
                         {% else %}
                           start: `{{ deadline.start_date }}`,
                           end: `{{ deadline.end_date }}`,
+                        {% endif %}
+                        {% if deadline.user_id|string == 'None' %}
+                          backgroundColor: '#1faee9',
+                          borderColor: '#000000',
+                        {% else %}
+                          backgroundColor: '#ffd942',
+                          borderColor: '#000000',
                         {% endif %}
                       },
                   {% endfor %}
@@ -235,7 +249,7 @@
     </div>
   </div>
 
-<div class="modal fade" id="addDeadline" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="addDeadline" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -251,7 +265,7 @@
             <div class="mb-3">
               <label for="message-text" class="col-form-label lang" key="start_date">Дата начала:</label>
               <div class="form-group">
-                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                <div class="input-group date datetimepicker" id="datetimepicker1" data-target-input="nearest">
                   <input required type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" name="start_date"/>
                   <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker" style="cursor: pointer">
                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -262,7 +276,7 @@
             <div class="mb-3">
               <label for="message-text" class="col-form-label lang" key="end_date">Дата окончания:</label>
               <div class="form-group">
-                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                <div class="input-group date datetimepicker" id="datetimepicker2" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" name="end_date"/>
                   <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker" style="cursor: pointer">
                     <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -272,11 +286,123 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary lang" key="exit_" data-mdb-dismiss="modal">Выйти</button>
-              <button type="submit" id="save-deadline" class="btn btn-primary lang" key="save" data-mdb-dismiss="modal">Сохранить</button>
+              <button type="submit" id="save-deadline" class="btn btn-primary lang" key="save">Сохранить</button>
             </div>
           </form>
         </div>
       </div>
     </div>
   </div>
+
+{% for deadline in deadlines %}
+  {% if deadline.user_id|string != 'None' %}
+    <div class="modal fade" id="editDeadline-{{deadline.deadline_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title lang" key="edit_deadline" id="editModalLabelDeadline">Редактирование события</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/edit_deadline/{{deadline.deadline_id}}" method="POST">
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label lang" key="name_">Название:</label>
+                <input required type="text" class="form-control" id="edit-name-deadline" value="{{ deadline.title }}" name="title"/>
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label lang" key="start_date">Дата начала:</label>
+                <div class="form-group">
+                  <div class="input-group date datetimepicker" id="edit-datetimepicker1-edit-{{deadline.deadline_id}}" data-target-input="nearest">
+                    <input required type="text" class="form-control datetimepicker-input" data-target="#edit-datetimepicker1-edit-{{deadline.deadline_id}}" name="start_date"
+                           {% if deadline.start_date|string == 'None' %}
+                            value="{{ deadline.end_date }}"
+                          {% else %}
+                            value="{{ deadline.start_date }}",
+                          {% endif %}
+                    />
+                    <div class="input-group-append" data-target="#edit-datetimepicker1-edit-{{deadline.deadline_id}}" data-toggle="datetimepicker" style="cursor: pointer">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label lang" key="end_date">Дата окончания:</label>
+                <div class="form-group">
+                  <div class="input-group date datetimepicker" id="edit-datetimepicker2-edit-{{deadline.deadline_id}}" data-target-input="nearest">
+                    <input type="text" class="form-control datetimepicker-input" data-target="#edit-datetimepicker2-edit-{{deadline.deadline_id}}" name="end_date"
+                           {% if deadline.start_date|string != 'None' and deadline.end_date|string != 'None' %}
+                            value="{{ deadline.end_date }}"
+                          {% endif %}
+                    />
+                    <div class="input-group-append" data-target="#edit-datetimepicker2-edit-{{deadline.deadline_id}}" data-toggle="datetimepicker" style="cursor: pointer">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary lang" key="exit_" data-mdb-dismiss="modal">Выйти</button>
+                <button type="button" class="btn btn-danger lang" key="delete" onclick="location.href='/remove_deadline/{{deadline.deadline_id}}'">Удалить</button>
+                <button type="submit" id="save-deadline" class="btn btn-primary lang" key="save">Сохранить</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="modal fade" id="editDeadline-{{deadline.deadline_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title lang" key="show_task_deadline" id="editModalLabelDeadline">Просмотр задания</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/edit_deadline/{{deadline.deadline_id}}" method="POST">
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label lang" key="name_">Название:</label>
+                <input required type="text" disabled class="form-control" id="edit-name-deadline" value="{{ deadline.title }}" name="title"/>
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label lang" key="deadline">Крайний срок выполнения:</label>
+                <div class="form-group">
+                  <div class="input-group date datetimepicker" id="edit-datetimepicker1-edit-{{deadline.deadline_id}}" data-target-input="nearest">
+                    <input required type="text" disabled class="form-control datetimepicker-input" data-target="#edit-datetimepicker1-edit-{{deadline.deadline_id}}" name="start_date"
+                           {% if deadline.start_date|string == 'None' %}
+                            value="{{ deadline.end_date }}"
+                          {% else %}
+                            value="{{ deadline.start_date }}",
+                          {% endif %}
+                    />
+                    <div class="input-group-append" data-target="#edit-datetimepicker1-edit-{{deadline.deadline_id}}" style="cursor: pointer">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary lang" key="exit_" data-mdb-dismiss="modal">Выйти</button>
+                <button type="button" id="go-to-deadline" class="btn btn-primary lang" key="go_to_task"
+                        {% if deadline.task_type == "test" %}
+                          onclick="location.href='/course/{{deadline.course_id}}/test_preview/{{deadline.task_id}}'"
+                        {% elif deadline.task_type == "article" %}
+                          onclick="location.href='/course/{{deadline.course_id}}/article/{{deadline.task_id}}'"
+                        {% elif deadline.task_type == "link" %}
+                          onclick="location.href='/course/{{deadline.course_id}}/link/{{deadline.task_id}}'"
+                        {% elif deadline.task_type == "file_attach" %}
+                          onclick="location.href='//course/{{deadline.course_id}}/file_attach_preview/{{deadline.task_id}}'"
+                        {% elif deadline.task_type == "forum" %}
+                          onclick="location.href='/course/{{deadline.course_id}}/forum_list/{{deadline.task_id}}'"
+                        {% endif %}
+                >Перейти на страницу задания</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}
 {% endblock modal_dialog %}
