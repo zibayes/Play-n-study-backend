@@ -1126,14 +1126,13 @@ def handle_link_save(course_id, unit_id):
         avatar = logic.upload_course_avatar(request.files['file'], current_user)
     link = Link(link_id=None, course_id=course_id, unit_id=unit_id, name=request.form['linkName'],
                 link=request.form['link'], avatar=avatar)
+    response = logic.link_add_link(link, course_id, unit_id)
 
     link_id = logic.get_last_link_by_course(course_id).link_id
     if request.form['deadline']:
         deadline = Deadline(None, course_id, 'link', link_id, None, request.form['linkName'], None,
                             request.form['deadline'])
         logic.add_deadline(deadline)
-
-    response = logic.link_add_link(link, course_id, unit_id)
     if response[1] == 'success':
         return redirect(f'/course_editor/{course_id}')
     flash('Ошибка при сохранении ссылки', 'error')

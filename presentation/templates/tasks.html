@@ -88,63 +88,77 @@
             </div>
 
               <script>
-                document.addEventListener('DOMContentLoaded', function() {
-              var calendarEl = document.getElementById('calendar');
+              let lang = localStorage.getItem('language');
+              let buttonText;
+              if (lang === "ru") {
+                  buttonText = {
+                      today: "Сегодня",
+                      month: "Месяц",
+                      week: "Неделя",
+                      day: "День",
+                      list: 'Список'
+                  }
+              } else {
+                buttonText = {
+                      today: "Today",
+                      month: "Month",
+                      week: "Week",
+                      day: "Day",
+                      list: 'List'
+                  }
+              }
 
-              var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid', 'list' ], //  'timeGrid',
-                height: '350',
-                firstDay: 1,
-                header: {
-                  left: 'prev,next today',
-                  center: 'title',
-                  right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                },
-                eventClick: function(date, jsEvent, view) {
-                    $('#editDeadline-' + date.event.id).modal('show');
-                    // Prevent browser context menu:
-                    return false;
-                },
+              document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('calendar');
 
-                locale: 'ru',
-                buttonText: {
-                    today: "Сегодня",
-                    month: "Месяц",
-                    week: "Неделя",
-                    day: "День",
-                    list: 'Список'
-                },
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                  plugins: [ 'dayGrid', 'list' ], //  'timeGrid',
+                  height: '350',
+                  firstDay: 1,
+                  header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                  },
+                  eventClick: function(date, jsEvent, view) {
+                      $('#editDeadline-' + date.event.id).modal('show');
+                      // Prevent browser context menu:
+                      return false;
+                  },
 
-                defaultView: 'dayGridMonth',
-                defaultDate: new Date(),
-                navLinks: true, // can click day/week names to navigate views
-                editable: true,
-                eventLimit: true, // allow "more" link when too many events
-                events: [
-                  {% for deadline in deadlines %}
-                      {
-                        title: `{{ deadline.title }}`,
-                        id: `{{ deadline.deadline_id }}`,
-                        {% if deadline.start_date|string == 'None' %}
-                          start: `{{ deadline.end_date }}`,
-                        {% else %}
-                          start: `{{ deadline.start_date }}`,
-                          end: `{{ deadline.end_date }}`,
-                        {% endif %}
-                        {% if deadline.user_id|string == 'None' %}
-                          backgroundColor: '#1faee9',
-                          borderColor: '#000000',
-                        {% else %}
-                          backgroundColor: '#ffd942',
-                          borderColor: '#000000',
-                        {% endif %}
-                      },
-                  {% endfor %}
-                ]
+                  locale: lang,
+                  buttonText: buttonText,
+
+                  defaultView: 'dayGridMonth',
+                  defaultDate: new Date(),
+                  navLinks: true, // can click day/week names to navigate views
+                  editable: true,
+                  eventLimit: true, // allow "more" link when too many events
+                  events: [
+                    {% for deadline in deadlines %}
+                        {
+                          title: `{{ deadline.title }}`,
+                          id: `{{ deadline.deadline_id }}`,
+                          {% if deadline.start_date|string == 'None' %}
+                            start: `{{ deadline.end_date }}`,
+                          {% else %}
+                            start: `{{ deadline.start_date }}`,
+                            end: `{{ deadline.end_date }}`,
+                          {% endif %}
+                          {% if deadline.user_id|string == 'None' %}
+                            backgroundColor: '#1faee9',
+                            borderColor: '#000000',
+                          {% else %}
+                            backgroundColor: '#ffd942',
+                            borderColor: '#000000',
+                          {% endif %}
+                        },
+                    {% endfor %}
+                  ]
+                });
+
+                calendar.render();
               });
-
-              calendar.render();
-            });
               </script>
             </div>
           </div>
@@ -203,8 +217,7 @@
 <!-- Scripts -->
 <script type="module" src="/static/js/tasks.js"></script>
 <script src="/static/js/moment.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ru.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script id="tempusdominus" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
 
 <script src="/static/js/jquery-3.3.1.min.js"></script>
@@ -216,7 +229,6 @@
 <script src='/static/fullcalendar/packages/timegrid/main.js'></script>
 <script src='/static/fullcalendar/packages/list/main.js'></script>
 <script src="/static/js/main.js"></script>
-<script src="/static/js/bootstrap-datetimepicker.ru.js"></script>
 
 
 {% endblock %}

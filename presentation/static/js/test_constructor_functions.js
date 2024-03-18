@@ -1210,30 +1210,49 @@ export function change_language(lang) {
     document.querySelectorAll(".tick").forEach(elem =>{
         elem.style.visibility = "hidden";
     });
+    let datetimepicker_locale = document.createElement('script');
+    datetimepicker_locale.setAttribute('id', "datetimepicker_locale");
     if (lang === "en") {
         document.getElementById("en-tick").style.visibility = "visible";
         localStorage.setItem('language', 'en')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/en-gb.min.js");
     } else if (lang === "ru") {
         document.getElementById("ru-tick").style.visibility = "visible";
         localStorage.setItem('language', 'ru')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/ru.min.js");
     } else if (lang === "de") {
         document.getElementById("de-tick").style.visibility = "visible";
         localStorage.setItem('language', 'de')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/de.min.js");
     } else if (lang === "fr") {
         document.getElementById("fr-tick").style.visibility = "visible";
         localStorage.setItem('language', 'fr')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/fr.min.js");
     } else if (lang === "es") {
         document.getElementById("es-tick").style.visibility = "visible";
         localStorage.setItem('language', 'es')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es.min.js");
     } else if (lang === "pt") {
         document.getElementById("pt-tick").style.visibility = "visible";
         localStorage.setItem('language', 'pt')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt.min.js");
     } else if (lang === "cn") {
         document.getElementById("cn-tick").style.visibility = "visible";
         localStorage.setItem('language', 'cn')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/zh-cn.min.js");
     } else if (lang === "jp") {
         document.getElementById("jp-tick").style.visibility = "visible";
         localStorage.setItem('language', 'jp')
+        datetimepicker_locale.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/ja.min.js");
     }
+    let datetimepicker_locale_prev = document.getElementById("datetimepicker_locale");
+    if(datetimepicker_locale_prev){
+        datetimepicker_locale_prev.remove();
+    }
+    let tempusdominus = document.getElementById("tempusdominus");
+    if(tempusdominus){
+        document.body.insertBefore(datetimepicker_locale, tempusdominus);
+    }
+    // document.body.replaceWith(calendar)
     translate(lang);
 }

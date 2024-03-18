@@ -44,7 +44,7 @@
                                 <div class="mb-2 bg-image card shadow-1-strong dnd-unit" style="background-image: url('/forumava/{{ unit_test.test.test_id }}');" id="{{unit.unit_id}}">
                             {% endif %}
                                 <div class="card-body text-white">
-                                    <h5 class="card-title" style="text-shadow: 2px 2px 2px black;">{{unit_test.test.content.name}}</h5>
+                                    <h5 class="card-title" style="text-shadow: 2px 2px 2px black; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{unit_test.test.content.name}}</h5>
                                     <p class="card-text">
                                         {% if unit_test.test.description != None %}
                                             <div style="text-shadow: 2px 2px 2px black; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{unit_test.test.description}}</div>

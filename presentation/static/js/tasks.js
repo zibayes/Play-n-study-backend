@@ -175,7 +175,3 @@ var flag_id = 0
     });
   }
   window.editNote = editNote
-
-  $('.datetimepicker').datetimepicker({
-     locale: moment.locale('ru')
-   });
