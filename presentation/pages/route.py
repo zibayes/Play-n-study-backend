@@ -30,7 +30,17 @@ def handle_task():
     user = logic.get_user_by_id(user_id)
     notes = logic.get_all_notes_by_user_id(user_id)
     deadlines = logic.get_all_deadlines_by_user_id(user_id)
-    return render_template('tasks.html', user=user, notes=notes, deadlines=deadlines)
+    return render_template('tasks.html', user=user, notes=notes, deadlines=deadlines, calendar=False)
+
+
+@login_required
+@pages_bp.route('/calendar')
+def handle_calendar():
+    user_id = current_user.get_id()
+    user = logic.get_user_by_id(user_id)
+    notes = logic.get_all_notes_by_user_id(user_id)
+    deadlines = logic.get_all_deadlines_by_user_id(user_id)
+    return render_template('tasks.html', user=user, notes=notes, deadlines=deadlines, calendar=True)
 
 
 @login_required
@@ -44,7 +54,7 @@ def handle_add_deadline():
         end_date = None
     deadline = Deadline(None, None, None, None, current_user.get_id(), request.form['title'], start_date, end_date)
     logic.add_deadline(deadline)
-    return redirect(f'/tasks')
+    return redirect(url_for('pages.handle_calendar'))
 
 
 @login_required
@@ -62,14 +72,14 @@ def handle_edit_deadline(deadline_id):
         deadline.start_date = request.form['start_date']
         deadline.end_date = request.form['end_date']
     logic.update_deadline(deadline)
-    return redirect(f'/tasks')
+    return redirect(url_for('pages.handle_calendar'))
 
 
 @login_required
 @pages_bp.route('/remove_deadline/<int:deadline_id>', methods=['GET'])
 def handle_remove_deadline(deadline_id):
     logic.remove_deadline(deadline_id)
-    return redirect(f'/tasks')
+    return redirect(url_for('pages.handle_calendar'))
 
 
 @login_required

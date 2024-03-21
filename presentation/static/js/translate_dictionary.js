@@ -336,6 +336,18 @@ export let arrLang = {
 
     "subscribers_": "Subscribers",
     "my_subscribers": "My subscribers",
+
+    "site_reviews": "Reviews of the service",
+    "how_do_you_like_this_site": "How do you like this service?",
+
+    'exit_': 'Exit',
+    'start_date': 'Start date:',
+    'end_date': 'End date:',
+    'edit_deadline': 'Editing an event',
+    'task_deadline': 'Deadline for completing the task',
+    'show_task_deadline': 'View the task',
+    'go_to_task': 'Go to the task page',
+    'deadline': 'Deadline for completion:',
   },
   'ru': {
     'mainpage': 'Главная',
@@ -1024,7 +1036,19 @@ export let arrLang = {
 
     "subscribers_": "Abonnenten",
     "my_subscribers": "Meine Abonnenten",
-    },
+
+    "site_reviews": "Service-Bewertungen",
+    "how_do_you_like_this_site": "Wie gefällt Ihnen dieser Service?",
+
+    'exit_': 'Beenden',
+    'start_date': 'Startdatum:',
+    'end_date': 'Enddatum:',
+    'edit_deadline': 'Ereignis bearbeiten',
+    'task_deadline': 'Frist für die Ausführung des Auftrags',
+    'show_task_deadline': 'Aufgabe anzeigen',
+    'go_to_task': 'Gehe zur Auftragsseite',
+    'deadline': 'Fälligkeitsdatum:',
+  },
     'fr': {
       'mainpage': 'Accueil',
       'support': 'Support',
@@ -1361,6 +1385,18 @@ export let arrLang = {
 
       "subscribers_": "Abonnés",
       "my_subscribers": "mes abonnés",
+
+      "site_reviews": "Avis sur le service",
+      "how_do_you_like_this_site": "comment Aimez-vous ce service?",
+
+      'exit_': 'Quitter',
+      'start_date': 'date de début:',
+      'end_date': 'date de fin:',
+      'edit_deadline': 'Modification de l`événement',
+      'task_deadline': 'date Limite d`exécution du travail',
+      'show_task_deadline': 'Afficher la tâche',
+      'go_to_task': 'aller à la page de travail',
+      'deadline': 'délai d`exécution:',
     },
     'es': {
       'mainpage':'Inicio',
@@ -1698,6 +1734,18 @@ export let arrLang = {
 
       "subscribers_": "Suscriptores",
       "my_subscribers": "mis seguidores",
+
+      "site_reviews": "Opiniones sobre el Servicio",
+      "how_do_you_like_this_site": "¿Qué tal este Servicio?",
+
+      'exit_': 'Salir',
+      'start_date':'fecha de Inicio:',
+      'end_date':'fecha de finalización:',
+      'edit_deadline' :' edición de eventos',
+      'task_deadline':'fecha Límite de trabajo',
+      'show_task_deadline': 'Ver el trabajo',
+      'go_to_task': 'Ir a la página de trabajo',
+      'deadline' :' fecha límite:',
     },
   'pt': {
     'mainpage': 'início',
@@ -2035,6 +2083,18 @@ export let arrLang = {
 
     "subscribers_":"assinantes",
     "my_subscribers": "meus seguidores",
+
+    "site_reviews": "comentários sobre o serviço",
+    "how_do_you_like_this_site": "o que você acha deste serviço?",
+
+    'exit_': 'sair',
+    'start_date':'data de início:',
+    'end_date': 'data de término:',
+    'edit_deadline': 'Editar evento',
+    'task_deadline' :' prazo de execução da tarefa',
+    'show_task_deadline': 'ver tarefa',
+    'go_to_task': 'ir para a página da tarefa',
+    'deadline': 'prazo de execução:',
   },
   'cn':{
     "mainpage":"主页",
@@ -2372,6 +2432,18 @@ export let arrLang = {
 
     "subscribers_":"订阅者",
     "my_subscribers":"我的订阅者",
+
+    "site_reviews":"服务评论",
+    "how_do_you_like_this_site":"你觉得这项服务怎么样？",
+
+    'exit_':'退出',
+    'start_date':'开始日期:',
+    'end_date':'结束日期:',
+    'edit_deadline':'编辑事件',
+    'task_deadline':'完成任务的截止日期',
+    'show_task_deadline':'查看任务',
+    'go_to_task':'转到任务页面',
+    'deadline':'完成截止日期:',
   },
   'jp':{
     'mainpage':'ホーム',
@@ -2709,5 +2781,17 @@ export let arrLang = {
 
     "subscribers_":"購読者",
     "my_subscribers":"私の購読者",
+
+    "site_reviews":"サービスのレビュー",
+    "how_do_you_like_this_site":"このサービスはどのように好きですか？",
+
+    'exit_':'終了',
+    'start_date':'開始日:',
+    'end_date':'終了日:',
+    'edit_deadline':'イベントの編集',
+    'task_deadline':'タスクを完了するための期限',
+    'show_task_deadline':'タスクを表示する',
+    'go_to_task':'タスクページに移動',
+    'deadline':'完了の締め切り:',
     },
 }
