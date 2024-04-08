@@ -20,26 +20,37 @@
         <ul class="nav nav-pills nav-fill mb-3 " id="ex1" role="tablist">
           <li class="nav-item" role="presentation">
             <a
-                    class="nav-link active lang"
+                    {% if calendar %}
+                      class="nav-link lang"
+                      aria-selected="false"
+                    {% else %}
+                      class="nav-link active lang"
+                      aria-selected="true"
+                    {% endif %}
                     id="ex2-tab-1"
                     data-mdb-toggle="pill"
                     href="#ex2-pills-1"
                     role="tab"
                     aria-controls="ex2-pills-1"
-                    aria-selected="true"
+
                     key="my_notes"
             >Мои заметки</a
             >
           </li>
           <li class="nav-item" role="presentation">
             <a
-                    class="nav-link lang"
+                    {% if calendar %}
+                      class="nav-link active lang"
+                      aria-selected="true"
+                    {% else %}
+                      class="nav-link lang"
+                      aria-selected="false"
+                    {% endif %}
                     id="ex2-tab-2"
                     data-mdb-toggle="pill"
                     href="#ex2-pills-2"
                     role="tab"
                     aria-controls="ex2-pills-2"
-                    aria-selected="false"
                     key="my_tasks"
             >Мои задачи</a
             >
@@ -49,7 +60,13 @@
 
         <!-- Pills content -->
         <div class="tab-content" id="ex2-content">
-          <div class="tab-pane fade show" id="ex2-pills-1" role="tabpanel" aria-labelledby="ex2-tab-1">
+          <div
+                  {% if calendar %}
+                    class="tab-pane fade show"
+                  {% else %}
+                    class="tab-pane fade show active"
+                  {% endif %}
+                  id="ex2-pills-1" role="tabpanel" aria-labelledby="ex2-tab-1">
             <div style="position: fixed; right: 45px; bottom: 45px">
               <button type="button" style="border-radius: 70%; background-color: #48abe0;color: #ffffff;border: none;font-size: 31px;height: 50px;width: 50px;box-shadow: 0 2px 4px darkslategray;cursor: pointer;transition: all 0.2s ease;" data-mdb-toggle="modal" data-mdb-target="#addNote">
                 <i class="fa fa-plus"></i>
@@ -76,7 +93,13 @@
               {% endfor %}
             </div>
           </div>
-          <div class="tab-pane fade show active" id="ex2-pills-2" role="tabpanel" aria-labelledby="ex2-tab-2">
+          <div
+                  {% if calendar %}
+                    class="tab-pane fade show active"
+                  {% else %}
+                    class="tab-pane fade show"
+                  {% endif %}
+                  id="ex2-pills-2" role="tabpanel" aria-labelledby="ex2-tab-2">
             <div style="position: fixed; right: 45px; bottom: 45px">
               <button type="button" style="border-radius: 70%; background-color: #48abe0;color: #ffffff;border: none;font-size: 31px;height: 50px;width: 50px;box-shadow: 0 2px 4px darkslategray;cursor: pointer;transition: all 0.2s ease;" data-mdb-toggle="modal" data-mdb-target="#addDeadline">
                 <i class="fa fa-plus"></i>
@@ -217,7 +240,8 @@
 <!-- Scripts -->
 <script type="module" src="/static/js/tasks.js"></script>
 <script src="/static/js/moment.js"></script>
-<script id="tempusdominus" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/locale/ru.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
 
 <script src="/static/js/jquery-3.3.1.min.js"></script>
@@ -229,6 +253,7 @@
 <script src='/static/fullcalendar/packages/timegrid/main.js'></script>
 <script src='/static/fullcalendar/packages/list/main.js'></script>
 <script src="/static/js/main.js"></script>
+<script src="/static/js/bootstrap-datetimepicker.ru.js"></script>
 
 
 {% endblock %}
