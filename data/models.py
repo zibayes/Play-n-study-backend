@@ -463,3 +463,15 @@ class DeadlinesModel(Base):
         self.title = title
         self.start_date = start_date
         self.end_date = end_date
+
+class LevelsModel(Base):
+    __tablename__ = 'levels'
+    level_id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.course_id"))
+    names = Column(ARRAY(Text))
+    scores = Column(ARRAY(Float))
+
+    def __init__(self, course_id, names, scores):
+        self.course_id = course_id
+        self.names = names
+        self.scores = scores

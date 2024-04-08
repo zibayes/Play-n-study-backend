@@ -623,3 +623,21 @@ class LogicFacade:
 
     def get_last_deadline(self):
         return self.data.get_last_deadline()
+
+    def add_level(self, level):
+        return self.data.add_level(level)
+
+    def get_level_by_id(self, level_id):
+        return self.data.get_level_by_id(level_id)
+
+    def get_all_levels_by_course_id(self, course_id):
+        return self.data.get_all_levels_by_course_id(course_id)
+
+    def remove_level(self, level_id):
+        return self.data.remove_level(level_id)
+
+    def update_level(self, level):
+        return self.data.update_level(level)
+
+    def get_last_level(self):
+        return self.data.get_last_level()

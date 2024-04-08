@@ -28,6 +28,7 @@ class DataFacade:
         self.notifications_repository = NotificationsRepository(session)
         self.notes_repository = NotesRepository(session)
         self.deadlines_repository = DeadlinesRepository(session)
+        self.levels_repository = LevelsRepository(session)
 
     def get_user_achievements(self, user_id: int) -> Optional[list]:
         user_achievements_list = []
@@ -628,3 +629,21 @@ class DataFacade:
 
     def get_last_deadline(self):
         return self.deadlines_repository.get_last_deadline()
+
+    def add_level(self, level):
+        return self.levels_repository.add_level(level)
+
+    def get_level_by_id(self, level_id):
+        return self.levels_repository.get_level_by_id(level_id)
+
+    def get_all_levels_by_course_id(self, course_id):
+        return self.levels_repository.get_all_levels_by_course_id(course_id)
+
+    def remove_level(self, level_id):
+        return self.levels_repository.remove_level(level_id)
+
+    def update_level(self, level):
+        return self.levels_repository.update_level(level)
+
+    def get_last_level(self):
+        return self.levels_repository.get_last_level()

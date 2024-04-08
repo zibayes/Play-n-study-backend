@@ -1,3 +1,4 @@
+import copy
 import random
 import json
 
@@ -5,7 +6,7 @@ from flask_login import current_user
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from data.types import TestContent, Test, Progress
+from data.types import TestContent, Test, Progress, Level
 from logic.test import TestResult
 from logic.facade import LogicFacade
 from markdown import markdown
@@ -205,6 +206,25 @@ def course_update(course, request):
                 if unit_name == 'unitName-' + str(unit['unit_id']):
                     new_units_order.append(unit)
     course.content['body'] = new_units_order
+
+    names = []
+    scores = []
+    structure_copy = copy.deepcopy(structure)
+    for key in structure_copy.keys():
+        if 'level-' in key:
+            names.append(structure.pop(key))
+        elif 'levelScore-' in key:
+            scores.append(structure.pop(key))
+    levels = logic.get_all_levels_by_course_id(course.course_id)
+    if len(names) > 0 and len(scores) > 0:
+        if not levels:
+            logic.add_level(Level(level_id=None, course_id=course.course_id, scores=scores, names=names))
+        else:
+            logic.update_level(
+                Level(level_id=levels[0].level_id, course_id=course.course_id, scores=scores, names=names))
+    elif levels:
+        logic.remove_level(levels[0].level_id)
+
     for unit in course.content['body']:
         unit['name'] = structure.pop('unitName-' + str(unit['unit_id'])).replace("'", '"').replace("`", '"').replace(
             '"', '\"')
@@ -218,7 +238,6 @@ def course_update(course, request):
                 if test.unit_type == task_type and test.test_id == int(task_id):
                     new_tests_order.append(test)
         unit['tests'] = new_tests_order
-
 
 def get_course_summary(course, progresses, user):
     marks = {}

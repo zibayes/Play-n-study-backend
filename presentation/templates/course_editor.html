@@ -28,6 +28,29 @@
                     <div style="color: gray; font-size: 14px; text-align: center;" class="lang" key="file_note">*Изображение должно иметь расширение png, jpg или jpeg и размер не более 2Мб</div>
                 </div>
             </span>
+            <div id="levelAdd">
+                <span class="fs-5 row m-3 justify-content-start lang" key="">Система уровней</span>
+                <script>document.level_num = {{ levels.items()|length + 1 }}</script>
+                {% set lavelNum = namespace(value=1) %}
+                {% for name, score in levels.items() %}
+                    <div style="display: flex; margin-bottom: 10px;">
+                        <textarea class="form-control toSend langp" key="" maxlength="1000" placeholder="Название уровня №{{lavelNum.value}}" name="level-{{lavelNum.value}}" rows="1">{{ name }}</textarea>
+                        <input type="number" name="levelScore-{{lavelNum.value}}" placeholder="Баллы" id="levelScore-{{lavelNum.value}}" style="width:120px; margin-left: 10px;" value="{{ score }}"/>
+                    </div>
+                    {% set lavelNum.value = lavelNum.value + 1 %}
+                {% endfor %}
+            </div>
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-primary lang" key=""
+                    id="addLevel" style=
+                    "background-color:green;" type="button" onclick="document.addLevel()">
+                    Добавить уровень
+                </button>
+                <button class="btn btn-danger lang" key="" type="button"
+                        id="delLevel" onclick="document.deleteLevel()">
+                        Удалить уровень
+                </button>
+            </div>
             <div class="row border" id="units_list">
                 {% for unit in course.content.body %}
                     <div id="unit-{{unit.unit_id}}" class="unit_div">

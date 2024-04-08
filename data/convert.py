@@ -203,3 +203,10 @@ def deadline_db_to_deadline(deadline: Type[DeadlinesModel]):
                  title=deadline.title,
                  start_date=deadline.start_date,
                  end_date=deadline.end_date)
+
+
+def level_db_to_level(level: Type[LevelsModel]):
+    return Level(level_id=level.level_id,
+                 course_id=level.course_id,
+                 names=level.names,
+                 scores=level.scores)

@@ -224,3 +224,10 @@ CREATE TABLE deadlines(
 	start_date timestamp NULL,
 	end_date timestamp NULL
 );
+
+CREATE TABLE levels(
+    level_id serial PRIMARY KEY,
+    course_id int REFERENCES courses(course_id),
+    names text[],
+    scores float[]
+);

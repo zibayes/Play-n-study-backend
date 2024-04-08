@@ -121,3 +121,34 @@ document.querySelectorAll(".dnd-units").forEach(elem =>{
 
 let units_list = document.getElementById("units_list");
 addDragoverEventListener(units_list, `unit_div`);
+
+document.addLevel = function(){
+    let div = document.createElement('div');
+    div.setAttribute('style', "display: flex; margin-bottom: 10px;");
+    let textarea = document.createElement('textarea');
+    textarea.setAttribute('class', "form-control toSend langp");
+    textarea.setAttribute('maxlength', "1000");
+    textarea.setAttribute('placeholder', 'Название уровня №' + document.level_num);
+    textarea.setAttribute('name', 'level-' + document.level_num);
+    textarea.setAttribute('id', 'level-' + document.level_num);
+    textarea.setAttribute('rows', '1');
+    let input = document.createElement('input');
+    input.setAttribute('type', "number");
+    input.setAttribute('id', "levelScore-" + document.level_num);
+    input.setAttribute('name', "levelScore-" + document.level_num);
+    input.setAttribute('placeholder', "Баллы");
+    input.setAttribute('style', "width:120px; margin-left: 10px;");
+    let level_add = document.getElementById('levelAdd');
+    div.appendChild(textarea);
+    div.appendChild(input);
+    level_add.appendChild(div);
+    document.level_num += 1;
+}
+
+document.deleteLevel = function(){
+    if (document.level_num > 1){
+        let level_add = document.getElementById('levelAdd');
+        level_add.children[level_add.childElementCount-1].remove();
+        document.level_num -= 1;
+    }
+}

@@ -587,3 +587,11 @@ class Deadline:
         self.title = title
         self.start_date = start_date
         self.end_date = end_date
+
+
+class Level:
+    def __init__(self, level_id, course_id, names, scores):
+        self.level_id = level_id
+        self.course_id = course_id
+        self.names = names
+        self.scores = scores
