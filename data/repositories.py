@@ -1525,3 +1525,64 @@ class DeadlinesRepository:
             .order_by(DeadlinesModel.deadline_id.desc()) \
             .first()
         return convert.deadline_db_to_deadline(deadline_db)
+
+
+class LevelsRepository:
+    def __init__(self, session):
+        self.session = session
+
+    def add_level(self, level: Level):
+        try:
+            new_level = LevelsModel(
+                course_id = level.course_id,
+                names = level.names,
+                scores = level.scores
+            )
+            self.session.add(new_level)
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка добавления крайнего срока в БД " + str(e))
+
+    def get_level_by_id(self, level_id):
+        level_db = self.session.query(LevelsModel) \
+            .filter_by(level_id=level_id) \
+            .first()
+        return convert.level_db_to_level(level_db)
+
+    def get_all_levels_by_course_id(self, course_id):
+        levels_db = self.session.query(LevelsModel) \
+            .filter_by(course_id=course_id) \
+            .all()
+        return [convert.level_db_to_level(i) for i in levels_db]
+
+    def remove_level(self, level_id) -> bool:
+        try:
+            self.session.query(LevelsModel) \
+                .filter_by(level_id=level_id) \
+                .delete()
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка удаления крайнего срока:" + str(e))
+            return False
+
+    def update_level(self, level: Level) -> bool:
+        try:
+            level_to_update = self.session.query(LevelsModel) \
+                .filter_by(level_id=level.level_id) \
+                .first()
+            level_to_update.course_id = level.course_id
+            level_to_update.names = level.names
+            level_to_update.scores = level.scores
+            self.session.commit()
+            return True
+        except sqlalchemy.exc.DatabaseError as e:
+            print("Ошибка обновления крайнего срока в БД " + str(e))
+            return False
+
+    def get_last_level(self):
+        level_db = self.session.query(LevelsModel) \
+            .order_by(LevelsModel.level_id.desc()) \
+            .first()
+        return convert.level_db_to_level(level_db)

@@ -18,6 +18,38 @@
           </ol>
         </nav>
         <div class="row border"></div>
+
+        <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Ваш текущий уровень на курсе:</span>{{current_level}}</span>
+
+          <div class="progresses" style="justify-content: center; padding: 30px; padding-top: 15px; padding-bottom: 5px;">
+
+            {% set lavelNum = namespace(value=1) %}
+            {% for score in levels %}
+                {% if total > score %}
+                    <div class="steps" style="text-align: center;">
+                      <span class="font-weight-bold">{{ lavelNum.value }}</span>
+                    </div>
+                {% else %}
+                  <div class="none-steps" style="text-align: center;">
+                    <span class="font-weight-bold">{{ lavelNum.value }}</span>
+                  </div>
+                {% endif %}
+                {% if lavelNum.value < levels|length and levels[lavelNum.value] < total %}
+                    <span class="line"></span>
+                {% elif lavelNum.value < levels|length %}
+                    <span class="none-line"></span>
+                {% endif %}
+                {% set lavelNum.value = lavelNum.value + 1 %}
+            {% endfor %}
+          </div>
+
+        <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Набрано баллов:</span></span>
+        <div style="justify-content: center; padding: 30px; padding-top: 5px;">
+            <div class="progress" style="alignment: center; height: 30px;">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{total / current_score * 100}}%; font-size: 22px;" aria-valuenow="{{total / current_score * 100}}" aria-valuemin="0" aria-valuemax="100">{{total}}/{{current_score}}</div>
+            </div>
+        </div>
+
         {% set notAllowed = namespace(value=0) %}
         {% for unit in course.content.body %}
             <div>
@@ -149,4 +181,5 @@
         </form>
     </div>
 </div>
+<link rel="stylesheet" href="/static/css/tests.css"/>
 {% endblock %}

@@ -1,0 +1,57 @@
+.progresses{
+    display: flex;
+        align-items: center;
+   }
+
+   .line{
+
+        width: 120px;
+    height: 6px;
+    background: #00bfa6;
+   }
+
+
+   .steps{
+
+    width: 5rem;
+    height: 5rem;
+    aspect-ratio: 1;
+    color: #63d19e;
+    background-color: #ced6d5;
+    border: 0.2rem solid #ced6d5;
+    border-radius: 50%;
+    font-size: 3rem;
+    transition: 0.4s ease;
+    position: relative;
+       color: #00bfa6;
+      border: 0.2rem solid #00bfa6;
+      background-color: #2f2e41;
+      box-shadow: #2f2e41 0px 0px 0px 10px,
+       #00bfa6 0px 0px 10px 12px;
+
+
+   }
+
+
+   .none-line{
+
+        width: 120px;
+    height: 6px;
+    background: #cccccc;
+   }
+
+
+   .none-steps{
+
+    width: 5rem;
+    height: 5rem;
+    aspect-ratio: 1;
+    color: #2f2e41;
+    background-color: #ced6d5;
+    border: 0.2rem solid #ced6d5;
+    border-radius: 50%;
+    font-size: 3rem;
+    transition: 0.4s ease;
+    position: relative;
+
+   }
