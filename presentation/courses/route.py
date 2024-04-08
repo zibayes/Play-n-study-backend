@@ -49,6 +49,9 @@ def handle_tests(course_id):
     deadlines = logic.get_all_deadlines_by_course_id(course_id)
     deadlines = {str(i.task_id) + i.task_type:i.end_date for i in deadlines}
     levels = logic.get_all_levels_by_course_id(course_id)
+    total = None
+    current_level = None
+    current_score = None
     if levels:
         final_dict = {}
         counter = 0
@@ -57,19 +60,21 @@ def handle_tests(course_id):
             final_dict[name] = levels.scores[counter]
             counter += 1
         levels = final_dict
-    _, _, _, _, total, _, _, \
-        _, _, _, _ = get_course_summary(course, progresses, user)
-    current_level = list(levels.keys())[0]
-    current_score = list(levels.values())[0]
-    counter = 0
-    for key, value in levels.items():
-        counter += 1
-        if total > value:
-            current_level = key
-            if counter < len(levels.keys()):
-                current_score = list(levels.values())[counter]
+        _, _, _, _, total, _, _, \
+            _, _, _, _ = get_course_summary(course, progresses, user)
+        current_level = list(levels.keys())[0]
+        current_score = list(levels.values())[0]
+        counter = 0
+        for key, value in levels.items():
+            counter += 1
+            if total > value:
+                current_level = key
+                if counter < len(levels.keys()):
+                    current_score = list(levels.values())[counter]
+    else:
+        levels = {}
     return render_template('tests.html', user=user, course=course, results=results, deadlines=deadlines,
-                           levels=list(levels.values()), total=total, current_level=current_level, current_score=current_score)
+                           levels=list(levels.values()), levels_aliases=list(levels.keys()), total=total, current_level=current_level, current_score=current_score)
 
 
 @login_required

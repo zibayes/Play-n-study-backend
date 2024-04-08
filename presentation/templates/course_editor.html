@@ -30,15 +30,20 @@
             </span>
             <div id="levelAdd">
                 <span class="fs-5 row m-3 justify-content-start lang" key="">Система уровней</span>
-                <script>document.level_num = {{ levels.items()|length + 1 }}</script>
-                {% set lavelNum = namespace(value=1) %}
-                {% for name, score in levels.items() %}
-                    <div style="display: flex; margin-bottom: 10px;">
-                        <textarea class="form-control toSend langp" key="" maxlength="1000" placeholder="Название уровня №{{lavelNum.value}}" name="level-{{lavelNum.value}}" rows="1">{{ name }}</textarea>
-                        <input type="number" name="levelScore-{{lavelNum.value}}" placeholder="Баллы" id="levelScore-{{lavelNum.value}}" style="width:120px; margin-left: 10px;" value="{{ score }}"/>
-                    </div>
-                    {% set lavelNum.value = lavelNum.value + 1 %}
-                {% endfor %}
+                {% if levels %}
+                    <script>document.level_num = {{ levels.items()|length + 1 }}</script>
+
+                    {% set lavelNum = namespace(value=1) %}
+                    {% for name, score in levels.items() %}
+                        <div style="display: flex; margin-bottom: 10px;">
+                            <textarea class="form-control toSend langp" key="" maxlength="1000" placeholder="Название уровня №{{lavelNum.value}}" name="level-{{lavelNum.value}}" rows="1">{{ name }}</textarea>
+                            <input type="number" name="levelScore-{{lavelNum.value}}" placeholder="Баллы" id="levelScore-{{lavelNum.value}}" style="width:120px; margin-left: 10px;" value="{{ score }}"/>
+                        </div>
+                        {% set lavelNum.value = lavelNum.value + 1 %}
+                    {% endfor %}
+                {% else %}
+                    <script>document.level_num = 1</script>
+                {% endif %}
             </div>
             <div style="margin-bottom: 20px;">
                 <button class="btn btn-primary lang" key=""

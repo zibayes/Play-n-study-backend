@@ -19,36 +19,49 @@
         </nav>
         <div class="row border"></div>
 
-        <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Ваш текущий уровень на курсе:</span>{{current_level}}</span>
+        {% if levels %}
+            <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Ваш текущий уровень на курсе:</span></span>
 
-          <div class="progresses" style="justify-content: center; padding: 30px; padding-top: 15px; padding-bottom: 5px;">
+              <div class="progresses" style="justify-content: center; padding: 30px; padding-top: 15px; padding-bottom: 40px;">
 
-            {% set lavelNum = namespace(value=1) %}
-            {% for score in levels %}
-                {% if total > score %}
-                    <div class="steps" style="text-align: center;">
-                      <span class="font-weight-bold">{{ lavelNum.value }}</span>
-                    </div>
-                {% else %}
-                  <div class="none-steps" style="text-align: center;">
-                    <span class="font-weight-bold">{{ lavelNum.value }}</span>
-                  </div>
-                {% endif %}
-                {% if lavelNum.value < levels|length and levels[lavelNum.value] < total %}
-                    <span class="line"></span>
-                {% elif lavelNum.value < levels|length %}
-                    <span class="none-line"></span>
-                {% endif %}
-                {% set lavelNum.value = lavelNum.value + 1 %}
-            {% endfor %}
+
+                {% set lavelNum = namespace(value=1) %}
+                {% for score in levels %}
+                    {% if total > score %}
+                        <div style="display: block; position: relative;">
+                            <div class="steps" style="text-align: center;">
+                              <span class="font-weight-bold">{{ lavelNum.value }}</span>
+                            </div>
+                            <p style="position: absolute; margin-left: auto; text-align: center; margin-right: auto; margin-top: 18px; left: {{-20 - (levels_aliases[lavelNum.value-1]|length * 6)}}px; right: 0; font: 2em Arial, sans-serif; color: #00bfa6;">{{levels_aliases[lavelNum.value-1]}}</p>
+                        </div>
+                    {% else %}
+                      <div style="display: block; position: relative;">
+                        <div class="none-steps" style="text-align: center;">
+                          <span class="font-weight-bold">{{ lavelNum.value }}</span>
+                        </div>
+                        <p style="position: absolute; margin-left: auto; text-align: center; margin-right: auto; margin-top: 18px; left: left: 0; right: {{-20 - (levels_aliases[lavelNum.value-1]|length * 6)}}px; font: 2em Arial, sans-serif; color: #2f2e41;">{{levels_aliases[lavelNum.value-1]}}</p>
+                      </div>
+                    {% endif %}
+                    {% if lavelNum.value < levels|length and levels[lavelNum.value] < total %}
+                        <span class="line"></span>
+                    {% elif lavelNum.value < levels|length %}
+                        <span class="none-line"></span>
+                    {% endif %}
+                    {% set lavelNum.value = lavelNum.value + 1 %}
+                {% endfor %}
+
           </div>
+        {% endif %}
 
-        <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Набрано баллов:</span></span>
-        <div style="justify-content: center; padding: 30px; padding-top: 5px;">
-            <div class="progress" style="alignment: center; height: 30px;">
-              <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{total / current_score * 100}}%; font-size: 22px;" aria-valuenow="{{total / current_score * 100}}" aria-valuemin="0" aria-valuemax="100">{{total}}/{{current_score}}</div>
+        {% if total %}
+            <span class="fs-5 row m-3 justify-content-center"><span class="lang justify-content-center" key="">Набрано баллов:</span></span>
+            <div style="justify-content: center; padding: 30px; padding-top: 5px;">
+                <div class="progress" style="alignment: center; height: 30px;">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{total / current_score * 100}}%; font-size: 22px;" aria-valuenow="{{total / current_score * 100}}" aria-valuemin="0" aria-valuemax="100"></div>
+                    <p style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; text-align: center; font: 2em Arial, sans-serif; color: whitesmoke; text-shadow: black 0 0 4px">{{total}}/{{current_score}}</p>
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         {% set notAllowed = namespace(value=0) %}
         {% for unit in course.content.body %}
