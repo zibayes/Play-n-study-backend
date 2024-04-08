@@ -131,7 +131,7 @@
 
                                     {% if question.type == "drag_to_text" %}
                                         {% set answerNum = namespace(value=0) %}
-                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}" style="display: flex">{{ question.ask }}</p>
+                                        <p class="fromMarkdown" id="DragToText-{{ questionNum.value }}" style="display: flex;text-align:justify;">{{ question.ask }}</p>
                                         <script>
                                             let mark_d;
                                             let filling_d = document.getElementById('DragToText-{{ questionNum.value }}');

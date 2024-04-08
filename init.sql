@@ -38,7 +38,7 @@ CREATE TABLE courses
     content json
 );
 -- Сайт
-INSERT INTO courses(course_id, name) VALUES (0, 'Play'n'Study');
+INSERT INTO courses(course_id, name) VALUES (0, 'Play and Study');
 -- Кураторы
 CREATE TABLE curators
 (

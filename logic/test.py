@@ -10,7 +10,6 @@ import numpy as np
 from data.types import TestContent, Question, Test
 from markdown import markdown
 
-
 class TestResult:
     def __init__(self, total_score, total_current_score, total_time, result):
         self.total_score = total_score
